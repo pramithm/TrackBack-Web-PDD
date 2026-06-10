@@ -1,0 +1,62 @@
+TrackBack - Smart Lost & Found Tracking Application
+This document outlines the development roadmap and technical architecture for the TrackBack mobile application based on the detailed requirements provided.
+
+Goal Description
+To build a cross-platform (Android & iOS) mobile application using React Native and Firebase that facilitates the secure recovery of lost items. The application heavily leverages AI for image verification, question generation, smart matching, and chat moderation to prevent fraud and ensure user safety.
+
+Proposed Architecture
+Tech Stack
+Frontend: React Native (using Expo for rapid cross-platform development).
+Backend & Database: Firebase (Authentication, Firestore for database, Cloud Storage for images).
+State Management: Zustand (lightweight and performant).
+Navigation: React Navigation.
+AI Integration: Integration with an LLM/Vision API (e.g., Google Gemini API or OpenAI API) to handle image analysis, question generation, and chat moderation.
+Design System
+Theme: Cool pastel colors extracted from the provided Figma screenshots.
+Components: Custom, reusable UI components built to match the Figma designs perfectly.
+Development Phases
+We will build the application iteratively.
+
+Phase 1: Foundation & Setup
+Initialize Expo React Native project in the FrontEnd directory.
+Set up navigation structure (Stack and Bottom Tabs).
+Integrate Firebase SDKs (Auth, Firestore, Storage).
+Set up Zustand store for global state management.
+Define the global theme (colors, typography based on Figma).
+Phase 2: Authentication Module
+Implement Splash and Welcome/Onboarding screens.
+Implement Login, Signup, and Forgot Password flows.
+Integrate Phone OTP and Social Login options.
+Implement Profile Setup screen.
+Phase 3: Core UI & Navigation
+Build the Home Feed with categories and filtering.
+Implement Search functionality (keyword and location-based).
+Build the Item Detailed View screen.
+Phase 4: Found Item Upload & AI Integration
+Implement camera/gallery upload functionality.
+AI Integration 1: Connect to AI API for Image Verification (reject faces, NSFW, unrelated items).
+AI Integration 2: Generate smart verification questions based on the verified image.
+Save item data to Firestore and image to Cloud Storage.
+Phase 5: Lost Item Workflow & Verification
+Implement "Request This Item" flow.
+Display the AI-generated questions to the requester.
+AI Integration 3: Ownership matching - AI compares the requester's answers to the finder's answers to approve or reject the request.
+Phase 6: Secure Chat & Moderation
+Build real-time chat interface using Firestore real-time listeners.
+AI Integration 4: Implement continuous chat moderation to warn users about spam/irrelevant/inappropriate content.
+Implement the 7-warning system and image filtering within the chat.
+Phase 7: Safety, Notifications & Profile
+Implement Push Notifications for matches and new messages.
+Implement user blocking and reporting features.
+Build profile privacy controls (request to view profile).
+Phase 8: Admin Portal
+(As requested, this will be handled last and likely scoped as a separate web interface or specific admin-only app views).
+WARNING
+
+User Review Required / Open Questions
+Before we begin coding Phase 1, I need clarification on the following technical details:
+
+AI Service Provider: To build the AI Image Verification, Question Generation, and Chat Moderation, we need an AI service. Do you prefer using Google Gemini API or OpenAI API (ChatGPT/GPT-4o)? We will need API keys for the chosen service when we reach Phase 4.
+Firebase Project: Do you already have a Firebase project created, or do you need me to provide instructions on how to set one up and get the configuration keys?
+Location Services: For the location picking (like Swiggy), we will need to use Google Maps API. Do you have a Google Cloud account to generate an API key for this?
+Please review this plan and answer the open questions. Once approved, I will immediately start initializing the React Native project!
