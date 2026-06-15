@@ -13,16 +13,33 @@ export default function ItemDetails({ onClose }) {
   const [claimStatus, setClaimStatus] = useState(null); // null | 'pending' | 'accepted' | 'rejected'
   const [showClaimForm, setShowClaimForm] = useState(false);
   const [answers, setAnswers] = useState(['', '', '']);
+  const [manualDescription, setManualDescription] = useState('');
   const [verifying, setVerifying] = useState(false);
   const [submitting, setSubmitting] = useState(false);
   const [feedback, setFeedback] = useState(null); // { score, reason }
   const [error, setError] = useState('');
 
   const isOwner = item?.userId === user?.uid;
+  const hasQuestions = item?.verificationQuestions && Array.isArray(item.verificationQuestions) && item.verificationQuestions.length > 0;
 
   useEffect(() => {
-    if (item && !isOwner) {
-      checkClaimStatus();
+    if (item) {
+      setShowClaimForm(false);
+      setManualDescription('');
+      setFeedback(null);
+      setError('');
+      setVerifying(false);
+      setSubmitting(false);
+
+      if (hasQuestions) {
+        setAnswers(new Array(item.verificationQuestions.length).fill(''));
+      } else {
+        setAnswers(['', '', '']);
+      }
+
+      if (!isOwner) {
+        checkClaimStatus();
+      }
     }
   }, [item]);
 
@@ -37,29 +54,59 @@ export default function ItemDetails({ onClose }) {
 
   const handleClaimSubmit = async (e) => {
     e.preventDefault();
-    const emptyAnswer = answers.some(ans => !ans.trim());
-    if (emptyAnswer) {
-      setError('Please answer all verification questions.');
-      return;
-    }
-
-    setVerifying(true);
     setError('');
     setFeedback(null);
 
-    try {
-      // 1. Call Gemini AI to verify ownership answers
-      const qaList = item.verificationQuestions;
-      const result = await aiService.verifyAnswers(qaList, answers);
-      
-      setFeedback(result);
+    if (hasQuestions) {
+      const emptyAnswer = answers.some(ans => !ans.trim());
+      if (emptyAnswer) {
+        setError('Please answer all verification questions.');
+        return;
+      }
 
-      if (result.score >= 70) {
-        // 2. Score is high enough, send Claim Request to the database
-        setSubmitting(true);
-        const claimMessage = qaList.map((q, i) => `Q: ${q.q}\nA: ${answers[i]}`).join('\n\n') + 
-          `\n\nAI Verification Score: ${result.score}%\nAI Reasoning: ${result.reason}`;
+      setVerifying(true);
 
+      try {
+        // 1. Call Gemini AI to verify ownership answers
+        const qaList = item.verificationQuestions;
+        const result = await aiService.verifyAnswers(qaList, answers);
+        
+        setFeedback(result);
+
+        if (result.score >= 70) {
+          // 2. Score is high enough, send Claim Request to the database
+          setSubmitting(true);
+          const claimMessage = qaList.map((q, i) => `Q: ${q.q}\nA: ${answers[i]}`).join('\n\n') + 
+            `\n\nAI Verification Score: ${result.score}%\nAI Reasoning: ${result.reason}`;
+
+          const claimResult = await requestService.sendClaimRequest(item, claimMessage);
+          
+          if (claimResult.success) {
+            setClaimStatus('pending');
+          } else {
+            setError('Failed to send claim request: ' + claimResult.error);
+          }
+        } else {
+          setError('Answer not matched. Please try again or maybe this is not your item.');
+        }
+      } catch (err) {
+        console.error(err);
+        setError('Verification failed: ' + err.message);
+      } finally {
+        setVerifying(false);
+        setSubmitting(false);
+      }
+    } else {
+      if (!manualDescription.trim()) {
+        setError('Please provide a description of the item to claim it.');
+        return;
+      }
+
+      setVerifying(true);
+      setSubmitting(true);
+
+      try {
+        const claimMessage = `No AI verification questions were set for this item.\n\nClaimant's Description:\n${manualDescription.trim()}`;
         const claimResult = await requestService.sendClaimRequest(item, claimMessage);
         
         if (claimResult.success) {
@@ -67,15 +114,13 @@ export default function ItemDetails({ onClose }) {
         } else {
           setError('Failed to send claim request: ' + claimResult.error);
         }
-      } else {
-        setError('Answer not matched. Please try again or maybe this is not your item.');
+      } catch (err) {
+        console.error(err);
+        setError('Failed to submit claim: ' + err.message);
+      } finally {
+        setVerifying(false);
+        setSubmitting(false);
       }
-    } catch (err) {
-      console.error(err);
-      setError('Verification failed: ' + err.message);
-    } finally {
-      setVerifying(false);
-      setSubmitting(false);
     }
   };
 
@@ -228,7 +273,11 @@ export default function ItemDetails({ onClose }) {
             <form onSubmit={handleClaimSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
               <div className="ai-status-card ai-status-pending">
                 <HelpCircle size={16} />
-                <span>Verification Check: Please answer the questions precisely. Gemini AI will match details.</span>
+                {hasQuestions ? (
+                  <span>Verification Check: Please answer the questions precisely. Gemini AI will match details.</span>
+                ) : (
+                  <span>Verification Check: Please describe the item in detail. The finder will review it.</span>
+                )}
               </div>
 
               {error && (
@@ -238,25 +287,43 @@ export default function ItemDetails({ onClose }) {
                 </div>
               )}
 
-              {item.verificationQuestions && item.verificationQuestions.map((q, idx) => (
-                <div className="form-group" key={idx}>
-                  <label className="form-label" style={{ fontWeight: 600 }}>Q{idx + 1}: {q.q}</label>
-                  <input
-                    type="text"
-                    className="form-input"
-                    placeholder="Enter your answer"
-                    value={answers[idx]}
+              {hasQuestions ? (
+                item.verificationQuestions.map((q, idx) => (
+                  <div className="form-group" key={idx}>
+                    <label className="form-label" style={{ fontWeight: 600 }}>Q{idx + 1}: {q.q}</label>
+                    <input
+                      type="text"
+                      className="form-input"
+                      placeholder="Enter your answer"
+                      value={answers[idx]}
+                      onChange={(e) => {
+                        const updated = [...answers];
+                        updated[idx] = e.target.value;
+                        setAnswers(updated);
+                        setError('');
+                      }}
+                      disabled={verifying}
+                      required
+                    />
+                  </div>
+                ))
+              ) : (
+                <div className="form-group">
+                  <label className="form-label" style={{ fontWeight: 600 }}>Describe the item to prove ownership</label>
+                  <textarea
+                    className="form-textarea"
+                    rows="5"
+                    placeholder="Provide specific details that only the true owner would know (e.g. brand, color, custom markings, contents, serial number, etc.)..."
+                    value={manualDescription}
                     onChange={(e) => {
-                      const updated = [...answers];
-                      updated[idx] = e.target.value;
-                      setAnswers(updated);
+                      setManualDescription(e.target.value);
                       setError('');
                     }}
                     disabled={verifying}
                     required
                   />
                 </div>
-              ))}
+              )}
 
               {feedback && (
                 <div className={`ai-status-card ${feedback.score >= 70 ? 'ai-status-success' : 'ai-status-error'}`}>
@@ -279,7 +346,7 @@ export default function ItemDetails({ onClose }) {
                       <span>{submitting ? 'Submitting Claim...' : 'AI Verifying Answers...'}</span>
                     </>
                   ) : (
-                    <span>Submit Claim Answers</span>
+                    <span>{hasQuestions ? 'Submit Claim Answers' : 'Submit Claim Request'}</span>
                   )}
                 </button>
               </div>
