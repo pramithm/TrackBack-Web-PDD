@@ -1,2 +1,2 @@
-cd web-app
+cd Frontend
 npm run dev
