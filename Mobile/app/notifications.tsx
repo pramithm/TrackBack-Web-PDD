@@ -8,7 +8,8 @@ import {
   ActivityIndicator,
   Alert,
   ScrollView,
-  Platform
+  Platform,
+  Modal
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
@@ -17,7 +18,6 @@ import { useRouter } from 'expo-router';
 import { useAuth } from '@/src/store/authStore';
 import { requestService, ClaimRequest } from '@/src/services/requestService';
 import { chatService } from '@/src/services/chatService';
-import { userService } from '@/src/services/userService';
 
 export default function NotificationsScreen() {
   const router = useRouter();
@@ -26,54 +26,43 @@ export default function NotificationsScreen() {
   const [requests, setRequests] = useState<ClaimRequest[]>([]);
   const [loading, setLoading] = useState(true);
   const [actionLoading, setActionLoading] = useState<string | null>(null);
-  const [claimerProfiles, setClaimerProfiles] = useState<Record<string, string>>({});
 
-  // Subscribe to incoming requests
+  // Modal Review States
+  const [selectedRequest, setSelectedRequest] = useState<ClaimRequest | null>(null);
+  const [reviewModalVisible, setReviewModalVisible] = useState(false);
+
+  // Subscribe to both incoming & outgoing requests
   useEffect(() => {
     if (!user) return;
 
-    console.log('[NotificationsScreen] Listening to incoming requests...');
-    const unsubscribe = requestService.listenToRequests('incoming', (fetchedRequests) => {
-      // Only display requests that are pending or accepted
-      const activeRequests = fetchedRequests.filter(
-        (req) => req.status === 'pending' || req.status === 'accepted'
-      );
-      setRequests(activeRequests);
+    console.log('[NotificationsScreen] Listening to incoming & outgoing requests...');
+    setLoading(true);
+
+    let incomingList: ClaimRequest[] = [];
+    let outgoingList: ClaimRequest[] = [];
+
+    const updateCombinedRequests = () => {
+      const combined = [...incomingList, ...outgoingList]
+        .sort((a, b) => b.createdAt - a.createdAt);
+      setRequests(combined);
       setLoading(false);
-    });
-
-    return unsubscribe;
-  }, [user]);
-
-  // Fetch claimer profile images asynchronously
-  useEffect(() => {
-    const fetchMissingProfiles = async () => {
-      const uidsToFetch = requests
-        .map((r) => r.claimerId)
-        .filter((uid) => uid && !claimerProfiles[uid]);
-
-      if (uidsToFetch.length === 0) return;
-
-      const uniqueUids = Array.from(new Set(uidsToFetch));
-      const updates: Record<string, string> = {};
-
-      await Promise.all(
-        uniqueUids.map(async (uid) => {
-          try {
-            const profile = await userService.getUserProfile(uid);
-            updates[uid] = profile?.photoURL || '';
-          } catch (err) {
-            console.error('[NotificationsScreen] Error fetching profile for:', uid, err);
-            updates[uid] = '';
-          }
-        })
-      );
-
-      setClaimerProfiles((prev) => ({ ...prev, ...updates }));
     };
 
-    fetchMissingProfiles();
-  }, [requests, claimerProfiles]);
+    const unsubscribeIncoming = requestService.listenToRequests('incoming', (fetchedIncoming) => {
+      incomingList = fetchedIncoming;
+      updateCombinedRequests();
+    });
+
+    const unsubscribeOutgoing = requestService.listenToRequests('outgoing', (fetchedOutgoing) => {
+      outgoingList = fetchedOutgoing;
+      updateCombinedRequests();
+    });
+
+    return () => {
+      unsubscribeIncoming();
+      unsubscribeOutgoing();
+    };
+  }, [user]);
 
   const handleAccept = async (request: ClaimRequest) => {
     setActionLoading(request.id);
@@ -95,6 +84,11 @@ export default function NotificationsScreen() {
         createdAt: Date.now(),
         status: 'ai-verified'
       });
+
+      // Update state in modal if active
+      if (selectedRequest && selectedRequest.id === request.id) {
+        setSelectedRequest({ ...selectedRequest, status: 'accepted' });
+      }
 
       Alert.alert('Success', `You approved ${request.claimerName}'s claim. Tap Chat to discuss return.`);
     } catch (err: any) {
@@ -118,6 +112,12 @@ export default function NotificationsScreen() {
             setActionLoading(request.id);
             try {
               await requestService.updateRequestStatus(request.id, 'rejected');
+              
+              // Update state in modal if active
+              if (selectedRequest && selectedRequest.id === request.id) {
+                setSelectedRequest({ ...selectedRequest, status: 'rejected' });
+              }
+
               Alert.alert('Success', 'The request was rejected.');
             } catch (err: any) {
               console.error(err);
@@ -133,6 +133,7 @@ export default function NotificationsScreen() {
 
   const handleChat = async (request: ClaimRequest) => {
     setActionLoading(request.id);
+    setReviewModalVisible(false);
     try {
       // Spawns the exact chat room ID matching the dashboard logic
       const chatId = [request.claimerId, request.finderId].sort().join('_') + '_' + request.itemId;
@@ -190,93 +191,60 @@ export default function NotificationsScreen() {
   };
 
   const renderNotificationCard = ({ item }: { item: ClaimRequest }) => {
+    const isIncoming = item.finderId === user?.uid;
     const isPending = item.status === 'pending';
-    const profileUrl = claimerProfiles[item.claimerId];
-    const isBusy = actionLoading === item.id;
+    const isAccepted = item.status === 'accepted';
+    
+    let titleText = '';
+    let subtitleText = '';
+
+    if (isIncoming) {
+      titleText = `Incoming Claim: ${item.itemTitle}`;
+      subtitleText = `From: ${item.claimerName || 'User'}`;
+    } else {
+      titleText = `Your Claim: ${item.itemTitle}`;
+      subtitleText = `Status: ${item.status.charAt(0).toUpperCase() + item.status.slice(1)}`;
+    }
 
     return (
-      <View style={styles.card}>
-        <View style={styles.cardHeader}>
-          {/* User Profile Image */}
-          {profileUrl ? (
-            <Image source={{ uri: profileUrl }} style={styles.avatar} />
-          ) : (
-            <View style={styles.avatarFallback}>
-              <Text style={styles.avatarText}>{item.claimerName?.charAt(0) || 'U'}</Text>
-            </View>
-          )}
+      <TouchableOpacity 
+        style={styles.card}
+        onPress={() => {
+          setSelectedRequest(item);
+          setReviewModalVisible(true);
+        }}
+        activeOpacity={0.8}
+      >
+        {/* Item Image */}
+        {item.itemImage ? (
+          <Image source={{ uri: item.itemImage }} style={styles.itemThumb} contentFit="cover" />
+        ) : (
+          <View style={styles.itemThumbFallback}>
+            <Ionicons name="images-outline" size={24} color="#94A3B8" />
+          </View>
+        )}
 
-          {/* User & Request Metadata */}
-          <View style={styles.cardMeta}>
-            <View style={styles.row}>
-              <Text style={styles.userName} numberOfLines={1}>
-                {item.claimerName}
-              </Text>
-              <Text style={styles.timeText}>{formatTime(item.createdAt)}</Text>
-            </View>
-            <Text style={styles.itemRef} numberOfLines={1}>
-              For item: {item.itemTitle}
+        {/* Content details */}
+        <View style={styles.cardContent}>
+          <Text style={styles.cardTitle} numberOfLines={1}>{titleText}</Text>
+          <Text style={styles.cardSubtitle} numberOfLines={1}>{subtitleText}</Text>
+          
+          {/* Status Badge capsule */}
+          <View style={[
+            styles.statusBadge,
+            isPending ? styles.badgePending : isAccepted ? styles.badgeAccepted : styles.badgeRejected
+          ]}>
+            <Text style={[
+              styles.statusText,
+              isPending ? styles.statusTextPending : isAccepted ? styles.statusTextAccepted : styles.statusTextRejected
+            ]}>
+              {item.status.toUpperCase()}
             </Text>
           </View>
         </View>
 
-        {/* Request Message */}
-        <View style={styles.messageBox}>
-          <Text style={styles.messageText}>
-            {item.message || 'No description message.'}
-          </Text>
-        </View>
-
-        {/* Responsive Card Action Buttons */}
-        {isPending ? (
-          <View style={styles.actionRow}>
-            <TouchableOpacity
-              style={[styles.btn, styles.rejectBtn]}
-              onPress={() => handleReject(item)}
-              disabled={actionLoading !== null}
-            >
-              {isBusy ? (
-                <ActivityIndicator size="small" color="#475569" />
-              ) : (
-                <>
-                  <Ionicons name="close" size={16} color="#475569" style={{ marginRight: 6 }} />
-                  <Text style={styles.rejectBtnText}>Reject</Text>
-                </>
-              )}
-            </TouchableOpacity>
-
-            <TouchableOpacity
-              style={[styles.btn, styles.acceptBtn]}
-              onPress={() => handleAccept(item)}
-              disabled={actionLoading !== null}
-            >
-              {isBusy ? (
-                <ActivityIndicator size="small" color="#FFFFFF" />
-              ) : (
-                <>
-                  <Ionicons name="checkmark" size={16} color="#FFFFFF" style={{ marginRight: 6 }} />
-                  <Text style={styles.acceptBtnText}>Accept</Text>
-                </>
-              )}
-            </TouchableOpacity>
-          </View>
-        ) : (
-          <TouchableOpacity
-            style={[styles.btn, styles.chatBtn]}
-            onPress={() => handleChat(item)}
-            disabled={actionLoading !== null}
-          >
-            {isBusy ? (
-              <ActivityIndicator size="small" color="#FFFFFF" />
-            ) : (
-              <>
-                <Ionicons name="chatbubbles-outline" size={18} color="#FFFFFF" style={{ marginRight: 8 }} />
-                <Text style={styles.chatBtnText}>Chat</Text>
-              </>
-            )}
-          </TouchableOpacity>
-        )}
-      </View>
+        <Ionicons name="chevron-forward" size={20} color="#94A3B8" style={styles.chevron} />
+      </TouchableOpacity>
     );
   };
 
@@ -285,7 +253,7 @@ export default function NotificationsScreen() {
       {/* Notifications Header */}
       <View style={styles.headerBar}>
         <TouchableOpacity style={styles.headerBtn} onPress={() => router.back()}>
-          <Ionicons name="arrow-back" size={24} color="#9A2E17" />
+          <Text style={styles.backText}>Back</Text>
         </TouchableOpacity>
 
         <Text style={styles.headerTitle}>Notifications</Text>
@@ -323,6 +291,121 @@ export default function NotificationsScreen() {
           showsVerticalScrollIndicator={false}
         />
       )}
+
+      {/* DETAIL REVIEW MODAL */}
+      {selectedRequest && (
+        <Modal
+          visible={reviewModalVisible}
+          transparent={true}
+          animationType="slide"
+          onRequestClose={() => setReviewModalVisible(false)}
+        >
+          <View style={styles.modalOverlay}>
+            <View style={styles.modalContent}>
+              <View style={styles.modalHeader}>
+                <Text style={styles.modalTitle}>
+                  {selectedRequest.finderId === user?.uid ? 'Review Claim Request' : 'Claim Request Status'}
+                </Text>
+                <TouchableOpacity onPress={() => setReviewModalVisible(false)}>
+                  <Ionicons name="close" size={24} color="#475569" />
+                </TouchableOpacity>
+              </View>
+
+              <ScrollView showsVerticalScrollIndicator={false}>
+                {/* Summary Card */}
+                <View style={styles.modalItemCard}>
+                  {selectedRequest.itemImage ? (
+                    <Image source={{ uri: selectedRequest.itemImage }} style={styles.modalItemImage} contentFit="cover" />
+                  ) : (
+                    <View style={[styles.modalItemImage, styles.modalItemFallback]}>
+                      <Ionicons name="images-outline" size={24} color="#94A3B8" />
+                    </View>
+                  )}
+                  <View style={{ flex: 1, marginLeft: 12 }}>
+                    <Text style={styles.modalItemTitle}>{selectedRequest.itemTitle}</Text>
+                    <Text style={styles.modalItemTime}>{formatTime(selectedRequest.createdAt)}</Text>
+                  </View>
+                </View>
+
+                {/* Sender/Recipient Info */}
+                <View style={styles.detailRow}>
+                  <Text style={styles.detailLabel}>
+                    {selectedRequest.finderId === user?.uid ? 'From Claimant' : 'Submitted By'}
+                  </Text>
+                  <Text style={styles.detailValue}>{selectedRequest.claimerName}</Text>
+                </View>
+
+                <View style={styles.detailRow}>
+                  <Text style={styles.detailLabel}>Status</Text>
+                  <View style={[
+                    styles.statusBadge,
+                    selectedRequest.status === 'pending' ? styles.badgePending : selectedRequest.status === 'accepted' ? styles.badgeAccepted : styles.badgeRejected,
+                    { marginTop: 4 }
+                  ]}>
+                    <Text style={[
+                      styles.statusText,
+                      selectedRequest.status === 'pending' ? styles.statusTextPending : selectedRequest.status === 'accepted' ? styles.statusTextAccepted : styles.statusTextRejected
+                    ]}>
+                      {selectedRequest.status.toUpperCase()}
+                    </Text>
+                  </View>
+                </View>
+
+                {/* Answers / Verification Message */}
+                <View style={styles.messageContainer}>
+                  <Text style={styles.messageHeader}>VERIFICATION RESPONSES</Text>
+                  <Text style={styles.messageBody}>
+                    {selectedRequest.message || 'No verification message provided.'}
+                  </Text>
+                </View>
+              </ScrollView>
+
+              {/* Action buttons inside Modal */}
+              <View style={styles.modalFooter}>
+                {selectedRequest.finderId === user?.uid && selectedRequest.status === 'pending' ? (
+                  <View style={styles.modalActionsRow}>
+                    <TouchableOpacity
+                      style={[styles.modalBtn, styles.modalRejectBtn]}
+                      onPress={() => handleReject(selectedRequest)}
+                      disabled={actionLoading !== null}
+                    >
+                      <Text style={styles.modalRejectText}>Reject</Text>
+                    </TouchableOpacity>
+
+                    <TouchableOpacity
+                      style={[styles.modalBtn, styles.modalAcceptBtn]}
+                      onPress={() => handleAccept(selectedRequest)}
+                      disabled={actionLoading !== null}
+                    >
+                      {actionLoading === selectedRequest.id ? (
+                        <ActivityIndicator size="small" color="#FFFFFF" />
+                      ) : (
+                        <Text style={styles.modalAcceptText}>Accept Claim</Text>
+                      )}
+                    </TouchableOpacity>
+                  </View>
+                ) : selectedRequest.status === 'accepted' ? (
+                  <TouchableOpacity
+                    style={[styles.modalBtn, styles.modalChatBtn]}
+                    onPress={() => handleChat(selectedRequest)}
+                    disabled={actionLoading !== null}
+                  >
+                    <Ionicons name="chatbubbles-outline" size={18} color="#FFFFFF" style={{ marginRight: 8 }} />
+                    <Text style={styles.modalChatText}>Start Chat</Text>
+                  </TouchableOpacity>
+                ) : (
+                  <TouchableOpacity
+                    style={[styles.modalBtn, styles.modalCloseBtn]}
+                    onPress={() => setReviewModalVisible(false)}
+                  >
+                    <Text style={styles.modalCloseText}>Close</Text>
+                  </TouchableOpacity>
+                )}
+              </View>
+            </View>
+          </View>
+        </Modal>
+      )}
     </SafeAreaView>
   );
 }
@@ -343,12 +426,17 @@ const styles = StyleSheet.create({
     backgroundColor: '#FFFFFF',
   },
   headerBtn: {
-    padding: 6,
-    minWidth: 44,
-    alignItems: 'center',
+    paddingVertical: 6,
+    paddingHorizontal: 10,
+    minWidth: 50,
+  },
+  backText: {
+    color: '#9A2E17',
+    fontSize: 16,
+    fontWeight: 'bold',
   },
   headerTitle: {
-    fontSize: 20,
+    fontSize: 19,
     fontWeight: 'bold',
     color: '#9A2E17',
   },
@@ -392,119 +480,231 @@ const styles = StyleSheet.create({
   },
   card: {
     backgroundColor: '#FFFFFF',
-    borderRadius: 24,
-    padding: 16,
-    marginBottom: 16,
+    borderRadius: 20,
+    padding: 12,
+    marginBottom: 12,
     shadowColor: '#000000',
     shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.03,
-    shadowRadius: 8,
+    shadowOpacity: 0.02,
+    shadowRadius: 6,
     elevation: 2,
     borderWidth: 1,
     borderColor: '#E2E8F0',
-  },
-  cardHeader: {
     flexDirection: 'row',
     alignItems: 'center',
-    marginBottom: 12,
   },
-  avatar: {
-    width: 48,
-    height: 48,
-    borderRadius: 24,
+  itemThumb: {
+    width: 64,
+    height: 64,
+    borderRadius: 12,
     backgroundColor: '#F1F5F9',
   },
-  avatarFallback: {
-    width: 48,
-    height: 48,
-    borderRadius: 24,
-    backgroundColor: '#9A2E17',
+  itemThumbFallback: {
+    width: 64,
+    height: 64,
+    borderRadius: 12,
+    backgroundColor: '#F1F5F9',
     justifyContent: 'center',
     alignItems: 'center',
   },
-  avatarText: {
-    color: '#FFFFFF',
-    fontWeight: 'bold',
-    fontSize: 18,
-  },
-  cardMeta: {
+  cardContent: {
     flex: 1,
     marginLeft: 12,
+    marginRight: 8,
   },
-  row: {
+  cardTitle: {
+    fontSize: 15,
+    fontWeight: 'bold',
+    color: '#1A1A1A',
+  },
+  cardSubtitle: {
+    fontSize: 13,
+    color: '#636E72',
+    marginTop: 2,
+  },
+  statusBadge: {
+    alignSelf: 'flex-start',
+    paddingHorizontal: 8,
+    paddingVertical: 3,
+    borderRadius: 6,
+    marginTop: 6,
+  },
+  badgePending: {
+    backgroundColor: '#FFEBE3',
+  },
+  badgeAccepted: {
+    backgroundColor: '#E6FBF3',
+  },
+  badgeRejected: {
+    backgroundColor: '#FEE2E2',
+  },
+  statusText: {
+    fontSize: 11,
+    fontWeight: '900',
+    letterSpacing: 0.5,
+  },
+  statusTextPending: {
+    color: '#EA580C',
+  },
+  statusTextAccepted: {
+    color: '#047857',
+  },
+  statusTextRejected: {
+    color: '#B91C1C',
+  },
+  chevron: {
+    marginLeft: 'auto',
+  },
+  modalOverlay: {
+    flex: 1,
+    backgroundColor: 'rgba(0, 0, 0, 0.4)',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  modalContent: {
+    backgroundColor: '#FFFFFF',
+    borderRadius: 24,
+    width: '90%',
+    maxHeight: '80%',
+    padding: 20,
+    shadowColor: '#000000',
+    shadowOpacity: 0.15,
+    shadowRadius: 10,
+    elevation: 5,
+  },
+  modalHeader: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
+    marginBottom: 16,
+    borderBottomWidth: 1,
+    borderBottomColor: '#F1F5F9',
+    paddingBottom: 12,
   },
-  userName: {
-    fontSize: 16,
+  modalTitle: {
+    fontSize: 18,
     fontWeight: 'bold',
-    color: '#1A1A1A',
-    flex: 1,
-    marginRight: 8,
+    color: '#1E293B',
   },
-  timeText: {
-    fontSize: 12,
-    color: '#94A3B8',
-    fontWeight: '500',
-  },
-  itemRef: {
-    fontSize: 13,
-    color: '#F27A35',
-    fontWeight: '600',
-    marginTop: 2,
-  },
-  messageBox: {
+  modalItemCard: {
+    flexDirection: 'row',
+    alignItems: 'center',
     backgroundColor: '#F8FAFC',
-    borderRadius: 12,
+    borderRadius: 16,
     padding: 12,
     borderWidth: 1,
-    borderColor: '#F1F5F9',
+    borderColor: '#E2E8F0',
     marginBottom: 16,
   },
-  messageText: {
-    fontSize: 14,
-    color: '#475569',
-    lineHeight: 20,
+  modalItemImage: {
+    width: 50,
+    height: 50,
+    borderRadius: 8,
   },
-  actionRow: {
+  modalItemFallback: {
+    backgroundColor: '#E2E8F0',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  modalItemTitle: {
+    fontSize: 15,
+    fontWeight: 'bold',
+    color: '#1E293B',
+  },
+  modalItemTime: {
+    fontSize: 12,
+    color: '#94A3B8',
+    marginTop: 2,
+  },
+  detailRow: {
+    marginBottom: 12,
+  },
+  detailLabel: {
+    fontSize: 11,
+    fontWeight: 'bold',
+    color: '#94A3B8',
+    letterSpacing: 0.5,
+    textTransform: 'uppercase',
+  },
+  detailValue: {
+    fontSize: 14,
+    color: '#1E293B',
+    fontWeight: '700',
+    marginTop: 2,
+  },
+  messageContainer: {
+    backgroundColor: '#FFF5F5',
+    borderWidth: 1,
+    borderColor: '#FEE2E2',
+    borderRadius: 16,
+    padding: 14,
+    marginTop: 12,
+    marginBottom: 16,
+  },
+  messageHeader: {
+    fontSize: 10,
+    fontWeight: '900',
+    color: '#9A2E17',
+    letterSpacing: 0.5,
+    marginBottom: 6,
+  },
+  messageBody: {
+    fontSize: 13,
+    color: '#475569',
+    lineHeight: 18,
+  },
+  modalFooter: {
+    marginTop: 12,
+  },
+  modalActionsRow: {
     flexDirection: 'row',
     gap: 12,
   },
-  btn: {
-    height: 44,
+  modalBtn: {
+    height: 48,
     borderRadius: 14,
     justifyContent: 'center',
     alignItems: 'center',
     flexDirection: 'row',
   },
-  rejectBtn: {
+  modalRejectBtn: {
     flex: 1,
+    borderWidth: 1.5,
+    borderColor: '#EF4444',
+    backgroundColor: '#FFFFFF',
+  },
+  modalRejectText: {
+    color: '#EF4444',
+    fontSize: 14,
+    fontWeight: 'bold',
+  },
+  modalAcceptBtn: {
+    flex: 2,
+    backgroundColor: '#10B981',
+  },
+  modalAcceptText: {
+    color: '#FFFFFF',
+    fontSize: 14,
+    fontWeight: 'bold',
+  },
+  modalChatBtn: {
+    width: '100%',
+    backgroundColor: '#9A2E17',
+  },
+  modalChatText: {
+    color: '#FFFFFF',
+    fontSize: 14,
+    fontWeight: 'bold',
+  },
+  modalCloseBtn: {
+    width: '100%',
     backgroundColor: '#F1F5F9',
     borderWidth: 1,
     borderColor: '#E2E8F0',
   },
-  rejectBtnText: {
+  modalCloseText: {
     color: '#475569',
     fontSize: 14,
     fontWeight: 'bold',
-  },
-  acceptBtn: {
-    flex: 1,
-    backgroundColor: '#F28C38',
-  },
-  acceptBtnText: {
-    color: '#FFFFFF',
-    fontSize: 14,
-    fontWeight: 'bold',
-  },
-  chatBtn: {
-    width: '100%',
-    backgroundColor: '#9A2E17',
-  },
-  chatBtnText: {
-    color: '#FFFFFF',
-    fontSize: 14,
-    fontWeight: 'bold',
-  },
+  }
 });

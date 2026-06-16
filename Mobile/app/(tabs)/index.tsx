@@ -190,7 +190,7 @@ export default function HomeScreen() {
     <SafeAreaView style={styles.container}>
       {/* Top Header Bar */}
       <View style={styles.headerBar}>
-        <TouchableOpacity onPress={handleLogout} style={styles.avatarWrapper}>
+        <TouchableOpacity onPress={() => router.push('/profile' as any)} style={styles.avatarWrapper}>
           {user?.photoURL ? (
             <Image source={{ uri: user.photoURL }} style={styles.avatar} />
           ) : (
@@ -212,7 +212,7 @@ export default function HomeScreen() {
               </View>
             )}
           </TouchableOpacity>
-          <TouchableOpacity style={styles.headerIcon}>
+          <TouchableOpacity onPress={handleLogout} style={styles.headerIcon}>
             <Ionicons name="ellipsis-vertical" size={24} color="#2D3436" />
           </TouchableOpacity>
         </View>

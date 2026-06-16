@@ -15,6 +15,8 @@ export interface UserProfile {
   email?: string | null;
   createdAt?: string;
   updatedAt?: string;
+  location?: string;
+  bio?: string;
 }
 
 export const userService = {
