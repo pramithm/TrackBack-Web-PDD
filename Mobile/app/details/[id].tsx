@@ -57,7 +57,7 @@ export default function ItemDetailsScreen() {
           const itemData = { id, ...snapshot.val() } as Item;
           
           // Ensure verification questions always exist and default them if missing
-          let questions = (itemData as any).verificationQuestions;
+          let questions = (itemData as any).questions || (itemData as any).verificationQuestions;
           if (questions && !Array.isArray(questions) && typeof questions === 'object') {
             console.log('[ItemDetails] Normalizing verificationQuestions dictionary to array');
             questions = Object.keys(questions)
@@ -66,10 +66,12 @@ export default function ItemDetailsScreen() {
           }
 
           if (questions && Array.isArray(questions) && questions.length > 0) {
+            (itemData as any).questions = questions;
             (itemData as any).verificationQuestions = questions;
             setAnswers(new Array(questions.length).fill(''));
           } else {
             const defaultQ = [{ q: 'What is the brand or description of this item?', a: itemData.title }];
+            (itemData as any).questions = defaultQ;
             (itemData as any).verificationQuestions = defaultQ;
             setAnswers(['']);
           }
@@ -115,15 +117,21 @@ export default function ItemDetailsScreen() {
 
     setVerifying(true);
 
-    try {
-      console.log('[ItemDetails] Requesting AI verification of answers...');
-      const response = await aiService.verifyAnswers(questions, answers);
-      console.log('[ItemDetails] AI verification result:', response);
-      setFeedback(response);
+    // Short timeout to simulate verification state visually
+    await new Promise(resolve => setTimeout(resolve, 600));
 
-      if (response.score >= 70) {
+    try {
+      const matches = questions.every((q: any, i: number) => {
+        const userAns = (answers[i] || '').trim().toLowerCase();
+        const expectedAns = (q.a || '').trim().toLowerCase();
+        return userAns === expectedAns;
+      });
+
+      if (matches) {
+        setFeedback({ score: 100, reason: 'Correctly matched finder\'s expected answers.' });
         setIsVerified(true);
       } else {
+        setFeedback({ score: 0, reason: 'The provided answers do not match the item details.' });
         setIsVerified(false);
         setFormError('Verification failed. The provided answers do not match the item details.');
         Alert.alert('Verification Failed', 'Verification failed. The provided answers do not match the item details.');
@@ -480,7 +488,6 @@ export default function ItemDetailsScreen() {
                       )}
                       {claimStatus === 'accepted' && (
                         <View style={{ gap: 12 }}>
-                          <div style={styles.webStyleHack} />
                           <View style={[styles.statusCard, styles.statusSuccess]}>
                             <Ionicons name="checkmark-circle" size={20} color="#047857" style={{ marginRight: 8 }} />
                             <Text style={styles.statusTextSuccess}>

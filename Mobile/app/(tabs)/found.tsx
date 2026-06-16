@@ -125,7 +125,7 @@ export default function FoundReportScreen() {
 
       if (!result.canceled && result.assets[0].uri) {
         setImageUri(result.assets[0].uri);
-        setImageVerified(false);
+        setImageVerified(true);
         setModerationError('');
       }
     } catch (err) {
@@ -262,6 +262,7 @@ export default function FoundReportScreen() {
         user: user.name || 'Anonymous User',
         image: imageUri || undefined,
         verificationQuestions: questions.filter(q => q.q.trim().length > 0 && q.a.trim().length > 0),
+        questions: questions.filter(q => q.q.trim().length > 0 && q.a.trim().length > 0),
         date: dateFound + ' ' + timeFound
       };
 
@@ -623,7 +624,7 @@ export default function FoundReportScreen() {
                     {imageVerified && <Ionicons name="checkmark-circle" size={16} color="#047857" style={{ marginLeft: 6 }} />}
                   </View>
 
-                  {/* Verify Action Button */}
+                   {/* Verify Action Button */}
                   {!imageVerified ? (
                     <TouchableOpacity
                       style={[styles.verifyButton, moderationLoading && styles.btnDisabled]}
@@ -640,9 +641,9 @@ export default function FoundReportScreen() {
                       )}
                     </TouchableOpacity>
                   ) : (
-                    <View style={styles.verifiedSafeBadge}>
-                      <Ionicons name="sparkles" size={16} color="#FFFFFF" style={{ marginRight: 6 }} />
-                      <Text style={styles.verifiedSafeText}>Verified Safe</Text>
+                    <View style={[styles.verifiedSafeBadge, { backgroundColor: '#047857' }]}>
+                      <Ionicons name="checkmark-circle" size={16} color="#FFFFFF" style={{ marginRight: 6 }} />
+                      <Text style={styles.verifiedSafeText}>Photo Added</Text>
                     </View>
                   )}
 
@@ -696,15 +697,6 @@ export default function FoundReportScreen() {
                   <TouchableOpacity style={styles.addQuestionSlotBtn} onPress={handleAddQuestion}>
                     <Ionicons name="add" size={16} color="#9A2E17" style={{ marginRight: 4 }} />
                     <Text style={styles.addQuestionSlotText}>Add Question</Text>
-                  </TouchableOpacity>
-
-                  <TouchableOpacity
-                    style={styles.autoQuestionsBtn}
-                    onPress={handleAutoGenerateQuestions}
-                    disabled={questionsLoading}
-                  >
-                    <Ionicons name="sparkles" size={16} color="#9A2E17" style={{ marginRight: 6 }} />
-                    <Text style={styles.autoQuestionsText}>Auto-generate Questions</Text>
                   </TouchableOpacity>
                 </View>
               </View>
