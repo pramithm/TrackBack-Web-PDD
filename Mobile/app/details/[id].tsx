@@ -35,30 +35,13 @@ export default function ItemDetailsScreen() {
   // Claim Form States
   const [showClaimForm, setShowClaimForm] = useState(false);
   const [answers, setAnswers] = useState<string[]>([]);
-  const [manualDescription, setManualDescription] = useState('');
   const [verifying, setVerifying] = useState(false);
   const [feedback, setFeedback] = useState<{ score: number; reason: string } | null>(null);
   const [formError, setFormError] = useState('');
-  const [isAnswerValid, setIsAnswerValid] = useState(false);
-  const [showValidationMessage, setShowValidationMessage] = useState(false);
+  const [isVerified, setIsVerified] = useState(false);
 
   const isOwner = item?.userId === user?.uid;
-  const hasQuestions = item && 'verificationQuestions' in item && Array.isArray((item as any).verificationQuestions) && (item as any).verificationQuestions.length > 0;
 
-  const validateClaimAnswers = (currentAnswers: string[]) => {
-    if (!item || !(item as any).verificationQuestions) return;
-    const questions = (item as any).verificationQuestions;
-
-    const allMatch = questions.every((q: any, i: number) => {
-      const userAns = (currentAnswers[i] || '').trim().toLowerCase();
-      const expectedAns = (q.a || '').trim().toLowerCase();
-      return userAns === expectedAns;
-    });
-
-    setIsAnswerValid(allMatch);
-    const allTyped = currentAnswers.every(ans => ans.trim().length > 0);
-    setShowValidationMessage(allTyped && !allMatch);
-  };
 
   // Fetch Item details and Claim status from RTDB
   useEffect(() => {
@@ -72,15 +55,26 @@ export default function ItemDetailsScreen() {
         
         if (snapshot.exists()) {
           const itemData = { id, ...snapshot.val() } as Item;
-          setItem(itemData);
           
-          // Initialise verification answers if questions exist
-          const questions = (itemData as any).verificationQuestions;
-          if (questions && Array.isArray(questions)) {
+          // Ensure verification questions always exist and default them if missing
+          let questions = (itemData as any).verificationQuestions;
+          if (questions && !Array.isArray(questions) && typeof questions === 'object') {
+            console.log('[ItemDetails] Normalizing verificationQuestions dictionary to array');
+            questions = Object.keys(questions)
+              .sort((a, b) => Number(a) - Number(b))
+              .map(key => (questions as any)[key]);
+          }
+
+          if (questions && Array.isArray(questions) && questions.length > 0) {
+            (itemData as any).verificationQuestions = questions;
             setAnswers(new Array(questions.length).fill(''));
           } else {
-            setAnswers(['', '', '']);
+            const defaultQ = [{ q: 'What is the brand or description of this item?', a: itemData.title }];
+            (itemData as any).verificationQuestions = defaultQ;
+            setAnswers(['']);
           }
+
+          setItem(itemData);
 
           // Fetch claim status if not the owner
           if (itemData.userId !== user?.uid) {
@@ -102,65 +96,80 @@ export default function ItemDetailsScreen() {
     fetchItemDetails();
   }, [id, user]);
 
-  const handleClaimSubmit = async () => {
+  const handleVerifySubmit = async () => {
     if (!item) return;
     setFormError('');
     setFeedback(null);
 
     const questions = (item as any).verificationQuestions;
 
-    if (hasQuestions && questions) {
-      if (!isAnswerValid) {
-        setFormError('Please answer all questions correctly.');
-        return;
+    if (!questions || !Array.isArray(questions) || questions.length === 0) {
+      setFormError('No verification questions found for this item.');
+      return;
+    }
+
+    if (answers.some(a => !a || a.trim().length === 0)) {
+      setFormError('Please answer all questions.');
+      return;
+    }
+
+    setVerifying(true);
+
+    try {
+      console.log('[ItemDetails] Requesting AI verification of answers...');
+      const response = await aiService.verifyAnswers(questions, answers);
+      console.log('[ItemDetails] AI verification result:', response);
+      setFeedback(response);
+
+      if (response.score >= 70) {
+        setIsVerified(true);
+      } else {
+        setIsVerified(false);
+        setFormError('Verification failed. The provided answers do not match the item details.');
+        Alert.alert('Verification Failed', 'Verification failed. The provided answers do not match the item details.');
       }
+    } catch (err: any) {
+      console.error(err);
+      setIsVerified(false);
+      setFormError('Failed to verify answers: ' + (err.message || err));
+    } finally {
+      setVerifying(false);
+    }
+  };
 
-      setVerifying(true);
+  const handleClaimSubmit = async () => {
+    if (!item) return;
+    setVerifying(true);
 
-      try {
-        const claimMessage = questions.map((q: any, i: number) => `Q: ${q.q}\nA: ${answers[i]}`).join('\n\n') + 
-          `\n\nVerification: Correctly matched finder's expected answers.`;
+    try {
+      const questions = (item as any).verificationQuestions;
+      const claimMessage = questions.map((q: any, i: number) => `Q: ${q.q}\nA: ${answers[i]}`).join('\n\n') + 
+        `\n\nAI Verification Score: ${feedback?.score || 100}/100\nAI Verification Details: ${feedback?.reason || 'Conceptually matched'}`;
 
-        const claimResult = await requestService.sendClaimRequest(item, claimMessage);
-        
-        if (claimResult.success) {
-          setClaimStatus('pending');
-          Alert.alert('Claim Request Sent', 'Your claim request has been sent to the finder.');
-          setShowClaimForm(false);
-        } else {
-          setFormError('Failed to send claim request: ' + claimResult.error);
-        }
-      } catch (err: any) {
-        console.error(err);
-        setFormError('Failed to submit claim: ' + (err.message || err));
-      } finally {
-        setVerifying(false);
+      const claimResult = await requestService.sendClaimRequest(item, claimMessage);
+      
+      if (claimResult.success) {
+        setClaimStatus('pending');
+        Alert.alert(
+          'Request Sent!',
+          "The finder will be notified. You'll be able to chat once they accept your request.",
+          [
+            {
+              text: 'OK',
+              onPress: () => {
+                setShowClaimForm(false);
+              }
+            }
+          ]
+        );
+      } else {
+        setFormError('Failed to send claim request: ' + claimResult.error);
       }
-    } else {
-      if (!manualDescription.trim()) {
-        setFormError('Please describe the item in detail.');
-        return;
-      }
-
-      setVerifying(true);
-
-      try {
-        const claimMessage = `No AI verification questions were set for this item.\n\nClaimant's Description:\n${manualDescription.trim()}`;
-        const claimResult = await requestService.sendClaimRequest(item, claimMessage);
-        
-        if (claimResult.success) {
-          setClaimStatus('pending');
-          Alert.alert('Claim Request Sent', 'Your claim request has been sent to the finder.');
-          setShowClaimForm(false);
-        } else {
-          setFormError('Failed to submit claim: ' + claimResult.error);
-        }
-      } catch (err: any) {
-        console.error(err);
-        setFormError('Failed to submit claim: ' + (err.message || err));
-      } finally {
-        setVerifying(false);
-      }
+    } catch (err: any) {
+      console.error(err);
+      setFormError('Failed to submit claim: ' + (err.message || err));
+    } finally {
+      setVerifying(false);
     }
   };
 
@@ -202,6 +211,129 @@ export default function ItemDetailsScreen() {
       <View style={styles.centered}>
         <Text style={styles.errorText}>Item not found.</Text>
       </View>
+    );
+  }
+
+  if (showClaimForm && item) {
+    return (
+      <KeyboardAvoidingView 
+        style={{ flex: 1 }} 
+        behavior={Platform.OS === 'ios' ? 'padding' : undefined}
+      >
+        <SafeAreaView style={styles.claimFormContainer} edges={['top', 'bottom']}>
+          {/* Header */}
+          <View style={styles.claimHeader}>
+            <Text style={styles.claimTitle}>Verify Ownership</Text>
+            <Text style={styles.claimSubtitle}>
+              Answer these questions to help the finder verify you are the owner.
+            </Text>
+          </View>
+
+          {/* Scrollable Content */}
+          <ScrollView contentContainerStyle={styles.claimScrollContent} showsVerticalScrollIndicator={false}>
+            {/* Item Card */}
+            <View style={styles.claimItemCard}>
+              {item.imageUrl ? (
+                <Image source={{ uri: item.imageUrl }} style={styles.claimItemImage} contentFit="cover" />
+              ) : (
+                <View style={[styles.claimItemImage, styles.claimItemImageFallback]}>
+                  <Ionicons name="images-outline" size={24} color="#94A3B8" />
+                </View>
+              )}
+              <View style={styles.claimItemDetails}>
+                <Text style={styles.claimItemBadge}>FOUND ITEM</Text>
+                <Text style={styles.claimItemTitle}>{item.title}</Text>
+                <Text style={styles.claimItemLocation} numberOfLines={1}>
+                  Found at {item.location || 'Not Specified'}
+                </Text>
+              </View>
+            </View>
+
+            {formError.length > 0 && (
+              <View style={styles.errorAlert}>
+                <Ionicons name="alert-circle-outline" size={18} color="#EF4444" style={{ marginRight: 6 }} />
+                <Text style={styles.errorAlertText}>{formError}</Text>
+              </View>
+            )}
+
+            {/* Questions */}
+            {((item as any).verificationQuestions || []).map((q: any, idx: number) => (
+              <View key={idx} style={styles.questionCard}>
+                <Text style={styles.questionText}>
+                  {idx + 1}. {q.q}
+                </Text>
+                <TextInput
+                  style={styles.claimTextInput}
+                  placeholder="Your answer..."
+                  placeholderTextColor="#94A3B8"
+                  value={answers[idx] || ''}
+                  onChangeText={(text) => {
+                    const updated = [...answers];
+                    updated[idx] = text;
+                    setAnswers(updated);
+                    setFormError('');
+                    setIsVerified(false);
+                  }}
+                  editable={!verifying}
+                />
+              </View>
+            ))}
+
+            {/* Answers Matched Banner */}
+            {isVerified && (
+              <View style={styles.matchedBanner}>
+                <Ionicons name="checkmark-circle" size={20} color="#047857" style={{ marginRight: 8 }} />
+                <Text style={styles.matchedBannerText}>Answers matched!</Text>
+              </View>
+            )}
+          </ScrollView>
+
+          {/* Action Buttons at the Bottom */}
+          <View style={styles.claimFooter}>
+            {isVerified ? (
+              <TouchableOpacity 
+                style={styles.sendRequestBtn} 
+                onPress={handleClaimSubmit}
+                disabled={verifying}
+              >
+                {verifying ? (
+                  <ActivityIndicator size="small" color="#FFFFFF" />
+                ) : (
+                  <Text style={styles.sendRequestBtnText}>Send Request</Text>
+                )}
+              </TouchableOpacity>
+            ) : (
+              <TouchableOpacity 
+                style={[
+                  styles.verifyBtn, 
+                  (answers.some(a => !a || a.trim().length === 0) || verifying) && styles.verifyBtnDisabled
+                ]} 
+                onPress={handleVerifySubmit}
+                disabled={answers.some(a => !a || a.trim().length === 0) || verifying}
+              >
+                {verifying ? (
+                  <ActivityIndicator size="small" color="#FFFFFF" />
+                ) : (
+                  <Text style={styles.verifyBtnText}>Submit & Verify</Text>
+                )}
+              </TouchableOpacity>
+            )}
+
+            <TouchableOpacity 
+              style={styles.cancelLinkBtn} 
+              onPress={() => {
+                setShowClaimForm(false);
+                setFormError('');
+                setFeedback(null);
+                setIsVerified(false);
+              }}
+              disabled={verifying}
+            >
+              <Text style={styles.cancelLinkLabel}>Cancel Claim</Text>
+            </TouchableOpacity>
+          </View>
+        </SafeAreaView>
+      </KeyboardAvoidingView>
     );
   }
 
@@ -319,177 +451,76 @@ export default function ItemDetailsScreen() {
             </View>
 
             {/* Claim Actions Layout */}
-            {!showClaimForm ? (
-              <View style={styles.actionsContainer}>
-                {isOwner ? (
-                  <View style={styles.ownerBadge}>
-                    <Ionicons name="create-outline" size={18} color="#9A2E17" />
-                    <Text style={styles.ownerBadgeText}>Your Reported Item</Text>
-                  </View>
-                ) : (
-                  <>
-                    {item.type === 'found' && (
-                      <View style={{ width: '100%' }}>
-                        {claimStatus === null && (
+            <View style={styles.actionsContainer}>
+              {isOwner ? (
+                <View style={styles.ownerBadge}>
+                  <Ionicons name="create-outline" size={18} color="#9A2E17" />
+                  <Text style={styles.ownerBadgeText}>Your Reported Item</Text>
+                </View>
+              ) : (
+                <>
+                  {item.type === 'found' && (
+                    <View style={{ width: '100%' }}>
+                      {claimStatus === null && (
+                        <TouchableOpacity 
+                          style={styles.primaryBtn} 
+                          onPress={() => setShowClaimForm(true)}
+                          activeOpacity={0.8}
+                        >
+                          <Text style={styles.primaryBtnText}>Claim This Item</Text>
+                        </TouchableOpacity>
+                      )}
+                      {claimStatus === 'pending' && (
+                        <View style={[styles.statusCard, styles.statusPending]}>
+                          <ActivityIndicator size="small" color="#B45309" style={{ marginRight: 8 }} />
+                          <Text style={styles.statusTextPending}>
+                            Verification Pending: Finder is reviewing.
+                          </Text>
+                        </View>
+                      )}
+                      {claimStatus === 'accepted' && (
+                        <View style={{ gap: 12 }}>
+                          <div style={styles.webStyleHack} />
+                          <View style={[styles.statusCard, styles.statusSuccess]}>
+                            <Ionicons name="checkmark-circle" size={20} color="#047857" style={{ marginRight: 8 }} />
+                            <Text style={styles.statusTextSuccess}>
+                              Claim Approved! Phone unlocked.
+                            </Text>
+                          </View>
                           <TouchableOpacity 
                             style={styles.primaryBtn} 
-                            onPress={() => setShowClaimForm(true)}
+                            onPress={handleStartChat}
                             activeOpacity={0.8}
                           >
-                            <Text style={styles.primaryBtnText}>Claim This Item</Text>
+                            <Ionicons name="chatbubbles-outline" size={20} color="#FFFFFF" style={{ marginRight: 8 }} />
+                            <Text style={styles.primaryBtnText}>Start Chat with Finder</Text>
                           </TouchableOpacity>
-                        )}
-                        {claimStatus === 'pending' && (
-                          <View style={[styles.statusCard, styles.statusPending]}>
-                            <ActivityIndicator size="small" color="#B45309" style={{ marginRight: 8 }} />
-                            <Text style={styles.statusTextPending}>
-                              Verification Pending: Finder is reviewing.
-                            </Text>
-                          </View>
-                        )}
-                        {claimStatus === 'accepted' && (
-                          <View style={{ gap: 12 }}>
-                            <div style={styles.webStyleHack} />
-                            <View style={[styles.statusCard, styles.statusSuccess]}>
-                              <Ionicons name="checkmark-circle" size={20} color="#047857" style={{ marginRight: 8 }} />
-                              <Text style={styles.statusTextSuccess}>
-                                Claim Approved! Phone unlocked.
-                              </Text>
-                            </View>
-                            <TouchableOpacity 
-                              style={styles.primaryBtn} 
-                              onPress={handleStartChat}
-                              activeOpacity={0.8}
-                            >
-                              <Ionicons name="chatbubbles-outline" size={20} color="#FFFFFF" style={{ marginRight: 8 }} />
-                              <Text style={styles.primaryBtnText}>Start Chat with Finder</Text>
-                            </TouchableOpacity>
-                          </View>
-                        )}
-                        {claimStatus === 'rejected' && (
-                          <View style={[styles.statusCard, styles.statusError]}>
-                            <Ionicons name="close-circle" size={20} color="#B91C1C" style={{ marginRight: 8 }} />
-                            <Text style={styles.statusTextError}>
-                              Claim Rejected. Contact support if inaccurate.
-                            </Text>
-                          </View>
-                        )}
-                      </View>
-                    )}
-
-                    {item.type === 'lost' && (
-                      <TouchableOpacity 
-                        style={styles.primaryBtn} 
-                        onPress={handleStartChat}
-                        activeOpacity={0.8}
-                      >
-                        <Ionicons name="chatbubbles-outline" size={20} color="#FFFFFF" style={{ marginRight: 8 }} />
-                        <Text style={styles.primaryBtnText}>Contact Owner</Text>
-                      </TouchableOpacity>
-                    )}
-                  </>
-                )}
-              </View>
-            ) : (
-              /* CLAIM FORM */
-              <View style={styles.formContainer}>
-                <View style={styles.formHeaderCard}>
-                  <Ionicons name="help-circle-outline" size={20} color="#9A2E17" style={{ marginRight: 8 }} />
-                  <Text style={styles.formHeaderTitle}>
-                    {hasQuestions 
-                      ? 'AI Verification check. Match expected answers.' 
-                      : 'Please describe the item in detail to claim.'}
-                  </Text>
-                </View>
-
-                {formError.length > 0 && (
-                  <View style={styles.errorAlert}>
-                    <Ionicons name="alert-circle-outline" size={18} color="#EF4444" style={{ marginRight: 6 }} />
-                    <Text style={styles.errorAlertText}>{formError}</Text>
-                  </View>
-                )}
-
-                {showValidationMessage && (
-                  <View style={styles.errorAlert}>
-                    <Ionicons name="alert-circle-outline" size={18} color="#D63031" style={{ marginRight: 6 }} />
-                    <Text style={styles.errorAlertText}>
-                      Answers do not match. Please try again. This item may not belong to you.
-                    </Text>
-                  </View>
-                )}
-
-                {hasQuestions ? (
-                  (item as any).verificationQuestions.map((q: any, idx: number) => (
-                    <View key={idx} style={styles.inputGroup}>
-                      <Text style={styles.inputLabel}>Q{idx + 1}: {q.q}</Text>
-                      <TextInput
-                        style={styles.textInput}
-                        placeholder="Type answer here..."
-                        placeholderTextColor="#94A3B8"
-                        value={answers[idx]}
-                        onChangeText={(text) => {
-                          const updated = [...answers];
-                          updated[idx] = text;
-                          setAnswers(updated);
-                          setFormError('');
-                          validateClaimAnswers(updated);
-                        }}
-                        editable={!verifying}
-                      />
-                    </View>
-                  ))
-                ) : (
-                  <View style={styles.inputGroup}>
-                    <Text style={styles.inputLabel}>Ownership description</Text>
-                    <TextInput
-                      style={[styles.textInput, styles.textArea]}
-                      placeholder="Provide specific details (brand, color, markings, contents, etc.)..."
-                      placeholderTextColor="#94A3B8"
-                      value={manualDescription}
-                      onChangeText={(text) => {
-                        setManualDescription(text);
-                        setFormError('');
-                      }}
-                      multiline
-                      numberOfLines={4}
-                      editable={!verifying}
-                    />
-                  </View>
-                )}
-
-                <View style={styles.formActions}>
-                  <TouchableOpacity 
-                    style={styles.cancelBtn} 
-                    onPress={() => {
-                      setShowClaimForm(false);
-                      setFormError('');
-                      setFeedback(null);
-                      setIsAnswerValid(false);
-                      setShowValidationMessage(false);
-                    }}
-                    disabled={verifying}
-                  >
-                    <Text style={styles.cancelBtnText}>Cancel</Text>
-                  </TouchableOpacity>
-
-                  {(!hasQuestions || isAnswerValid) && (
-                    <TouchableOpacity 
-                      style={styles.submitBtn} 
-                      onPress={handleClaimSubmit}
-                      disabled={verifying}
-                    >
-                      {verifying ? (
-                        <ActivityIndicator size="small" color="#FFFFFF" />
-                      ) : (
-                        <Text style={styles.submitBtnText}>
-                          {hasQuestions ? 'Send Request' : 'Submit Claim'}
-                        </Text>
+                        </View>
                       )}
+                      {claimStatus === 'rejected' && (
+                        <View style={[styles.statusCard, styles.statusError]}>
+                          <Ionicons name="close-circle" size={20} color="#B91C1C" style={{ marginRight: 8 }} />
+                          <Text style={styles.statusTextError}>
+                            Claim Rejected. Contact support if inaccurate.
+                          </Text>
+                        </View>
+                      )}
+                    </View>
+                  )}
+
+                  {item.type === 'lost' && (
+                    <TouchableOpacity 
+                      style={styles.primaryBtn} 
+                      onPress={handleStartChat}
+                      activeOpacity={0.8}
+                    >
+                      <Ionicons name="chatbubbles-outline" size={20} color="#FFFFFF" style={{ marginRight: 8 }} />
+                      <Text style={styles.primaryBtnText}>Contact Owner</Text>
                     </TouchableOpacity>
                   )}
-                </View>
-              </View>
-            )}
+                </>
+              )}
+            </View>
 
           </View>
         </ScrollView>
@@ -859,6 +890,9 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
   },
+  submitBtnDisabled: {
+    backgroundColor: '#CBD5E1',
+  },
   submitBtnText: {
     color: '#FFFFFF',
     fontWeight: 'bold',
@@ -866,5 +900,164 @@ const styles = StyleSheet.create({
   },
   webStyleHack: {
     display: 'none',
+  },
+  claimFormContainer: {
+    flex: 1,
+    backgroundColor: '#EFF6F6',
+  },
+  claimHeader: {
+    paddingHorizontal: 20,
+    paddingTop: 16,
+    paddingBottom: 8,
+  },
+  claimTitle: {
+    fontSize: 28,
+    fontWeight: 'bold',
+    color: '#1E293B',
+    marginBottom: 6,
+  },
+  claimSubtitle: {
+    fontSize: 14,
+    color: '#64748B',
+    lineHeight: 20,
+  },
+  claimScrollContent: {
+    paddingHorizontal: 20,
+    paddingBottom: 24,
+  },
+  claimItemCard: {
+    flexDirection: 'row',
+    backgroundColor: '#E2E8F0',
+    borderRadius: 16,
+    padding: 12,
+    alignItems: 'center',
+    marginTop: 16,
+    marginBottom: 16,
+  },
+  claimItemImage: {
+    width: 64,
+    height: 64,
+    borderRadius: 12,
+  },
+  claimItemImageFallback: {
+    backgroundColor: '#CBD5E1',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  claimItemDetails: {
+    flex: 1,
+    marginLeft: 12,
+  },
+  claimItemBadge: {
+    fontSize: 10,
+    fontWeight: 'bold',
+    color: '#EA580C',
+    letterSpacing: 0.5,
+    marginBottom: 2,
+  },
+  claimItemTitle: {
+    fontSize: 16,
+    fontWeight: 'bold',
+    color: '#1E293B',
+    marginBottom: 2,
+  },
+  claimItemLocation: {
+    fontSize: 12,
+    color: '#64748B',
+  },
+  questionCard: {
+    backgroundColor: '#FFFFFF',
+    borderRadius: 16,
+    padding: 16,
+    marginBottom: 16,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.05,
+    shadowRadius: 4,
+    elevation: 2,
+  },
+  questionText: {
+    fontSize: 15,
+    fontWeight: '700',
+    color: '#1E293B',
+    marginBottom: 12,
+  },
+  claimTextInput: {
+    backgroundColor: '#EFF6F6',
+    borderRadius: 12,
+    height: 48,
+    paddingHorizontal: 16,
+    fontSize: 14,
+    color: '#1E293B',
+  },
+  matchedBanner: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: '#D1FAE5',
+    borderColor: '#A7F3D0',
+    borderWidth: 1,
+    borderRadius: 12,
+    padding: 12,
+    marginBottom: 16,
+  },
+  matchedBannerText: {
+    color: '#047857',
+    fontWeight: 'bold',
+    fontSize: 14,
+  },
+  claimFooter: {
+    paddingHorizontal: 20,
+    paddingVertical: 16,
+    backgroundColor: '#EFF6F6',
+  },
+  verifyBtn: {
+    height: 52,
+    backgroundColor: '#F27A35',
+    borderRadius: 16,
+    justifyContent: 'center',
+    alignItems: 'center',
+    shadowColor: '#F27A35',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.2,
+    shadowRadius: 6,
+    elevation: 3,
+  },
+  verifyBtnDisabled: {
+    backgroundColor: '#FDBA74',
+    shadowOpacity: 0,
+    elevation: 0,
+  },
+  verifyBtnText: {
+    color: '#FFFFFF',
+    fontSize: 16,
+    fontWeight: 'bold',
+  },
+  sendRequestBtn: {
+    height: 52,
+    backgroundColor: '#9A2E17',
+    borderRadius: 16,
+    justifyContent: 'center',
+    alignItems: 'center',
+    shadowColor: '#9A2E17',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.2,
+    shadowRadius: 6,
+    elevation: 3,
+  },
+  sendRequestBtnText: {
+    color: '#FFFFFF',
+    fontSize: 16,
+    fontWeight: 'bold',
+  },
+  cancelLinkBtn: {
+    alignItems: 'center',
+    paddingVertical: 12,
+    marginTop: 8,
+  },
+  cancelLinkLabel: {
+    color: '#64748B',
+    fontSize: 15,
+    fontWeight: '600',
   }
 });

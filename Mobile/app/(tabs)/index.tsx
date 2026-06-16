@@ -6,6 +6,7 @@ import { Ionicons } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
 import { useAuth, logoutUser } from '@/src/store/authStore';
 import { itemService, Item } from '@/src/services/itemService';
+import { requestService } from '@/src/services/requestService';
 
 const CATEGORIES = ['All', 'Electronics', 'Wallets', 'Keys', 'Bags', 'Pets', 'Documents', 'Jewelry', 'Clothing', 'Other'];
 
@@ -27,6 +28,8 @@ export default function HomeScreen() {
   const [reportingItem, setReportingItem] = useState<Item | null>(null);
   const [reportReason, setReportReason] = useState('Spam / Fake Post');
 
+  const [pendingCount, setPendingCount] = useState(0);
+
   useEffect(() => {
     console.log('[HomeScreen] Subscribing to items feed...');
     const unsubscribe = itemService.subscribeToItems((fetchedItems) => {
@@ -35,6 +38,16 @@ export default function HomeScreen() {
     });
     return unsubscribe;
   }, []);
+
+  useEffect(() => {
+    if (!user) return;
+    console.log('[HomeScreen] Subscribing to incoming claim requests count...');
+    const unsubscribe = requestService.listenToRequests('incoming', (fetchedRequests) => {
+      const pending = fetchedRequests.filter(req => req.status === 'pending');
+      setPendingCount(pending.length);
+    });
+    return unsubscribe;
+  }, [user]);
 
   const handleLogout = () => {
     Alert.alert(
@@ -188,8 +201,16 @@ export default function HomeScreen() {
         </TouchableOpacity>
         <Text style={styles.headerTitle}>TrackBack</Text>
         <View style={styles.headerRight}>
-          <TouchableOpacity style={styles.headerIcon}>
+          <TouchableOpacity 
+            style={styles.headerIcon}
+            onPress={() => router.push('/notifications' as any)}
+          >
             <Ionicons name="notifications-outline" size={24} color="#2D3436" />
+            {pendingCount > 0 && (
+              <View style={styles.bellBadge}>
+                <Text style={styles.bellBadgeText}>{pendingCount}</Text>
+              </View>
+            )}
           </TouchableOpacity>
           <TouchableOpacity style={styles.headerIcon}>
             <Ionicons name="ellipsis-vertical" size={24} color="#2D3436" />
@@ -810,6 +831,22 @@ const styles = StyleSheet.create({
   dialogReportText: {
     color: '#FFFFFF',
     fontSize: 16,
+    fontWeight: 'bold',
+  },
+  bellBadge: {
+    position: 'absolute',
+    top: -2,
+    right: -2,
+    backgroundColor: '#EF4444',
+    borderRadius: 8,
+    width: 16,
+    height: 16,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  bellBadgeText: {
+    color: '#FFFFFF',
+    fontSize: 10,
     fontWeight: 'bold',
   },
 });
