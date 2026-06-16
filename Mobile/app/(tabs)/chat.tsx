@@ -17,6 +17,65 @@ import { useRouter } from 'expo-router';
 import { useAuth } from '@/src/store/authStore';
 import { chatService, ChatMetadata } from '@/src/services/chatService';
 import { requestService, ClaimRequest } from '@/src/services/requestService';
+import { userService } from '@/src/services/userService';
+
+const ChatCard = ({ item, currentUserId, onPress, formatTime }: { 
+  item: ChatMetadata; 
+  currentUserId: string; 
+  onPress: () => void; 
+  formatTime: (t: number) => string;
+}) => {
+  const partnerId = Object.keys(item.participants).find(id => id !== currentUserId) || '';
+  const [partnerProfile, setPartnerProfile] = useState<any>(null);
+
+  useEffect(() => {
+    if (partnerId) {
+      userService.getUserProfile(partnerId)
+        .then((profile) => {
+          setPartnerProfile(profile);
+        })
+        .catch(err => console.log('Error loading partner profile in list:', err));
+    }
+  }, [partnerId]);
+
+  const partnerName = partnerProfile?.name || item.participantNames[partnerId] || 'User';
+  const partnerPhoto = partnerProfile?.photoURL || null;
+  const unreadCount = (item.unreadCount && item.unreadCount[currentUserId]) || 0;
+
+  return (
+    <TouchableOpacity
+      style={styles.chatCard}
+      onPress={onPress}
+      activeOpacity={0.8}
+    >
+      {partnerPhoto ? (
+        <Image source={{ uri: partnerPhoto }} style={styles.chatAvatar} contentFit="cover" />
+      ) : (
+        <View style={styles.chatAvatarFallback}>
+          <Text style={styles.avatarLetter}>{partnerName.charAt(0).toUpperCase()}</Text>
+        </View>
+      )}
+
+      <View style={styles.chatContent}>
+        <View style={styles.chatHeaderRow}>
+          <Text style={styles.partnerName} numberOfLines={1}>{partnerName}</Text>
+          <Text style={styles.chatTime}>{formatTime(item.lastMessageTime)}</Text>
+        </View>
+        <Text style={styles.lastMessageText} numberOfLines={1}>
+          {item.lastMessage || 'No messages yet. Tap to start chatting.'}
+        </Text>
+      </View>
+
+      {unreadCount > 0 && (
+        <View style={styles.unreadBadge}>
+          <Text style={styles.unreadBadgeText}>
+            {unreadCount} {unreadCount === 1 ? 'New Message' : 'New Messages'}
+          </Text>
+        </View>
+      )}
+    </TouchableOpacity>
+  );
+};
 
 export default function ChatDashboardScreen() {
   const router = useRouter();
@@ -147,35 +206,13 @@ export default function ChatDashboardScreen() {
   };
 
   const renderChatItem = ({ item }: { item: ChatMetadata }) => {
-    const currentUserId = user?.uid;
-    const partnerId = Object.keys(item.participants).find(id => id !== currentUserId) || '';
-    const partnerName = item.participantNames[partnerId] || 'User';
-
     return (
-      <TouchableOpacity
-        style={styles.chatCard}
+      <ChatCard
+        item={item}
+        currentUserId={user?.uid || ''}
         onPress={() => router.push(`/chat/${item.id}` as any)}
-        activeOpacity={0.8}
-      >
-        {item.itemImage ? (
-          <Image source={{ uri: item.itemImage }} style={styles.chatAvatar} contentFit="cover" />
-        ) : (
-          <View style={styles.chatAvatarFallback}>
-            <Ionicons name="chatbubbles-outline" size={20} color="#9A2E17" />
-          </View>
-        )}
-
-        <View style={styles.chatContent}>
-          <View style={styles.chatHeaderRow}>
-            <Text style={styles.partnerName} numberOfLines={1}>{partnerName}</Text>
-            <Text style={styles.chatTime}>{formatTime(item.lastMessageTime)}</Text>
-          </View>
-          <Text style={styles.itemTitleLabel} numberOfLines={1}>Item: {item.itemTitle}</Text>
-          <Text style={styles.lastMessageText} numberOfLines={1}>
-            {item.lastMessage || 'No messages yet. Tap to start chatting.'}
-          </Text>
-        </View>
-      </TouchableOpacity>
+        formatTime={formatTime}
+      />
     );
   };
 
@@ -698,6 +735,25 @@ const styles = StyleSheet.create({
   openChatBtnText: {
     color: '#9A2E17',
     fontSize: 12,
+    fontWeight: 'bold',
+  },
+  avatarLetter: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    color: '#9A2E17',
+  },
+  unreadBadge: {
+    backgroundColor: '#9A2E17',
+    borderRadius: 12,
+    paddingHorizontal: 8,
+    paddingVertical: 4,
+    justifyContent: 'center',
+    alignItems: 'center',
+    alignSelf: 'center',
+  },
+  unreadBadgeText: {
+    color: '#FFFFFF',
+    fontSize: 10,
     fontWeight: 'bold',
   },
 });

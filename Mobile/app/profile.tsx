@@ -16,7 +16,7 @@ import { Image } from 'expo-image';
 import { Ionicons } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
 import * as ImagePicker from 'expo-image-picker';
-import { useAuth } from '@/src/store/authStore';
+import { useAuth, logoutUser } from '@/src/store/authStore';
 import { userService } from '@/src/services/userService';
 import { itemService } from '@/src/services/itemService';
 
@@ -168,6 +168,17 @@ export default function ProfileScreen() {
     Alert.alert('Reset Link Sent', 'A password reset instructions email has been sent to ' + user?.email);
   };
 
+  const handleLogout = () => {
+    Alert.alert(
+      'Log Out',
+      'Are you sure you want to log out of TrackBack?',
+      [
+        { text: 'Cancel', style: 'cancel' },
+        { text: 'Log Out', style: 'destructive', onPress: async () => await logoutUser() }
+      ]
+    );
+  };
+
   // Render View Profile Screen
   const renderProfileView = () => (
     <ScrollView contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false}>
@@ -268,7 +279,7 @@ export default function ProfileScreen() {
 
         {/* Notifications */}
         <TouchableOpacity
-          style={styles.cardItem}
+          style={[styles.cardItem, styles.marginBtn]}
           onPress={() => router.push('/notifications' as any)}
           activeOpacity={0.7}
         >
@@ -282,6 +293,24 @@ export default function ProfileScreen() {
             </View>
           </View>
           <Ionicons name="arrow-forward" size={18} color="#9A2E17" />
+        </TouchableOpacity>
+
+        {/* Log Out */}
+        <TouchableOpacity
+          style={styles.cardItem}
+          onPress={handleLogout}
+          activeOpacity={0.7}
+        >
+          <View style={styles.cardItemLeft}>
+            <View style={styles.iconWrapper}>
+              <Ionicons name="log-out-outline" size={24} color="#D63031" />
+            </View>
+            <View style={styles.cardItemTextContent}>
+              <Text style={[styles.cardItemTitle, { color: '#D63031' }]}>Log Out</Text>
+              <Text style={styles.cardItemSub}>Log out of your account</Text>
+            </View>
+          </View>
+          <Ionicons name="arrow-forward" size={18} color="#D63031" />
         </TouchableOpacity>
       </View>
     </ScrollView>

@@ -9,7 +9,8 @@ import {
   KeyboardAvoidingView,
   Platform,
   ActivityIndicator,
-  Alert
+  Alert,
+  ScrollView
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useLocalSearchParams, useRouter } from 'expo-router';
@@ -17,6 +18,7 @@ import { Ionicons } from '@expo/vector-icons';
 import { Image } from 'expo-image';
 import { useAuth } from '@/src/store/authStore';
 import { chatService, ChatMessage, ChatMetadata } from '@/src/services/chatService';
+import { userService } from '@/src/services/userService';
 
 export default function ChatDetailScreen() {
   const { id: chatId } = useLocalSearchParams<{ id: string }>();
@@ -25,6 +27,7 @@ export default function ChatDetailScreen() {
 
   const [metadata, setMetadata] = useState<ChatMetadata | null>(null);
   const [messages, setMessages] = useState<ChatMessage[]>([]);
+  const [partnerProfile, setPartnerProfile] = useState<any>(null);
   const [inputText, setInputText] = useState('');
   const [loading, setLoading] = useState(true);
   const [sending, setSending] = useState(false);
@@ -46,7 +49,8 @@ export default function ChatDetailScreen() {
     const unsubMessages = chatService.listenToMessages(chatId, (fetchedMessages) => {
       setMessages(fetchedMessages);
       setLoading(false);
-      // Scroll to bottom when messages load
+      
+      // Auto scroll to bottom
       setTimeout(() => {
         flatListRef.current?.scrollToEnd({ animated: true });
       }, 100);
@@ -58,6 +62,37 @@ export default function ChatDetailScreen() {
     };
   }, [chatId]);
 
+  // Fetch partner profile dynamically
+  useEffect(() => {
+    if (metadata && user) {
+      const partnerId = Object.keys(metadata.participants).find(uid => uid !== user.uid) || '';
+      if (partnerId) {
+        userService.getUserProfile(partnerId)
+          .then((profile) => {
+            setPartnerProfile(profile);
+          })
+          .catch((err) => {
+            console.error('[ChatDetail] Error loading partner profile:', err);
+          });
+      }
+    }
+  }, [metadata, user]);
+
+  // Handle read receipts & clear unread count
+  useEffect(() => {
+    if (!chatId || !user) return;
+
+    // Clear current user's unread count
+    chatService.clearUnreadCount(chatId, user.uid);
+
+    if (metadata) {
+      const partnerId = Object.keys(metadata.participants).find(uid => uid !== user.uid) || '';
+      if (partnerId) {
+        chatService.markMessagesAsSeen(chatId, partnerId);
+      }
+    }
+  }, [chatId, user, metadata, messages.length]);
+
   const handleSendMessage = async () => {
     if (!chatId || !inputText.trim() || !metadata) return;
 
@@ -67,13 +102,13 @@ export default function ChatDetailScreen() {
 
     try {
       await chatService.sendMessage(chatId, textToSend, metadata.itemTitle);
-      // Clear input and scroll to bottom
+      
+      // Scroll to bottom
       setTimeout(() => {
         flatListRef.current?.scrollToEnd({ animated: true });
       }, 100);
     } catch (err: any) {
-      console.error(err);
-      // Alerts the user if message is blocked by AI moderator
+      console.error('[ChatDetail] Error sending message:', err);
       Alert.alert('Moderation Alert', err.message || 'Failed to send message.');
     } finally {
       setSending(false);
@@ -81,43 +116,135 @@ export default function ChatDetailScreen() {
   };
 
   const getPartnerName = () => {
+    if (partnerProfile?.name) return partnerProfile.name;
     if (!metadata || !user) return 'User';
     const partnerId = Object.keys(metadata.participants).find(uid => uid !== user.uid) || '';
     return metadata.participantNames[partnerId] || 'User';
   };
 
-  const renderMessageBubble = ({ item }: { item: ChatMessage }) => {
+  const getPartnerPhoto = () => {
+    return partnerProfile?.photoURL || null;
+  };
+
+  const isPartnerOnline = () => {
+    // Return true by default as offline indicator isn't actively set in DB
+    return partnerProfile?.isOnline !== false;
+  };
+
+  const isSameDay = (t1: number, t2: number) => {
+    const d1 = new Date(t1);
+    const d2 = new Date(t2);
+    return d1.getFullYear() === d2.getFullYear() &&
+           d1.getMonth() === d2.getMonth() &&
+           d1.getDate() === d2.getDate();
+  };
+
+  const getDateSeparatorText = (timestamp: number) => {
+    const date = new Date(timestamp);
+    const today = new Date();
+    const yesterday = new Date();
+    yesterday.setDate(today.getDate() - 1);
+    
+    if (date.toDateString() === today.toDateString()) {
+      return 'Today';
+    } else if (date.toDateString() === yesterday.toDateString()) {
+      return 'Yesterday';
+    } else {
+      return date.toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' });
+    }
+  };
+
+  const renderMessageBubble = ({ item, index }: { item: ChatMessage; index: number }) => {
     const isMe = item.senderId === user?.uid;
     const isSystem = item.isSystem || item.senderId === 'SYSTEM';
+
+    // Date separator logic
+    const showDateSeparator = index === 0 || !isSameDay(messages[index - 1].createdAt, item.createdAt);
 
     if (isSystem) {
       const isLock = item.text.includes('locked') || item.text.includes('locked.');
       return (
-        <View style={[styles.systemMessageWrapper, isLock ? styles.systemLock : styles.systemWarning]}>
-          <Ionicons 
-            name={isLock ? "ban-outline" : "warning-outline"} 
-            size={18} 
-            color={isLock ? "#C53030" : "#D69E2E"} 
-            style={{ marginRight: 8 }} 
-          />
-          <Text style={[styles.systemMessageText, { color: isLock ? "#9B2C2C" : "#975A16" }]}>
-            {item.text}
-          </Text>
+        <View key={item.id}>
+          {showDateSeparator && (
+            <View style={styles.dateSeparatorWrapper}>
+              <View style={styles.dateSeparatorLine} />
+              <Text style={styles.dateSeparatorText}>{getDateSeparatorText(item.createdAt)}</Text>
+              <View style={styles.dateSeparatorLine} />
+            </View>
+          )}
+          <View style={[styles.systemMessageWrapper, isLock ? styles.systemLock : styles.systemWarning]}>
+            <Ionicons 
+              name={isLock ? "ban-outline" : "warning-outline"} 
+              size={18} 
+              color={isLock ? "#C53030" : "#D69E2E"} 
+              style={{ marginRight: 8 }} 
+            />
+            <Text style={[styles.systemMessageText, { color: isLock ? "#9B2C2C" : "#975A16" }]}>
+              {item.text}
+            </Text>
+          </View>
         </View>
       );
     }
 
     return (
-      <View style={[styles.messageBubbleWrapper, isMe ? styles.messageMe : styles.messagePartner]}>
-        <View style={[styles.messageBubble, isMe ? styles.bubbleMe : styles.bubblePartner]}>
-          <Text style={[styles.messageText, isMe ? styles.textMe : styles.textPartner]}>
-            {item.text}
-          </Text>
-          <Text style={[styles.messageTime, isMe ? styles.timeMe : styles.timePartner]}>
-            {new Date(item.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
-          </Text>
+      <View key={item.id}>
+        {showDateSeparator && (
+          <View style={styles.dateSeparatorWrapper}>
+            <View style={styles.dateSeparatorLine} />
+            <Text style={styles.dateSeparatorText}>{getDateSeparatorText(item.createdAt)}</Text>
+            <View style={styles.dateSeparatorLine} />
+          </View>
+        )}
+        
+        <View style={[styles.messageBubbleWrapper, isMe ? styles.messageMe : styles.messagePartner]}>
+          <View style={[styles.messageBubble, isMe ? styles.bubbleMe : styles.bubblePartner]}>
+            <Text style={[styles.messageText, isMe ? styles.textMe : styles.textPartner]}>
+              {item.text}
+            </Text>
+            
+            {/* Timestamp & Read receipts inline under the text */}
+            <View style={styles.bubbleFooter}>
+              <Text style={[styles.messageTime, isMe ? styles.timeMe : styles.timePartner]}>
+                {new Date(item.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+              </Text>
+              {isMe && (
+                <View style={styles.receiptWrapper}>
+                  {item.seen ? (
+                    <Ionicons name="checkmark-done" size={15} color="#3B82F6" />
+                  ) : (
+                    <Ionicons name="checkmark" size={15} color="#FCA5A5" />
+                  )}
+                </View>
+              )}
+            </View>
+          </View>
         </View>
       </View>
+    );
+  };
+
+  const renderEmptyChatState = () => {
+    const photo = getPartnerPhoto();
+    const name = getPartnerName();
+    
+    return (
+      <ScrollView contentContainerStyle={styles.emptyChatContainer} showsVerticalScrollIndicator={false}>
+        <View style={styles.emptyChatCard}>
+          {photo ? (
+            <Image source={{ uri: photo }} style={styles.emptyChatAvatar} />
+          ) : (
+            <View style={styles.emptyChatAvatarFallback}>
+              <Text style={styles.emptyChatLetter}>{name.charAt(0).toUpperCase()}</Text>
+            </View>
+          )}
+          
+          <Text style={styles.emptyChatTitle}>Start a conversation</Text>
+          <Text style={styles.emptyChatSubtitle}>
+            This chat was created after a successful claim request. Discuss securely to plan meeting up and returning the item safely.
+          </Text>
+        </View>
+      </ScrollView>
     );
   };
 
@@ -130,43 +257,60 @@ export default function ChatDetailScreen() {
   }
 
   return (
-    <SafeAreaView style={styles.container} edges={['bottom']}>
-      {/* Header */}
+    <SafeAreaView style={styles.container} edges={['top', 'bottom']}>
+      {/* Premium Chat Header */}
       <View style={styles.headerBar}>
         <TouchableOpacity style={styles.backBtn} onPress={() => router.back()}>
-          <Ionicons name="arrow-back" size={24} color="#2D3436" />
+          <Ionicons name="chevron-back" size={26} color="#2D3436" />
         </TouchableOpacity>
+
+        {/* Dynamic Partner profile avatar */}
+        {getPartnerPhoto() ? (
+          <Image source={{ uri: getPartnerPhoto()! }} style={styles.headerAvatar} />
+        ) : (
+          <View style={styles.headerAvatarFallback}>
+            <Text style={styles.headerAvatarLetter}>{getPartnerName().charAt(0).toUpperCase()}</Text>
+          </View>
+        )}
 
         <View style={styles.headerTitleContainer}>
           <Text style={styles.headerPartnerName} numberOfLines={1}>{getPartnerName()}</Text>
-          <Text style={styles.headerItemTitle} numberOfLines={1}>Item: {metadata?.itemTitle || 'Loading...'}</Text>
+          
+          {/* Online status indicator */}
+          <View style={styles.statusIndicatorRow}>
+            <View style={[styles.statusDot, isPartnerOnline() ? styles.statusDotOnline : styles.statusDotOffline]} />
+            <Text style={styles.statusText}>{isPartnerOnline() ? 'Online' : 'Offline'}</Text>
+          </View>
         </View>
 
+        {/* Small floating preview badge for item details on the right */}
         {metadata?.itemImage ? (
-          <Image source={{ uri: metadata.itemImage }} style={styles.headerThumb} contentFit="cover" />
-        ) : (
-          <View style={styles.headerThumbFallback}>
-            <Ionicons name="chatbubbles-outline" size={18} color="#9A2E17" />
-          </View>
-        )}
+          <TouchableOpacity style={styles.headerItemDetails} onPress={() => router.push(`/details/${metadata.itemId}` as any)}>
+            <Image source={{ uri: metadata.itemImage }} style={styles.headerThumb} contentFit="cover" />
+          </TouchableOpacity>
+        ) : null}
       </View>
 
-      {/* Keyboard Area */}
+      {/* Tuned KeyboardAvoidingView for smooth inputs */}
       <KeyboardAvoidingView
         style={{ flex: 1 }}
-        behavior={Platform.OS === 'ios' ? 'padding' : undefined}
-        keyboardVerticalOffset={Platform.OS === 'ios' ? 0 : 0}
+        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+        keyboardVerticalOffset={Platform.OS === 'ios' ? 95 : 0}
       >
         {/* Chat Feed */}
-        <FlatList
-          ref={flatListRef}
-          data={messages}
-          renderItem={renderMessageBubble}
-          keyExtractor={(item) => item.id}
-          contentContainerStyle={styles.feedContent}
-          showsVerticalScrollIndicator={false}
-          onContentSizeChange={() => flatListRef.current?.scrollToEnd({ animated: true })}
-        />
+        {messages.length === 0 ? (
+          renderEmptyChatState()
+        ) : (
+          <FlatList
+            ref={flatListRef}
+            data={messages}
+            renderItem={renderMessageBubble}
+            keyExtractor={(item) => item.id}
+            contentContainerStyle={styles.feedContent}
+            showsVerticalScrollIndicator={false}
+            onContentSizeChange={() => flatListRef.current?.scrollToEnd({ animated: true })}
+          />
+        )}
 
         {/* Input Bar or Block Banner */}
         {metadata?.isBlockedByAI ? (
@@ -227,7 +371,30 @@ const styles = StyleSheet.create({
   },
   backBtn: {
     padding: 6,
-    marginRight: 8,
+    marginRight: 4,
+  },
+  headerAvatar: {
+    width: 38,
+    height: 38,
+    borderRadius: 19,
+    backgroundColor: '#F1F5F9',
+    marginRight: 10,
+  },
+  headerAvatarFallback: {
+    width: 38,
+    height: 38,
+    borderRadius: 19,
+    backgroundColor: '#FFF5F5',
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginRight: 10,
+    borderWidth: 1.5,
+    borderColor: '#9A2E17',
+  },
+  headerAvatarLetter: {
+    fontSize: 16,
+    fontWeight: 'bold',
+    color: '#9A2E17',
   },
   headerTitleContainer: {
     flex: 1,
@@ -238,27 +405,37 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     color: '#1A1A1A',
   },
-  headerItemTitle: {
-    fontSize: 12,
-    color: '#F27A35',
-    fontWeight: '700',
+  statusIndicatorRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
     marginTop: 2,
   },
+  statusDot: {
+    width: 8,
+    height: 8,
+    borderRadius: 4,
+    marginRight: 5,
+  },
+  statusDotOnline: {
+    backgroundColor: '#10B981',
+  },
+  statusDotOffline: {
+    backgroundColor: '#94A3B8',
+  },
+  statusText: {
+    fontSize: 11,
+    color: '#64748B',
+  },
+  headerItemDetails: {
+    padding: 4,
+  },
   headerThumb: {
-    width: 38,
-    height: 38,
+    width: 36,
+    height: 36,
     borderRadius: 8,
     backgroundColor: '#F1F5F9',
-  },
-  headerThumbFallback: {
-    width: 38,
-    height: 38,
-    borderRadius: 8,
-    backgroundColor: '#FFF5F5',
-    justifyContent: 'center',
-    alignItems: 'center',
     borderWidth: 1,
-    borderColor: '#FEE2E2',
+    borderColor: '#E2E8F0',
   },
   feedContent: {
     padding: 16,
@@ -266,7 +443,7 @@ const styles = StyleSheet.create({
   },
   messageBubbleWrapper: {
     flexDirection: 'row',
-    marginBottom: 12,
+    marginBottom: 14,
     width: '100%',
   },
   messageMe: {
@@ -276,24 +453,29 @@ const styles = StyleSheet.create({
     justifyContent: 'flex-start',
   },
   messageBubble: {
-    maxWidth: '75%',
-    borderRadius: 16,
+    maxWidth: '78%',
+    borderRadius: 18,
     paddingHorizontal: 14,
     paddingVertical: 10,
+    shadowColor: '#000000',
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.02,
+    shadowRadius: 2,
+    elevation: 1,
   },
   bubbleMe: {
     backgroundColor: '#9A2E17',
-    borderBottomRightRadius: 2,
+    borderBottomRightRadius: 4,
   },
   bubblePartner: {
     backgroundColor: '#FFFFFF',
-    borderBottomLeftRadius: 2,
+    borderBottomLeftRadius: 4,
     borderWidth: 1,
     borderColor: '#E2E8F0',
   },
   messageText: {
     fontSize: 15,
-    lineHeight: 20,
+    lineHeight: 21,
   },
   textMe: {
     color: '#FFFFFF',
@@ -301,16 +483,24 @@ const styles = StyleSheet.create({
   textPartner: {
     color: '#2D3436',
   },
-  messageTime: {
-    fontSize: 10,
+  bubbleFooter: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'flex-end',
     marginTop: 4,
-    alignSelf: 'flex-end',
+    gap: 4,
+  },
+  messageTime: {
+    fontSize: 9,
   },
   timeMe: {
     color: '#FCA5A5',
   },
   timePartner: {
     color: '#94A3B8',
+  },
+  receiptWrapper: {
+    alignSelf: 'flex-end',
   },
   systemMessageWrapper: {
     flexDirection: 'row',
@@ -334,6 +524,78 @@ const styles = StyleSheet.create({
     flex: 1,
     lineHeight: 18,
   },
+  dateSeparatorWrapper: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginVertical: 18,
+  },
+  dateSeparatorLine: {
+    flex: 1,
+    height: 1,
+    backgroundColor: 'rgba(154, 46, 23, 0.08)',
+  },
+  dateSeparatorText: {
+    fontSize: 11,
+    fontWeight: 'bold',
+    color: '#64748B',
+    paddingHorizontal: 12,
+    backgroundColor: '#EFF6F6',
+  },
+  emptyChatContainer: {
+    flexGrow: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    padding: 24,
+  },
+  emptyChatCard: {
+    backgroundColor: '#FFFFFF',
+    borderRadius: 24,
+    padding: 24,
+    alignItems: 'center',
+    shadowColor: '#000000',
+    shadowOffset: { width: 0, height: 6 },
+    shadowOpacity: 0.04,
+    shadowRadius: 12,
+    elevation: 2,
+    borderWidth: 1,
+    borderColor: '#E2E8F0',
+  },
+  emptyChatAvatar: {
+    width: 80,
+    height: 80,
+    borderRadius: 40,
+    marginBottom: 16,
+  },
+  emptyChatAvatarFallback: {
+    width: 80,
+    height: 80,
+    borderRadius: 40,
+    backgroundColor: '#FFF5F5',
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginBottom: 16,
+    borderWidth: 2,
+    borderColor: '#9A2E17',
+  },
+  emptyChatLetter: {
+    fontSize: 32,
+    fontWeight: 'bold',
+    color: '#9A2E17',
+  },
+  emptyChatTitle: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    color: '#1E293B',
+    marginBottom: 8,
+    textAlign: 'center',
+  },
+  emptyChatSubtitle: {
+    fontSize: 13,
+    color: '#64748B',
+    textAlign: 'center',
+    lineHeight: 19,
+  },
   inputContainer: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -353,7 +615,7 @@ const styles = StyleSheet.create({
     paddingTop: Platform.OS === 'ios' ? 10 : 8,
     paddingBottom: Platform.OS === 'ios' ? 10 : 8,
     fontSize: 15,
-    maxHeight: 100,
+    maxHeight: 110,
     color: '#1A1A1A',
   },
   sendBtn: {

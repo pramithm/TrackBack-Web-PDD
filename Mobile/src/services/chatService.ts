@@ -12,6 +12,7 @@ export interface ChatMessage {
   senderId: string;
   createdAt: number;
   isSystem?: boolean;
+  seen?: boolean;
 }
 
 export interface ChatMetadata {
@@ -26,6 +27,7 @@ export interface ChatMetadata {
   createdAt: number;
   warningCount?: number;
   isBlockedByAI?: boolean;
+  unreadCount?: Record<string, number>;
 }
 
 export const chatService = {
@@ -110,6 +112,8 @@ export const chatService = {
         throw new Error(isNowBlocked ? 'Chat permanently locked.' : `Message blocked by AI: ${analysis.reason}`);
       }
 
+      const partnerId = Object.keys(chatData?.participants || {}).find(uid => uid !== currentUserId) || '';
+
       const messagesRef = ref(rtdb, `${MESSAGES_PATH}/${chatId}`);
       const newMessageRef = push(messagesRef);
       const timestamp = Date.now();
@@ -119,17 +123,55 @@ export const chatService = {
         text,
         senderId: currentUserId,
         createdAt: timestamp,
+        seen: false
       };
       
       await set(newMessageRef, messageData);
       
+      const partnerUnreadCount = (chatData?.unreadCount && chatData.unreadCount[partnerId]) || 0;
+
       await update(chatRef, {
         lastMessage: text,
         lastMessageTime: timestamp,
+        [`unreadCount/${partnerId}`]: partnerUnreadCount + 1
       });
     } catch (error) {
       console.error('Error sending message:', error);
       throw error;
+    }
+  },
+
+  clearUnreadCount: async (chatId: string, userId: string): Promise<void> => {
+    try {
+      const chatRef = ref(rtdb, `${CHATS_PATH}/${chatId}`);
+      await update(chatRef, {
+        [`unreadCount/${userId}`]: 0
+      });
+    } catch (error) {
+      console.error('Error clearing unread count:', error);
+    }
+  },
+
+  markMessagesAsSeen: async (chatId: string, partnerId: string): Promise<void> => {
+    try {
+      const messagesRef = ref(rtdb, `${MESSAGES_PATH}/${chatId}`);
+      const snapshot = await get(messagesRef);
+      const data = snapshot.val();
+      if (!data) return;
+
+      const updates: Record<string, any> = {};
+      Object.keys(data).forEach(key => {
+        const msg = data[key];
+        if (msg.senderId === partnerId && !msg.seen) {
+          updates[`${key}/seen`] = true;
+        }
+      });
+
+      if (Object.keys(updates).length > 0) {
+        await update(messagesRef, updates);
+      }
+    } catch (error) {
+      console.error('Error marking messages as seen:', error);
     }
   },
 
