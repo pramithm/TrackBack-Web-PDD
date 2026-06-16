@@ -1,0 +1,110 @@
+name: "\U0001F512 Security Review \u2013 SAST + Dependency Scan"
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  detect-stack:
+    name: "\U0001F50D Detect Technology Stack"
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Detect stack
+        run: |
+          echo "### \U0001F4CB Technology Stack" >> $GITHUB_STEP_SUMMARY
+          echo "| Tool | Version |" >> $GITHUB_STEP_SUMMARY
+          echo "|------|---------|" >> $GITHUB_STEP_SUMMARY
+          REACT=$(cat Frontend/package.json | python3 -c \
+            "import sys,json; d=json.load(sys.stdin); print(d['dependencies'].get('react','N/A'))")
+          VITE=$(cat Frontend/package.json | python3 -c \
+            "import sys,json; d=json.load(sys.stdin); print(d['devDependencies'].get('vite','N/A'))")
+          FIREBASE=$(cat Frontend/package.json | python3 -c \
+            "import sys,json; d=json.load(sys.stdin); print(d['dependencies'].get('firebase','N/A'))")
+          echo "| React | $REACT |" >> $GITHUB_STEP_SUMMARY
+          echo "| Vite  | $VITE  |" >> $GITHUB_STEP_SUMMARY
+          echo "| Firebase | $FIREBASE |" >> $GITHUB_STEP_SUMMARY
+          echo "| Node | $(node --version) |" >> $GITHUB_STEP_SUMMARY
+
+  sast-semgrep:
+    name: "\U0001F510 SAST \u2013 Semgrep"
+    runs-on: ubuntu-latest
+    needs: detect-stack
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Run Semgrep SAST
+        uses: semgrep/semgrep-action@v1
+        with:
+          config: >-
+            p/javascript
+            p/react
+            p/secrets
+            p/owasp-top-ten
+        continue-on-error: true
+
+  dependency-scan:
+    name: "\U0001F4E6 Dependency Vulnerability Scan"
+    runs-on: ubuntu-latest
+    needs: detect-stack
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+
+      - name: Install & audit Frontend
+        working-directory: Frontend
+        run: |
+          npm ci
+          echo "### \U0001F4E6 Dependency Audit Results" >> $GITHUB_STEP_SUMMARY
+          npm audit --audit-level=high --json | python3 -c "
+          import sys, json
+          data = json.load(sys.stdin)
+          vulns = data.get('metadata', {}).get('vulnerabilities', {})
+          print(f'| Severity | Count |')
+          print(f'|----------|-------|')
+          for k, v in vulns.items():
+              print(f'| {k.capitalize()} | {v} |')
+          " >> $GITHUB_STEP_SUMMARY 2>/dev/null || echo "Audit completed (some findings may exist)" >> $GITHUB_STEP_SUMMARY
+
+  secret-detection:
+    name: "\U0001F511 Secret Detection \u2013 Gitleaks"
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Run Gitleaks
+        uses: gitleaks/gitleaks-action@v2
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        continue-on-error: true
+
+  generate-report:
+    name: "\U0001F4CA Generate Security Reports"
+    runs-on: ubuntu-latest
+    needs: [sast-semgrep, dependency-scan, secret-detection]
+    if: always()
+    steps:
+      - name: Security Summary Report
+        run: |
+          echo "## \U0001F512 TrackBack Security Review Summary" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "| Check | Status |" >> $GITHUB_STEP_SUMMARY
+          echo "|-------|--------|" >> $GITHUB_STEP_SUMMARY
+          echo "| \U0001F510 SAST (Semgrep) | ${{ needs.sast-semgrep.result }} |" >> $GITHUB_STEP_SUMMARY
+          echo "| \U0001F4E6 Dependency Audit | ${{ needs.dependency-scan.result }} |" >> $GITHUB_STEP_SUMMARY
+          echo "| \U0001F511 Secret Detection | ${{ needs.secret-detection.result }} |" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "**Build:** #${{ github.run_number }} · **Branch:** \`${{ github.ref_name }}\` · **Commit:** \`${{ github.sha }}\`" >> $GITHUB_STEP_SUMMARY

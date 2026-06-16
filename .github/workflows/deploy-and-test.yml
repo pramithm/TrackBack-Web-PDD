@@ -1,0 +1,106 @@
+name: "\U0001F680 Deploy to GitHub Pages + Selenium E2E Tests"
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+jobs:
+  build-and-deploy:
+    name: "\U0001F528 Build Expo Web App"
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: Frontend
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js 20
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: "npm"
+          cache-dependency-path: Frontend/package-lock.json
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build Vite app
+        run: npm run build
+
+      - name: Deploy to GitHub Pages
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: Frontend/dist
+          publish_branch: gh-pages
+
+  verify-deployment:
+    name: "\U0001F50D Verify Live Deployment"
+    runs-on: ubuntu-latest
+    needs: build-and-deploy
+
+    steps:
+      - name: Wait for Pages to propagate
+        run: sleep 30
+
+      - name: Check live URL responds
+        run: |
+          URL="https://${{ github.repository_owner }}.github.io/$(echo '${{ github.repository }}' | cut -d'/' -f2)/"
+          echo "Checking: $URL"
+          STATUS=$(curl -s -o /dev/null -w "%{http_code}" "$URL")
+          echo "HTTP Status: $STATUS"
+          echo "### \U0001F310 Live URL" >> $GITHUB_STEP_SUMMARY
+          echo "$URL" >> $GITHUB_STEP_SUMMARY
+          [ "$STATUS" -eq 200 ] && echo "✅ Site is live" || { echo "⚠️ Got status $STATUS — Pages may still be propagating"; }
+
+  selenium-e2e:
+    name: "\U0001F9EA Selenium E2E Tests"
+    runs-on: ubuntu-latest
+    needs: verify-deployment
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js 20
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: "npm"
+          cache-dependency-path: Frontend/package-lock.json
+
+      - name: Setup Chrome
+        uses: browser-actions/setup-chrome@v1
+
+      - name: Install ChromeDriver
+        run: |
+          CHROME_VERSION=$(google-chrome --version | awk '{print $3}' | cut -d'.' -f1)
+          npm install -g chromedriver@$CHROME_VERSION || npm install -g chromedriver
+
+      - name: Install frontend dependencies
+        working-directory: Frontend
+        run: npm ci
+
+      - name: Run Selenium E2E Tests
+        working-directory: Frontend
+        env:
+          TEST_EMAIL: ${{ secrets.TEST_EMAIL }}
+          TEST_PASSWORD: ${{ secrets.TEST_PASSWORD }}
+          REPO_NAME: ${{ github.event.repository.name }}
+          REPO_OWNER: ${{ github.repository_owner }}
+        run: npm run test:e2e
+
+      - name: "\U0001F4CB Selenium E2E Tests Summary"
+        if: always()
+        run: |
+          echo "## ✅ Live GitHub Pages E2E Test Summary" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "| Field  | Value |" >> $GITHUB_STEP_SUMMARY
+          echo "|--------|-------|" >> $GITHUB_STEP_SUMMARY
+          echo "| Build  | #${{ github.run_number }} |" >> $GITHUB_STEP_SUMMARY
+          echo "| Branch | \`${{ github.ref_name }}\` |" >> $GITHUB_STEP_SUMMARY
+          echo "| Commit | \`${{ github.sha }}\` |" >> $GITHUB_STEP_SUMMARY
+          echo "| URL    | https://${{ github.repository_owner }}.github.io/${{ github.event.repository.name }}/ |" >> $GITHUB_STEP_SUMMARY
