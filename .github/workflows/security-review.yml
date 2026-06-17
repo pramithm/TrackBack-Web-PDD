@@ -7,12 +7,16 @@ on:
     branches: [main]
   workflow_dispatch:
 
+concurrency:
+  group: trackback-security-${{ github.ref }}
+  cancel-in-progress: true
+
 permissions:
   contents: read
   security-events: write
 
 env:
-  NODE_VERSION: "20"
+  NODE_VERSION: "22"
 
 # ════════════════════════════════════════════════════════════════════════════
 # JOB 1 – Detect technology stack and inventory APIs
@@ -21,6 +25,7 @@ jobs:
   detect-stack:
     name: "🔍 Stack Detection & API Inventory"
     runs-on: ubuntu-latest
+    timeout-minutes: 5
 
     steps:
       - name: "📥 Checkout repository"
@@ -73,6 +78,7 @@ jobs:
   sast-semgrep:
     name: "🔐 SAST – Semgrep"
     runs-on: ubuntu-latest
+    timeout-minutes: 15
     needs: detect-stack
 
     steps:
@@ -99,6 +105,7 @@ jobs:
   dependency-scan:
     name: "📦 Dependency Vulnerability Scan"
     runs-on: ubuntu-latest
+    timeout-minutes: 15
     needs: detect-stack
 
     steps:
@@ -109,6 +116,10 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: ${{ env.NODE_VERSION }}
+          cache: npm
+          cache-dependency-path: |
+            Frontend/package-lock.json
+            Mobile/package-lock.json
 
       - name: "🔍 npm audit – Frontend"
         id: frontend-audit
@@ -129,7 +140,7 @@ jobs:
           npm audit --audit-level=moderate 2>&1 | tail -30 >> ../security-artifacts/dependency-audit.txt || true
 
       - name: "🛡️  Run Trivy filesystem scan"
-        uses: aquasecurity/trivy-action@master
+        uses: aquasecurity/trivy-action@v0.28.0
         with:
           scan-type: fs
           scan-ref: .
@@ -152,6 +163,7 @@ jobs:
   secret-detection:
     name: "🔑 Secret Detection – Gitleaks"
     runs-on: ubuntu-latest
+    timeout-minutes: 15
 
     steps:
       - name: "📥 Checkout repository (full history)"
@@ -167,11 +179,12 @@ jobs:
         continue-on-error: true
 
   # ════════════════════════════════════════════════════════════════════════════
-  # JOB 5 – Generate Security Reports (Markdown + Excel + executive summary)
+  # JOB 5 – Generate Security Reports (Markdown + Executive Summary)
   # ════════════════════════════════════════════════════════════════════════════
   generate-security-report:
     name: "📊 Generate Security Reports"
     runs-on: ubuntu-latest
+    timeout-minutes: 15
     needs: [sast-semgrep, dependency-scan, secret-detection]
     if: always()
 
@@ -192,7 +205,7 @@ jobs:
         continue-on-error: true
 
       - name: "📦 Install report dependencies"
-        run: npm install exceljs
+        run: npm install exceljs --no-save --no-audit --ignore-scripts
 
       - name: "📊 Generate security reports"
         env:

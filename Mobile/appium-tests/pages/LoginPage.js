@@ -23,7 +23,35 @@ class LoginPage {
   get signupButtonXP()  { return this.driver.$('//android.widget.Button[@text="Sign Up"]'); }
 
   // ─── Actions ──────────────────────────────────────────────────────────────
+  async bypassOnboarding() {
+    try {
+      console.log('🔍 Checking if Welcome onboarding is visible...');
+      const welcomeBtn = await this.driver.$('~welcome-get-started-btn');
+      if (await welcomeBtn.waitForExist({ timeout: 4000 })) {
+        console.log('👉 Found Welcome Screen. Tapping "Get Started"...');
+        await welcomeBtn.click();
+        
+        const skipBtn = await this.driver.$('~walkthrough-skip-btn');
+        if (await skipBtn.waitForExist({ timeout: 4000 })) {
+          console.log('👉 Found Walkthrough Screen. Tapping "Skip"...');
+          await skipBtn.click();
+          
+          const loginBtn = await this.driver.$('~walkthrough-login-btn');
+          if (await loginBtn.waitForExist({ timeout: 4000 })) {
+            console.log('👉 Tapping "Log In" on walkthrough end...');
+            await loginBtn.click();
+          }
+        }
+      }
+    } catch (err) {
+      console.log('ℹ️ Welcome screen onboarding bypass skipped or not visible:', err.message);
+    }
+  }
+
   async waitForScreen(timeoutMs = 15000) {
+    // Attempt onboarding bypass first
+    await this.bypassOnboarding();
+
     try {
       await this.emailInput.waitForExist({ timeout: timeoutMs });
     } catch {

@@ -95,6 +95,8 @@ export default function SignupScreen() {
                   value={name}
                   onChangeText={setName}
                   autoCapitalize="words"
+                  accessibilityLabel="signup-name"
+                  testID="signup-name"
                 />
               </View>
             </View>
@@ -113,6 +115,8 @@ export default function SignupScreen() {
                   autoCapitalize="none"
                   keyboardType="email-address"
                   autoComplete="email"
+                  accessibilityLabel="signup-email"
+                  testID="signup-email"
                 />
               </View>
             </View>
@@ -131,6 +135,8 @@ export default function SignupScreen() {
                   secureTextEntry={secureTextEntry}
                   autoCapitalize="none"
                   autoComplete="password"
+                  accessibilityLabel="signup-password"
+                  testID="signup-password"
                 />
                 <TouchableOpacity 
                   style={styles.toggleButton} 
@@ -147,6 +153,8 @@ export default function SignupScreen() {
               onPress={handleSignup}
               disabled={loading}
               activeOpacity={0.8}
+              accessibilityLabel="signup-submit-btn"
+              testID="signup-submit-btn"
             >
               {loading ? (
                 <ActivityIndicator color="#FFFFFF" size="small" />

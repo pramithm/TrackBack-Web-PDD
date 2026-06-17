@@ -98,4 +98,48 @@ function getResults() {
   return [...testResults];
 }
 
-module.exports = { ensureDirs, takeScreenshot, recordResult, sleep, getResults, testResults };
+/**
+ * Capture failure screenshot, current active page source XML, and logs for troubleshooting.
+ * @param {WebdriverIO.Browser} driver
+ * @param {string} name
+ * @returns {string} relative path to saved PNG
+ */
+async function captureFailureDiagnostics(driver, name) {
+  ensureDirs();
+  const timestamp = new Date().toISOString().replace(/[:.]/g, '-');
+  const screenshotFilename = `${name}_${timestamp}.png`;
+  const xmlFilename = `${name}_${timestamp}_source.xml`;
+  
+  const screenshotFilepath = path.join(SCREENSHOT_DIR, screenshotFilename);
+  const xmlFilepath = path.join(LOG_DIR, xmlFilename);
+  
+  // 1. Capture Screenshot
+  try {
+    const screenshot = await driver.takeScreenshot();
+    fs.writeFileSync(screenshotFilepath, Buffer.from(screenshot, 'base64'));
+    console.log(`  📸 Failure screenshot saved: ${screenshotFilename}`);
+  } catch (err) {
+    console.warn(`  ⚠️ Screenshot failed: ${err.message}`);
+  }
+  
+  // 2. Dump XML page source
+  try {
+    const source = await driver.getPageSource();
+    fs.writeFileSync(xmlFilepath, source, 'utf8');
+    console.log(`  📄 Failure page source XML saved: ${xmlFilename}`);
+  } catch (err) {
+    console.warn(`  ⚠️ Page source dump failed: ${err.message}`);
+  }
+  
+  return `Screenshots/${screenshotFilename}`;
+}
+
+module.exports = { 
+  ensureDirs, 
+  takeScreenshot, 
+  recordResult, 
+  sleep, 
+  getResults, 
+  testResults, 
+  captureFailureDiagnostics 
+};

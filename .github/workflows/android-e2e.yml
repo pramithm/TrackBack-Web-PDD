@@ -7,15 +7,19 @@ on:
     branches: [main]
   workflow_dispatch:
 
+concurrency:
+  group: trackback-android-${{ github.ref }}
+  cancel-in-progress: true
+
+# Required for GITHUB_TOKEN to push to gh-pages and deploy Pages
 permissions:
   contents: write
   pages: write
   id-token: write
 
-# ─── Global env ──────────────────────────────────────────────────────────────
 env:
   JAVA_VERSION: "17"
-  NODE_VERSION: "20"
+  NODE_VERSION: "22"
   ANDROID_API_LEVEL: "29"
   ANDROID_BUILD_TOOLS: "34.0.0"
   ANDROID_TARGET: "google_apis"
@@ -29,6 +33,7 @@ jobs:
   build-apk:
     name: "🔨 Build Android APK"
     runs-on: ubuntu-latest
+    timeout-minutes: 25
     defaults:
       run:
         working-directory: Mobile
@@ -86,6 +91,7 @@ jobs:
   appium-e2e:
     name: "🧪 Appium E2E Tests"
     runs-on: ubuntu-latest
+    timeout-minutes: 35
     needs: build-apk
 
     steps:
@@ -123,20 +129,18 @@ jobs:
           name: trackback-debug-apk
           path: Mobile/appium-tests/apk
 
-      # ── 6. Android SDK (Managed by Emulator Runner) ───────────────────────
-
-      # ── 7. Appium ─────────────────────────────────────────────────────────
+      # ── 6. Appium ─────────────────────────────────────────────────────────
       - name: "🚀 Install Appium ${{ env.APPIUM_VERSION }}"
         run: |
           npm install -g appium@${{ env.APPIUM_VERSION }}
           appium driver install uiautomator2@3.5.1
 
-      # ── 8. Install test dependencies ──────────────────────────────────────
+      # ── 7. Install test dependencies ──────────────────────────────────────
       - name: "📦 Install Appium test dependencies"
         working-directory: Mobile/appium-tests
         run: npm install
 
-      # ── 9. Start emulator & run tests ─────────────────────────────────────
+      # ── 8. Start emulator & run tests ─────────────────────────────────────
       - name: "▶️  Start emulator, install APK & run Appium E2E tests"
         uses: reactivecircus/android-emulator-runner@v2
         env:
@@ -156,9 +160,16 @@ jobs:
           disable-animations: true
           working-directory: Mobile/appium-tests
           script: |
+            # Create logs and screenshots dirs
+            mkdir -p "Test Results/Logs" "Test Results/Screenshots" "Test Results/Excel" "Test Results/Summary" "Test Results/HTML"
+            
             # Start Appium in background
             appium --log appium.log --log-level info &
             APPIUM_PID=$!
+
+            # Start logcat in background
+            adb logcat -v time > android_logcat.log &
+            LOGCAT_PID=$!
 
             # Wait for Appium to start on port 4723
             echo "Waiting for Appium server to start..."
@@ -177,19 +188,24 @@ jobs:
             TEST_EXIT_CODE=$?
             set -e
 
-            # Clean up Appium
+            # Clean up Appium and Logcat
             kill $APPIUM_PID 2>/dev/null || true
+            kill $LOGCAT_PID 2>/dev/null || true
+
+            # Copy raw logs into Test Results directory
+            cp appium.log "Test Results/Logs/" 2>/dev/null || true
+            cp android_logcat.log "Test Results/Logs/" 2>/dev/null || true
 
             # Exit with test status
             exit $TEST_EXIT_CODE
 
-      # ── 10. Generate reports ──────────────────────────────────────────────
+      # ── 9. Generate reports ──────────────────────────────────────────────
       - name: "📊 Generate HTML + Excel + Summary reports"
         if: always()
         working-directory: Mobile/appium-tests
         run: node scripts/generate-reports.js
 
-      # ── 11. Upload artifacts ──────────────────────────────────────────────
+      # ── 10. Upload artifacts ──────────────────────────────────────────────
       - name: "⬆️  Upload test artifacts"
         if: always()
         uses: actions/upload-artifact@v4
@@ -199,7 +215,7 @@ jobs:
             Mobile/appium-tests/Test Results/
           retention-days: 30
 
-      # ── 12. Stage for GitHub Pages ────────────────────────────────────────
+      # ── 11. Stage for GitHub Pages ────────────────────────────────────────
       - name: "📄 Prepare GitHub Pages report structure"
         if: always()
         run: |
@@ -231,7 +247,7 @@ jobs:
           </html>
           INDEXEOF
 
-      # ── 13. Checkout existing gh-pages (history) ──────────────────────────
+      # ── 12. Checkout existing gh-pages (history) ──────────────────────────
       - name: "📖 Fetch existing gh-pages history"
         if: always()
         uses: actions/checkout@v4
@@ -247,7 +263,7 @@ jobs:
             cp -r gh-pages-existing/android-reports/reports/history/. gh-pages-reports/reports/history/ 2>/dev/null || true
           fi
 
-      # ── 14. Deploy to GitHub Pages ────────────────────────────────────────
+      # ── 13. Deploy to GitHub Pages ────────────────────────────────────────
       - name: "🚀 Deploy reports to GitHub Pages"
         if: always()
         uses: peaceiris/actions-gh-pages@v4
@@ -259,7 +275,7 @@ jobs:
           keep_files: true
           commit_message: "📊 Android E2E Report – Build #${{ github.run_number }}"
 
-      # ── 15. GitHub Actions Summary ────────────────────────────────────────
+      # ── 14. GitHub Actions Summary ────────────────────────────────────────
       - name: "📋 Publish GitHub Actions Summary"
         if: always()
         run: |

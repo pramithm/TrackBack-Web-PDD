@@ -64,7 +64,7 @@ describe('TrackBack Android – Navigation Tests', function () {
       helpers.recordResult({ name: 'TC-009 Lost Tab', status: 'passed', duration: Date.now() - start });
       console.log('  ✅ TC-009 passed');
     } catch (err) {
-      const screenshotPath = await helpers.takeScreenshot(driver, 'FAIL_TC009_lost_tab');
+      const screenshotPath = await helpers.captureFailureDiagnostics(driver, 'FAIL_TC009_lost_tab');
       helpers.recordResult({ name: 'TC-009 Lost Tab', status: 'failed', duration: Date.now() - start, error: err, screenshotPath });
       throw err;
     }
@@ -79,7 +79,7 @@ describe('TrackBack Android – Navigation Tests', function () {
       helpers.recordResult({ name: 'TC-010 Found Tab', status: 'passed', duration: Date.now() - start });
       console.log('  ✅ TC-010 passed');
     } catch (err) {
-      const screenshotPath = await helpers.takeScreenshot(driver, 'FAIL_TC010_found_tab');
+      const screenshotPath = await helpers.captureFailureDiagnostics(driver, 'FAIL_TC010_found_tab');
       helpers.recordResult({ name: 'TC-010 Found Tab', status: 'failed', duration: Date.now() - start, error: err, screenshotPath });
       throw err;
     }
@@ -95,7 +95,7 @@ describe('TrackBack Android – Navigation Tests', function () {
       helpers.recordResult({ name: 'TC-011 Search Tab', status: 'passed', duration: Date.now() - start });
       console.log('  ✅ TC-011 passed');
     } catch (err) {
-      const screenshotPath = await helpers.takeScreenshot(driver, 'FAIL_TC011_search_tab');
+      const screenshotPath = await helpers.captureFailureDiagnostics(driver, 'FAIL_TC011_search_tab');
       helpers.recordResult({ name: 'TC-011 Search Tab', status: 'failed', duration: Date.now() - start, error: err, screenshotPath });
       throw err;
     }
@@ -111,7 +111,7 @@ describe('TrackBack Android – Navigation Tests', function () {
       helpers.recordResult({ name: 'TC-012 Chat Tab', status: 'passed', duration: Date.now() - start });
       console.log('  ✅ TC-012 passed');
     } catch (err) {
-      const screenshotPath = await helpers.takeScreenshot(driver, 'FAIL_TC012_chat_tab');
+      const screenshotPath = await helpers.captureFailureDiagnostics(driver, 'FAIL_TC012_chat_tab');
       helpers.recordResult({ name: 'TC-012 Chat Tab', status: 'failed', duration: Date.now() - start, error: err, screenshotPath });
       throw err;
     }

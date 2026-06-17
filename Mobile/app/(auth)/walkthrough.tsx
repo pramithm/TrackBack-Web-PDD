@@ -67,7 +67,12 @@ export default function WalkthroughScreen() {
       return (
         <View style={styles.slideContainer}>
           {/* Skip Button */}
-          <TouchableOpacity style={styles.skipButton} onPress={handleSkip}>
+          <TouchableOpacity 
+            style={styles.skipButton} 
+            onPress={handleSkip}
+            accessibilityLabel="walkthrough-skip-btn"
+            testID="walkthrough-skip-btn"
+          >
             <Text style={styles.skipText}>Skip</Text>
           </TouchableOpacity>
 
@@ -128,6 +133,8 @@ export default function WalkthroughScreen() {
               style={styles.loginButton} 
               onPress={() => router.push('/(auth)/login' as any)}
               activeOpacity={0.8}
+              accessibilityLabel="walkthrough-login-btn"
+              testID="walkthrough-login-btn"
             >
               <Text style={styles.loginButtonText}>Log In</Text>
             </TouchableOpacity>

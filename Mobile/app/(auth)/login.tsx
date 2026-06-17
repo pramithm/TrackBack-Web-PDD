@@ -48,12 +48,12 @@ export default function LoginScreen() {
       >
         <ScrollView contentContainerStyle={styles.scrollContent} keyboardShouldPersistTaps="handled">
           <View style={styles.header}>
-            <Text style={styles.title}>Welcome Back</Text>
+            <Text style={styles.title} accessibilityLabel="welcome-title" testID="welcome-title">Welcome Back</Text>
             <Text style={styles.subtitle}>Log in to find your lost items</Text>
           </View>
 
           {error ? (
-            <View style={styles.errorContainer}>
+            <View style={styles.errorContainer} accessibilityLabel="auth-error" testID="auth-error">
               <Ionicons name="alert-circle-outline" size={20} color="#D63031" />
               <Text style={styles.errorText}>{error}</Text>
             </View>
@@ -75,6 +75,8 @@ export default function LoginScreen() {
                   autoCapitalize="none"
                   keyboardType="email-address"
                   autoComplete="email"
+                  accessibilityLabel="email-input"
+                  testID="email-input"
                 />
               </View>
             </View>
@@ -93,6 +95,8 @@ export default function LoginScreen() {
                   secureTextEntry={secureTextEntry}
                   autoCapitalize="none"
                   autoComplete="password"
+                  accessibilityLabel="password-input"
+                  testID="password-input"
                 />
                 <TouchableOpacity 
                   style={styles.toggleButton} 
@@ -117,6 +121,8 @@ export default function LoginScreen() {
               onPress={handleLogin}
               disabled={loading}
               activeOpacity={0.8}
+              accessibilityLabel="login-button"
+              testID="login-button"
             >
               {loading ? (
                 <ActivityIndicator color="#FFFFFF" size="small" />
@@ -145,7 +151,11 @@ export default function LoginScreen() {
 
           <View style={styles.footer}>
             <Text style={styles.footerText}>Don't have an account? </Text>
-            <TouchableOpacity onPress={() => router.push('/(auth)/signup' as any)}>
+            <TouchableOpacity 
+              onPress={() => router.push('/(auth)/signup' as any)}
+              accessibilityLabel="signup-button"
+              testID="signup-button"
+            >
               <Text style={styles.signupText}>Sign Up</Text>
             </TouchableOpacity>
           </View>

@@ -1,4 +1,4 @@
-name: "🚀 Deploy to GitHub Pages + Selenium E2E Tests" # trigger run
+name: "🚀 Deploy to GitHub Pages + Selenium E2E Tests"
 
 on:
   push:
@@ -7,6 +7,10 @@ on:
     branches: [main]
   workflow_dispatch:
 
+concurrency:
+  group: trackback-web-${{ github.ref }}
+  cancel-in-progress: true
+
 # Required for GITHUB_TOKEN to push to gh-pages and deploy Pages
 permissions:
   contents: write
@@ -14,7 +18,7 @@ permissions:
   id-token: write
 
 env:
-  NODE_VERSION: "20"
+  NODE_VERSION: "22"
   REPO_OWNER: ${{ github.repository_owner }}
   REPO_NAME: ${{ github.event.repository.name }}
 
@@ -25,6 +29,7 @@ jobs:
   build-and-deploy:
     name: "🔨 Build & Deploy Vite App"
     runs-on: ubuntu-latest
+    timeout-minutes: 15
     defaults:
       run:
         working-directory: Frontend
@@ -69,19 +74,20 @@ jobs:
           commit_message: "🚀 Deploy TrackBack Web – Build #${{ github.run_number }}"
 
   # ════════════════════════════════════════════════════════════════════════════
-  # JOB 2 – Verify Deployment is Live
+  # JOB 2 – Verify Deployment is Live (With Strict Timeout & Exit Failures)
   # ════════════════════════════════════════════════════════════════════════════
   verify-deployment:
     name: "🔍 Verify Live Deployment"
     runs-on: ubuntu-latest
+    timeout-minutes: 10
     needs: build-and-deploy
 
     outputs:
       live_url: ${{ steps.set-url.outputs.url }}
 
     steps:
-      - name: "⏳ Wait 45 s for Pages propagation"
-        run: sleep 45
+      - name: "⏳ Wait 30 s for Pages deploy start"
+        run: sleep 30
 
       - name: "🔗 Compute live URL"
         id: set-url
@@ -93,19 +99,27 @@ jobs:
       - name: "✅ Verify HTTP 200 from live URL"
         run: |
           URL="${{ steps.set-url.outputs.url }}"
-          MAX=5; DELAY=20; i=0
+          MAX=10; DELAY=20; i=0; SUCCEEDED=false
           while [ $i -lt $MAX ]; do
             STATUS=$(curl -s -o /dev/null -w "%{http_code}" "$URL")
             echo "Attempt $((i+1))/$MAX – HTTP $STATUS"
             if [ "$STATUS" -eq 200 ]; then
               echo "✅ Site is live!"
+              SUCCEEDED=true
               break
             fi
             i=$((i+1))
             [ $i -lt $MAX ] && sleep $DELAY
           done
+          
+          # Write summary reports
           echo "### 🌐 Deployment URL" >> $GITHUB_STEP_SUMMARY
           echo "$URL – HTTP $STATUS" >> $GITHUB_STEP_SUMMARY
+
+          if [ "$SUCCEEDED" = "false" ]; then
+            echo "❌ Error: Deployment failed to propagate to GitHub Pages (Returned HTTP $STATUS)"
+            exit 1
+          fi
 
   # ════════════════════════════════════════════════════════════════════════════
   # JOB 3 – Selenium E2E Tests Against Live GitHub Pages
@@ -113,6 +127,7 @@ jobs:
   selenium-e2e:
     name: "🧪 Selenium E2E Tests (Live)"
     runs-on: ubuntu-latest
+    timeout-minutes: 20
     needs: verify-deployment
 
     steps:
@@ -233,7 +248,6 @@ jobs:
 
           RESULTS_FILE="Frontend/Test Results/Summary/summary.md"
           TOTAL=0; PASSED=0; FAILED=0; SKIPPED=0; RATE="N/A"
-          FAILED_LIST=""
           if [ -f "$RESULTS_FILE" ]; then
             TOTAL=$(grep -oP 'Total Tests\s*\|\s*\K\d+' "$RESULTS_FILE" 2>/dev/null || echo 0)
             PASSED=$(grep -oP 'Passed\s*\|\s*\K\d+' "$RESULTS_FILE" 2>/dev/null || echo 0)
@@ -264,5 +278,6 @@ jobs:
           | 📈 Pass %  | $RATE |
 
           ## 📊 Report URL
+
           > **[View Live HTML Report]($REPORT_URL)**
           EOF

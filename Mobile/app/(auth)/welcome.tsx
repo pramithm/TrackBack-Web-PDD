@@ -49,6 +49,8 @@ export default function WelcomeScreen() {
           style={styles.button}
           onPress={() => router.push('/(auth)/walkthrough' as any)}
           activeOpacity={0.8}
+          accessibilityLabel="welcome-get-started-btn"
+          testID="welcome-get-started-btn"
         >
           <Text style={styles.buttonText}>Get Started</Text>
         </TouchableOpacity>
