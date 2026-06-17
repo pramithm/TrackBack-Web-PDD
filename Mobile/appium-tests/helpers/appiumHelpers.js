@@ -43,21 +43,45 @@ async function takeScreenshot(driver, name) {
   } catch (err) {
     console.warn(`  ⚠️  Screenshot failed: ${err.message}`);
   }
-  return filepath;
+  return `Screenshots/${filename}`;
 }
 
 /**
  * Record a test result.
  */
 function recordResult({ name, status, duration, error, screenshotPath }) {
-  testResults.push({
+  ensureDirs();
+  const resultsFilePath = path.resolve(__dirname, '../Test Results/recorded-results.json');
+  
+  let currentResults = [];
+  if (fs.existsSync(resultsFilePath)) {
+    try {
+      currentResults = JSON.parse(fs.readFileSync(resultsFilePath, 'utf8'));
+    } catch (e) {
+      currentResults = [];
+    }
+  }
+
+  const newResult = {
     name,
     status,        // 'passed' | 'failed' | 'skipped'
     duration,
     error: error ? String(error.message || error) : null,
     screenshotPath: screenshotPath || null,
     timestamp: new Date().toISOString(),
-  });
+  };
+
+  const existingIndex = currentResults.findIndex(r => r.name === name);
+  if (existingIndex > -1) {
+    currentResults[existingIndex] = newResult;
+  } else {
+    currentResults.push(newResult);
+  }
+
+  fs.writeFileSync(resultsFilePath, JSON.stringify(currentResults, null, 2), 'utf8');
+  
+  // Also keep in-memory representation for compatibility
+  testResults.push(newResult);
 }
 
 /**

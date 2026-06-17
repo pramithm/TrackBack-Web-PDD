@@ -42,6 +42,7 @@ jobs:
         with:
           distribution: temurin
           java-version: ${{ env.JAVA_VERSION }}
+          cache: gradle
 
       - name: "📦 Setup Node.js ${{ env.NODE_VERSION }}"
         uses: actions/setup-node@v4
@@ -112,6 +113,8 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: ${{ env.NODE_VERSION }}
+          cache: npm
+          cache-dependency-path: Mobile/appium-tests/package.json
 
       # ── 5. Download APK ───────────────────────────────────────────────────
       - name: "⬇️  Download APK artifact"
@@ -120,20 +123,7 @@ jobs:
           name: trackback-debug-apk
           path: Mobile/appium-tests/apk
 
-      # ── 6. Android SDK ────────────────────────────────────────────────────
-      - name: "🔧 Setup Android SDK"
-        uses: android-actions/setup-android@v3
-
-      - name: "📦 Install emulator packages"
-        run: |
-          sdkmanager \
-            "emulator" \
-            "system-images;android-${{ env.ANDROID_API_LEVEL }};${{ env.ANDROID_TARGET }};${{ env.ANDROID_ARCH }}" \
-            "platform-tools"
-          echo "no" | avdmanager create avd \
-            --force \
-            --name "TrackBack_AVD" \
-            --package "system-images;android-${{ env.ANDROID_API_LEVEL }};${{ env.ANDROID_TARGET }};${{ env.ANDROID_ARCH }}"
+      # ── 6. Android SDK (Managed by Emulator Runner) ───────────────────────
 
       # ── 7. Appium ─────────────────────────────────────────────────────────
       - name: "🚀 Install Appium ${{ env.APPIUM_VERSION }}"
@@ -159,7 +149,7 @@ jobs:
           target: ${{ env.ANDROID_TARGET }}
           arch: ${{ env.ANDROID_ARCH }}
           avd-name: TrackBack_AVD
-          force-avd-creation: false
+          force-avd-creation: true
           emulator-options: >-
             -no-snapshot-save -no-window -gpu swiftshader_indirect
             -noaudio -no-boot-anim -camera-back none
@@ -169,12 +159,29 @@ jobs:
             # Start Appium in background
             appium --log appium.log --log-level info &
             APPIUM_PID=$!
-            sleep 10
 
-            # Run tests
-            npm run test:ci || true
+            # Wait for Appium to start on port 4723
+            echo "Waiting for Appium server to start..."
+            for i in {1..30}; do
+              if curl -s http://127.0.0.1:4723/status > /dev/null; then
+                echo "✅ Appium server is up and running!"
+                break
+              fi
+              echo "Waiting..."
+              sleep 2
+            done
 
+            # Run tests and capture exit code
+            set +e
+            npm run test:ci
+            TEST_EXIT_CODE=$?
+            set -e
+
+            # Clean up Appium
             kill $APPIUM_PID 2>/dev/null || true
+
+            # Exit with test status
+            exit $TEST_EXIT_CODE
 
       # ── 10. Generate reports ──────────────────────────────────────────────
       - name: "📊 Generate HTML + Excel + Summary reports"
@@ -201,7 +208,7 @@ jobs:
           mkdir -p "$BUILD_DIR"
 
           # Latest
-          cp -r "Mobile/appium-tests/Test Results/HTML/." gh-pages-reports/reports/latest/ 2>/dev/null || true
+          cp "Mobile/appium-tests/Test Results/execution-report.html" gh-pages-reports/reports/latest/ 2>/dev/null || true
           cp -r "Mobile/appium-tests/Test Results/Screenshots" gh-pages-reports/reports/latest/ 2>/dev/null || true
           cp -r "Mobile/appium-tests/Test Results/Logs" gh-pages-reports/reports/latest/ 2>/dev/null || true
           cp "Mobile/appium-tests/Test Results/Summary/summary.md" gh-pages-reports/reports/latest/ 2>/dev/null || true
@@ -236,8 +243,8 @@ jobs:
       - name: "🔀 Merge history into new pages content"
         if: always()
         run: |
-          if [ -d gh-pages-existing/reports/history ]; then
-            cp -r gh-pages-existing/reports/history/. gh-pages-reports/reports/history/ 2>/dev/null || true
+          if [ -d gh-pages-existing/android-reports/reports/history ]; then
+            cp -r gh-pages-existing/android-reports/reports/history/. gh-pages-reports/reports/history/ 2>/dev/null || true
           fi
 
       # ── 14. Deploy to GitHub Pages ────────────────────────────────────────

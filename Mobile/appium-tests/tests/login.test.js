@@ -54,9 +54,7 @@ after(async function () {
 });
 
 afterEach(async function () {
-  if (this.currentTest.state === 'failed') {
-    await helpers.takeScreenshot(driver, `FAIL_${this.currentTest.title.replace(/\s+/g, '_')}`);
-  }
+  // Screenshots are handled inside catch blocks for precise report mapping
 });
 
 // ─── Test Suites ─────────────────────────────────────────────────────────────
@@ -74,7 +72,8 @@ describe('TrackBack Android – Login & Authentication', function () {
       helpers.recordResult({ name: 'TC-001 App Launch', status: 'passed', duration: Date.now() - start });
       console.log('  ✅ TC-001 passed');
     } catch (err) {
-      helpers.recordResult({ name: 'TC-001 App Launch', status: 'failed', duration: Date.now() - start, error: err });
+      const screenshotPath = await helpers.takeScreenshot(driver, 'FAIL_TC001_app_launch');
+      helpers.recordResult({ name: 'TC-001 App Launch', status: 'failed', duration: Date.now() - start, error: err, screenshotPath });
       throw err;
     }
   });
@@ -88,7 +87,8 @@ describe('TrackBack Android – Login & Authentication', function () {
       helpers.recordResult({ name: 'TC-002 Login Screen', status: 'passed', duration: Date.now() - start });
       console.log('  ✅ TC-002 passed');
     } catch (err) {
-      helpers.recordResult({ name: 'TC-002 Login Screen', status: 'failed', duration: Date.now() - start, error: err });
+      const screenshotPath = await helpers.takeScreenshot(driver, 'FAIL_TC002_login_screen');
+      helpers.recordResult({ name: 'TC-002 Login Screen', status: 'failed', duration: Date.now() - start, error: err, screenshotPath });
       throw err;
     }
   });
@@ -111,7 +111,8 @@ describe('TrackBack Android – Login & Authentication', function () {
       helpers.recordResult({ name: 'TC-003 Valid Login', status: 'passed', duration: Date.now() - start });
       console.log('  ✅ TC-003 passed');
     } catch (err) {
-      helpers.recordResult({ name: 'TC-003 Valid Login', status: 'failed', duration: Date.now() - start, error: err });
+      const screenshotPath = await helpers.takeScreenshot(driver, 'FAIL_TC003_dashboard');
+      helpers.recordResult({ name: 'TC-003 Valid Login', status: 'failed', duration: Date.now() - start, error: err, screenshotPath });
       throw err;
     }
   });
@@ -138,7 +139,8 @@ describe('TrackBack Android – Login & Authentication', function () {
       console.log(`  ✅ TC-004 passed – Error: "${errorText}"`);
       helpers.recordResult({ name: 'TC-004 Invalid Credentials', status: 'passed', duration: Date.now() - start });
     } catch (err) {
-      helpers.recordResult({ name: 'TC-004 Invalid Credentials', status: 'failed', duration: Date.now() - start, error: err });
+      const screenshotPath = await helpers.takeScreenshot(driver, 'FAIL_TC004_invalid_credentials');
+      helpers.recordResult({ name: 'TC-004 Invalid Credentials', status: 'failed', duration: Date.now() - start, error: err, screenshotPath });
       throw err;
     }
   });
@@ -162,7 +164,8 @@ describe('TrackBack Android – Login & Authentication', function () {
       helpers.recordResult({ name: 'TC-005 Empty Form Validation', status: 'passed', duration: Date.now() - start });
       console.log('  ✅ TC-005 passed');
     } catch (err) {
-      helpers.recordResult({ name: 'TC-005 Empty Form Validation', status: 'failed', duration: Date.now() - start, error: err });
+      const screenshotPath = await helpers.takeScreenshot(driver, 'FAIL_TC005_empty_form');
+      helpers.recordResult({ name: 'TC-005 Empty Form Validation', status: 'failed', duration: Date.now() - start, error: err, screenshotPath });
       throw err;
     }
   });
@@ -187,7 +190,8 @@ describe('TrackBack Android – Login & Authentication', function () {
       helpers.recordResult({ name: 'TC-006 Navigate to Sign Up', status: 'passed', duration: Date.now() - start });
       console.log('  ✅ TC-006 passed');
     } catch (err) {
-      helpers.recordResult({ name: 'TC-006 Navigate to Sign Up', status: 'failed', duration: Date.now() - start, error: err });
+      const screenshotPath = await helpers.takeScreenshot(driver, 'FAIL_TC006_signup');
+      helpers.recordResult({ name: 'TC-006 Navigate to Sign Up', status: 'failed', duration: Date.now() - start, error: err, screenshotPath });
       throw err;
     }
   });
@@ -214,7 +218,8 @@ describe('TrackBack Android – Login & Authentication', function () {
       helpers.recordResult({ name: 'TC-007 Dashboard Tabs', status: 'passed', duration: Date.now() - start });
       console.log('  ✅ TC-007 passed');
     } catch (err) {
-      helpers.recordResult({ name: 'TC-007 Dashboard Tabs', status: 'failed', duration: Date.now() - start, error: err });
+      const screenshotPath = await helpers.takeScreenshot(driver, 'FAIL_TC007_tabs');
+      helpers.recordResult({ name: 'TC-007 Dashboard Tabs', status: 'failed', duration: Date.now() - start, error: err, screenshotPath });
       throw err;
     }
   });
@@ -243,7 +248,8 @@ describe('TrackBack Android – Login & Authentication', function () {
       console.log('  ✅ TC-008 passed');
     } catch (err) {
       // Non-critical – logout UI varies; mark as skipped if button not found
-      helpers.recordResult({ name: 'TC-008 Logout', status: 'skipped', duration: Date.now() - start, error: err });
+      const screenshotPath = await helpers.takeScreenshot(driver, 'FAIL_TC008_logout');
+      helpers.recordResult({ name: 'TC-008 Logout', status: 'skipped', duration: Date.now() - start, error: err, screenshotPath });
       console.log('  ⚠️  TC-008 skipped – logout button not found (UI may differ)');
     }
   });

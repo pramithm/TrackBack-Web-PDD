@@ -30,39 +30,59 @@ const LOGS_DIR    = path.join(RESULTS_DIR, 'Logs');
 );
 
 // ─── Load results ─────────────────────────────────────────────────────────────
-// Results are recorded by helpers/appiumHelpers.js and optionally saved to JSON.
 let results = [];
 
-// Try mocha JSON output first
-const mochaJson = path.join(ROOT, 'test-results.json');
-if (fs.existsSync(mochaJson)) {
+// 1. Try custom recorded results JSON first (contains screenshots and precise durations)
+const recordedJson = path.join(RESULTS_DIR, 'recorded-results.json');
+if (fs.existsSync(recordedJson)) {
   try {
-    const raw = JSON.parse(fs.readFileSync(mochaJson, 'utf8'));
-    const passes   = (raw.passes  || []).map(t => ({ name: t.fullTitle, status: 'passed',  duration: t.duration || 0, error: null }));
-    const failures = (raw.failures|| []).map(t => ({ name: t.fullTitle, status: 'failed',  duration: t.duration || 0, error: t.err?.message || '' }));
-    const pending  = (raw.pending || []).map(t => ({ name: t.fullTitle, status: 'skipped', duration: 0, error: null }));
-    results = [...passes, ...failures, ...pending];
+    results = JSON.parse(fs.readFileSync(recordedJson, 'utf8'));
+    console.log(`Loaded ${results.length} real test results from recorded-results.json`);
   } catch (e) {
-    console.warn('Could not parse test-results.json:', e.message);
+    console.warn('Could not parse recorded-results.json:', e.message);
   }
 }
 
-// Fallback: invent placeholder results for demo
+// 2. Try mocha JSON output if custom results are not available
 if (results.length === 0) {
-  results = [
-    { name: 'TC-001 App Launch',             status: 'passed',  duration: 3210 },
-    { name: 'TC-002 Login Screen',           status: 'passed',  duration: 1850 },
-    { name: 'TC-003 Valid Login',            status: 'passed',  duration: 8720 },
-    { name: 'TC-004 Invalid Credentials',    status: 'passed',  duration: 5430 },
-    { name: 'TC-005 Empty Form Validation',  status: 'passed',  duration: 2100 },
-    { name: 'TC-006 Navigate to Sign Up',    status: 'passed',  duration: 3340 },
-    { name: 'TC-007 Dashboard Tabs',         status: 'passed',  duration: 6780 },
-    { name: 'TC-008 Logout',                 status: 'skipped', duration: 0 },
-    { name: 'TC-009 Lost Tab',               status: 'passed',  duration: 2900 },
-    { name: 'TC-010 Found Tab',              status: 'passed',  duration: 2750 },
-    { name: 'TC-011 Search Tab',             status: 'passed',  duration: 1980 },
-    { name: 'TC-012 Chat Tab',               status: 'passed',  duration: 2100 },
-  ];
+  const mochaJson = path.join(ROOT, 'test-results.json');
+  if (fs.existsSync(mochaJson)) {
+    try {
+      const raw = JSON.parse(fs.readFileSync(mochaJson, 'utf8'));
+      const passes   = (raw.passes  || []).map(t => ({ name: t.fullTitle, status: 'passed',  duration: t.duration || 0, error: null }));
+      const failures = (raw.failures|| []).map(t => ({ name: t.fullTitle, status: 'failed',  duration: t.duration || 0, error: t.err?.message || '' }));
+      const pending  = (raw.pending || []).map(t => ({ name: t.fullTitle, status: 'skipped', duration: 0, error: null }));
+      results = [...passes, ...failures, ...pending];
+      console.log(`Loaded ${results.length} results from test-results.json`);
+    } catch (e) {
+      console.warn('Could not parse test-results.json:', e.message);
+    }
+  }
+}
+
+// 3. Fallback or Fail: If still empty, check if running in CI
+if (results.length === 0) {
+  if (process.env.CI === 'true') {
+    console.error('❌ Error: No test results found in CI environment!');
+    process.exit(1);
+  } else {
+    // Fallback: invent placeholder results for demo only in local mode
+    console.log('⚠️ No test results found. Generating placeholder results for local demo.');
+    results = [
+      { name: 'TC-001 App Launch',             status: 'passed',  duration: 3210 },
+      { name: 'TC-002 Login Screen',           status: 'passed',  duration: 1850 },
+      { name: 'TC-003 Valid Login',            status: 'passed',  duration: 8720 },
+      { name: 'TC-004 Invalid Credentials',    status: 'passed',  duration: 5430 },
+      { name: 'TC-005 Empty Form Validation',  status: 'passed',  duration: 2100 },
+      { name: 'TC-006 Navigate to Sign Up',    status: 'passed',  duration: 3340 },
+      { name: 'TC-007 Dashboard Tabs',         status: 'passed',  duration: 6780 },
+      { name: 'TC-008 Logout',                 status: 'skipped', duration: 0 },
+      { name: 'TC-009 Lost Tab',               status: 'passed',  duration: 2900 },
+      { name: 'TC-010 Found Tab',              status: 'passed',  duration: 2750 },
+      { name: 'TC-011 Search Tab',             status: 'passed',  duration: 1980 },
+      { name: 'TC-012 Chat Tab',               status: 'passed',  duration: 2100 },
+    ];
+  }
 }
 
 // ─── Compute stats ────────────────────────────────────────────────────────────
@@ -87,14 +107,22 @@ function statusClass(s) {
   return { passed: 'pass', failed: 'fail', skipped: 'skip' }[s] || '';
 }
 
-const rows = results.map((r, i) => `
+const rows = results.map((r, i) => {
+  let screenshotHtml = '—';
+  if (r.screenshotPath) {
+    // screenshotPath is relative to Test Results directory, e.g. "Screenshots/filename.png"
+    screenshotHtml = `<a href="${r.screenshotPath}" target="_blank" style="color: #6366f1; text-decoration: none; font-weight: 600;">🖼️ View</a>`;
+  }
+  return `
   <tr class="${statusClass(r.status)}">
     <td>${i + 1}</td>
     <td>${r.name}</td>
     <td><span class="badge badge-${r.status}">${statusBadge(r.status)}</span></td>
     <td>${(r.duration / 1000).toFixed(2)}s</td>
     <td class="error-cell">${r.error || '—'}</td>
-  </tr>`).join('');
+    <td>${screenshotHtml}</td>
+  </tr>`;
+}).join('');
 
 const htmlContent = `<!DOCTYPE html>
 <html lang="en">
@@ -153,6 +181,7 @@ const htmlContent = `<!DOCTYPE html>
         <th>Status</th>
         <th>Duration</th>
         <th>Error / Notes</th>
+        <th>Screenshot</th>
       </tr>
     </thead>
     <tbody>${rows}</tbody>
@@ -166,8 +195,8 @@ const htmlContent = `<!DOCTYPE html>
 </body>
 </html>`;
 
-fs.writeFileSync(path.join(HTML_DIR, 'execution-report.html'), htmlContent, 'utf8');
-console.log('✅ HTML report generated: Test Results/HTML/execution-report.html');
+fs.writeFileSync(path.join(RESULTS_DIR, 'execution-report.html'), htmlContent, 'utf8');
+console.log('✅ HTML report generated: Test Results/execution-report.html');
 
 // ════════════════════════════════════════════════════════════════════════════
 // 2. Summary Markdown
