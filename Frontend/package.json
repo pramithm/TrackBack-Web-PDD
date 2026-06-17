@@ -11,9 +11,9 @@
     "preview": "vite preview",
     "predeploy": "npm run build",
     "deploy": "gh-pages -d dist",
-    "test:e2e": "mocha selenium-tests/tests/*.test.js --timeout 90000 --reporter spec",
-    "test:e2e:ci": "mocha selenium-tests/tests/*.test.js --timeout 90000 --reporter json --reporter-option output=\"Test Results/mocha-results.json\"",
-    "test:login": "mocha selenium-tests/tests/login.test.js --timeout 90000",
+    "test:e2e": "mocha selenium-tests/tests/*.test.cjs --timeout 90000 --reporter spec",
+    "test:e2e:ci": "mocha selenium-tests/tests/*.test.cjs --timeout 90000 --reporter json --reporter-option output=\"Test Results/mocha-results.json\"",
+    "test:login": "mocha selenium-tests/tests/login.test.cjs --timeout 90000",
     "generate:report": "node selenium-tests/scripts/generate-reports.cjs"
   },
   "dependencies": {
