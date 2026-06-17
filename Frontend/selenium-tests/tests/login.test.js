@@ -1,5 +1,9 @@
 const { Builder, By, until } = require('selenium-webdriver');
 const chrome = require('selenium-webdriver/chrome');
+const fs = require('fs');
+const path = require('path');
+
+const testResults = [];
 
 const REPO_OWNER = process.env.REPO_OWNER || 'YOUR_USERNAME';
 const REPO_NAME  = process.env.REPO_NAME  || 'TrackBack-Web-PDD';
@@ -37,8 +41,45 @@ describe('TrackBack — Login E2E Tests', function () {
     console.log(`\n🌐 Testing against: ${BASE_URL}`);
   });
 
+  afterEach(async function () {
+    const title = this.currentTest.title;
+    const state = this.currentTest.state || 'skipped';
+    const duration = this.currentTest.duration || 0;
+    const error = this.currentTest.err ? this.currentTest.err.message : null;
+    
+    let screenshotPath = null;
+    if (state === 'failed' && driver) {
+      try {
+        const screenshot = await driver.takeScreenshot();
+        const filename = `FAIL_${title.replace(/[^a-z0-9]/gi, '_')}_${Date.now()}.png`;
+        const shotsDir = path.resolve(__dirname, '../../Test Results/Screenshots');
+        fs.mkdirSync(shotsDir, { recursive: true });
+        fs.writeFileSync(path.join(shotsDir, filename), Buffer.from(screenshot, 'base64'));
+        screenshotPath = `Screenshots/${filename}`;
+        console.log(`  📸 Failure screenshot saved: ${filename}`);
+      } catch (err) {
+        console.warn(`  ⚠️ Screenshot capture failed: ${err.message}`);
+      }
+    }
+    
+    testResults.push({
+      name: title,
+      status: state === 'passed' ? 'passed' : (state === 'failed' ? 'failed' : 'skipped'),
+      duration,
+      error,
+      screenshotPath
+    });
+  });
+
   after(async () => {
     if (driver) await driver.quit();
+    
+    const resultsDir = path.resolve(__dirname, '../../Test Results');
+    fs.mkdirSync(resultsDir, { recursive: true });
+    
+    const resultsFile = path.join(resultsDir, 'recorded-results.json');
+    fs.writeFileSync(resultsFile, JSON.stringify(testResults, null, 2), 'utf8');
+    console.log(`Recorded results saved to recorded-results.json (${testResults.length} cases)`);
   });
 
   // ─── Test 1: Page Load ────────────────────────────────────────────────────

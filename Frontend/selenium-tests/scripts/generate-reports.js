@@ -37,43 +37,50 @@ const LOGS_DIR      = path.join(RESULTS_DIR, 'Logs');
 // ─── Load test results ────────────────────────────────────────────────────────
 let results = [];
 
-// Try Mocha JSON reporter output
-const jsonOutput = path.join(RESULTS_DIR, 'mocha-results.json');
-if (fs.existsSync(jsonOutput)) {
+// 1. Try custom recorded results JSON first
+const recordedJson = path.join(RESULTS_DIR, 'recorded-results.json');
+if (fs.existsSync(recordedJson)) {
   try {
-    const raw = JSON.parse(fs.readFileSync(jsonOutput, 'utf8'));
-    const passes   = (raw.passes  || []).map(t => ({ name: t.fullTitle, status: 'passed',  duration: t.duration || 0, error: null }));
-    const failures = (raw.failures|| []).map(t => ({ name: t.fullTitle, status: 'failed',  duration: t.duration || 0, error: t.err?.message || 'Unknown error' }));
-    const pending  = (raw.pending || []).map(t => ({ name: t.fullTitle, status: 'skipped', duration: 0, error: null }));
-    results = [...passes, ...failures, ...pending];
+    results = JSON.parse(fs.readFileSync(recordedJson, 'utf8'));
+    console.log(`Loaded ${results.length} real test results from recorded-results.json`);
   } catch (e) {
-    console.warn('Could not parse mocha-results.json:', e.message);
+    console.warn('Could not parse recorded-results.json:', e.message);
   }
 }
 
-// Parse Selenium log for pass/fail if no JSON
+// 2. Try Mocha JSON reporter output if no custom results are available
 if (results.length === 0) {
-  const logFile = path.join(LOGS_DIR, 'selenium-run.log');
-  if (fs.existsSync(logFile)) {
-    const logContent = fs.readFileSync(logFile, 'utf8');
-    const passMatches = [...logContent.matchAll(/✅\s+(.+)/g)];
-    const failMatches = [...logContent.matchAll(/AssertionError|Error:\s+(.+)/g)];
-    passMatches.forEach(m => {
-      results.push({ name: m[1].trim(), status: 'passed', duration: 0 });
-    });
-    // Basic heuristic — real parsing depends on Mocha reporter
+  const jsonOutput = path.join(RESULTS_DIR, 'mocha-results.json');
+  if (fs.existsSync(jsonOutput)) {
+    try {
+      const raw = JSON.parse(fs.readFileSync(jsonOutput, 'utf8'));
+      const passes   = (raw.passes  || []).map(t => ({ name: t.fullTitle, status: 'passed',  duration: t.duration || 0, error: null }));
+      const failures = (raw.failures|| []).map(t => ({ name: t.fullTitle, status: 'failed',  duration: t.duration || 0, error: t.err?.message || 'Unknown error' }));
+      const pending  = (raw.pending || []).map(t => ({ name: t.fullTitle, status: 'skipped', duration: 0, error: null }));
+      results = [...passes, ...failures, ...pending];
+      console.log(`Loaded ${results.length} results from mocha-results.json`);
+    } catch (e) {
+      console.warn('Could not parse mocha-results.json:', e.message);
+    }
   }
 }
 
-// Fallback – representative test results
+// 3. Fallback or Fail: If still empty, check if running in CI
 if (results.length === 0) {
-  results = [
-    { name: 'TrackBack — Login E2E: Load landing page',                 status: 'passed',  duration: 4120 },
-    { name: 'TrackBack — Login E2E: Navigate to login form',             status: 'passed',  duration: 3450 },
-    { name: 'TrackBack — Login E2E: Login with valid credentials',       status: 'passed',  duration: 9870 },
-    { name: 'TrackBack — Login E2E: Reject invalid credentials',         status: 'passed',  duration: 5230 },
-    { name: 'TrackBack — Login E2E: Open sign-up form',                  status: 'passed',  duration: 3780 },
-  ];
+  if (process.env.CI === 'true') {
+    console.error('❌ Error: No test results found in CI environment!');
+    process.exit(1);
+  } else {
+    // Fallback – representative test results for local demo
+    console.log('⚠️ No test results found. Generating placeholder results for local demo.');
+    results = [
+      { name: 'TrackBack — Login E2E: Load landing page',                 status: 'passed',  duration: 4120 },
+      { name: 'TrackBack — Login E2E: Navigate to login form',             status: 'passed',  duration: 3450 },
+      { name: 'TrackBack — Login E2E: Login with valid credentials',       status: 'passed',  duration: 9870 },
+      { name: 'TrackBack — Login E2E: Reject invalid credentials',         status: 'passed',  duration: 5230 },
+      { name: 'TrackBack — Login E2E: Open sign-up form',                  status: 'passed',  duration: 3780 },
+    ];
+  }
 }
 
 // ─── Compute stats ─────────────────────────────────────────────────────────────
@@ -93,6 +100,7 @@ const reportUrl = `https://${process.env.GITHUB_REPOSITORY_OWNER || 'pramithm'}.
 // ════════════════════════════════════════════════════════════════════════════
 // 1. HTML Report
 // ════════════════════════════════════════════════════════════════════════════
+// 1. HTML Report
 function badge(s) {
   return { passed: '✅ PASS', failed: '❌ FAIL', skipped: '⏭ SKIP' }[s] || s;
 }
@@ -100,14 +108,21 @@ function cls(s) {
   return { passed: 'pass', failed: 'fail', skipped: 'skip' }[s] || '';
 }
 
-const rows = results.map((r, i) => `
+const rows = results.map((r, i) => {
+  let screenshotHtml = '—';
+  if (r.screenshotPath) {
+    screenshotHtml = `<a href="${r.screenshotPath}" target="_blank" style="color: #818cf8; text-decoration: none; font-weight: 600;">🖼️ View</a>`;
+  }
+  return `
     <tr class="${cls(r.status)}">
       <td>${i + 1}</td>
       <td>${escHtml(r.name)}</td>
       <td><span class="badge badge-${r.status}">${badge(r.status)}</span></td>
       <td>${(r.duration / 1000).toFixed(2)}s</td>
       <td class="err">${escHtml(r.error || '—')}</td>
-    </tr>`).join('');
+      <td>${screenshotHtml}</td>
+    </tr>`;
+}).join('');
 
 function escHtml(str) {
   return String(str)
@@ -173,7 +188,7 @@ const html = `<!DOCTYPE html>
 <div class="table-wrap">
   <table>
     <thead><tr>
-      <th>#</th><th>Test Case</th><th>Status</th><th>Duration</th><th>Error</th>
+      <th>#</th><th>Test Case</th><th>Status</th><th>Duration</th><th>Error</th><th>Screenshot</th>
     </tr></thead>
     <tbody>${rows}</tbody>
   </table>
@@ -186,8 +201,8 @@ const html = `<!DOCTYPE html>
 </body>
 </html>`;
 
-fs.writeFileSync(path.join(HTML_DIR, 'execution-report.html'), html, 'utf8');
-console.log('✅ HTML report: Test Results/HTML/execution-report.html');
+fs.writeFileSync(path.join(RESULTS_DIR, 'execution-report.html'), html, 'utf8');
+console.log('✅ HTML report: Test Results/execution-report.html');
 
 // ════════════════════════════════════════════════════════════════════════════
 // 2. Summary Markdown

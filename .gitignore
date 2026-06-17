@@ -1,0 +1,7 @@
+node_modules/
+.expo/
+dist/
+Test Results/
+complete_implementation_report.md
+.env*.local
+*.log

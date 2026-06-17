@@ -39,6 +39,8 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: ${{ env.NODE_VERSION }}
+          cache: npm
+          cache-dependency-path: Frontend/package-lock.json
 
       - name: "📦 Install dependencies"
         run: npm install
@@ -119,6 +121,8 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: ${{ env.NODE_VERSION }}
+          cache: npm
+          cache-dependency-path: Frontend/package-lock.json
 
       - name: "🌐 Setup Chrome"
         uses: browser-actions/setup-chrome@v1
@@ -145,11 +149,13 @@ jobs:
           TEST_OUTPUT_DIR: "Test Results"
           CI: "true"
         run: |
-          mkdir -p "Test Results/Logs" "Test Results/Screenshots" "Test Results/HTML" "Test Results/Excel" "Test Results/Summary"
-          # Run with spec reporter for human-readable log, pipe to file
-          npm run test:e2e 2>&1 | tee "Test Results/Logs/selenium-run.log" || true
-          # Run again with JSON reporter for machine-readable output (used by report generator)
-          npm run test:e2e:ci 2>/dev/null || true
+          mkdir -p "Test Results/Logs" "Test Results/Screenshots" "Test Results/Excel" "Test Results/Summary"
+          set -o pipefail
+          set +e
+          npm run test:e2e 2>&1 | tee "Test Results/Logs/selenium-run.log"
+          TEST_EXIT_CODE=$?
+          set -e
+          exit $TEST_EXIT_CODE
 
       - name: "📊 Generate HTML + Excel + Summary reports"
         if: always()
@@ -179,7 +185,7 @@ jobs:
           mkdir -p "$BUILD_DIR"
 
           # Latest
-          cp -r "Frontend/Test Results/HTML/." gh-pages-web/web-reports/latest/ 2>/dev/null || true
+          cp "Frontend/Test Results/execution-report.html" gh-pages-web/web-reports/latest/ 2>/dev/null || true
           cp -r "Frontend/Test Results/Screenshots" gh-pages-web/web-reports/latest/ 2>/dev/null || true
           cp -r "Frontend/Test Results/Logs" gh-pages-web/web-reports/latest/ 2>/dev/null || true
           cp "Frontend/Test Results/Summary/summary.md" gh-pages-web/web-reports/latest/ 2>/dev/null || true
