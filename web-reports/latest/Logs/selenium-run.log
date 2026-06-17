@@ -1,0 +1,32 @@
+
+> web-app@0.0.0 test:e2e
+> mocha selenium-tests/tests/*.test.js --timeout 90000 --reporter spec
+
+
+ Exception during run: ReferenceError: require is not defined in ES module scope, you can use import instead
+This file is being treated as an ES module because it has a '.js' file extension and '/home/runner/work/TrackBack-Web-PDD/TrackBack-Web-PDD/Frontend/package.json' contains "type": "module". To treat it as a CommonJS script, rename it to use the '.cjs' file extension.
+    at file:///home/runner/work/TrackBack-Web-PDD/TrackBack-Web-PDD/Frontend/selenium-tests/tests/login.test.js:1:32
+    at ModuleJobSync.runSync (node:internal/modules/esm/module_job:437:37)
+    at ModuleLoader.importSyncForRequire (node:internal/modules/esm/loader:389:47)
+    at loadESMFromCJS (node:internal/modules/cjs/loader:1363:24)
+    at Module._compile (node:internal/modules/cjs/loader:1503:5)
+    at Module._extensions..js (node:internal/modules/cjs/loader:1623:10)
+    at Module.load (node:internal/modules/cjs/loader:1266:32)
+    at Module._load (node:internal/modules/cjs/loader:1091:12)
+    at Module.require (node:internal/modules/cjs/loader:1289:19)
+    at require (node:internal/modules/helpers:182:18)
+    at Object.requireModule [as requireOrImport] (/home/runner/work/TrackBack-Web-PDD/TrackBack-Web-PDD/node_modules/mocha/lib/nodejs/esm-utils.js:98:12)
+    at exports.loadFilesAsync (/home/runner/work/TrackBack-Web-PDD/TrackBack-Web-PDD/node_modules/mocha/lib/nodejs/esm-utils.js:155:34)
+    at Mocha.loadFilesAsync (/home/runner/work/TrackBack-Web-PDD/TrackBack-Web-PDD/node_modules/mocha/lib/mocha.js:429:19)
+    at singleRun (/home/runner/work/TrackBack-Web-PDD/TrackBack-Web-PDD/node_modules/mocha/lib/cli/run-helpers.js:174:15)
+    at exports.runMocha (/home/runner/work/TrackBack-Web-PDD/TrackBack-Web-PDD/node_modules/mocha/lib/cli/run-helpers.js:247:10)
+    at exports.handler (/home/runner/work/TrackBack-Web-PDD/TrackBack-Web-PDD/node_modules/mocha/lib/cli/run.js:384:11)
+    at /home/runner/work/TrackBack-Web-PDD/TrackBack-Web-PDD/node_modules/yargs/build/index.cjs:1:8993
+    at /home/runner/work/TrackBack-Web-PDD/TrackBack-Web-PDD/node_modules/yargs/build/index.cjs:1:4949
+npm error Lifecycle script `test:e2e` failed with error:
+npm error code 1
+npm error path /home/runner/work/TrackBack-Web-PDD/TrackBack-Web-PDD/Frontend
+npm error workspace web-app@0.0.0
+npm error location /home/runner/work/TrackBack-Web-PDD/TrackBack-Web-PDD/Frontend
+npm error command failed
+npm error command sh -c mocha selenium-tests/tests/*.test.js --timeout 90000 --reporter spec
