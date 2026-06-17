@@ -44,8 +44,8 @@ jobs:
 
       - name: "📦 Install dependencies"
         run: |
+          rm -f package-lock.json
           npm install
-          npm install --no-save @rolldown/binding-linux-x64-gnu
 
       - name: "🏗️  Build Vite app"
         env:
@@ -136,8 +136,8 @@ jobs:
       - name: "📦 Install frontend dependencies"
         working-directory: Frontend
         run: |
+          rm -f package-lock.json
           npm install
-          npm install --no-save @rolldown/binding-linux-x64-gnu
 
       - name: "🧹 Create test output directory"
         run: mkdir -p "Frontend/Test Results/Screenshots" "Frontend/Test Results/Logs" "Frontend/Test Results/HTML" "Frontend/Test Results/Excel" "Frontend/Test Results/Summary"
