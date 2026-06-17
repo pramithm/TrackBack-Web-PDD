@@ -163,8 +163,8 @@ jobs:
           REPO_OWNER: ${{ github.repository_owner }}
           REPO_NAME: ${{ github.event.repository.name }}
           BASE_URL: "https://${{ github.repository_owner }}.github.io/${{ github.event.repository.name }}/"
-          TEST_EMAIL: ${{ secrets.firebase_mail }}
-          TEST_PASSWORD: ${{ secrets.firebase_password }}
+          TEST_EMAIL: ${{ secrets.FIREBASE_EMAIL }}
+          TEST_PASSWORD: ${{ secrets.FIREBASE_PASSWORD }}
           TEST_OUTPUT_DIR: "Test Results"
           CI: "true"
         run: |

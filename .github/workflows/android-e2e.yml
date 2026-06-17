@@ -144,8 +144,8 @@ jobs:
       - name: "▶️  Start emulator, install APK & run Appium E2E tests"
         uses: reactivecircus/android-emulator-runner@v2
         env:
-          TEST_EMAIL: ${{ secrets.firebase_mail }}
-          TEST_PASSWORD: ${{ secrets.firebase_password }}
+          TEST_EMAIL: ${{ secrets.FIREBASE_EMAIL }}
+          TEST_PASSWORD: ${{ secrets.FIREBASE_PASSWORD }}
           GITHUB_REPOSITORY: ${{ github.repository }}
           GITHUB_REPOSITORY_OWNER: ${{ github.repository_owner }}
         with:
