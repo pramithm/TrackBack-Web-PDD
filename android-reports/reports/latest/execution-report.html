@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TrackBack Android – Appium E2E Report – Build #4</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap');
+  *{margin:0;padding:0;box-sizing:border-box;}
+  body{font-family:'Inter',sans-serif;background:#0f172a;color:#e2e8f0;min-height:100vh;padding:2rem;}
+  .header{background:linear-gradient(135deg,#6366f1,#8b5cf6);border-radius:1rem;padding:2rem;margin-bottom:2rem;text-align:center;}
+  .header h1{font-size:2rem;font-weight:700;margin-bottom:.5rem;color:#fff;}
+  .header p{color:rgba(255,255,255,.8);font-size:.9rem;}
+  .stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:1rem;margin-bottom:2rem;}
+  .stat{background:#1e293b;border-radius:.75rem;padding:1.5rem;text-align:center;border:1px solid #334155;}
+  .stat .value{font-size:2.5rem;font-weight:700;margin-bottom:.25rem;}
+  .stat .label{font-size:.8rem;color:#94a3b8;text-transform:uppercase;letter-spacing:.05em;}
+  .val-total{color:#6366f1;} .val-passed{color:#22c55e;} .val-failed{color:#ef4444;} .val-skip{color:#f59e0b;} .val-rate{color:#06b6d4;}
+  .table-wrap{background:#1e293b;border-radius:.75rem;overflow:hidden;border:1px solid #334155;}
+  table{width:100%;border-collapse:collapse;}
+  th{background:#0f172a;padding:1rem;font-size:.75rem;text-transform:uppercase;letter-spacing:.05em;color:#64748b;text-align:left;}
+  td{padding:.85rem 1rem;border-top:1px solid #1e293b;font-size:.85rem;vertical-align:top;}
+  tr.pass td{border-left:3px solid #22c55e;}
+  tr.fail td{border-left:3px solid #ef4444;background:rgba(239,68,68,.04);}
+  tr.skip td{border-left:3px solid #f59e0b;}
+  .badge{display:inline-block;padding:.2rem .6rem;border-radius:.375rem;font-size:.75rem;font-weight:600;}
+  .badge-passed{background:rgba(34,197,94,.2);color:#22c55e;}
+  .badge-failed{background:rgba(239,68,68,.2);color:#ef4444;}
+  .badge-skipped{background:rgba(245,158,11,.2);color:#f59e0b;}
+  .error-cell{color:#f87171;font-size:.78rem;max-width:300px;word-break:break-word;}
+  .footer{text-align:center;margin-top:2rem;font-size:.75rem;color:#475569;}
+</style>
+</head>
+<body>
+
+<div class="header">
+  <h1>📱 TrackBack Android – Appium E2E Report</h1>
+  <p>Build #4 &nbsp;•&nbsp; 2026-06-17 09:06:36 UTC &nbsp;•&nbsp; Branch: main &nbsp;•&nbsp; Commit: 1afc2fe</p>
+</div>
+
+<div class="stats">
+  <div class="stat"><div class="value val-total">12</div><div class="label">Total Tests</div></div>
+  <div class="stat"><div class="value val-passed">11</div><div class="label">Passed</div></div>
+  <div class="stat"><div class="value val-failed">0</div><div class="label">Failed</div></div>
+  <div class="stat"><div class="value val-skip">1</div><div class="label">Skipped</div></div>
+  <div class="stat"><div class="value val-rate">91.7%</div><div class="label">Pass Rate</div></div>
+</div>
+
+<div class="table-wrap">
+  <table>
+    <thead>
+      <tr>
+        <th>#</th>
+        <th>Test Case</th>
+        <th>Status</th>
+        <th>Duration</th>
+        <th>Error / Notes</th>
+      </tr>
+    </thead>
+    <tbody>
+  <tr class="pass">
+    <td>1</td>
+    <td>TC-001 App Launch</td>
+    <td><span class="badge badge-passed">✅ PASS</span></td>
+    <td>3.21s</td>
+    <td class="error-cell">—</td>
+  </tr>
+  <tr class="pass">
+    <td>2</td>
+    <td>TC-002 Login Screen</td>
+    <td><span class="badge badge-passed">✅ PASS</span></td>
+    <td>1.85s</td>
+    <td class="error-cell">—</td>
+  </tr>
+  <tr class="pass">
+    <td>3</td>
+    <td>TC-003 Valid Login</td>
+    <td><span class="badge badge-passed">✅ PASS</span></td>
+    <td>8.72s</td>
+    <td class="error-cell">—</td>
+  </tr>
+  <tr class="pass">
+    <td>4</td>
+    <td>TC-004 Invalid Credentials</td>
+    <td><span class="badge badge-passed">✅ PASS</span></td>
+    <td>5.43s</td>
+    <td class="error-cell">—</td>
+  </tr>
+  <tr class="pass">
+    <td>5</td>
+    <td>TC-005 Empty Form Validation</td>
+    <td><span class="badge badge-passed">✅ PASS</span></td>
+    <td>2.10s</td>
+    <td class="error-cell">—</td>
+  </tr>
+  <tr class="pass">
+    <td>6</td>
+    <td>TC-006 Navigate to Sign Up</td>
+    <td><span class="badge badge-passed">✅ PASS</span></td>
+    <td>3.34s</td>
+    <td class="error-cell">—</td>
+  </tr>
+  <tr class="pass">
+    <td>7</td>
+    <td>TC-007 Dashboard Tabs</td>
+    <td><span class="badge badge-passed">✅ PASS</span></td>
+    <td>6.78s</td>
+    <td class="error-cell">—</td>
+  </tr>
+  <tr class="skip">
+    <td>8</td>
+    <td>TC-008 Logout</td>
+    <td><span class="badge badge-skipped">⏭ SKIP</span></td>
+    <td>0.00s</td>
+    <td class="error-cell">—</td>
+  </tr>
+  <tr class="pass">
+    <td>9</td>
+    <td>TC-009 Lost Tab</td>
+    <td><span class="badge badge-passed">✅ PASS</span></td>
+    <td>2.90s</td>
+    <td class="error-cell">—</td>
+  </tr>
+  <tr class="pass">
+    <td>10</td>
+    <td>TC-010 Found Tab</td>
+    <td><span class="badge badge-passed">✅ PASS</span></td>
+    <td>2.75s</td>
+    <td class="error-cell">—</td>
+  </tr>
+  <tr class="pass">
+    <td>11</td>
+    <td>TC-011 Search Tab</td>
+    <td><span class="badge badge-passed">✅ PASS</span></td>
+    <td>1.98s</td>
+    <td class="error-cell">—</td>
+  </tr>
+  <tr class="pass">
+    <td>12</td>
+    <td>TC-012 Chat Tab</td>
+    <td><span class="badge badge-passed">✅ PASS</span></td>
+    <td>2.10s</td>
+    <td class="error-cell">—</td>
+  </tr></tbody>
+  </table>
+</div>
+
+<div class="footer">
+  Generated by TrackBack CI/CD Pipeline &nbsp;|&nbsp; 2026-06-17 09:06:36 UTC
+</div>
+
+</body>
+</html>
