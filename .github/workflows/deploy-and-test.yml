@@ -1,4 +1,4 @@
-name: "🚀 Deploy to GitHub Pages + Selenium E2E Tests"
+name: "🚀 Deploy to GitHub Pages + Selenium E2E Tests" # trigger run
 
 on:
   push:
