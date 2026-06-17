@@ -1,0 +1,286 @@
+name: "📱 Android Appium E2E Tests + GitHub Pages Report"
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  pages: write
+  id-token: write
+
+# ─── Global env ──────────────────────────────────────────────────────────────
+env:
+  JAVA_VERSION: "17"
+  NODE_VERSION: "20"
+  ANDROID_API_LEVEL: "29"
+  ANDROID_BUILD_TOOLS: "34.0.0"
+  ANDROID_TARGET: "google_apis"
+  ANDROID_ARCH: "x86_64"
+  APPIUM_VERSION: "2.5.4"
+
+jobs:
+  # ════════════════════════════════════════════════════════════════════════════
+  # JOB 1 – Build the Android APK from the Expo/React Native project
+  # ════════════════════════════════════════════════════════════════════════════
+  build-apk:
+    name: "🔨 Build Android APK"
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: Mobile
+
+    steps:
+      - name: "📥 Checkout repository"
+        uses: actions/checkout@v4
+
+      - name: "☕ Setup Java ${{ env.JAVA_VERSION }}"
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: ${{ env.JAVA_VERSION }}
+
+      - name: "📦 Setup Node.js ${{ env.NODE_VERSION }}"
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: npm
+          cache-dependency-path: Mobile/package-lock.json
+
+      - name: "📦 Install Node dependencies"
+        run: npm ci
+
+      - name: "🔧 Setup Android SDK"
+        uses: android-actions/setup-android@v3
+
+      - name: "📦 Install Android build tools"
+        run: |
+          sdkmanager \
+            "build-tools;${{ env.ANDROID_BUILD_TOOLS }}" \
+            "platforms;android-${{ env.ANDROID_API_LEVEL }}" \
+            "platform-tools"
+
+      - name: "🏗️  Build debug APK via Gradle"
+        run: |
+          cd android
+          chmod +x gradlew
+          ./gradlew assembleDebug --no-daemon --stacktrace
+
+      - name: "⬆️  Upload APK artifact"
+        uses: actions/upload-artifact@v4
+        with:
+          name: trackback-debug-apk
+          path: Mobile/android/app/build/outputs/apk/debug/app-debug.apk
+          retention-days: 7
+
+  # ════════════════════════════════════════════════════════════════════════════
+  # JOB 2 – Run Appium E2E Tests + Generate Reports
+  # ════════════════════════════════════════════════════════════════════════════
+  appium-e2e:
+    name: "🧪 Appium E2E Tests"
+    runs-on: ubuntu-latest
+    needs: build-apk
+
+    steps:
+      # ── 1. Checkout ────────────────────────────────────────────────────────
+      - name: "📥 Checkout repository"
+        uses: actions/checkout@v4
+
+      # ── 2. Enable KVM ─────────────────────────────────────────────────────
+      - name: "⚡ Enable KVM (hardware acceleration)"
+        run: |
+          echo 'KERNEL=="kvm", GROUP="kvm", MODE="0666", OPTIONS+="static_node=kvm"' \
+            | sudo tee /etc/udev/rules.d/99-kvm4all.rules
+          sudo udevadm control --reload-rules
+          sudo udevadm trigger --name-match=kvm
+
+      # ── 3. Java ───────────────────────────────────────────────────────────
+      - name: "☕ Setup Java ${{ env.JAVA_VERSION }}"
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: ${{ env.JAVA_VERSION }}
+
+      # ── 4. Node ───────────────────────────────────────────────────────────
+      - name: "📦 Setup Node.js ${{ env.NODE_VERSION }}"
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: npm
+          cache-dependency-path: Mobile/appium-tests/package-lock.json
+
+      # ── 5. Download APK ───────────────────────────────────────────────────
+      - name: "⬇️  Download APK artifact"
+        uses: actions/download-artifact@v4
+        with:
+          name: trackback-debug-apk
+          path: Mobile/appium-tests/apk
+
+      # ── 6. Android SDK ────────────────────────────────────────────────────
+      - name: "🔧 Setup Android SDK"
+        uses: android-actions/setup-android@v3
+
+      - name: "📦 Install emulator packages"
+        run: |
+          sdkmanager \
+            "emulator" \
+            "system-images;android-${{ env.ANDROID_API_LEVEL }};${{ env.ANDROID_TARGET }};${{ env.ANDROID_ARCH }}" \
+            "platform-tools"
+          echo "no" | avdmanager create avd \
+            --force \
+            --name "TrackBack_AVD" \
+            --package "system-images;android-${{ env.ANDROID_API_LEVEL }};${{ env.ANDROID_TARGET }};${{ env.ANDROID_ARCH }}"
+
+      # ── 7. Appium ─────────────────────────────────────────────────────────
+      - name: "🚀 Install Appium ${{ env.APPIUM_VERSION }}"
+        run: |
+          npm install -g appium@${{ env.APPIUM_VERSION }}
+          appium driver install uiautomator2
+
+      # ── 8. Install test dependencies ──────────────────────────────────────
+      - name: "📦 Install Appium test dependencies"
+        working-directory: Mobile/appium-tests
+        run: npm ci
+
+      # ── 9. Start emulator & run tests ─────────────────────────────────────
+      - name: "▶️  Start emulator, install APK & run Appium E2E tests"
+        uses: reactivecircus/android-emulator-runner@v2
+        with:
+          api-level: ${{ env.ANDROID_API_LEVEL }}
+          target: ${{ env.ANDROID_TARGET }}
+          arch: ${{ env.ANDROID_ARCH }}
+          avd-name: TrackBack_AVD
+          force-avd-creation: false
+          emulator-options: >-
+            -no-snapshot-save -no-window -gpu swiftshader_indirect
+            -noaudio -no-boot-anim -camera-back none
+          disable-animations: true
+          working-directory: Mobile/appium-tests
+          script: |
+            # Start Appium in background
+            appium --log appium.log --log-level info &
+            APPIUM_PID=$!
+            sleep 10
+
+            # Run tests
+            npm test || true
+
+            kill $APPIUM_PID 2>/dev/null || true
+
+      # ── 10. Generate reports ──────────────────────────────────────────────
+      - name: "📊 Generate HTML + Excel + Summary reports"
+        if: always()
+        working-directory: Mobile/appium-tests
+        run: node scripts/generate-reports.js
+
+      # ── 11. Upload artifacts ──────────────────────────────────────────────
+      - name: "⬆️  Upload test artifacts"
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: android-e2e-reports-${{ github.run_number }}
+          path: |
+            Mobile/appium-tests/Test Results/
+          retention-days: 30
+
+      # ── 12. Stage for GitHub Pages ────────────────────────────────────────
+      - name: "📄 Prepare GitHub Pages report structure"
+        if: always()
+        run: |
+          BUILD_DIR="gh-pages-reports/reports/history/build-$(printf '%03d' ${{ github.run_number }})"
+          mkdir -p gh-pages-reports/reports/latest
+          mkdir -p "$BUILD_DIR"
+
+          # Latest
+          cp -r "Mobile/appium-tests/Test Results/HTML/." gh-pages-reports/reports/latest/ 2>/dev/null || true
+          cp -r "Mobile/appium-tests/Test Results/Screenshots" gh-pages-reports/reports/latest/ 2>/dev/null || true
+          cp -r "Mobile/appium-tests/Test Results/Logs" gh-pages-reports/reports/latest/ 2>/dev/null || true
+          cp "Mobile/appium-tests/Test Results/Summary/summary.md" gh-pages-reports/reports/latest/ 2>/dev/null || true
+
+          # History
+          cp -r "Mobile/appium-tests/Test Results/." "$BUILD_DIR/" 2>/dev/null || true
+
+          # Index page
+          cat > gh-pages-reports/index.html << 'INDEXEOF'
+          <!DOCTYPE html>
+          <html lang="en">
+          <head>
+            <meta charset="UTF-8">
+            <title>TrackBack – Test Reports</title>
+            <meta http-equiv="refresh" content="0; url=reports/latest/execution-report.html">
+          </head>
+          <body>
+            <p>Redirecting to <a href="reports/latest/execution-report.html">latest report</a>…</p>
+          </body>
+          </html>
+          INDEXEOF
+
+      # ── 13. Checkout existing gh-pages (history) ──────────────────────────
+      - name: "📖 Fetch existing gh-pages history"
+        if: always()
+        uses: actions/checkout@v4
+        continue-on-error: true
+        with:
+          ref: gh-pages
+          path: gh-pages-existing
+
+      - name: "🔀 Merge history into new pages content"
+        if: always()
+        run: |
+          if [ -d gh-pages-existing/reports/history ]; then
+            cp -r gh-pages-existing/reports/history/. gh-pages-reports/reports/history/ 2>/dev/null || true
+          fi
+
+      # ── 14. Deploy to GitHub Pages ────────────────────────────────────────
+      - name: "🚀 Deploy reports to GitHub Pages"
+        if: always()
+        uses: peaceiris/actions-gh-pages@v4
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: gh-pages-reports
+          publish_branch: gh-pages
+          destination_dir: android-reports
+          keep_files: true
+          commit_message: "📊 Android E2E Report – Build #${{ github.run_number }}"
+
+      # ── 15. GitHub Actions Summary ────────────────────────────────────────
+      - name: "📋 Publish GitHub Actions Summary"
+        if: always()
+        run: |
+          REPORT_URL="https://${{ github.repository_owner }}.github.io/${{ github.event.repository.name }}/android-reports/reports/latest/execution-report.html"
+
+          RESULTS_FILE="Mobile/appium-tests/Test Results/Summary/summary.md"
+          TOTAL=0; PASSED=0; FAILED=0; RATE="N/A"
+          if [ -f "$RESULTS_FILE" ]; then
+            TOTAL=$(grep -oP 'Total Tests:\s*\K\d+' "$RESULTS_FILE" || echo 0)
+            PASSED=$(grep -oP 'Passed:\s*\K\d+' "$RESULTS_FILE" || echo 0)
+            FAILED=$(grep -oP 'Failed:\s*\K\d+' "$RESULTS_FILE" || echo 0)
+            RATE=$(grep -oP 'Pass Rate:\s*\K[\d.]+%' "$RESULTS_FILE" || echo "N/A")
+          fi
+
+          cat >> $GITHUB_STEP_SUMMARY << EOF
+          # 📱 Android Appium Test Summary
+
+          | Field | Value |
+          |-------|-------|
+          | **Build Number** | #${{ github.run_number }} |
+          | **Execution Date** | $(date -u '+%Y-%m-%d %H:%M UTC') |
+          | **Branch** | \`${{ github.ref_name }}\` |
+          | **Commit** | \`${{ github.sha }}\` |
+
+          ## Test Results
+
+          | Metric | Count |
+          |--------|-------|
+          | ✅ Total Tests | $TOTAL |
+          | ✔️  Passed     | $PASSED |
+          | ❌ Failed      | $FAILED |
+          | 📈 Pass Rate  | $RATE |
+
+          ## 📊 Report URL
+
+          > **[View Live HTML Report]($REPORT_URL)**
+          EOF

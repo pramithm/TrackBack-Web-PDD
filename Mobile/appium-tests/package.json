@@ -1,0 +1,21 @@
+{
+  "name": "trackback-appium-tests",
+  "version": "1.0.0",
+  "description": "Appium E2E test suite for TrackBack Android application",
+  "private": true,
+  "scripts": {
+    "test": "mocha tests/**/*.test.js --timeout 120000 --reporter spec",
+    "test:ci": "mocha tests/**/*.test.js --timeout 120000 --reporter json --reporter-option output=test-results.json",
+    "test:single": "mocha tests/login.test.js --timeout 120000",
+    "pretest": "node scripts/setup-test-dirs.js"
+  },
+  "dependencies": {
+    "webdriverio": "^8.40.6",
+    "@wdio/appium-service": "^8.40.6"
+  },
+  "devDependencies": {
+    "mocha": "^10.7.3",
+    "exceljs": "^4.4.0",
+    "dayjs": "^1.11.13"
+  }
+}
