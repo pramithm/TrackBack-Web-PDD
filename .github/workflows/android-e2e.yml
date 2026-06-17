@@ -37,13 +37,6 @@ jobs:
       - name: "📥 Checkout repository"
         uses: actions/checkout@v4
 
-      - name: "☕ Setup Java ${{ env.JAVA_VERSION }}"
-        uses: actions/setup-java@v4
-        with:
-          distribution: temurin
-          java-version: ${{ env.JAVA_VERSION }}
-          cache: gradle
-
       - name: "📦 Setup Node.js ${{ env.NODE_VERSION }}"
         uses: actions/setup-node@v4
         with:
@@ -66,6 +59,13 @@ jobs:
 
       - name: "⚙️ Generate Android native directory (Expo Prebuild)"
         run: npx expo prebuild --platform android --no-install
+
+      - name: "☕ Setup Java ${{ env.JAVA_VERSION }}"
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: ${{ env.JAVA_VERSION }}
+          cache: gradle
 
       - name: "🏗️  Build debug APK via Gradle"
         working-directory: Mobile/android
