@@ -177,6 +177,9 @@ const failedTests = results
   .map(r => `- **${r.name}**: ${r.error || 'Unknown error'}`)
   .join('\n') || '_None_';
 
+const repoNameOnly = (process.env.GITHUB_REPOSITORY || 'pramithm/TrackBack-Web-PDD').split('/')[1] || 'TrackBack-Web-PDD';
+const reportUrl = `https://${process.env.GITHUB_REPOSITORY_OWNER || 'pramithm'}.github.io/${repoNameOnly}/android-reports/reports/latest/execution-report.html`;
+
 const summaryMd = `# Android Appium Test Summary
 
 ## Build Information
@@ -200,7 +203,7 @@ const summaryMd = `# Android Appium Test Summary
 ${failedTests}
 
 ## Report URL
-https://\${GITHUB_PAGES_URL}/android-reports/reports/latest/execution-report.html
+[View Online HTML Report](${reportUrl})
 `;
 
 fs.writeFileSync(path.join(SUMMARY_DIR, 'summary.md'), summaryMd, 'utf8');

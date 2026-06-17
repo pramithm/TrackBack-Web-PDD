@@ -114,7 +114,7 @@ jobs:
         id: frontend-audit
         working-directory: Frontend
         run: |
-          npm ci --ignore-scripts
+          npm install --no-audit --ignore-scripts
           mkdir -p ../security-artifacts
           echo "## 📦 Frontend Dependency Audit" >> ../security-artifacts/dependency-audit.txt
           npm audit --audit-level=moderate --json > ../security-artifacts/frontend-audit.json 2>&1 || true
@@ -190,6 +190,9 @@ jobs:
           name: dependency-scan-${{ github.run_number }}
           path: security-artifacts
         continue-on-error: true
+
+      - name: "📦 Install report dependencies"
+        run: npm install exceljs
 
       - name: "📊 Generate security reports"
         env:

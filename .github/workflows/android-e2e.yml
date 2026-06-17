@@ -63,9 +63,12 @@ jobs:
             "platforms;android-${{ env.ANDROID_API_LEVEL }}" \
             "platform-tools"
 
+      - name: "⚙️ Generate Android native directory (Expo Prebuild)"
+        run: npx expo prebuild --platform android --no-install
+
       - name: "🏗️  Build debug APK via Gradle"
+        working-directory: Mobile/android
         run: |
-          cd android
           chmod +x gradlew
           ./gradlew assembleDebug --no-daemon --stacktrace
 
@@ -109,8 +112,6 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: ${{ env.NODE_VERSION }}
-          cache: npm
-          cache-dependency-path: Mobile/appium-tests/package-lock.json
 
       # ── 5. Download APK ───────────────────────────────────────────────────
       - name: "⬇️  Download APK artifact"
@@ -143,11 +144,16 @@ jobs:
       # ── 8. Install test dependencies ──────────────────────────────────────
       - name: "📦 Install Appium test dependencies"
         working-directory: Mobile/appium-tests
-        run: npm ci
+        run: npm install
 
       # ── 9. Start emulator & run tests ─────────────────────────────────────
       - name: "▶️  Start emulator, install APK & run Appium E2E tests"
         uses: reactivecircus/android-emulator-runner@v2
+        env:
+          TEST_EMAIL: ${{ secrets.firebase_mail }}
+          TEST_PASSWORD: ${{ secrets.firebase_password }}
+          GITHUB_REPOSITORY: ${{ github.repository }}
+          GITHUB_REPOSITORY_OWNER: ${{ github.repository_owner }}
         with:
           api-level: ${{ env.ANDROID_API_LEVEL }}
           target: ${{ env.ANDROID_TARGET }}
@@ -166,7 +172,7 @@ jobs:
             sleep 10
 
             # Run tests
-            npm test || true
+            npm run test:ci || true
 
             kill $APPIUM_PID 2>/dev/null || true
 
@@ -255,10 +261,10 @@ jobs:
           RESULTS_FILE="Mobile/appium-tests/Test Results/Summary/summary.md"
           TOTAL=0; PASSED=0; FAILED=0; RATE="N/A"
           if [ -f "$RESULTS_FILE" ]; then
-            TOTAL=$(grep -oP 'Total Tests:\s*\K\d+' "$RESULTS_FILE" || echo 0)
-            PASSED=$(grep -oP 'Passed:\s*\K\d+' "$RESULTS_FILE" || echo 0)
-            FAILED=$(grep -oP 'Failed:\s*\K\d+' "$RESULTS_FILE" || echo 0)
-            RATE=$(grep -oP 'Pass Rate:\s*\K[\d.]+%' "$RESULTS_FILE" || echo "N/A")
+            TOTAL=$(grep -oP 'Total Tests\s*\|\s*\K\d+' "$RESULTS_FILE" || echo 0)
+            PASSED=$(grep -oP 'Passed\s*\|\s*\K\d+' "$RESULTS_FILE" || echo 0)
+            FAILED=$(grep -oP 'Failed\s*\|\s*\K\d+' "$RESULTS_FILE" || echo 0)
+            RATE=$(grep -oP 'Pass Rate\s*\|\s*\K[\d.]+%' "$RESULTS_FILE" || echo "N/A")
           fi
 
           cat >> $GITHUB_STEP_SUMMARY << EOF

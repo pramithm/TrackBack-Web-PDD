@@ -123,11 +123,9 @@ jobs:
       - name: "🌐 Setup Chrome"
         uses: browser-actions/setup-chrome@v1
 
-      - name: "🔧 Install ChromeDriver (version-matched)"
+      - name: "🔍 Verify Chrome Installation"
         run: |
-          CHROME_MAJOR=$(google-chrome --version | grep -oP '\d+' | head -1)
-          npm install -g chromedriver@$CHROME_MAJOR 2>/dev/null || npm install -g chromedriver
-          chromedriver --version
+          google-chrome --version
 
       - name: "📦 Install frontend dependencies"
         working-directory: Frontend
@@ -142,8 +140,8 @@ jobs:
           REPO_OWNER: ${{ github.repository_owner }}
           REPO_NAME: ${{ github.event.repository.name }}
           BASE_URL: "https://${{ github.repository_owner }}.github.io/${{ github.event.repository.name }}/"
-          TEST_EMAIL: ${{ secrets.TEST_EMAIL }}
-          TEST_PASSWORD: ${{ secrets.TEST_PASSWORD }}
+          TEST_EMAIL: ${{ secrets.firebase_mail }}
+          TEST_PASSWORD: ${{ secrets.firebase_password }}
           TEST_OUTPUT_DIR: "Test Results"
           CI: "true"
         run: |
@@ -227,11 +225,11 @@ jobs:
           TOTAL=0; PASSED=0; FAILED=0; SKIPPED=0; RATE="N/A"
           FAILED_LIST=""
           if [ -f "$RESULTS_FILE" ]; then
-            TOTAL=$(grep -oP 'Total Tests:\s*\K\d+' "$RESULTS_FILE" 2>/dev/null || echo 0)
-            PASSED=$(grep -oP 'Passed:\s*\K\d+' "$RESULTS_FILE" 2>/dev/null || echo 0)
-            FAILED=$(grep -oP 'Failed:\s*\K\d+' "$RESULTS_FILE" 2>/dev/null || echo 0)
-            SKIPPED=$(grep -oP 'Skipped:\s*\K\d+' "$RESULTS_FILE" 2>/dev/null || echo 0)
-            RATE=$(grep -oP 'Pass Percentage:\s*\K[\d.]+%' "$RESULTS_FILE" 2>/dev/null || echo "N/A")
+            TOTAL=$(grep -oP 'Total Tests\s*\|\s*\K\d+' "$RESULTS_FILE" 2>/dev/null || echo 0)
+            PASSED=$(grep -oP 'Passed\s*\|\s*\K\d+' "$RESULTS_FILE" 2>/dev/null || echo 0)
+            FAILED=$(grep -oP 'Failed\s*\|\s*\K\d+' "$RESULTS_FILE" 2>/dev/null || echo 0)
+            SKIPPED=$(grep -oP 'Skipped\s*\|\s*\K\d+' "$RESULTS_FILE" 2>/dev/null || echo 0)
+            RATE=$(grep -oP 'Pass Percentage\s*\|\s*\K[\d.]+%' "$RESULTS_FILE" 2>/dev/null || echo "N/A")
           fi
 
           cat >> $GITHUB_STEP_SUMMARY << EOF
