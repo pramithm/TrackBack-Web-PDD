@@ -140,7 +140,7 @@ jobs:
           npm audit --audit-level=moderate 2>&1 | tail -30 >> ../security-artifacts/dependency-audit.txt || true
 
       - name: "🛡️  Run Trivy filesystem scan"
-        uses: aquasecurity/trivy-action@v0.29.0
+        uses: aquasecurity/trivy-action@v0.35.0
         with:
           scan-type: fs
           scan-ref: .
