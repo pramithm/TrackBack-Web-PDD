@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>TrackBack Web – Selenium E2E Report – Build #14</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap');
+  *{margin:0;padding:0;box-sizing:border-box;}
+  body{font-family:'Inter',sans-serif;background:#0f172a;color:#e2e8f0;min-height:100vh;padding:2rem;}
+  a{color:#818cf8;}
+
+  .header{background:linear-gradient(135deg,#0ea5e9,#6366f1);border-radius:1rem;padding:2rem;margin-bottom:2rem;text-align:center;}
+  .header h1{font-size:2rem;font-weight:700;color:#fff;margin-bottom:.5rem;}
+  .header p{color:rgba(255,255,255,.8);font-size:.9rem;}
+  .url-link{display:inline-block;margin-top:.5rem;background:rgba(0,0,0,.25);padding:.3rem .8rem;border-radius:.5rem;font-size:.8rem;color:#bfdbfe;}
+
+  .stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:1rem;margin-bottom:2rem;}
+  .stat{background:#1e293b;border-radius:.75rem;padding:1.5rem;text-align:center;border:1px solid #334155;}
+  .stat .val{font-size:2.5rem;font-weight:700;margin-bottom:.25rem;}
+  .stat .lbl{font-size:.75rem;color:#94a3b8;text-transform:uppercase;letter-spacing:.05em;}
+  .v-total{color:#6366f1;} .v-pass{color:#22c55e;} .v-fail{color:#ef4444;} .v-skip{color:#f59e0b;} .v-rate{color:#06b6d4;}
+
+  .table-wrap{background:#1e293b;border-radius:.75rem;overflow:hidden;border:1px solid #334155;}
+  table{width:100%;border-collapse:collapse;}
+  th{background:#0f172a;padding:1rem;font-size:.72rem;text-transform:uppercase;letter-spacing:.05em;color:#64748b;text-align:left;}
+  td{padding:.85rem 1rem;border-top:1px solid #273445;font-size:.85rem;vertical-align:top;}
+  tr.pass td{border-left:3px solid #22c55e;}
+  tr.fail td{border-left:3px solid #ef4444;background:rgba(239,68,68,.04);}
+  tr.skip td{border-left:3px solid #f59e0b;}
+
+  .badge{display:inline-block;padding:.2rem .6rem;border-radius:.375rem;font-size:.75rem;font-weight:600;}
+  .badge-passed{background:rgba(34,197,94,.15);color:#22c55e;}
+  .badge-failed{background:rgba(239,68,68,.15);color:#ef4444;}
+  .badge-skipped{background:rgba(245,158,11,.15);color:#f59e0b;}
+  .err{color:#f87171;font-size:.78rem;max-width:280px;word-break:break-word;}
+  .footer{text-align:center;margin-top:2rem;font-size:.75rem;color:#475569;}
+</style>
+</head>
+<body>
+
+<div class="header">
+  <h1>🌐 TrackBack Web – Selenium E2E Report</h1>
+  <p>Build #14 &nbsp;•&nbsp; 2026-06-17 11:29:47 UTC &nbsp;•&nbsp; Branch: main &nbsp;•&nbsp; Commit: 4de104f</p>
+  <a class="url-link" href="https://pramithm.github.io/TrackBack-Web-PDD/" target="_blank">🔗 https://pramithm.github.io/TrackBack-Web-PDD/</a>
+</div>
+
+<div class="stats">
+  <div class="stat"><div class="val v-total">5</div><div class="lbl">Total</div></div>
+  <div class="stat"><div class="val v-pass">0</div><div class="lbl">Passed</div></div>
+  <div class="stat"><div class="val v-fail">5</div><div class="lbl">Failed</div></div>
+  <div class="stat"><div class="val v-skip">0</div><div class="lbl">Skipped</div></div>
+  <div class="stat"><div class="val v-rate">0.0%</div><div class="lbl">Pass %</div></div>
+</div>
+
+<div class="table-wrap">
+  <table>
+    <thead><tr>
+      <th>#</th><th>Test Case</th><th>Status</th><th>Duration</th><th>Error</th><th>Screenshot</th>
+    </tr></thead>
+    <tbody>
+    <tr class="fail">
+      <td>1</td>
+      <td>should load the TrackBack landing page</td>
+      <td><span class="badge badge-failed">❌ FAIL</span></td>
+      <td>20.43s</td>
+      <td class="err">Landing page did not load — Sign In button not found
+Wait timed out after 20089ms</td>
+      <td><a href="Screenshots/FAIL_should_load_the_TrackBack_landing_page_1781695706690.png" target="_blank" style="color: #818cf8; text-decoration: none; font-weight: 600;">🖼️ View</a></td>
+    </tr>
+    <tr class="fail">
+      <td>2</td>
+      <td>should navigate to the login form</td>
+      <td><span class="badge badge-failed">❌ FAIL</span></td>
+      <td>20.23s</td>
+      <td class="err">Waiting for element to be located By(css selector, *[id=&quot;landing-signin-btn&quot;])
+Wait timed out after 20188ms</td>
+      <td><a href="Screenshots/FAIL_should_navigate_to_the_login_form_1781695726946.png" target="_blank" style="color: #818cf8; text-decoration: none; font-weight: 600;">🖼️ View</a></td>
+    </tr>
+    <tr class="fail">
+      <td>3</td>
+      <td>should login with valid credentials and reach the dashboard</td>
+      <td><span class="badge badge-failed">❌ FAIL</span></td>
+      <td>20.18s</td>
+      <td class="err">Waiting for element to be located By(css selector, *[id=&quot;landing-signin-btn&quot;])
+Wait timed out after 20149ms</td>
+      <td><a href="Screenshots/FAIL_should_login_with_valid_credentials_and_reach_the_dashboard_1781695747163.png" target="_blank" style="color: #818cf8; text-decoration: none; font-weight: 600;">🖼️ View</a></td>
+    </tr>
+    <tr class="fail">
+      <td>4</td>
+      <td>should reject invalid credentials with an error message</td>
+      <td><span class="badge badge-failed">❌ FAIL</span></td>
+      <td>20.18s</td>
+      <td class="err">Waiting for element to be located By(css selector, *[id=&quot;landing-signin-btn&quot;])
+Wait timed out after 20152ms</td>
+      <td><a href="Screenshots/FAIL_should_reject_invalid_credentials_with_an_error_message_1781695767378.png" target="_blank" style="color: #818cf8; text-decoration: none; font-weight: 600;">🖼️ View</a></td>
+    </tr>
+    <tr class="fail">
+      <td>5</td>
+      <td>should open the sign-up form from landing</td>
+      <td><span class="badge badge-failed">❌ FAIL</span></td>
+      <td>20.18s</td>
+      <td class="err">Waiting for element to be located By(css selector, *[id=&quot;landing-signup-btn&quot;])
+Wait timed out after 20155ms</td>
+      <td><a href="Screenshots/FAIL_should_open_the_sign_up_form_from_landing_1781695787594.png" target="_blank" style="color: #818cf8; text-decoration: none; font-weight: 600;">🖼️ View</a></td>
+    </tr></tbody>
+  </table>
+</div>
+
+<div class="footer">
+  Generated by TrackBack CI/CD Pipeline &nbsp;|&nbsp; 2026-06-17 11:29:47 UTC<br>
+  <a href="https://pramithm.github.io/TrackBack-Web-PDD/web-reports/latest/execution-report.html">📊 View Latest Report Online</a>
+</div>
+</body>
+</html>
