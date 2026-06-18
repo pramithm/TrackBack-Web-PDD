@@ -1,0 +1,37 @@
+[
+  {
+    "name": "should load the TrackBack landing page",
+    "status": "passed",
+    "duration": 450,
+    "error": null,
+    "screenshotPath": null
+  },
+  {
+    "name": "should navigate to the login form",
+    "status": "passed",
+    "duration": 163,
+    "error": null,
+    "screenshotPath": null
+  },
+  {
+    "name": "should login with valid credentials and reach the dashboard",
+    "status": "passed",
+    "duration": 1425,
+    "error": null,
+    "screenshotPath": null
+  },
+  {
+    "name": "should reject invalid credentials with an error message",
+    "status": "failed",
+    "duration": 20186,
+    "error": "Waiting for element to be located By(css selector, *[id=\"landing-signin-btn\"])\nWait timed out after 20157ms",
+    "screenshotPath": "Screenshots/FAIL_should_reject_invalid_credentials_with_an_error_message_1781783545772.png"
+  },
+  {
+    "name": "should open the sign-up form from landing",
+    "status": "failed",
+    "duration": 20172,
+    "error": "Waiting for element to be located By(css selector, *[id=\"landing-signup-btn\"])\nWait timed out after 20150ms",
+    "screenshotPath": "Screenshots/FAIL_should_open_the_sign_up_form_from_landing_1781783566096.png"
+  }
+]

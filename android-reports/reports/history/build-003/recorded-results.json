@@ -1,0 +1,66 @@
+[
+  {
+    "name": "TC-001 App Launch",
+    "status": "passed",
+    "duration": 5327,
+    "error": null,
+    "screenshotPath": null,
+    "timestamp": "2026-06-18T12:09:24.536Z"
+  },
+  {
+    "name": "TC-002 Login Screen",
+    "status": "passed",
+    "duration": 3089,
+    "error": null,
+    "screenshotPath": null,
+    "timestamp": "2026-06-18T12:09:27.626Z"
+  },
+  {
+    "name": "TC-003 Valid Login",
+    "status": "failed",
+    "duration": 46836,
+    "error": "element (\"//android.widget.TextView[@text=\"Lost\"]\") still not existing after 20000ms",
+    "screenshotPath": "Screenshots/FAIL_TC003_dashboard_2026-06-18T12-10-14-311Z.png",
+    "timestamp": "2026-06-18T12:10:14.463Z"
+  },
+  {
+    "name": "TC-004 Invalid Credentials",
+    "status": "failed",
+    "duration": 49075,
+    "error": "element (\"//android.widget.EditText[@hint=\"Email\"]\") still not existing after 20000ms",
+    "screenshotPath": "Screenshots/FAIL_TC004_invalid_credentials_2026-06-18T12-11-03-432Z.png",
+    "timestamp": "2026-06-18T12:11:03.540Z"
+  },
+  {
+    "name": "TC-005 Empty Form Validation",
+    "status": "failed",
+    "duration": 47590,
+    "error": "element (\"//android.widget.EditText[@hint=\"Email\"]\") still not existing after 20000ms",
+    "screenshotPath": "Screenshots/FAIL_TC005_empty_form_2026-06-18T12-11-51-023Z.png",
+    "timestamp": "2026-06-18T12:11:51.131Z"
+  },
+  {
+    "name": "TC-006 Navigate to Sign Up",
+    "status": "failed",
+    "duration": 47768,
+    "error": "element (\"//android.widget.EditText[@hint=\"Email\"]\") still not existing after 20000ms",
+    "screenshotPath": "Screenshots/FAIL_TC006_signup_2026-06-18T12-12-38-793Z.png",
+    "timestamp": "2026-06-18T12:12:38.899Z"
+  },
+  {
+    "name": "TC-007 Dashboard Tabs",
+    "status": "failed",
+    "duration": 47523,
+    "error": "element (\"//android.widget.EditText[@hint=\"Email\"]\") still not existing after 20000ms",
+    "screenshotPath": "Screenshots/FAIL_TC007_tabs_2026-06-18T12-13-26-311Z.png",
+    "timestamp": "2026-06-18T12:13:26.423Z"
+  },
+  {
+    "name": "TC-008 Logout",
+    "status": "passed",
+    "duration": 185,
+    "error": null,
+    "screenshotPath": null,
+    "timestamp": "2026-06-18T12:13:26.610Z"
+  }
+]
