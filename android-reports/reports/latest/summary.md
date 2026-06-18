@@ -3,26 +3,24 @@
 ## Build Information
 | Field | Value |
 |-------|-------|
-| Build Number | 3 |
-| Execution Date | 2026-06-18 12:14:27 UTC |
+| Build Number | 4 |
+| Execution Date | 2026-06-18 12:47:41 UTC |
 | Branch | main |
-| Commit | ad1cf54 |
+| Commit | 5d20adc |
 
 ## Test Results
 | Metric | Count |
 |--------|-------|
 | Total Tests | 300 |
-| Passed | 288 |
-| Failed | 12 |
+| Passed | 290 |
+| Failed | 10 |
 | Skipped | 0 |
-| Pass Rate | 96.0% |
+| Pass Rate | 96.7% |
 
 ## Failed Tests
-- **TC-003 Valid Login**: element ("//android.widget.TextView[@text="Lost"]") still not existing after 20000ms
-- **TC-004 Invalid Credentials**: element ("//android.widget.EditText[@hint="Email"]") still not existing after 20000ms
-- **TC-005 Empty Form Validation**: element ("//android.widget.EditText[@hint="Email"]") still not existing after 20000ms
-- **TC-006 Navigate to Sign Up**: element ("//android.widget.EditText[@hint="Email"]") still not existing after 20000ms
-- **TC-007 Dashboard Tabs**: element ("//android.widget.EditText[@hint="Email"]") still not existing after 20000ms
+- **TC-004 Invalid Credentials**: No error message shown for invalid credentials
+- **TC-006 Navigate to Sign Up**: Can't call click on element with selector "//android.widget.Button[@text="Sign Up"]" because element wasn't found
+- **TC-008 Logout**: element ("~avatar-button") still not existing after 20000ms
 - **TrackBack Android — E2E [Layout]: Verify app layout scaling for density utf8-emoji-text (Check Point #40)**: Appium layout assertion failed at check point #40
 - **TrackBack Android — E2E [Layout]: Verify app layout scaling for density android-sdk-30 (Check Point #80)**: Appium layout assertion failed at check point #80
 - **TrackBack Android — E2E [Layout]: Verify app layout scaling for density mdpi (Check Point #120)**: Appium layout assertion failed at check point #120
