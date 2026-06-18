@@ -1,0 +1,66 @@
+[
+  {
+    "name": "TC-001 App Launch",
+    "status": "passed",
+    "duration": 5238,
+    "error": null,
+    "screenshotPath": null,
+    "timestamp": "2026-06-18T07:52:33.301Z"
+  },
+  {
+    "name": "TC-002 Login Screen",
+    "status": "failed",
+    "duration": 44803,
+    "error": "element (\"//android.widget.EditText[@hint=\"Email\"]\") still not existing after 20000ms",
+    "screenshotPath": "Screenshots/FAIL_TC002_login_screen_2026-06-18T07-53-17-898Z.png",
+    "timestamp": "2026-06-18T07:53:18.105Z"
+  },
+  {
+    "name": "TC-003 Valid Login",
+    "status": "failed",
+    "duration": 44178,
+    "error": "element (\"//android.widget.EditText[@hint=\"Email\"]\") still not existing after 20000ms",
+    "screenshotPath": "Screenshots/FAIL_TC003_dashboard_2026-06-18T07-54-02-209Z.png",
+    "timestamp": "2026-06-18T07:54:02.285Z"
+  },
+  {
+    "name": "TC-004 Invalid Credentials",
+    "status": "failed",
+    "duration": 47651,
+    "error": "element (\"//android.widget.EditText[@hint=\"Email\"]\") still not existing after 20000ms",
+    "screenshotPath": "Screenshots/FAIL_TC004_invalid_credentials_2026-06-18T07-54-49-874Z.png",
+    "timestamp": "2026-06-18T07:54:49.937Z"
+  },
+  {
+    "name": "TC-005 Empty Form Validation",
+    "status": "failed",
+    "duration": 47456,
+    "error": "element (\"//android.widget.EditText[@hint=\"Email\"]\") still not existing after 20000ms",
+    "screenshotPath": "Screenshots/FAIL_TC005_empty_form_2026-06-18T07-55-37-310Z.png",
+    "timestamp": "2026-06-18T07:55:37.394Z"
+  },
+  {
+    "name": "TC-006 Navigate to Sign Up",
+    "status": "failed",
+    "duration": 47499,
+    "error": "element (\"//android.widget.EditText[@hint=\"Email\"]\") still not existing after 20000ms",
+    "screenshotPath": "Screenshots/FAIL_TC006_signup_2026-06-18T07-56-24-839Z.png",
+    "timestamp": "2026-06-18T07:56:24.895Z"
+  },
+  {
+    "name": "TC-007 Dashboard Tabs",
+    "status": "failed",
+    "duration": 47440,
+    "error": "element (\"//android.widget.EditText[@hint=\"Email\"]\") still not existing after 20000ms",
+    "screenshotPath": "Screenshots/FAIL_TC007_tabs_2026-06-18T07-57-12-270Z.png",
+    "timestamp": "2026-06-18T07:57:12.335Z"
+  },
+  {
+    "name": "TC-008 Logout",
+    "status": "passed",
+    "duration": 156,
+    "error": null,
+    "screenshotPath": null,
+    "timestamp": "2026-06-18T07:57:12.492Z"
+  }
+]
