@@ -43,6 +43,17 @@ let driver;
 const loginPage = () => new LoginPage(driver);
 const homePage  = () => new HomePage(driver);
 
+async function ensureLoggedOut(driver) {
+  try {
+    await driver.terminateApp('com.mounikamouni12.FrontEnd');
+    await driver.execute('mobile: clearApp', { appId: 'com.mounikamouni12.FrontEnd' });
+    await driver.activateApp('com.mounikamouni12.FrontEnd');
+    await helpers.sleep(5000);
+  } catch (err) {
+    console.warn('⚠️ clearApp failed:', err.message);
+  }
+}
+
 // ─── Test Suites ─────────────────────────────────────────────────────────────
 describe('TrackBack Android – Login & Authentication', function () {
   this.timeout(90000);
@@ -136,9 +147,7 @@ describe('TrackBack Android – Login & Authentication', function () {
     const start = Date.now();
     try {
       // Reset app to force logout / login screen
-      await driver.terminateApp('com.mounikamouni12.FrontEnd');
-      await driver.activateApp('com.mounikamouni12.FrontEnd');
-      await helpers.sleep(3000);
+      await ensureLoggedOut(driver);
 
       await loginPage().waitForScreen(TIMEOUT);
       await loginPage().enterEmail('notauser@nowhere.xyz');
@@ -163,9 +172,7 @@ describe('TrackBack Android – Login & Authentication', function () {
   it('TC-005 | Empty form submission → Validation error', async function () {
     const start = Date.now();
     try {
-      await driver.terminateApp('com.mounikamouni12.FrontEnd');
-      await driver.activateApp('com.mounikamouni12.FrontEnd');
-      await helpers.sleep(3000);
+      await ensureLoggedOut(driver);
 
       await loginPage().waitForScreen(TIMEOUT);
       // Tap login without entering credentials
@@ -188,9 +195,7 @@ describe('TrackBack Android – Login & Authentication', function () {
   it('TC-006 | Navigate to Sign Up screen', async function () {
     const start = Date.now();
     try {
-      await driver.terminateApp('com.mounikamouni12.FrontEnd');
-      await driver.activateApp('com.mounikamouni12.FrontEnd');
-      await helpers.sleep(3000);
+      await ensureLoggedOut(driver);
 
       await loginPage().waitForScreen(TIMEOUT);
       await loginPage().tapSignUp();
@@ -214,9 +219,7 @@ describe('TrackBack Android – Login & Authentication', function () {
   it('TC-007 | Dashboard tabs visible after login', async function () {
     const start = Date.now();
     try {
-      await driver.terminateApp('com.mounikamouni12.FrontEnd');
-      await driver.activateApp('com.mounikamouni12.FrontEnd');
-      await helpers.sleep(3000);
+      await ensureLoggedOut(driver);
 
       await loginPage().waitForScreen(TIMEOUT);
       await loginPage().enterEmail(TEST_EMAIL);
@@ -242,29 +245,34 @@ describe('TrackBack Android – Login & Authentication', function () {
   it('TC-008 | Logout returns to Login screen', async function () {
     const start = Date.now();
     try {
-      // Assume we are on the dashboard from TC-007
-      // Navigate to profile and tap logout
-      const profileTab = await driver.$('//android.widget.TextView[@text="Profile"]');
-      if (await profileTab.isExisting()) {
-        await profileTab.click();
-        await helpers.sleep(1500);
-      }
+      // Tapping on avatar button to go to Profile screen
+      const avatarBtn = await driver.$('~avatar-button');
+      await avatarBtn.waitForExist({ timeout: TIMEOUT });
+      await avatarBtn.click();
+      await helpers.sleep(2000);
 
-      const logoutBtn = await driver.$('//android.widget.Button[contains(@text,"Logout") or contains(@text,"Sign Out")]');
-      if (await logoutBtn.isExisting()) {
-        await logoutBtn.click();
-        await helpers.sleep(2000);
-        await loginPage().waitForScreen(TIMEOUT);
-      }
+      // Now on Profile screen, find and tap the logout button
+      const logoutBtn = await driver.$('~logout-button');
+      await logoutBtn.waitForExist({ timeout: TIMEOUT });
+      await logoutBtn.click();
+      await helpers.sleep(1500);
+
+      // Tap the native Alert "Log Out" confirmation button
+      const confirmBtn = await driver.$('//android.widget.Button[@text="LOG OUT" or @text="Log Out" or @resource-id="android:id/button1"]');
+      await confirmBtn.waitForExist({ timeout: TIMEOUT });
+      await confirmBtn.click();
+      await helpers.sleep(3000);
+
+      // Wait for login screen to confirm successful logout
+      await loginPage().waitForScreen(TIMEOUT);
 
       await helpers.takeScreenshot(driver, 'TC008_after_logout');
       helpers.recordResult({ name: 'TC-008 Logout', status: 'passed', duration: Date.now() - start });
       console.log('  ✅ TC-008 passed');
     } catch (err) {
-      // Non-critical – logout UI varies; mark as skipped if button not found
       const screenshotPath = await helpers.captureFailureDiagnostics(driver, 'FAIL_TC008_logout');
-      helpers.recordResult({ name: 'TC-008 Logout', status: 'skipped', duration: Date.now() - start, error: err, screenshotPath });
-      console.log('  ⚠️  TC-008 skipped – logout button not found (UI may differ)');
+      helpers.recordResult({ name: 'TC-008 Logout', status: 'failed', duration: Date.now() - start, error: err, screenshotPath });
+      throw err;
     }
   });
 });

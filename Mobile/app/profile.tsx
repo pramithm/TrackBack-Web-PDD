@@ -300,6 +300,7 @@ export default function ProfileScreen() {
           style={styles.cardItem}
           onPress={handleLogout}
           activeOpacity={0.7}
+          testID="logout-button"
         >
           <View style={styles.cardItemLeft}>
             <View style={styles.iconWrapper}>

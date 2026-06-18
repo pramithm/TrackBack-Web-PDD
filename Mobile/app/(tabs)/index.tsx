@@ -122,7 +122,7 @@ export default function HomeScreen() {
     const isLost = item.type === 'lost';
     
     return (
-      <View style={styles.card}>
+      <View style={styles.card} testID={isLost ? "lost-item" : "found-item"}>
         {/* Card Image Header */}
         <View style={styles.cardHeader}>
           {item.imageUrl ? (
@@ -190,7 +190,7 @@ export default function HomeScreen() {
     <SafeAreaView style={styles.container}>
       {/* Top Header Bar */}
       <View style={styles.headerBar}>
-        <TouchableOpacity onPress={() => router.push('/profile' as any)} style={styles.avatarWrapper}>
+        <TouchableOpacity onPress={() => router.push('/profile' as any)} style={styles.avatarWrapper} testID="avatar-button">
           {user?.photoURL ? (
             <Image source={{ uri: user.photoURL }} style={styles.avatar} />
           ) : (

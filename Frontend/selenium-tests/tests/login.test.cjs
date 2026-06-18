@@ -53,6 +53,26 @@ describe('TrackBack — Login E2E Tests', function () {
     console.log(`\n🌐 Testing against: ${BASE_URL}`);
   });
 
+  beforeEach(async () => {
+    if (driver) {
+      try {
+        await driver.get(BASE_URL);
+        await driver.manage().deleteAllCookies();
+        await driver.executeScript(`
+          try {
+            window.localStorage.clear();
+            window.sessionStorage.clear();
+            if (window.indexedDB) {
+              window.indexedDB.deleteDatabase('firebaseLocalStorageDb');
+            }
+          } catch(e){}
+        `);
+      } catch (e) {
+        console.warn('⚠️ Failed to clear session in beforeEach:', e.message);
+      }
+    }
+  });
+
   afterEach(async function () {
     const title = this.currentTest.title;
     const state = this.currentTest.state || 'skipped';

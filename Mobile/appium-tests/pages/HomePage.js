@@ -16,9 +16,9 @@ class HomePage {
 
   // Fallback XPaths
   get bottomTabBarXP() { return this.driver.$('//android.widget.HorizontalScrollView'); }
-  get lostTabXP()      { return this.driver.$('//android.widget.TextView[@text="Lost"]'); }
-  get foundTabXP()     { return this.driver.$('//android.widget.TextView[@text="Found"]'); }
-  get searchTabXP()    { return this.driver.$('//android.widget.TextView[@text="Search"]'); }
+  get lostTabXP()      { return this.driver.$('//android.widget.TextView[contains(@text,"Lost")]'); }
+  get foundTabXP()     { return this.driver.$('//android.widget.TextView[contains(@text,"Found")]'); }
+  get searchTabXP()    { return this.driver.$('//android.widget.TextView[contains(@text,"Search")]'); }
 
   async waitForDashboard(timeoutMs = 20000) {
     // Wait for the tab bar OR any core nav element

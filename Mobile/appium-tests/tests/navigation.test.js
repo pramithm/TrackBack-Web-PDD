@@ -35,6 +35,17 @@ let driver;
 const loginPage = () => new LoginPage(driver);
 const homePage  = () => new HomePage(driver);
 
+async function ensureLoggedOut(driver) {
+  try {
+    await driver.terminateApp('com.mounikamouni12.FrontEnd');
+    await driver.execute('mobile: clearApp', { appId: 'com.mounikamouni12.FrontEnd' });
+    await driver.activateApp('com.mounikamouni12.FrontEnd');
+    await helpers.sleep(5000);
+  } catch (err) {
+    console.warn('⚠️ clearApp failed:', err.message);
+  }
+}
+
 // ─── Test Suites ─────────────────────────────────────────────────────────────
 describe('TrackBack Android – Navigation Tests', function () {
   this.timeout(60000);
@@ -51,6 +62,9 @@ describe('TrackBack Android – Navigation Tests', function () {
       connectionRetryTimeout: 120000,
       connectionRetryCount: 3,
     });
+
+    // Make sure we start clean and logged out before logging in
+    await ensureLoggedOut(driver);
 
     // Login once for all navigation tests
     await loginPage().waitForScreen(20000);
