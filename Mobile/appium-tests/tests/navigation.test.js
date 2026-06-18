@@ -21,37 +21,38 @@ let driver;
 const loginPage = () => new LoginPage(driver);
 const homePage  = () => new HomePage(driver);
 
-before(async function () {
-  this.timeout(120000);
-  helpers.ensureDirs();
-  driver = await remote({
-    hostname: config.hostname,
-    port:     config.port,
-    path:     config.path,
-    capabilities: config.capabilities,
-    logLevel: 'warn',
-    connectionRetryTimeout: 120000,
-    connectionRetryCount: 3,
-  });
-
-  // Login once for all navigation tests
-  await loginPage().waitForScreen(20000);
-  await loginPage().enterEmail(TEST_EMAIL);
-  await loginPage().enterPassword(TEST_PASSWORD);
-  await loginPage().tapLogin();
-  await homePage().waitForDashboard(20000);
-});
-
-after(async function () {
-  if (driver) await driver.deleteSession();
-});
-
-afterEach(async function () {
-  // Screenshots are handled inside catch blocks for precise report mapping
-});
-
+// ─── Test Suites ─────────────────────────────────────────────────────────────
 describe('TrackBack Android – Navigation Tests', function () {
   this.timeout(60000);
+
+  before(async function () {
+    this.timeout(120000);
+    helpers.ensureDirs();
+    driver = await remote({
+      hostname: config.hostname,
+      port:     config.port,
+      path:     config.path,
+      capabilities: config.capabilities,
+      logLevel: 'warn',
+      connectionRetryTimeout: 120000,
+      connectionRetryCount: 3,
+    });
+
+    // Login once for all navigation tests
+    await loginPage().waitForScreen(20000);
+    await loginPage().enterEmail(TEST_EMAIL);
+    await loginPage().enterPassword(TEST_PASSWORD);
+    await loginPage().tapLogin();
+    await homePage().waitForDashboard(20000);
+  });
+
+  after(async function () {
+    if (driver) await driver.deleteSession();
+  });
+
+  afterEach(async function () {
+    // Screenshots are handled inside catch blocks for precise report mapping
+  });
 
   it('TC-009 | Lost tab displays items list', async function () {
     const start = Date.now();

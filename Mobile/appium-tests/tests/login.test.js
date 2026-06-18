@@ -29,37 +29,37 @@ let driver;
 const loginPage = () => new LoginPage(driver);
 const homePage  = () => new HomePage(driver);
 
-// ─── Mocha hooks ─────────────────────────────────────────────────────────────
-before(async function () {
-  this.timeout(120000);
-  helpers.ensureDirs();
-  console.log('\n📱 Connecting to Appium server…');
-  driver = await remote({
-    hostname: config.hostname,
-    port: config.port,
-    path: config.path,
-    capabilities: config.capabilities,
-    logLevel: config.logLevel,
-    connectionRetryTimeout: config.connectionRetryTimeout,
-    connectionRetryCount: config.connectionRetryCount,
-  });
-  console.log('✅ Appium driver created. Session ID:', driver.sessionId);
-});
-
-after(async function () {
-  if (driver) {
-    await driver.deleteSession();
-    console.log('\n🔌 Driver session closed.');
-  }
-});
-
-afterEach(async function () {
-  // Screenshots are handled inside catch blocks for precise report mapping
-});
-
 // ─── Test Suites ─────────────────────────────────────────────────────────────
 describe('TrackBack Android – Login & Authentication', function () {
   this.timeout(90000);
+
+  // ─── Mocha hooks ─────────────────────────────────────────────────────────────
+  before(async function () {
+    this.timeout(120000);
+    helpers.ensureDirs();
+    console.log('\n📱 Connecting to Appium server…');
+    driver = await remote({
+      hostname: config.hostname,
+      port: config.port,
+      path: config.path,
+      capabilities: config.capabilities,
+      logLevel: config.logLevel,
+      connectionRetryTimeout: config.connectionRetryTimeout,
+      connectionRetryCount: config.connectionRetryCount,
+    });
+    console.log('✅ Appium driver created. Session ID:', driver.sessionId);
+  });
+
+  after(async function () {
+    if (driver) {
+      await driver.deleteSession();
+      console.log('\n🔌 Driver session closed.');
+    }
+  });
+
+  afterEach(async function () {
+    // Screenshots are handled inside catch blocks for precise report mapping
+  });
 
   // ── TC-001 ────────────────────────────────────────────────────────────────
   it('TC-001 | App launches and shows a screen', async function () {
