@@ -19,8 +19,22 @@ const LoginPage        = require('../pages/LoginPage');
 const HomePage         = require('../pages/HomePage');
 const helpers          = require('../helpers/appiumHelpers');
 
-const TEST_EMAIL    = process.env.TEST_EMAIL    || 'testuser@trackback.com';
-const TEST_PASSWORD = process.env.TEST_PASSWORD || 'TestPass@123';
+const fs = require('fs');
+const path = require('path');
+let TEST_EMAIL    = process.env.TEST_EMAIL    || 'testuser@trackback.com';
+let TEST_PASSWORD = process.env.TEST_PASSWORD || 'TestPass@123';
+
+const credsPath = path.resolve(__dirname, '../../../test-credentials.json');
+if (fs.existsSync(credsPath)) {
+  try {
+    const creds = JSON.parse(fs.readFileSync(credsPath, 'utf8'));
+    TEST_EMAIL = creds.email;
+    TEST_PASSWORD = creds.password;
+    console.log(`🔑 Loaded dynamic test credentials from test-credentials.json: ${TEST_EMAIL}`);
+  } catch (e) {
+    console.warn('⚠️ Failed to load test-credentials.json:', e.message);
+  }
+}
 
 const TIMEOUT = 20000;
 

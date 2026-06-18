@@ -9,8 +9,20 @@ const REPO_OWNER = process.env.REPO_OWNER || 'YOUR_USERNAME';
 const REPO_NAME  = process.env.REPO_NAME  || 'TrackBack-Web-PDD';
 const BASE_URL   = `https://${REPO_OWNER}.github.io/${REPO_NAME}/`;
 
-const TEST_EMAIL    = process.env.TEST_EMAIL    || 'testuser@trackback.com';
-const TEST_PASSWORD = process.env.TEST_PASSWORD || 'TestPass@123';
+let TEST_EMAIL    = process.env.TEST_EMAIL    || 'testuser@trackback.com';
+let TEST_PASSWORD = process.env.TEST_PASSWORD || 'TestPass@123';
+
+const credsPath = path.resolve(__dirname, '../../../test-credentials.json');
+if (fs.existsSync(credsPath)) {
+  try {
+    const creds = JSON.parse(fs.readFileSync(credsPath, 'utf8'));
+    TEST_EMAIL = creds.email;
+    TEST_PASSWORD = creds.password;
+    console.log(`🔑 Loaded dynamic test credentials from test-credentials.json: ${TEST_EMAIL}`);
+  } catch (e) {
+    console.warn('⚠️ Failed to load test-credentials.json:', e.message);
+  }
+}
 
 const TIMEOUT = 20000;
 

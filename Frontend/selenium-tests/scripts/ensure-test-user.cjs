@@ -17,8 +17,20 @@ const auth = getAuth(app);
 const rtdb = getDatabase(app);
 
 const run = async () => {
-  const email = process.env.TEST_EMAIL || 'testuser@trackback.com';
+  const buildNum = process.env.BUILD_NUMBER || process.env.GITHUB_RUN_NUMBER || 'local';
+  const rand = Math.floor(1000 + Math.random() * 9000);
+  
+  // Generate a unique email per build to avoid password/profile collisions from previous runs
+  const rawEmail = process.env.TEST_EMAIL || '';
+  const email = (rawEmail && rawEmail.includes('@') && !rawEmail.includes('testuser@trackback.com'))
+    ? rawEmail
+    : `test_run_${buildNum}_${rand}@trackback.com`;
   const password = process.env.TEST_PASSWORD || 'TestPass@123';
+
+  console.log(`🔑 Debugging credentials (secure format check):`);
+  console.log(`- Email length: ${email ? email.length : 0}`);
+  console.log(`- Email contains @: ${email ? email.includes('@') : false}`);
+  console.log(`- Password length: ${password ? password.length : 0}`);
 
   console.log(`🔑 Ensuring test user exists: ${email}`);
 
@@ -54,6 +66,14 @@ const run = async () => {
     
     await set(profileRef, profileData);
     console.log("✅ Profile successfully seeded and verified!");
+
+    // Save credentials to test-credentials.json in the workspace root
+    const fs = require('fs');
+    const path = require('path');
+    const credsPath = path.resolve(__dirname, '../../../test-credentials.json');
+    fs.writeFileSync(credsPath, JSON.stringify({ email, password }, null, 2), 'utf8');
+    console.log(`💾 Saved credentials to: ${credsPath}`);
+
     process.exit(0);
   } catch (error) {
     console.error("❌ Error seeding test user:", error);
