@@ -4,21 +4,23 @@
 | Field | Value |
 |-------|-------|
 | Build Number | 5 |
-| Execution Date | 2026-06-17 10:57:19 UTC |
+| Execution Date | 2026-06-18 13:33:47 UTC |
 | Branch | main |
-| Commit | 0895133 |
+| Commit | 3f6a3f3 |
 
 ## Test Results
 | Metric | Count |
 |--------|-------|
-| Total Tests | 1 |
-| Passed | 0 |
-| Failed | 1 |
+| Total Tests | 300 |
+| Passed | 297 |
+| Failed | 3 |
 | Skipped | 0 |
-| Pass Rate | 0.0% |
+| Pass Rate | 99.0% |
 
 ## Failed Tests
-- **"before all" hook in "{root}"**: element ("//android.widget.EditText[@hint="Email"]") still not existing after 20000ms
+- **TC-004 Invalid Credentials**: No error message shown for invalid credentials
+- **TC-006 Navigate to Sign Up**: Can't call click on element with selector "//android.widget.Button[@text="Sign Up"]" because element wasn't found
+- **TC-008 Logout**: element ("~avatar-button") still not existing after 20000ms
 
 ## Report URL
 [View Online HTML Report](https://pramithm.github.io/TrackBack-Web-PDD/android-reports/reports/latest/execution-report.html)
