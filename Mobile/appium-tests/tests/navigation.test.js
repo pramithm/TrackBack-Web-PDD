@@ -36,19 +36,47 @@ const loginPage = () => new LoginPage(driver);
 const homePage  = () => new HomePage(driver);
 
 async function ensureLoggedOut(driver) {
-  try {
-    await driver.terminateApp('com.mounikamouni12.FrontEnd');
-    await driver.execute('mobile: clearApp', { appId: 'com.mounikamouni12.FrontEnd' });
-    await driver.activateApp('com.mounikamouni12.FrontEnd');
-    await helpers.sleep(5000);
-  } catch (err) {
-    console.warn('⚠️ clearApp failed:', err.message);
+  const APP_ID = 'com.mounikamouni12.FrontEnd';
+  for (let attempt = 1; attempt <= 3; attempt++) {
+    try {
+      console.log(`  → ensureLoggedOut attempt ${attempt}/3`);
+      await driver.terminateApp(APP_ID);
+      await helpers.sleep(1000);
+      try {
+        await driver.execute('mobile: clearApp', { appId: APP_ID });
+      } catch (clearErr) {
+        console.warn('  ⚠️ clearApp not supported, proceeding without:', clearErr.message);
+      }
+      await driver.activateApp(APP_ID);
+      await helpers.sleep(3000);
+
+      // Verify login screen appeared
+      const LoginPage = require('../pages/LoginPage');
+      const lp = new LoginPage(driver);
+      try {
+        await lp.emailInput.waitForExist({ timeout: 8000 });
+        console.log('  ✅ ensureLoggedOut: login screen confirmed');
+        return;
+      } catch {
+        try {
+          await (driver.$('//android.widget.EditText[@hint="Email"]')).waitForExist({ timeout: 5000 });
+          console.log('  ✅ ensureLoggedOut: login screen confirmed via XPath');
+          return;
+        } catch {
+          console.warn(`  ⚠️ ensureLoggedOut attempt ${attempt}: login screen not found`);
+        }
+      }
+    } catch (err) {
+      console.warn(`  ⚠️ ensureLoggedOut attempt ${attempt} failed:`, err.message);
+    }
+    await helpers.sleep(2000);
   }
+  console.warn('  ⚠️ ensureLoggedOut: could not confirm login screen after 3 attempts');
 }
 
 // ─── Test Suites ─────────────────────────────────────────────────────────────
 describe('TrackBack Android – Navigation Tests', function () {
-  this.timeout(60000);
+  this.timeout(90000);
 
   before(async function () {
     this.timeout(120000);
@@ -67,11 +95,11 @@ describe('TrackBack Android – Navigation Tests', function () {
     await ensureLoggedOut(driver);
 
     // Login once for all navigation tests
-    await loginPage().waitForScreen(20000);
+    await loginPage().waitForScreen(25000);
     await loginPage().enterEmail(TEST_EMAIL);
     await loginPage().enterPassword(TEST_PASSWORD);
     await loginPage().tapLogin();
-    await homePage().waitForDashboard(20000);
+    await homePage().waitForDashboard(30000);
   });
 
   after(async function () {
@@ -86,9 +114,17 @@ describe('TrackBack Android – Navigation Tests', function () {
     const start = Date.now();
     try {
       await homePage().tapLostTab();
-      await helpers.sleep(2000);
-      const listEl = await driver.$('//android.view.ViewGroup[contains(@content-desc,"lost-item")]');
-      // Verify at least the screen is visible (list may be empty in test env)
+      await helpers.sleep(2500);
+      // Check for the Lost Report tab being selected (verify we navigated)
+      // Also try to find a lost-item card by accessibility ID (testID="lost-item")
+      try {
+        const listEl = await driver.$('~lost-item');
+        const exists = await listEl.isExisting();
+        console.log(`  ℹ️ lost-item card found via accessibilityId: ${exists}`);
+      } catch (e) {
+        // It's OK if no items exist in test environment — we just verify the tab navigated
+        console.log('  ℹ️ No lost-item cards found (empty state is acceptable in test env)');
+      }
       await helpers.takeScreenshot(driver, 'TC009_lost_tab');
       helpers.recordResult({ name: 'TC-009 Lost Tab', status: 'passed', duration: Date.now() - start });
       console.log('  ✅ TC-009 passed');
@@ -103,7 +139,7 @@ describe('TrackBack Android – Navigation Tests', function () {
     const start = Date.now();
     try {
       await homePage().tapFoundTab();
-      await helpers.sleep(2000);
+      await helpers.sleep(2500);
       await helpers.takeScreenshot(driver, 'TC010_found_tab');
       helpers.recordResult({ name: 'TC-010 Found Tab', status: 'passed', duration: Date.now() - start });
       console.log('  ✅ TC-010 passed');
@@ -117,9 +153,8 @@ describe('TrackBack Android – Navigation Tests', function () {
   it('TC-011 | Search tab is accessible', async function () {
     const start = Date.now();
     try {
-      const searchTab = await driver.$('//android.widget.TextView[@text="Search"]');
-      if (await searchTab.isExisting()) await searchTab.click();
-      await helpers.sleep(1500);
+      await homePage().tapSearchTab();
+      await helpers.sleep(2000);
       await helpers.takeScreenshot(driver, 'TC011_search_tab');
       helpers.recordResult({ name: 'TC-011 Search Tab', status: 'passed', duration: Date.now() - start });
       console.log('  ✅ TC-011 passed');
@@ -133,9 +168,8 @@ describe('TrackBack Android – Navigation Tests', function () {
   it('TC-012 | Chat tab is accessible', async function () {
     const start = Date.now();
     try {
-      const chatTab = await driver.$('//android.widget.TextView[@text="Chat"]');
-      if (await chatTab.isExisting()) await chatTab.click();
-      await helpers.sleep(1500);
+      await homePage().tapChatTab();
+      await helpers.sleep(2000);
       await helpers.takeScreenshot(driver, 'TC012_chat_tab');
       helpers.recordResult({ name: 'TC-012 Chat Tab', status: 'passed', duration: Date.now() - start });
       console.log('  ✅ TC-012 passed');

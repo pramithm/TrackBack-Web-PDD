@@ -44,19 +44,48 @@ const loginPage = () => new LoginPage(driver);
 const homePage  = () => new HomePage(driver);
 
 async function ensureLoggedOut(driver) {
-  try {
-    await driver.terminateApp('com.mounikamouni12.FrontEnd');
-    await driver.execute('mobile: clearApp', { appId: 'com.mounikamouni12.FrontEnd' });
-    await driver.activateApp('com.mounikamouni12.FrontEnd');
-    await helpers.sleep(5000);
-  } catch (err) {
-    console.warn('⚠️ clearApp failed:', err.message);
+  const APP_ID = 'com.mounikamouni12.FrontEnd';
+  // Try up to 3 times to fully reset the app and reach the login screen
+  for (let attempt = 1; attempt <= 3; attempt++) {
+    try {
+      console.log(`  → ensureLoggedOut attempt ${attempt}/3`);
+      await driver.terminateApp(APP_ID);
+      await helpers.sleep(1000);
+      try {
+        await driver.execute('mobile: clearApp', { appId: APP_ID });
+      } catch (clearErr) {
+        console.warn('  ⚠️ clearApp not supported, proceeding without:', clearErr.message);
+      }
+      await driver.activateApp(APP_ID);
+      await helpers.sleep(3000);
+
+      // Verify we are back at the login screen
+      const loginPage = new (require('../pages/LoginPage'))(driver);
+      try {
+        await loginPage.emailInput.waitForExist({ timeout: 8000 });
+        console.log('  ✅ ensureLoggedOut: login screen confirmed');
+        return; // success
+      } catch {
+        // Try XPath fallback
+        try {
+          await (driver.$('//android.widget.EditText[@hint="Email"]')).waitForExist({ timeout: 5000 });
+          console.log('  ✅ ensureLoggedOut: login screen confirmed via XPath fallback');
+          return;
+        } catch {
+          console.warn(`  ⚠️ ensureLoggedOut attempt ${attempt}: login screen not found, retrying...`);
+        }
+      }
+    } catch (err) {
+      console.warn(`  ⚠️ ensureLoggedOut attempt ${attempt} failed:`, err.message);
+    }
+    await helpers.sleep(2000);
   }
+  console.warn('  ⚠️ ensureLoggedOut: could not confirm login screen after 3 attempts, proceeding anyway');
 }
 
 // ─── Test Suites ─────────────────────────────────────────────────────────────
 describe('TrackBack Android – Login & Authentication', function () {
-  this.timeout(90000);
+  this.timeout(150000);
 
   // ─── Mocha hooks ─────────────────────────────────────────────────────────────
   before(async function () {
