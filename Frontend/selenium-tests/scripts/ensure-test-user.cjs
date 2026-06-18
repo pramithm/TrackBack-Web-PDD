@@ -20,35 +20,44 @@ const run = async () => {
   const buildNum = process.env.BUILD_NUMBER || process.env.GITHUB_RUN_NUMBER || 'local';
   const rand = Math.floor(1000 + Math.random() * 9000);
   
-  // Generate a unique email per build to avoid password/profile collisions from previous runs
-  const rawEmail = process.env.TEST_EMAIL || '';
+  // Retrieve raw credentials and trim whitespaces
+  const rawEmail = (process.env.TEST_EMAIL || '').trim();
+  const rawPassword = (process.env.TEST_PASSWORD || '').trim();
+  
+  // Enforce fallbacks for empty or invalid values
   const email = (rawEmail && rawEmail.includes('@') && !rawEmail.includes('testuser@trackback.com'))
     ? rawEmail
     : `test_run_${buildNum}_${rand}@trackback.com`;
-  const password = process.env.TEST_PASSWORD || 'TestPass@123';
+  const password = rawPassword.length >= 6 ? rawPassword : 'TestPass@123';
 
   console.log(`🔑 Debugging credentials (secure format check):`);
   console.log(`- Email length: ${email ? email.length : 0}`);
   console.log(`- Email contains @: ${email ? email.includes('@') : false}`);
   console.log(`- Password length: ${password ? password.length : 0}`);
+  console.log(`- Email contains whitespace/newlines: ${/\s/.test(email)}`);
+  console.log(`- Password contains whitespace/newlines: ${/\s/.test(password)}`);
 
   console.log(`🔑 Ensuring test user exists: ${email}`);
 
   try {
     let user;
     try {
-      // Try to create the user first
-      const cred = await createUserWithEmailAndPassword(auth, email, password);
+      // Try to sign in first (in case user already exists)
+      const cred = await signInWithEmailAndPassword(auth, email, password);
       user = cred.user;
-      console.log(`👤 Created new test user in Firebase Auth. UID: ${user.uid}`);
-    } catch (err) {
-      if (err.code === 'auth/email-already-in-use') {
-        // User already exists, sign in to retrieve their UID
-        const cred = await signInWithEmailAndPassword(auth, email, password);
+      console.log(`👤 Signed in existing test user. UID: ${user.uid}`);
+    } catch (signInErr) {
+      console.log(`⚠️ Sign-in failed (possibly user does not exist). Attempting sign-up...`);
+      try {
+        // If sign-in fails, try to create the user
+        const cred = await createUserWithEmailAndPassword(auth, email, password);
         user = cred.user;
-        console.log(`👤 Test user already exists. Signed in successfully. UID: ${user.uid}`);
-      } else {
-        throw err;
+        console.log(`👤 Successfully registered new test user. UID: ${user.uid}`);
+      } catch (signUpErr) {
+        console.error(`❌ Both sign-in and sign-up failed.`);
+        console.error(`Sign-in error:`, signInErr.message);
+        console.error(`Sign-up error:`, signUpErr.message);
+        throw signUpErr;
       }
     }
 
