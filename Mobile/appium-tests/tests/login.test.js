@@ -50,29 +50,36 @@ async function ensureLoggedOut(driver) {
     try {
       console.log(`  → ensureLoggedOut attempt ${attempt}/3`);
       await driver.terminateApp(APP_ID);
-      await helpers.sleep(1000);
+      await helpers.sleep(1500);
       try {
         await driver.execute('mobile: clearApp', { appId: APP_ID });
       } catch (clearErr) {
         console.warn('  ⚠️ clearApp not supported, proceeding without:', clearErr.message);
       }
       await driver.activateApp(APP_ID);
-      await helpers.sleep(3000);
 
-      // Verify we are back at the login screen
-      const loginPage = new (require('../pages/LoginPage'))(driver);
+      // After clearApp the app launches as a fresh install → onboarding screen appears.
+      // Give the RN bundle time to hydrate, then run bypassOnboarding() which handles
+      // the welcome + walkthrough flow and lands us on the login screen.
+      await helpers.sleep(5000);
+      const LoginPage = require('../pages/LoginPage');
+      const lp = new LoginPage(driver);
+      console.log('  🔍 Running onboarding bypass after clearApp...');
+      await lp.bypassOnboarding();
+
+      // Now verify we are on the login screen
       try {
-        await loginPage.emailInput.waitForExist({ timeout: 8000 });
-        console.log('  ✅ ensureLoggedOut: login screen confirmed');
+        await lp.emailInput.waitForExist({ timeout: 10000 });
+        console.log('  ✅ ensureLoggedOut: login screen confirmed via accessibilityId');
         return; // success
       } catch {
-        // Try XPath fallback
+        // XPath fallback
         try {
-          await (driver.$('//android.widget.EditText[@hint="Email"]')).waitForExist({ timeout: 5000 });
-          console.log('  ✅ ensureLoggedOut: login screen confirmed via XPath fallback');
+          await driver.$('//android.widget.EditText[@hint="Email"]').waitForExist({ timeout: 8000 });
+          console.log('  ✅ ensureLoggedOut: login screen confirmed via XPath');
           return;
         } catch {
-          console.warn(`  ⚠️ ensureLoggedOut attempt ${attempt}: login screen not found, retrying...`);
+          console.warn(`  ⚠️ ensureLoggedOut attempt ${attempt}: login screen not found after onboarding bypass`);
         }
       }
     } catch (err) {

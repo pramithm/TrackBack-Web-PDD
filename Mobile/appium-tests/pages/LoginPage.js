@@ -24,22 +24,27 @@ class LoginPage {
 
   // ─── Actions ──────────────────────────────────────────────────────────────
   async bypassOnboarding() {
+    // After a cold start (e.g. clearApp), the RN bundle needs extra time to hydrate.
+    // Use generous timeouts and inter-step sleeps so navigation animations complete.
     try {
       console.log('🔍 Checking if Welcome onboarding is visible...');
       const welcomeBtn = await this.driver.$('~welcome-get-started-btn');
-      if (await welcomeBtn.waitForExist({ timeout: 4000 })) {
+      if (await welcomeBtn.waitForExist({ timeout: 12000 })) {
         console.log('👉 Found Welcome Screen. Tapping "Get Started"...');
         await welcomeBtn.click();
-        
+        await this.driver.pause(2500); // wait for walkthrough navigation
+
         const skipBtn = await this.driver.$('~walkthrough-skip-btn');
-        if (await skipBtn.waitForExist({ timeout: 4000 })) {
+        if (await skipBtn.waitForExist({ timeout: 10000 })) {
           console.log('👉 Found Walkthrough Screen. Tapping "Skip"...');
           await skipBtn.click();
-          
+          await this.driver.pause(2000); // wait for final step to render
+
           const loginBtn = await this.driver.$('~walkthrough-login-btn');
-          if (await loginBtn.waitForExist({ timeout: 4000 })) {
+          if (await loginBtn.waitForExist({ timeout: 10000 })) {
             console.log('👉 Tapping "Log In" on walkthrough end...');
             await loginBtn.click();
+            await this.driver.pause(2500); // wait for login screen to render
           }
         }
       }

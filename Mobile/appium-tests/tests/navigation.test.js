@@ -41,29 +41,34 @@ async function ensureLoggedOut(driver) {
     try {
       console.log(`  → ensureLoggedOut attempt ${attempt}/3`);
       await driver.terminateApp(APP_ID);
-      await helpers.sleep(1000);
+      await helpers.sleep(1500);
       try {
         await driver.execute('mobile: clearApp', { appId: APP_ID });
       } catch (clearErr) {
         console.warn('  ⚠️ clearApp not supported, proceeding without:', clearErr.message);
       }
       await driver.activateApp(APP_ID);
-      await helpers.sleep(3000);
 
-      // Verify login screen appeared
+      // After clearApp the app launches as a fresh install → onboarding screen appears.
+      // bypassOnboarding() handles the welcome + walkthrough flow and lands on login screen.
+      await helpers.sleep(5000);
       const LoginPage = require('../pages/LoginPage');
       const lp = new LoginPage(driver);
+      console.log('  🔍 Running onboarding bypass after clearApp...');
+      await lp.bypassOnboarding();
+
+      // Verify login screen appeared
       try {
-        await lp.emailInput.waitForExist({ timeout: 8000 });
-        console.log('  ✅ ensureLoggedOut: login screen confirmed');
+        await lp.emailInput.waitForExist({ timeout: 10000 });
+        console.log('  ✅ ensureLoggedOut: login screen confirmed via accessibilityId');
         return;
       } catch {
         try {
-          await (driver.$('//android.widget.EditText[@hint="Email"]')).waitForExist({ timeout: 5000 });
+          await driver.$('//android.widget.EditText[@hint="Email"]').waitForExist({ timeout: 8000 });
           console.log('  ✅ ensureLoggedOut: login screen confirmed via XPath');
           return;
         } catch {
-          console.warn(`  ⚠️ ensureLoggedOut attempt ${attempt}: login screen not found`);
+          console.warn(`  ⚠️ ensureLoggedOut attempt ${attempt}: login screen not found after onboarding bypass`);
         }
       }
     } catch (err) {
