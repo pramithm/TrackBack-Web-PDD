@@ -1,0 +1,98 @@
+[
+  {
+    "name": "TC-001 App Launch",
+    "status": "passed",
+    "duration": 5799,
+    "error": null,
+    "screenshotPath": null,
+    "timestamp": "2026-06-18T14:28:22.503Z"
+  },
+  {
+    "name": "TC-002 Login Screen",
+    "status": "passed",
+    "duration": 8281,
+    "error": null,
+    "screenshotPath": null,
+    "timestamp": "2026-06-18T14:28:30.785Z"
+  },
+  {
+    "name": "TC-003 Valid Login",
+    "status": "passed",
+    "duration": 37347,
+    "error": null,
+    "screenshotPath": null,
+    "timestamp": "2026-06-18T14:29:08.134Z"
+  },
+  {
+    "name": "TC-004 Invalid Credentials",
+    "status": "failed",
+    "duration": 61370,
+    "error": "No error message shown for invalid credentials",
+    "screenshotPath": "Screenshots/FAIL_TC004_invalid_credentials_2026-06-18T14-30-09-322Z.png",
+    "timestamp": "2026-06-18T14:30:09.504Z"
+  },
+  {
+    "name": "TC-005 Empty Form Validation",
+    "status": "passed",
+    "duration": 29229,
+    "error": null,
+    "screenshotPath": null,
+    "timestamp": "2026-06-18T14:30:38.734Z"
+  },
+  {
+    "name": "TC-006 Navigate to Sign Up",
+    "status": "failed",
+    "duration": 31782,
+    "error": "Can't call click on element with selector \"//android.widget.Button[@text=\"Sign Up\"]\" because element wasn't found",
+    "screenshotPath": "Screenshots/FAIL_TC006_signup_2026-06-18T14-31-10-397Z.png",
+    "timestamp": "2026-06-18T14:31:10.516Z"
+  },
+  {
+    "name": "TC-007 Dashboard Tabs",
+    "status": "passed",
+    "duration": 52839,
+    "error": null,
+    "screenshotPath": null,
+    "timestamp": "2026-06-18T14:32:03.357Z"
+  },
+  {
+    "name": "TC-008 Logout",
+    "status": "failed",
+    "duration": 20243,
+    "error": "element (\"~avatar-button\") still not existing after 20000ms",
+    "screenshotPath": "Screenshots/FAIL_TC008_logout_2026-06-18T14-32-23-406Z.png",
+    "timestamp": "2026-06-18T14:32:23.600Z"
+  },
+  {
+    "name": "TC-009 Lost Tab",
+    "status": "passed",
+    "duration": 3090,
+    "error": null,
+    "screenshotPath": null,
+    "timestamp": "2026-06-18T14:33:37.009Z"
+  },
+  {
+    "name": "TC-010 Found Tab",
+    "status": "passed",
+    "duration": 2847,
+    "error": null,
+    "screenshotPath": null,
+    "timestamp": "2026-06-18T14:33:39.857Z"
+  },
+  {
+    "name": "TC-011 Search Tab",
+    "status": "passed",
+    "duration": 2342,
+    "error": null,
+    "screenshotPath": null,
+    "timestamp": "2026-06-18T14:33:42.200Z"
+  },
+  {
+    "name": "TC-012 Chat Tab",
+    "status": "passed",
+    "duration": 2349,
+    "error": null,
+    "screenshotPath": null,
+    "timestamp": "2026-06-18T14:33:44.550Z"
+  }
+]

@@ -1,0 +1,37 @@
+[
+  {
+    "name": "should load the TrackBack landing page",
+    "status": "passed",
+    "duration": 107,
+    "error": null,
+    "screenshotPath": null
+  },
+  {
+    "name": "should navigate to the login form",
+    "status": "passed",
+    "duration": 168,
+    "error": null,
+    "screenshotPath": null
+  },
+  {
+    "name": "should login with valid credentials and reach the dashboard",
+    "status": "passed",
+    "duration": 4110,
+    "error": null,
+    "screenshotPath": null
+  },
+  {
+    "name": "should reject invalid credentials with an error message",
+    "status": "passed",
+    "duration": 542,
+    "error": null,
+    "screenshotPath": null
+  },
+  {
+    "name": "should open the sign-up form from landing",
+    "status": "passed",
+    "duration": 130,
+    "error": null,
+    "screenshotPath": null
+  }
+]
