@@ -1,0 +1,271 @@
+2026-06-18 07:20:01:498 [HTTP] --> GET /status {}
+2026-06-18 07:20:01:508 [HTTP] <-- GET /status 200 9 ms - 110 
+2026-06-18 07:20:02:510 [HTTP] --> POST /session {"capabilities":{"alwaysMatch":{"platformName":"Android","appium:automationName":"UiAutomator2","appium:deviceName":"TrackBack_AVD","appium:app":"/home/runner/work/TrackBack-Web-PDD/TrackBack-Web-PDD/Mobile/appium-tests/apk/app-debug.apk","appium:appPackage":"com.mounikamouni12.FrontEnd","appium:appActivity":"com.mounikamouni12.FrontEnd.MainActivity","appium:noReset":false,"appium:fullReset":false,"appium:newCommandTimeout":300,"appium:autoGrantPermissions":true,"appium:skipUnlock":true,"appium:uiautomator2ServerInstallTimeout":60000,"appium:androidInstallTimeout":90000},"firstMatch":[{}]},"desiredCapabilities":{"platformName":"Android","appium:automationName":"UiAutomator2","appium:deviceName":"TrackBack_AVD","appium:app":"/home/runner/work/TrackBack-Web-PDD/TrackBack-Web-PDD/Mobile/appium-tests/apk/app-debug.apk","appium:appPackage":"com.mounikamouni12.FrontEnd","appium:appActivity":"com.mounikamouni12.FrontEnd.MainActivity","appium:noReset":false,"appium:fullReset":false,"appium:newCommandTimeout":300,"...
+2026-06-18 07:20:02:517 [AppiumDriver@c01c] Appium v2.5.4 creating new AndroidUiautomator2Driver (v3.5.1) session
+2026-06-18 07:20:02:517 [AppiumDriver@c01c] Checking BaseDriver versions for Appium and AndroidUiautomator2Driver
+2026-06-18 07:20:02:518 [AppiumDriver@c01c] Appium's BaseDriver version is 9.18.0
+2026-06-18 07:20:02:518 [AppiumDriver@c01c] AndroidUiautomator2Driver's BaseDriver version is 9.18.0
+2026-06-18 07:20:02:531 [AndroidUiautomator2Driver@3fb5] Session created with session id: 24b0bb7d-6b8d-49ce-b36f-0be18b15194d
+2026-06-18 07:20:02:544 [ADB] Found 6 'build-tools' folders under '/usr/local/lib/android/sdk' (newest first):
+2026-06-18 07:20:02:544 [ADB]     /usr/local/lib/android/sdk/build-tools/37.0.0
+2026-06-18 07:20:02:544 [ADB]     /usr/local/lib/android/sdk/build-tools/36.1.0
+2026-06-18 07:20:02:544 [ADB]     /usr/local/lib/android/sdk/build-tools/36.0.0
+2026-06-18 07:20:02:545 [ADB]     /usr/local/lib/android/sdk/build-tools/35.0.1
+2026-06-18 07:20:02:545 [ADB]     /usr/local/lib/android/sdk/build-tools/35.0.0
+2026-06-18 07:20:02:545 [ADB]     /usr/local/lib/android/sdk/build-tools/34.0.0
+2026-06-18 07:20:02:546 [ADB] Using 'adb' from '/usr/local/lib/android/sdk/platform-tools/adb'
+2026-06-18 07:20:02:554 [AndroidUiautomator2Driver@3fb5] Retrieving device list
+2026-06-18 07:20:02:562 [AndroidUiautomator2Driver@3fb5] Using device: emulator-5554
+2026-06-18 07:20:02:563 [ADB] Using 'adb' from '/usr/local/lib/android/sdk/platform-tools/adb'
+2026-06-18 07:20:02:571 [BaseDriver] Using local app '/home/runner/work/TrackBack-Web-PDD/TrackBack-Web-PDD/Mobile/appium-tests/apk/app-debug.apk'
+2026-06-18 07:20:03:089 [ADB] Getting device platform version
+2026-06-18 07:20:03:226 [AndroidUiautomator2Driver@3fb5] Relaxing hidden api policy
+2026-06-18 07:20:03:496 [ADB] The application at '/home/runner/.appium/node_modules/appium-uiautomator2-driver/node_modules/io.appium.settings/apks/settings_apk-debug.apk' will not be cached, because the device under test has confirmed the support of streamed installs
+2026-06-18 07:20:05:968 [ADB] The installation of 'settings_apk-debug.apk' took 2471ms
+2026-06-18 07:20:08:508 [AndroidUiautomator2Driver@3fb5] Server packages are going to be (re)installed
+2026-06-18 07:20:08:529 [ADB] The application at '/home/runner/.appium/node_modules/appium-uiautomator2-driver/node_modules/appium-uiautomator2-server/apks/appium-uiautomator2-server-v7.0.7.apk' will not be cached, because the device under test has confirmed the support of streamed installs
+2026-06-18 07:20:08:537 [ADB] The application at '/home/runner/.appium/node_modules/appium-uiautomator2-driver/node_modules/appium-uiautomator2-server/apks/appium-uiautomator2-server-debug-androidTest.apk' will not be cached, because the device under test has confirmed the support of streamed installs
+2026-06-18 07:20:08:575 [ADB] Using 'apksigner.jar' from '/usr/local/lib/android/sdk/build-tools/37.0.0/lib/apksigner.jar'
+2026-06-18 07:20:09:653 [ADB] '/home/runner/work/TrackBack-Web-PDD/TrackBack-Web-PDD/Mobile/appium-tests/apk/app-debug.apk' is signed with a non-default certificate
+2026-06-18 07:20:09:886 [ADB] The application at '/home/runner/work/TrackBack-Web-PDD/TrackBack-Web-PDD/Mobile/appium-tests/apk/app-debug.apk' will not be cached, because the device under test has confirmed the support of streamed installs
+2026-06-18 07:20:09:979 [ADB] The installation of 'appium-uiautomator2-server-debug-androidTest.apk' took 1441ms
+2026-06-18 07:20:11:598 [ADB] The installation of 'appium-uiautomator2-server-v7.0.7.apk' took 3069ms
+2026-06-18 07:20:11:918 [ADB] Adding packages ["io.appium.settings","io.appium.uiautomator2.server","io.appium.uiautomator2.server.test"] to Doze whitelist
+2026-06-18 07:20:16:313 [ADB] The installation of 'app-debug.apk' took 6426ms
+2026-06-18 07:20:16:630 [AndroidUiautomator2Driver@3fb5] Starting UIAutomator2 server 7.0.7
+2026-06-18 07:20:16:630 [AndroidUiautomator2Driver@3fb5] Using UIAutomator2 server from '/home/runner/.appium/node_modules/appium-uiautomator2-driver/node_modules/appium-uiautomator2-server/apks/appium-uiautomator2-server-v7.0.7.apk' and test from '/home/runner/.appium/node_modules/appium-uiautomator2-driver/node_modules/appium-uiautomator2-server/apks/appium-uiautomator2-server-debug-androidTest.apk'
+2026-06-18 07:20:16:630 [AndroidUiautomator2Driver@3fb5] Waiting up to 30000ms for UiAutomator2 to be online...
+2026-06-18 07:20:16:773 [AndroidUiautomator2Driver@3fb5] socket hang up
+2026-06-18 07:20:17:780 [AndroidUiautomator2Driver@3fb5] socket hang up
+2026-06-18 07:20:18:795 [AndroidUiautomator2Driver@3fb5] socket hang up
+2026-06-18 07:20:19:806 [AndroidUiautomator2Driver@3fb5] socket hang up
+2026-06-18 07:20:20:814 [AndroidUiautomator2Driver@3fb5] socket hang up
+2026-06-18 07:20:21:820 [AndroidUiautomator2Driver@3fb5] socket hang up
+2026-06-18 07:20:23:088 [AndroidUiautomator2Driver@3fb5] Determined the downstream protocol as 'W3C'
+2026-06-18 07:20:23:136 [AndroidUiautomator2Driver@3fb5] Starting 'com.mounikamouni12.FrontEnd/com.mounikamouni12.FrontEnd.MainActivity and waiting for 'com.mounikamouni12.FrontEnd/com.mounikamouni12.FrontEnd.MainActivity'
+2026-06-18 07:20:33:888 [AppiumDriver@c01c] New AndroidUiautomator2Driver session created successfully, session 24b0bb7d-6b8d-49ce-b36f-0be18b15194d added to master session list
+2026-06-18 07:20:33:892 [HTTP] <-- POST /session 200 31381 ms - 1505 
+2026-06-18 07:20:33:914 [HTTP] --> POST /session {"capabilities":{"alwaysMatch":{"platformName":"Android","appium:automationName":"UiAutomator2","appium:deviceName":"TrackBack_AVD","appium:app":"/home/runner/work/TrackBack-Web-PDD/TrackBack-Web-PDD/Mobile/appium-tests/apk/app-debug.apk","appium:appPackage":"com.mounikamouni12.FrontEnd","appium:appActivity":"com.mounikamouni12.FrontEnd.MainActivity","appium:noReset":false,"appium:fullReset":false,"appium:newCommandTimeout":300,"appium:autoGrantPermissions":true,"appium:skipUnlock":true,"appium:uiautomator2ServerInstallTimeout":60000,"appium:androidInstallTimeout":90000},"firstMatch":[{}]},"desiredCapabilities":{"platformName":"Android","appium:automationName":"UiAutomator2","appium:deviceName":"TrackBack_AVD","appium:app":"/home/runner/work/TrackBack-Web-PDD/TrackBack-Web-PDD/Mobile/appium-tests/apk/app-debug.apk","appium:appPackage":"com.mounikamouni12.FrontEnd","appium:appActivity":"com.mounikamouni12.FrontEnd.MainActivity","appium:noReset":false,"appium:fullReset":false,"appium:newCommandTimeout":300,"...
+2026-06-18 07:20:33:920 [AppiumDriver@c01c] Appium v2.5.4 creating new AndroidUiautomator2Driver (v3.5.1) session
+2026-06-18 07:20:33:921 [AppiumDriver@c01c] Checking BaseDriver versions for Appium and AndroidUiautomator2Driver
+2026-06-18 07:20:33:921 [AppiumDriver@c01c] Appium's BaseDriver version is 9.18.0
+2026-06-18 07:20:33:921 [AppiumDriver@c01c] AndroidUiautomator2Driver's BaseDriver version is 9.18.0
+2026-06-18 07:20:33:931 [AndroidUiautomator2Driver@dfa1] Session created with session id: 801cc1c5-cf5e-4ecb-bb5c-d060cbfff5f6
+2026-06-18 07:20:33:932 [ADB] Using 'adb' from '/usr/local/lib/android/sdk/platform-tools/adb'
+2026-06-18 07:20:33:938 [AndroidUiautomator2Driver@dfa1] Retrieving device list
+2026-06-18 07:20:33:944 [AndroidUiautomator2Driver@dfa1] Using device: emulator-5554
+2026-06-18 07:20:33:945 [ADB] Using 'adb' from '/usr/local/lib/android/sdk/platform-tools/adb'
+2026-06-18 07:20:33:951 [BaseDriver] Using local app '/home/runner/work/TrackBack-Web-PDD/TrackBack-Web-PDD/Mobile/appium-tests/apk/app-debug.apk'
+2026-06-18 07:20:34:604 [ADB] Getting device platform version
+2026-06-18 07:20:34:648 [AndroidUiautomator2Driver@dfa1] Relaxing hidden api policy
+2026-06-18 07:20:35:996 [AndroidUiautomator2Driver@dfa1] Server packages are not going to be (re)installed
+2026-06-18 07:20:36:075 [AndroidUiautomator2Driver@dfa1] Performing fast reset on 'com.mounikamouni12.FrontEnd'
+2026-06-18 07:20:36:233 [ADB] Adding packages ["io.appium.settings","io.appium.uiautomator2.server","io.appium.uiautomator2.server.test"] to Doze whitelist
+2026-06-18 07:20:39:152 [AndroidUiautomator2Driver@dfa1] Starting UIAutomator2 server 7.0.7
+2026-06-18 07:20:39:152 [AndroidUiautomator2Driver@dfa1] Using UIAutomator2 server from '/home/runner/.appium/node_modules/appium-uiautomator2-driver/node_modules/appium-uiautomator2-server/apks/appium-uiautomator2-server-v7.0.7.apk' and test from '/home/runner/.appium/node_modules/appium-uiautomator2-driver/node_modules/appium-uiautomator2-server/apks/appium-uiautomator2-server-debug-androidTest.apk'
+2026-06-18 07:20:39:152 [AndroidUiautomator2Driver@dfa1] Waiting up to 30000ms for UiAutomator2 to be online...
+2026-06-18 07:20:39:180 [AndroidUiautomator2Driver@dfa1] socket hang up
+2026-06-18 07:20:40:187 [AndroidUiautomator2Driver@dfa1] socket hang up
+2026-06-18 07:20:41:193 [AndroidUiautomator2Driver@dfa1] socket hang up
+2026-06-18 07:20:42:199 [AndroidUiautomator2Driver@dfa1] socket hang up
+2026-06-18 07:20:43:392 [AndroidUiautomator2Driver@dfa1] Determined the downstream protocol as 'W3C'
+2026-06-18 07:20:43:395 [AndroidUiautomator2Driver@dfa1] Starting 'com.mounikamouni12.FrontEnd/com.mounikamouni12.FrontEnd.MainActivity and waiting for 'com.mounikamouni12.FrontEnd/com.mounikamouni12.FrontEnd.MainActivity'
+2026-06-18 07:20:53:859 [AppiumDriver@c01c] New AndroidUiautomator2Driver session created successfully, session 801cc1c5-cf5e-4ecb-bb5c-d060cbfff5f6 added to master session list
+2026-06-18 07:20:53:864 [HTTP] <-- POST /session 200 19949 ms - 1505 
+2026-06-18 07:20:53:882 [HTTP] --> POST /session/801cc1c5-cf5e-4ecb-bb5c-d060cbfff5f6/element {"using":"accessibility id","value":"welcome-get-started-btn"}
+2026-06-18 07:20:53:953 [AndroidUiautomator2Driver@dfa1] Got response with status 404: {"sessionId":"eb357486-4fe7-4ee1-adc8-8df99c578d46","value":{"error":"no such element","message":"An element could not be located on the page using the given search parameters","stacktrace":"io.appium.uiautomator2.common.exceptions.ElementNotFoundException: An element could not be located on the page using the given search parameters\n\tat io.appium.uiautomator2.handler.FindElement.safeHandle(FindElement.java:63)\n\tat io.appium.uiautomator2.handler.request.SafeRequestHandler.handle(SafeRequestHandler.java:59)\n\tat io.appium.uiautomator2.server.AppiumServlet.handleRequest(AppiumServlet.java:259)\n\tat io.appium.uiautomator2.server.AppiumServlet.handleHttpRequest(AppiumServlet.java:253)\n\tat io.appium.uiautomator2.http.ServerHandler.channelRead(ServerHandler.java:77)\n\tat io.netty.channel.AbstractChannelHandlerContext.invokeChannelRead(AbstractChannelHandlerContext.java:366)\n\tat io.netty.channel.AbstractChannelHandlerContext.invokeChannelRead(AbstractChannelHandlerContext.java:352)\n\tat io.netty.chann...
+2026-06-18 07:20:53:962 [HTTP] <-- POST /session/801cc1c5-cf5e-4ecb-bb5c-d060cbfff5f6/element 404 74 ms - 865 
+2026-06-18 07:20:53:976 [HTTP] --> POST /session/801cc1c5-cf5e-4ecb-bb5c-d060cbfff5f6/elements {"using":"accessibility id","value":"welcome-get-started-btn"}
+2026-06-18 07:20:54:025 [HTTP] <-- POST /session/801cc1c5-cf5e-4ecb-bb5c-d060cbfff5f6/elements 200 48 ms - 12 
+2026-06-18 07:20:54:476 [HTTP] --> POST /session/801cc1c5-cf5e-4ecb-bb5c-d060cbfff5f6/elements {"using":"accessibility id","value":"welcome-get-started-btn"}
+2026-06-18 07:20:54:501 [HTTP] <-- POST /session/801cc1c5-cf5e-4ecb-bb5c-d060cbfff5f6/elements 200 25 ms - 12 
+2026-06-18 07:20:54:977 [HTTP] --> POST /session/801cc1c5-cf5e-4ecb-bb5c-d060cbfff5f6/elements {"using":"accessibility id","value":"welcome-get-started-btn"}
+2026-06-18 07:20:54:998 [HTTP] <-- POST /session/801cc1c5-cf5e-4ecb-bb5c-d060cbfff5f6/elements 200 22 ms - 12 
+2026-06-18 07:20:55:477 [HTTP] --> POST /session/801cc1c5-cf5e-4ecb-bb5c-d060cbfff5f6/elements {"using":"accessibility id","value":"welcome-get-started-btn"}
+2026-06-18 07:20:55:499 [HTTP] <-- POST /session/801cc1c5-cf5e-4ecb-bb5c-d060cbfff5f6/elements 200 18 ms - 12 
+2026-06-18 07:20:55:975 [HTTP] --> POST /session/801cc1c5-cf5e-4ecb-bb5c-d060cbfff5f6/elements {"using":"accessibility id","value":"welcome-get-started-btn"}
+2026-06-18 07:20:55:997 [HTTP] <-- POST /session/801cc1c5-cf5e-4ecb-bb5c-d060cbfff5f6/elements 200 21 ms - 12 
+2026-06-18 07:20:56:478 [HTTP] --> POST /session/801cc1c5-cf5e-4ecb-bb5c-d060cbfff5f6/elements {"using":"accessibility id","value":"welcome-get-started-btn"}
+2026-06-18 07:20:56:515 [HTTP] <-- POST /session/801cc1c5-cf5e-4ecb-bb5c-d060cbfff5f6/elements 200 37 ms - 12 
+2026-06-18 07:20:56:977 [HTTP] --> POST /session/801cc1c5-cf5e-4ecb-bb5c-d060cbfff5f6/elements {"using":"accessibility id","value":"welcome-get-started-btn"}
+2026-06-18 07:20:57:022 [HTTP] <-- POST /session/801cc1c5-cf5e-4ecb-bb5c-d060cbfff5f6/elements 200 42 ms - 12 
+2026-06-18 07:20:57:477 [HTTP] --> POST /session/801cc1c5-cf5e-4ecb-bb5c-d060cbfff5f6/elements {"using":"accessibility id","value":"welcome-get-started-btn"}
+2026-06-18 07:20:57:515 [HTTP] <-- POST /session/801cc1c5-cf5e-4ecb-bb5c-d060cbfff5f6/elements 200 38 ms - 12 
+2026-06-18 07:20:57:976 [HTTP] --> POST /session/801cc1c5-cf5e-4ecb-bb5c-d060cbfff5f6/element {"using":"accessibility id","value":"email-input"}
+2026-06-18 07:20:58:015 [AndroidUiautomator2Driver@dfa1] Got response with status 404: {"sessionId":"eb357486-4fe7-4ee1-adc8-8df99c578d46","value":{"error":"no such element","message":"An element could not be located on the page using the given search parameters","stacktrace":"io.appium.uiautomator2.common.exceptions.ElementNotFoundException: An element could not be located on the page using the given search parameters\n\tat io.appium.uiautomator2.handler.FindElement.safeHandle(FindElement.java:63)\n\tat io.appium.uiautomator2.handler.request.SafeRequestHandler.handle(SafeRequestHandler.java:59)\n\tat io.appium.uiautomator2.server.AppiumServlet.handleRequest(AppiumServlet.java:259)\n\tat io.appium.uiautomator2.server.AppiumServlet.handleHttpRequest(AppiumServlet.java:253)\n\tat io.appium.uiautomator2.http.ServerHandler.channelRead(ServerHandler.java:77)\n\tat io.netty.channel.AbstractChannelHandlerContext.invokeChannelRead(AbstractChannelHandlerContext.java:366)\n\tat io.netty.channel.AbstractChannelHandlerContext.invokeChannelRead(AbstractChannelHandlerContext.java:352)\n\tat io.netty.chann...
+2026-06-18 07:20:58:019 [HTTP] <-- POST /session/801cc1c5-cf5e-4ecb-bb5c-d060cbfff5f6/element 404 42 ms - 865 
+2026-06-18 07:20:58:025 [HTTP] --> POST /session/801cc1c5-cf5e-4ecb-bb5c-d060cbfff5f6/elements {"using":"accessibility id","value":"email-input"}
+2026-06-18 07:20:58:045 [HTTP] <-- POST /session/801cc1c5-cf5e-4ecb-bb5c-d060cbfff5f6/elements 200 19 ms - 12 
+2026-06-18 07:20:58:526 [HTTP] --> POST /session/801cc1c5-cf5e-4ecb-bb5c-d060cbfff5f6/elements {"using":"accessibility id","value":"email-input"}
+2026-06-18 07:20:58:563 [HTTP] <-- POST /session/801cc1c5-cf5e-4ecb-bb5c-d060cbfff5f6/elements 200 36 ms - 12 
+2026-06-18 07:20:59:026 [HTTP] --> POST /session/801cc1c5-cf5e-4ecb-bb5c-d060cbfff5f6/elements {"using":"accessibility id","value":"email-input"}
+2026-06-18 07:20:59:064 [HTTP] <-- POST /session/801cc1c5-cf5e-4ecb-bb5c-d060cbfff5f6/elements 200 37 ms - 12 
+2026-06-18 07:20:59:526 [HTTP] --> POST /session/801cc1c5-cf5e-4ecb-bb5c-d060cbfff5f6/elements {"using":"accessibility id","value":"email-input"}
+2026-06-18 07:20:59:569 [HTTP] <-- POST /session/801cc1c5-cf5e-4ecb-bb5c-d060cbfff5f6/elements 200 42 ms - 12 
+2026-06-18 07:21:00:027 [HTTP] --> POST /session/801cc1c5-cf5e-4ecb-bb5c-d060cbfff5f6/elements {"using":"accessibility id","value":"email-input"}
+2026-06-18 07:21:00:046 [HTTP] <-- POST /session/801cc1c5-cf5e-4ecb-bb5c-d060cbfff5f6/elements 200 19 ms - 12 
+2026-06-18 07:21:00:526 [HTTP] --> POST /session/801cc1c5-cf5e-4ecb-bb5c-d060cbfff5f6/elements {"using":"accessibility id","value":"email-input"}
+2026-06-18 07:21:00:963 [HTTP] <-- POST /session/801cc1c5-cf5e-4ecb-bb5c-d060cbfff5f6/elements 200 437 ms - 12 
+2026-06-18 07:21:01:026 [HTTP] --> POST /session/801cc1c5-cf5e-4ecb-bb5c-d060cbfff5f6/elements {"using":"accessibility id","value":"email-input"}
+2026-06-18 07:21:01:060 [HTTP] <-- POST /session/801cc1c5-cf5e-4ecb-bb5c-d060cbfff5f6/elements 200 33 ms - 12 
+2026-06-18 07:21:01:526 [HTTP] --> POST /session/801cc1c5-cf5e-4ecb-bb5c-d060cbfff5f6/elements {"using":"accessibility id","value":"email-input"}
+2026-06-18 07:21:01:560 [HTTP] <-- POST /session/801cc1c5-cf5e-4ecb-bb5c-d060cbfff5f6/elements 200 33 ms - 12 
+2026-06-18 07:21:02:027 [HTTP] --> POST /session/801cc1c5-cf5e-4ecb-bb5c-d060cbfff5f6/elements {"using":"accessibility id","value":"email-input"}
+2026-06-18 07:21:02:059 [HTTP] <-- POST /session/801cc1c5-cf5e-4ecb-bb5c-d060cbfff5f6/elements 200 32 ms - 12 
+2026-06-18 07:21:02:525 [HTTP] --> POST /session/801cc1c5-cf5e-4ecb-bb5c-d060cbfff5f6/elements {"using":"accessibility id","value":"email-input"}
+2026-06-18 07:21:02:561 [HTTP] <-- POST /session/801cc1c5-cf5e-4ecb-bb5c-d060cbfff5f6/elements 200 36 ms - 12 
+2026-06-18 07:21:03:026 [HTTP] --> POST /session/801cc1c5-cf5e-4ecb-bb5c-d060cbfff5f6/elements {"using":"accessibility id","value":"email-input"}
+2026-06-18 07:21:03:042 [HTTP] <-- POST /session/801cc1c5-cf5e-4ecb-bb5c-d060cbfff5f6/elements 200 16 ms - 12 
+2026-06-18 07:21:03:526 [HTTP] --> POST /session/801cc1c5-cf5e-4ecb-bb5c-d060cbfff5f6/elements {"using":"accessibility id","value":"email-input"}
+2026-06-18 07:21:03:544 [HTTP] <-- POST /session/801cc1c5-cf5e-4ecb-bb5c-d060cbfff5f6/elements 200 18 ms - 12 
+2026-06-18 07:21:04:026 [HTTP] --> POST /session/801cc1c5-cf5e-4ecb-bb5c-d060cbfff5f6/elements {"using":"accessibility id","value":"email-input"}
+2026-06-18 07:21:04:042 [HTTP] <-- POST /session/801cc1c5-cf5e-4ecb-bb5c-d060cbfff5f6/elements 200 16 ms - 12 
+2026-06-18 07:21:04:525 [HTTP] --> POST /session/801cc1c5-cf5e-4ecb-bb5c-d060cbfff5f6/elements {"using":"accessibility id","value":"email-input"}
+2026-06-18 07:21:04:555 [HTTP] <-- POST /session/801cc1c5-cf5e-4ecb-bb5c-d060cbfff5f6/elements 200 30 ms - 12 
+2026-06-18 07:21:05:026 [HTTP] --> POST /session/801cc1c5-cf5e-4ecb-bb5c-d060cbfff5f6/elements {"using":"accessibility id","value":"email-input"}
+2026-06-18 07:21:05:052 [HTTP] <-- POST /session/801cc1c5-cf5e-4ecb-bb5c-d060cbfff5f6/elements 200 25 ms - 12 
+2026-06-18 07:21:05:526 [HTTP] --> POST /session/801cc1c5-cf5e-4ecb-bb5c-d060cbfff5f6/elements {"using":"accessibility id","value":"email-input"}
+2026-06-18 07:21:05:563 [HTTP] <-- POST /session/801cc1c5-cf5e-4ecb-bb5c-d060cbfff5f6/elements 200 37 ms - 12 
+2026-06-18 07:21:06:027 [HTTP] --> POST /session/801cc1c5-cf5e-4ecb-bb5c-d060cbfff5f6/elements {"using":"accessibility id","value":"email-input"}
+2026-06-18 07:21:06:076 [HTTP] <-- POST /session/801cc1c5-cf5e-4ecb-bb5c-d060cbfff5f6/elements 200 49 ms - 12 
+2026-06-18 07:21:06:525 [HTTP] --> POST /session/801cc1c5-cf5e-4ecb-bb5c-d060cbfff5f6/elements {"using":"accessibility id","value":"email-input"}
+2026-06-18 07:21:06:543 [HTTP] <-- POST /session/801cc1c5-cf5e-4ecb-bb5c-d060cbfff5f6/elements 200 18 ms - 12 
+2026-06-18 07:21:07:027 [HTTP] --> POST /session/801cc1c5-cf5e-4ecb-bb5c-d060cbfff5f6/elements {"using":"accessibility id","value":"email-input"}
+2026-06-18 07:21:07:042 [HTTP] <-- POST /session/801cc1c5-cf5e-4ecb-bb5c-d060cbfff5f6/elements 200 15 ms - 12 
+2026-06-18 07:21:07:527 [HTTP] --> POST /session/801cc1c5-cf5e-4ecb-bb5c-d060cbfff5f6/elements {"using":"accessibility id","value":"email-input"}
+2026-06-18 07:21:07:541 [HTTP] <-- POST /session/801cc1c5-cf5e-4ecb-bb5c-d060cbfff5f6/elements 200 15 ms - 12 
+2026-06-18 07:21:08:026 [HTTP] --> POST /session/801cc1c5-cf5e-4ecb-bb5c-d060cbfff5f6/elements {"using":"accessibility id","value":"email-input"}
+2026-06-18 07:21:08:044 [HTTP] <-- POST /session/801cc1c5-cf5e-4ecb-bb5c-d060cbfff5f6/elements 200 18 ms - 12 
+2026-06-18 07:21:08:526 [HTTP] --> POST /session/801cc1c5-cf5e-4ecb-bb5c-d060cbfff5f6/elements {"using":"accessibility id","value":"email-input"}
+2026-06-18 07:21:08:564 [HTTP] <-- POST /session/801cc1c5-cf5e-4ecb-bb5c-d060cbfff5f6/elements 200 38 ms - 12 
+2026-06-18 07:21:09:026 [HTTP] --> POST /session/801cc1c5-cf5e-4ecb-bb5c-d060cbfff5f6/elements {"using":"accessibility id","value":"email-input"}
+2026-06-18 07:21:09:059 [HTTP] <-- POST /session/801cc1c5-cf5e-4ecb-bb5c-d060cbfff5f6/elements 200 32 ms - 12 
+2026-06-18 07:21:09:526 [HTTP] --> POST /session/801cc1c5-cf5e-4ecb-bb5c-d060cbfff5f6/elements {"using":"accessibility id","value":"email-input"}
+2026-06-18 07:21:09:542 [HTTP] <-- POST /session/801cc1c5-cf5e-4ecb-bb5c-d060cbfff5f6/elements 200 16 ms - 12 
+2026-06-18 07:21:10:026 [HTTP] --> POST /session/801cc1c5-cf5e-4ecb-bb5c-d060cbfff5f6/elements {"using":"accessibility id","value":"email-input"}
+2026-06-18 07:21:10:058 [HTTP] <-- POST /session/801cc1c5-cf5e-4ecb-bb5c-d060cbfff5f6/elements 200 32 ms - 12 
+2026-06-18 07:21:10:526 [HTTP] --> POST /session/801cc1c5-cf5e-4ecb-bb5c-d060cbfff5f6/elements {"using":"accessibility id","value":"email-input"}
+2026-06-18 07:21:10:558 [HTTP] <-- POST /session/801cc1c5-cf5e-4ecb-bb5c-d060cbfff5f6/elements 200 32 ms - 12 
+2026-06-18 07:21:11:026 [HTTP] --> POST /session/801cc1c5-cf5e-4ecb-bb5c-d060cbfff5f6/elements {"using":"accessibility id","value":"email-input"}
+2026-06-18 07:21:11:042 [HTTP] <-- POST /session/801cc1c5-cf5e-4ecb-bb5c-d060cbfff5f6/elements 200 16 ms - 12 
+2026-06-18 07:21:11:526 [HTTP] --> POST /session/801cc1c5-cf5e-4ecb-bb5c-d060cbfff5f6/elements {"using":"accessibility id","value":"email-input"}
+2026-06-18 07:21:11:544 [HTTP] <-- POST /session/801cc1c5-cf5e-4ecb-bb5c-d060cbfff5f6/elements 200 18 ms - 12 
+2026-06-18 07:21:12:026 [HTTP] --> POST /session/801cc1c5-cf5e-4ecb-bb5c-d060cbfff5f6/elements {"using":"accessibility id","value":"email-input"}
+2026-06-18 07:21:12:043 [HTTP] <-- POST /session/801cc1c5-cf5e-4ecb-bb5c-d060cbfff5f6/elements 200 17 ms - 12 
+2026-06-18 07:21:12:526 [HTTP] --> POST /session/801cc1c5-cf5e-4ecb-bb5c-d060cbfff5f6/elements {"using":"accessibility id","value":"email-input"}
+2026-06-18 07:21:12:559 [HTTP] <-- POST /session/801cc1c5-cf5e-4ecb-bb5c-d060cbfff5f6/elements 200 33 ms - 12 
+2026-06-18 07:21:13:027 [HTTP] --> POST /session/801cc1c5-cf5e-4ecb-bb5c-d060cbfff5f6/elements {"using":"accessibility id","value":"email-input"}
+2026-06-18 07:21:13:042 [HTTP] <-- POST /session/801cc1c5-cf5e-4ecb-bb5c-d060cbfff5f6/elements 200 15 ms - 12 
+2026-06-18 07:21:13:526 [HTTP] --> POST /session/801cc1c5-cf5e-4ecb-bb5c-d060cbfff5f6/elements {"using":"accessibility id","value":"email-input"}
+2026-06-18 07:21:13:544 [HTTP] <-- POST /session/801cc1c5-cf5e-4ecb-bb5c-d060cbfff5f6/elements 200 17 ms - 12 
+2026-06-18 07:21:14:027 [HTTP] --> POST /session/801cc1c5-cf5e-4ecb-bb5c-d060cbfff5f6/elements {"using":"accessibility id","value":"email-input"}
+2026-06-18 07:21:14:042 [HTTP] <-- POST /session/801cc1c5-cf5e-4ecb-bb5c-d060cbfff5f6/elements 200 15 ms - 12 
+2026-06-18 07:21:14:526 [HTTP] --> POST /session/801cc1c5-cf5e-4ecb-bb5c-d060cbfff5f6/elements {"using":"accessibility id","value":"email-input"}
+2026-06-18 07:21:14:542 [HTTP] <-- POST /session/801cc1c5-cf5e-4ecb-bb5c-d060cbfff5f6/elements 200 16 ms - 12 
+2026-06-18 07:21:15:026 [HTTP] --> POST /session/801cc1c5-cf5e-4ecb-bb5c-d060cbfff5f6/elements {"using":"accessibility id","value":"email-input"}
+2026-06-18 07:21:15:042 [HTTP] <-- POST /session/801cc1c5-cf5e-4ecb-bb5c-d060cbfff5f6/elements 200 16 ms - 12 
+2026-06-18 07:21:15:526 [HTTP] --> POST /session/801cc1c5-cf5e-4ecb-bb5c-d060cbfff5f6/elements {"using":"accessibility id","value":"email-input"}
+2026-06-18 07:21:15:542 [HTTP] <-- POST /session/801cc1c5-cf5e-4ecb-bb5c-d060cbfff5f6/elements 200 15 ms - 12 
+2026-06-18 07:21:16:026 [HTTP] --> POST /session/801cc1c5-cf5e-4ecb-bb5c-d060cbfff5f6/elements {"using":"accessibility id","value":"email-input"}
+2026-06-18 07:21:16:059 [HTTP] <-- POST /session/801cc1c5-cf5e-4ecb-bb5c-d060cbfff5f6/elements 200 32 ms - 12 
+2026-06-18 07:21:16:526 [HTTP] --> POST /session/801cc1c5-cf5e-4ecb-bb5c-d060cbfff5f6/elements {"using":"accessibility id","value":"email-input"}
+2026-06-18 07:21:16:559 [HTTP] <-- POST /session/801cc1c5-cf5e-4ecb-bb5c-d060cbfff5f6/elements 200 32 ms - 12 
+2026-06-18 07:21:17:027 [HTTP] --> POST /session/801cc1c5-cf5e-4ecb-bb5c-d060cbfff5f6/elements {"using":"accessibility id","value":"email-input"}
+2026-06-18 07:21:17:041 [HTTP] <-- POST /session/801cc1c5-cf5e-4ecb-bb5c-d060cbfff5f6/elements 200 15 ms - 12 
+2026-06-18 07:21:17:526 [HTTP] --> POST /session/801cc1c5-cf5e-4ecb-bb5c-d060cbfff5f6/elements {"using":"accessibility id","value":"email-input"}
+2026-06-18 07:21:17:542 [HTTP] <-- POST /session/801cc1c5-cf5e-4ecb-bb5c-d060cbfff5f6/elements 200 16 ms - 12 
+2026-06-18 07:21:18:026 [HTTP] --> POST /session/801cc1c5-cf5e-4ecb-bb5c-d060cbfff5f6/elements {"using":"accessibility id","value":"email-input"}
+2026-06-18 07:21:18:030 [HTTP] --> POST /session/801cc1c5-cf5e-4ecb-bb5c-d060cbfff5f6/element {"using":"xpath","value":"//android.widget.EditText[@hint=\"Email\"]"}
+2026-06-18 07:21:18:042 [HTTP] <-- POST /session/801cc1c5-cf5e-4ecb-bb5c-d060cbfff5f6/elements 200 16 ms - 12 
+2026-06-18 07:21:18:541 [AndroidUiautomator2Driver@dfa1] Got response with status 404: {"sessionId":"eb357486-4fe7-4ee1-adc8-8df99c578d46","value":{"error":"no such element","message":"An element could not be located on the page using the given search parameters","stacktrace":"io.appium.uiautomator2.common.exceptions.ElementNotFoundException: An element could not be located on the page using the given search parameters\n\tat io.appium.uiautomator2.utils.ElementLocationHelpers.findElement(ElementLocationHelpers.java:156)\n\tat io.appium.uiautomator2.handler.FindElement.safeHandle(FindElement.java:60)\n\tat io.appium.uiautomator2.handler.request.SafeRequestHandler.handle(SafeRequestHandler.java:59)\n\tat io.appium.uiautomator2.server.AppiumServlet.handleRequest(AppiumServlet.java:259)\n\tat io.appium.uiautomator2.server.AppiumServlet.handleHttpRequest(AppiumServlet.java:253)\n\tat io.appium.uiautomator2.http.ServerHandler.channelRead(ServerHandler.java:77)\n\tat io.netty.channel.AbstractChannelHandlerContext.invokeChannelRead(AbstractChannelHandlerContext.java:366)\n\tat io.netty.channel.Abstr...
+2026-06-18 07:21:18:545 [HTTP] <-- POST /session/801cc1c5-cf5e-4ecb-bb5c-d060cbfff5f6/element 404 513 ms - 865 
+2026-06-18 07:21:18:552 [HTTP] --> POST /session/801cc1c5-cf5e-4ecb-bb5c-d060cbfff5f6/elements {"using":"xpath","value":"//android.widget.EditText[@hint=\"Email\"]"}
+2026-06-18 07:21:18:585 [HTTP] <-- POST /session/801cc1c5-cf5e-4ecb-bb5c-d060cbfff5f6/elements 200 32 ms - 12 
+2026-06-18 07:21:19:053 [HTTP] --> POST /session/801cc1c5-cf5e-4ecb-bb5c-d060cbfff5f6/elements {"using":"xpath","value":"//android.widget.EditText[@hint=\"Email\"]"}
+2026-06-18 07:21:19:099 [HTTP] <-- POST /session/801cc1c5-cf5e-4ecb-bb5c-d060cbfff5f6/elements 200 46 ms - 12 
+2026-06-18 07:21:19:553 [HTTP] --> POST /session/801cc1c5-cf5e-4ecb-bb5c-d060cbfff5f6/elements {"using":"xpath","value":"//android.widget.EditText[@hint=\"Email\"]"}
+2026-06-18 07:21:19:586 [HTTP] <-- POST /session/801cc1c5-cf5e-4ecb-bb5c-d060cbfff5f6/elements 200 32 ms - 12 
+2026-06-18 07:21:20:052 [HTTP] --> POST /session/801cc1c5-cf5e-4ecb-bb5c-d060cbfff5f6/elements {"using":"xpath","value":"//android.widget.EditText[@hint=\"Email\"]"}
+2026-06-18 07:21:20:083 [HTTP] <-- POST /session/801cc1c5-cf5e-4ecb-bb5c-d060cbfff5f6/elements 200 30 ms - 12 
+2026-06-18 07:21:20:553 [HTTP] --> POST /session/801cc1c5-cf5e-4ecb-bb5c-d060cbfff5f6/elements {"using":"xpath","value":"//android.widget.EditText[@hint=\"Email\"]"}
+2026-06-18 07:21:20:582 [HTTP] <-- POST /session/801cc1c5-cf5e-4ecb-bb5c-d060cbfff5f6/elements 200 28 ms - 12 
+2026-06-18 07:21:21:053 [HTTP] --> POST /session/801cc1c5-cf5e-4ecb-bb5c-d060cbfff5f6/elements {"using":"xpath","value":"//android.widget.EditText[@hint=\"Email\"]"}
+2026-06-18 07:21:21:084 [HTTP] <-- POST /session/801cc1c5-cf5e-4ecb-bb5c-d060cbfff5f6/elements 200 30 ms - 12 
+2026-06-18 07:21:21:553 [HTTP] --> POST /session/801cc1c5-cf5e-4ecb-bb5c-d060cbfff5f6/elements {"using":"xpath","value":"//android.widget.EditText[@hint=\"Email\"]"}
+2026-06-18 07:21:21:586 [HTTP] <-- POST /session/801cc1c5-cf5e-4ecb-bb5c-d060cbfff5f6/elements 200 32 ms - 12 
+2026-06-18 07:21:22:053 [HTTP] --> POST /session/801cc1c5-cf5e-4ecb-bb5c-d060cbfff5f6/elements {"using":"xpath","value":"//android.widget.EditText[@hint=\"Email\"]"}
+2026-06-18 07:21:22:080 [HTTP] <-- POST /session/801cc1c5-cf5e-4ecb-bb5c-d060cbfff5f6/elements 200 27 ms - 12 
+2026-06-18 07:21:22:553 [HTTP] --> POST /session/801cc1c5-cf5e-4ecb-bb5c-d060cbfff5f6/elements {"using":"xpath","value":"//android.widget.EditText[@hint=\"Email\"]"}
+2026-06-18 07:21:22:580 [HTTP] <-- POST /session/801cc1c5-cf5e-4ecb-bb5c-d060cbfff5f6/elements 200 26 ms - 12 
+2026-06-18 07:21:23:053 [HTTP] --> POST /session/801cc1c5-cf5e-4ecb-bb5c-d060cbfff5f6/elements {"using":"xpath","value":"//android.widget.EditText[@hint=\"Email\"]"}
+2026-06-18 07:21:23:080 [HTTP] <-- POST /session/801cc1c5-cf5e-4ecb-bb5c-d060cbfff5f6/elements 200 26 ms - 12 
+2026-06-18 07:21:23:553 [HTTP] --> POST /session/801cc1c5-cf5e-4ecb-bb5c-d060cbfff5f6/elements {"using":"xpath","value":"//android.widget.EditText[@hint=\"Email\"]"}
+2026-06-18 07:21:23:579 [HTTP] <-- POST /session/801cc1c5-cf5e-4ecb-bb5c-d060cbfff5f6/elements 200 26 ms - 12 
+2026-06-18 07:21:24:052 [HTTP] --> POST /session/801cc1c5-cf5e-4ecb-bb5c-d060cbfff5f6/elements {"using":"xpath","value":"//android.widget.EditText[@hint=\"Email\"]"}
+2026-06-18 07:21:24:080 [HTTP] <-- POST /session/801cc1c5-cf5e-4ecb-bb5c-d060cbfff5f6/elements 200 28 ms - 12 
+2026-06-18 07:21:24:553 [HTTP] --> POST /session/801cc1c5-cf5e-4ecb-bb5c-d060cbfff5f6/elements {"using":"xpath","value":"//android.widget.EditText[@hint=\"Email\"]"}
+2026-06-18 07:21:24:583 [HTTP] <-- POST /session/801cc1c5-cf5e-4ecb-bb5c-d060cbfff5f6/elements 200 30 ms - 12 
+2026-06-18 07:21:25:053 [HTTP] --> POST /session/801cc1c5-cf5e-4ecb-bb5c-d060cbfff5f6/elements {"using":"xpath","value":"//android.widget.EditText[@hint=\"Email\"]"}
+2026-06-18 07:21:25:080 [HTTP] <-- POST /session/801cc1c5-cf5e-4ecb-bb5c-d060cbfff5f6/elements 200 26 ms - 12 
+2026-06-18 07:21:25:552 [HTTP] --> POST /session/801cc1c5-cf5e-4ecb-bb5c-d060cbfff5f6/elements {"using":"xpath","value":"//android.widget.EditText[@hint=\"Email\"]"}
+2026-06-18 07:21:25:580 [HTTP] <-- POST /session/801cc1c5-cf5e-4ecb-bb5c-d060cbfff5f6/elements 200 27 ms - 12 
+2026-06-18 07:21:26:053 [HTTP] --> POST /session/801cc1c5-cf5e-4ecb-bb5c-d060cbfff5f6/elements {"using":"xpath","value":"//android.widget.EditText[@hint=\"Email\"]"}
+2026-06-18 07:21:26:079 [HTTP] <-- POST /session/801cc1c5-cf5e-4ecb-bb5c-d060cbfff5f6/elements 200 26 ms - 12 
+2026-06-18 07:21:26:553 [HTTP] --> POST /session/801cc1c5-cf5e-4ecb-bb5c-d060cbfff5f6/elements {"using":"xpath","value":"//android.widget.EditText[@hint=\"Email\"]"}
+2026-06-18 07:21:26:580 [HTTP] <-- POST /session/801cc1c5-cf5e-4ecb-bb5c-d060cbfff5f6/elements 200 27 ms - 12 
+2026-06-18 07:21:27:053 [HTTP] --> POST /session/801cc1c5-cf5e-4ecb-bb5c-d060cbfff5f6/elements {"using":"xpath","value":"//android.widget.EditText[@hint=\"Email\"]"}
+2026-06-18 07:21:27:079 [HTTP] <-- POST /session/801cc1c5-cf5e-4ecb-bb5c-d060cbfff5f6/elements 200 26 ms - 12 
+2026-06-18 07:21:27:553 [HTTP] --> POST /session/801cc1c5-cf5e-4ecb-bb5c-d060cbfff5f6/elements {"using":"xpath","value":"//android.widget.EditText[@hint=\"Email\"]"}
+2026-06-18 07:21:27:583 [HTTP] <-- POST /session/801cc1c5-cf5e-4ecb-bb5c-d060cbfff5f6/elements 200 31 ms - 12 
+2026-06-18 07:21:28:052 [HTTP] --> POST /session/801cc1c5-cf5e-4ecb-bb5c-d060cbfff5f6/elements {"using":"xpath","value":"//android.widget.EditText[@hint=\"Email\"]"}
+2026-06-18 07:21:28:081 [HTTP] <-- POST /session/801cc1c5-cf5e-4ecb-bb5c-d060cbfff5f6/elements 200 28 ms - 12 
+2026-06-18 07:21:28:553 [HTTP] --> POST /session/801cc1c5-cf5e-4ecb-bb5c-d060cbfff5f6/elements {"using":"xpath","value":"//android.widget.EditText[@hint=\"Email\"]"}
+2026-06-18 07:21:28:579 [HTTP] <-- POST /session/801cc1c5-cf5e-4ecb-bb5c-d060cbfff5f6/elements 200 26 ms - 12 
+2026-06-18 07:21:29:052 [HTTP] --> POST /session/801cc1c5-cf5e-4ecb-bb5c-d060cbfff5f6/elements {"using":"xpath","value":"//android.widget.EditText[@hint=\"Email\"]"}
+2026-06-18 07:21:29:079 [HTTP] <-- POST /session/801cc1c5-cf5e-4ecb-bb5c-d060cbfff5f6/elements 200 26 ms - 12 
+2026-06-18 07:21:29:552 [HTTP] --> POST /session/801cc1c5-cf5e-4ecb-bb5c-d060cbfff5f6/elements {"using":"xpath","value":"//android.widget.EditText[@hint=\"Email\"]"}
+2026-06-18 07:21:29:580 [HTTP] <-- POST /session/801cc1c5-cf5e-4ecb-bb5c-d060cbfff5f6/elements 200 27 ms - 12 
+2026-06-18 07:21:30:053 [HTTP] --> POST /session/801cc1c5-cf5e-4ecb-bb5c-d060cbfff5f6/elements {"using":"xpath","value":"//android.widget.EditText[@hint=\"Email\"]"}
+2026-06-18 07:21:30:079 [HTTP] <-- POST /session/801cc1c5-cf5e-4ecb-bb5c-d060cbfff5f6/elements 200 26 ms - 12 
+2026-06-18 07:21:30:553 [HTTP] --> POST /session/801cc1c5-cf5e-4ecb-bb5c-d060cbfff5f6/elements {"using":"xpath","value":"//android.widget.EditText[@hint=\"Email\"]"}
+2026-06-18 07:21:30:578 [HTTP] <-- POST /session/801cc1c5-cf5e-4ecb-bb5c-d060cbfff5f6/elements 200 25 ms - 12 
+2026-06-18 07:21:31:053 [HTTP] --> POST /session/801cc1c5-cf5e-4ecb-bb5c-d060cbfff5f6/elements {"using":"xpath","value":"//android.widget.EditText[@hint=\"Email\"]"}
+2026-06-18 07:21:31:079 [HTTP] <-- POST /session/801cc1c5-cf5e-4ecb-bb5c-d060cbfff5f6/elements 200 26 ms - 12 
+2026-06-18 07:21:31:553 [HTTP] --> POST /session/801cc1c5-cf5e-4ecb-bb5c-d060cbfff5f6/elements {"using":"xpath","value":"//android.widget.EditText[@hint=\"Email\"]"}
+2026-06-18 07:21:31:579 [HTTP] <-- POST /session/801cc1c5-cf5e-4ecb-bb5c-d060cbfff5f6/elements 200 26 ms - 12 
+2026-06-18 07:21:32:053 [HTTP] --> POST /session/801cc1c5-cf5e-4ecb-bb5c-d060cbfff5f6/elements {"using":"xpath","value":"//android.widget.EditText[@hint=\"Email\"]"}
+2026-06-18 07:21:32:079 [HTTP] <-- POST /session/801cc1c5-cf5e-4ecb-bb5c-d060cbfff5f6/elements 200 26 ms - 12 
+2026-06-18 07:21:32:552 [HTTP] --> POST /session/801cc1c5-cf5e-4ecb-bb5c-d060cbfff5f6/elements {"using":"xpath","value":"//android.widget.EditText[@hint=\"Email\"]"}
+2026-06-18 07:21:32:579 [HTTP] <-- POST /session/801cc1c5-cf5e-4ecb-bb5c-d060cbfff5f6/elements 200 27 ms - 12 
+2026-06-18 07:21:33:053 [HTTP] --> POST /session/801cc1c5-cf5e-4ecb-bb5c-d060cbfff5f6/elements {"using":"xpath","value":"//android.widget.EditText[@hint=\"Email\"]"}
+2026-06-18 07:21:33:079 [HTTP] <-- POST /session/801cc1c5-cf5e-4ecb-bb5c-d060cbfff5f6/elements 200 26 ms - 12 
+2026-06-18 07:21:33:553 [HTTP] --> POST /session/801cc1c5-cf5e-4ecb-bb5c-d060cbfff5f6/elements {"using":"xpath","value":"//android.widget.EditText[@hint=\"Email\"]"}
+2026-06-18 07:21:33:581 [HTTP] <-- POST /session/801cc1c5-cf5e-4ecb-bb5c-d060cbfff5f6/elements 200 27 ms - 12 
+2026-06-18 07:21:34:052 [HTTP] --> POST /session/801cc1c5-cf5e-4ecb-bb5c-d060cbfff5f6/elements {"using":"xpath","value":"//android.widget.EditText[@hint=\"Email\"]"}
+2026-06-18 07:21:34:082 [HTTP] <-- POST /session/801cc1c5-cf5e-4ecb-bb5c-d060cbfff5f6/elements 200 30 ms - 12 
+2026-06-18 07:21:34:552 [HTTP] --> POST /session/801cc1c5-cf5e-4ecb-bb5c-d060cbfff5f6/elements {"using":"xpath","value":"//android.widget.EditText[@hint=\"Email\"]"}
+2026-06-18 07:21:34:580 [HTTP] <-- POST /session/801cc1c5-cf5e-4ecb-bb5c-d060cbfff5f6/elements 200 28 ms - 12 
+2026-06-18 07:21:35:052 [HTTP] --> POST /session/801cc1c5-cf5e-4ecb-bb5c-d060cbfff5f6/elements {"using":"xpath","value":"//android.widget.EditText[@hint=\"Email\"]"}
+2026-06-18 07:21:35:079 [HTTP] <-- POST /session/801cc1c5-cf5e-4ecb-bb5c-d060cbfff5f6/elements 200 27 ms - 12 
+2026-06-18 07:21:35:555 [HTTP] --> POST /session/801cc1c5-cf5e-4ecb-bb5c-d060cbfff5f6/elements {"using":"xpath","value":"//android.widget.EditText[@hint=\"Email\"]"}
+2026-06-18 07:21:35:603 [HTTP] <-- POST /session/801cc1c5-cf5e-4ecb-bb5c-d060cbfff5f6/elements 200 45 ms - 12 
+2026-06-18 07:21:36:054 [HTTP] --> POST /session/801cc1c5-cf5e-4ecb-bb5c-d060cbfff5f6/elements {"using":"xpath","value":"//android.widget.EditText[@hint=\"Email\"]"}
+2026-06-18 07:21:36:081 [HTTP] <-- POST /session/801cc1c5-cf5e-4ecb-bb5c-d060cbfff5f6/elements 200 26 ms - 12 
+2026-06-18 07:21:36:553 [HTTP] --> POST /session/801cc1c5-cf5e-4ecb-bb5c-d060cbfff5f6/elements {"using":"xpath","value":"//android.widget.EditText[@hint=\"Email\"]"}
+2026-06-18 07:21:36:583 [HTTP] <-- POST /session/801cc1c5-cf5e-4ecb-bb5c-d060cbfff5f6/elements 200 30 ms - 12 
+2026-06-18 07:21:37:056 [HTTP] --> POST /session/801cc1c5-cf5e-4ecb-bb5c-d060cbfff5f6/elements {"using":"xpath","value":"//android.widget.EditText[@hint=\"Email\"]"}
+2026-06-18 07:21:37:086 [HTTP] <-- POST /session/801cc1c5-cf5e-4ecb-bb5c-d060cbfff5f6/elements 200 31 ms - 12 
+2026-06-18 07:21:37:553 [HTTP] --> POST /session/801cc1c5-cf5e-4ecb-bb5c-d060cbfff5f6/elements {"using":"xpath","value":"//android.widget.EditText[@hint=\"Email\"]"}
+2026-06-18 07:21:37:580 [HTTP] <-- POST /session/801cc1c5-cf5e-4ecb-bb5c-d060cbfff5f6/elements 200 27 ms - 12 
+2026-06-18 07:21:38:052 [HTTP] --> POST /session/801cc1c5-cf5e-4ecb-bb5c-d060cbfff5f6/elements {"using":"xpath","value":"//android.widget.EditText[@hint=\"Email\"]"}
+2026-06-18 07:21:38:081 [HTTP] <-- POST /session/801cc1c5-cf5e-4ecb-bb5c-d060cbfff5f6/elements 200 28 ms - 12 
+2026-06-18 07:21:38:554 [HTTP] --> DELETE /session/24b0bb7d-6b8d-49ce-b36f-0be18b15194d {}
+2026-06-18 07:21:38:556 [AppiumDriver@c01c] Removing session 24b0bb7d-6b8d-49ce-b36f-0be18b15194d from our master session list
+2026-06-18 07:21:38:558 [AndroidUiautomator2Driver@3fb5] Did not get confirmation UiAutomator2 deleteSession worked; Error was: UnknownError: An unknown server-side error occurred while processing the command. Original error: 'DELETE /' cannot be proxied to UiAutomator2 server because the instrumentation process is not running (probably crashed). Check the server log and/or the logcat output for more details
+2026-06-18 07:21:38:819 [AndroidUiautomator2Driver@3fb5] Restoring hidden api policy to the device default configuration
+2026-06-18 07:21:39:184 [HTTP] <-- DELETE /session/24b0bb7d-6b8d-49ce-b36f-0be18b15194d 200 629 ms - 14 
+2026-06-18 07:21:39:186 [HTTP] --> DELETE /session/801cc1c5-cf5e-4ecb-bb5c-d060cbfff5f6 {}
+2026-06-18 07:21:39:186 [AppiumDriver@c01c] Removing session 801cc1c5-cf5e-4ecb-bb5c-d060cbfff5f6 from our master session list
+2026-06-18 07:21:39:393 [AndroidUiautomator2Driver@dfa1] Restoring hidden api policy to the device default configuration
+2026-06-18 07:21:39:528 [HTTP] <-- DELETE /session/801cc1c5-cf5e-4ecb-bb5c-d060cbfff5f6 200 341 ms - 14 
+2026-06-18 07:21:39:558 [HTTP] Closing Appium HTTP server
