@@ -1,0 +1,37 @@
+[
+  {
+    "name": "should load the TrackBack landing page",
+    "status": "passed",
+    "duration": 1184,
+    "error": null,
+    "screenshotPath": null
+  },
+  {
+    "name": "should navigate to the login form",
+    "status": "passed",
+    "duration": 261,
+    "error": null,
+    "screenshotPath": null
+  },
+  {
+    "name": "should login with valid credentials and reach the dashboard",
+    "status": "failed",
+    "duration": 20779,
+    "error": "Neither dashboard nor verify step appeared after login",
+    "screenshotPath": "Screenshots/FAIL_should_login_with_valid_credentials_and_reach_the_dashboard_1781770549035.png"
+  },
+  {
+    "name": "should reject invalid credentials with an error message",
+    "status": "passed",
+    "duration": 537,
+    "error": null,
+    "screenshotPath": null
+  },
+  {
+    "name": "should open the sign-up form from landing",
+    "status": "passed",
+    "duration": 122,
+    "error": null,
+    "screenshotPath": null
+  }
+]
