@@ -113,8 +113,12 @@ describe('TrackBack Android – Login & Authentication', function () {
 
   after(async function () {
     if (driver) {
-      await driver.deleteSession();
-      console.log('\n🔌 Driver session closed.');
+      try {
+        await driver.deleteSession();
+        console.log('\n🔌 Driver session closed.');
+      } catch (err) {
+        console.warn('\n⚠️ Could not cleanly close driver session:', err.message);
+      }
     }
   });
 

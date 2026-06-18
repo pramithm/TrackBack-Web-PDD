@@ -108,7 +108,14 @@ describe('TrackBack Android – Navigation Tests', function () {
   });
 
   after(async function () {
-    if (driver) await driver.deleteSession();
+    if (driver) {
+      try {
+        await driver.deleteSession();
+        console.log('🔌 Navigation driver session closed.');
+      } catch (err) {
+        console.warn('⚠️ Could not cleanly close navigation driver session:', err.message);
+      }
+    }
   });
 
   afterEach(async function () {
