@@ -142,8 +142,7 @@ function App() {
 
                 <div style={{ display: 'flex', gap: '0.5rem' }}>
                   <button 
-                    className="btn btn-secondary" 
-                    style={{ padding: '0.5rem', color: 'var(--accent-color)', background: 'rgba(255,118,117,0.1)' }}
+                    className="btn-delete-soft" 
                     onClick={(e) => {
                       e.stopPropagation();
                       if (window.confirm('Are you sure you want to delete this report? This cannot be undone.')) {

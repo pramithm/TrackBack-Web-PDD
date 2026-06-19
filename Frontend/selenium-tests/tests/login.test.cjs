@@ -7,7 +7,7 @@ const testResults = [];
 
 const REPO_OWNER = process.env.REPO_OWNER || 'YOUR_USERNAME';
 const REPO_NAME  = process.env.REPO_NAME  || 'TrackBack-Web-PDD';
-const BASE_URL   = `https://${REPO_OWNER}.github.io/${REPO_NAME}/`;
+const BASE_URL   = process.env.BASE_URL || `https://${REPO_OWNER}.github.io/${REPO_NAME}/`;
 
 let TEST_EMAIL    = process.env.TEST_EMAIL    || 'testuser@trackback.com';
 let TEST_PASSWORD = process.env.TEST_PASSWORD || 'TestPass@123';

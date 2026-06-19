@@ -158,36 +158,42 @@ export default function ReportWizard({ onClose }) {
 
   const renderStep1 = () => (
     <div>
-      <h3 style={{ fontSize: '1.25rem', fontWeight: 600, marginBottom: '1rem' }}>Step 1: What type of report?</h3>
+      <h3 style={{ fontSize: '1.25rem', fontWeight: 600, marginBottom: '1rem', color: 'var(--primary-color)' }}>Step 1: What type of report?</h3>
       
       <div style={{ display: 'flex', gap: '1rem', marginBottom: '2rem' }}>
         <button
-          className="btn glass-interactive"
+          className="glass-interactive"
           style={{
             flex: 1,
             padding: '2rem 1rem',
             display: 'flex',
             flexDirection: 'column',
             gap: '0.5rem',
-            border: type === 'found' ? '2px solid #00b894' : '1px solid var(--card-border)',
-            background: type === 'found' ? 'rgba(0, 184, 148, 0.05)' : ''
+            alignItems: 'center',
+            justifyContent: 'center',
+            cursor: 'pointer',
+            border: type === 'found' ? '2px solid var(--success-color)' : '1px solid var(--card-border)',
+            background: type === 'found' ? 'rgba(16, 185, 129, 0.05)' : '#FFFFFF'
           }}
           onClick={() => { setType('found'); handleRemoveImage(); }}
         >
-          <span style={{ fontSize: '1.2rem', fontWeight: 700, color: '#00b894' }}>I Found an Item</span>
+          <span style={{ fontSize: '1.2rem', fontWeight: 700, color: 'var(--success-color)' }}>I Found an Item</span>
           <span style={{ fontSize: '0.8rem', color: 'var(--light-text)' }}>I want to verify the owner and return it</span>
         </button>
 
         <button
-          className="btn glass-interactive"
+          className="glass-interactive"
           style={{
             flex: 1,
             padding: '2rem 1rem',
             display: 'flex',
             flexDirection: 'column',
             gap: '0.5rem',
+            alignItems: 'center',
+            justifyContent: 'center',
+            cursor: 'pointer',
             border: type === 'lost' ? '2px solid var(--accent-color)' : '1px solid var(--card-border)',
-            background: type === 'lost' ? 'rgba(255, 118, 117, 0.05)' : ''
+            background: type === 'lost' ? 'rgba(150, 71, 52, 0.05)' : '#FFFFFF'
           }}
           onClick={() => { setType('lost'); handleRemoveImage(); }}
         >
@@ -196,15 +202,15 @@ export default function ReportWizard({ onClose }) {
         </button>
       </div>
 
-      <h3 style={{ fontSize: '1.25rem', fontWeight: 600, marginBottom: '1rem' }}>
+      <h3 style={{ fontSize: '1.25rem', fontWeight: 600, marginBottom: '1rem', color: 'var(--primary-color)' }}>
         Upload Image {type === 'lost' && <span style={{ fontSize: '0.9rem', color: 'var(--light-text)', fontWeight: 400 }}>(Optional)</span>}
       </h3>
 
       {!imagePreview ? (
         <div className="upload-dropzone" onClick={() => fileInputRef.current.click()}>
-          <Upload size={36} style={{ color: 'var(--primary-color)' }} />
+          <Upload size={36} style={{ color: 'var(--cyan-accent)' }} />
           <div>
-            <p style={{ fontWeight: 600 }}>Click to upload an image</p>
+            <p style={{ fontWeight: 600, color: 'var(--primary-color)' }}>Click to upload an image</p>
             <p style={{ fontSize: '0.8rem', color: 'var(--light-text)' }}>PNG, JPG or WEBP up to 5MB</p>
           </div>
           <input
@@ -237,7 +243,7 @@ export default function ReportWizard({ onClose }) {
 
   const renderStep2 = () => (
     <div>
-      <h3 style={{ fontSize: '1.25rem', fontWeight: 600, marginBottom: '1.5rem' }}>Step 2: Tell us about the item</h3>
+      <h3 style={{ fontSize: '1.25rem', fontWeight: 600, marginBottom: '1.5rem', color: 'var(--primary-color)' }}>Step 2: Tell us about the item</h3>
 
       <div className="form-group">
         <label className="form-label">Item Title</label>
@@ -280,7 +286,7 @@ export default function ReportWizard({ onClose }) {
 
   const renderStep3 = () => (
     <div>
-      <h3 style={{ fontSize: '1.25rem', fontWeight: 600, marginBottom: '1.5rem' }}>Step 3: Where and how to reach?</h3>
+      <h3 style={{ fontSize: '1.25rem', fontWeight: 600, marginBottom: '1.5rem', color: 'var(--primary-color)' }}>Step 3: Where and how to reach?</h3>
 
       <div className="form-group">
         <label className="form-label">Location / Address</label>
@@ -295,7 +301,7 @@ export default function ReportWizard({ onClose }) {
         <button
           type="button"
           className="btn btn-secondary"
-          style={{ alignSelf: 'flex-start', padding: '0.4rem 0.8rem', fontSize: '0.8rem', marginTop: '0.5rem' }}
+          style={{ alignSelf: 'flex-start', padding: '0.5rem 1rem', fontSize: '0.8rem', marginTop: '0.5rem', borderRadius: '10px' }}
           onClick={() => {
             navigator.geolocation.getCurrentPosition(
               (pos) => {
@@ -312,7 +318,7 @@ export default function ReportWizard({ onClose }) {
       <div className="form-group">
         <label className="form-label">Contact Mobile Number</label>
         <div style={{ display: 'flex', gap: '0.5rem' }}>
-          <div className="form-input" style={{ width: '80px', display: 'flex', alignItems: 'center', justifyContent: 'center', background: '#eaeaea', fontWeight: 'bold' }}>
+          <div className="form-input" style={{ width: '80px', display: 'flex', alignItems: 'center', justifyContent: 'center', background: '#F1F5F9', border: '1px solid #E5E7EB', borderRadius: '12px', fontWeight: 'bold' }}>
             +91
           </div>
           <input
@@ -332,7 +338,7 @@ export default function ReportWizard({ onClose }) {
   const renderStep4 = () => (
     <div>
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem' }}>
-        <h3 style={{ fontSize: '1.25rem', fontWeight: 600 }}>Step 4: Owner Verification Questions</h3>
+        <h3 style={{ fontSize: '1.25rem', fontWeight: 600, color: 'var(--primary-color)' }}>Step 4: Owner Verification Questions</h3>
         {questionsLoading && (
           <span style={{ display: 'flex', alignItems: 'center', gap: '0.3rem', fontSize: '0.8rem', color: 'var(--primary-color)' }}>
             <Loader2 className="spinner" size={12} style={{ width: 12, height: 12 }} /> Generating...
@@ -346,7 +352,7 @@ export default function ReportWizard({ onClose }) {
 
       {questions.map((q, idx) => (
         <div key={idx} className="question-item">
-          <span style={{ fontWeight: 'bold', fontSize: '0.85rem', color: 'var(--primary-color)' }}>Question {idx + 1}</span>
+          <span style={{ fontWeight: 'bold', fontSize: '0.85rem', color: 'var(--cyan-accent)' }}>Question {idx + 1}</span>
           <input
             type="text"
             className="form-input"
@@ -369,16 +375,16 @@ export default function ReportWizard({ onClose }) {
 
   const renderStep5 = () => (
     <div style={{ textAlign: 'left' }}>
-      <h3 style={{ fontSize: '1.25rem', fontWeight: 600, marginBottom: '1.5rem' }}>Step 5: Review & Publish</h3>
+      <h3 style={{ fontSize: '1.25rem', fontWeight: 600, marginBottom: '1.5rem', color: 'var(--primary-color)' }}>Step 5: Review & Publish</h3>
       
-      <div className="glass" style={{ padding: '1.5rem', display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+      <div style={{ padding: '1.5rem', display: 'flex', flexDirection: 'column', gap: '1rem', border: '1px solid #E5E7EB', borderRadius: '14px', background: '#F8FAFC' }}>
         {imagePreview && (
-          <img src={imagePreview} alt="Preview" style={{ width: '100%', height: '180px', objectFit: 'cover', borderRadius: 'var(--radius-sm)' }} />
+          <img src={imagePreview} alt="Preview" style={{ width: '100%', height: '180px', objectFit: 'cover', borderRadius: '12px' }} />
         )}
         
         <div>
           <span className={`item-badge ${type === 'found' ? 'badge-found' : 'badge-lost'}`}>{type}</span>
-          <h4 style={{ fontSize: '1.3rem', fontWeight: 700, margin: '0.5rem 0 0.2rem' }}>{title}</h4>
+          <h4 style={{ fontSize: '1.3rem', fontWeight: 700, margin: '0.5rem 0 0.2rem', color: 'var(--primary-color)' }}>{title}</h4>
           <p style={{ fontSize: '0.85rem', color: 'var(--light-text)', fontWeight: 600 }}>Category: {category}</p>
         </div>
 
@@ -393,7 +399,7 @@ export default function ReportWizard({ onClose }) {
 
         {type === 'found' && (
           <div style={{ borderTop: '1px solid rgba(0,0,0,0.05)', paddingTop: '0.75rem' }}>
-            <span style={{ fontWeight: 700, fontSize: '0.9rem', display: 'block', marginBottom: '0.5rem' }}>Verification Questions:</span>
+            <span style={{ fontWeight: 700, fontSize: '0.9rem', display: 'block', marginBottom: '0.5rem', color: 'var(--primary-color)' }}>Verification Questions:</span>
             {questions.map((q, idx) => (
               <div key={idx} style={{ fontSize: '0.85rem', marginBottom: '0.25rem' }}>
                 <strong>Q:</strong> {q.q}
@@ -407,11 +413,11 @@ export default function ReportWizard({ onClose }) {
 
   return (
     <div className="wizard-overlay">
-      <div className="wizard-modal glass">
+      <div className="wizard-modal">
         
         <div className="wizard-header">
           <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-            <Sparkles size={20} style={{ color: 'var(--primary-color)' }} />
+            <Sparkles size={20} style={{ color: 'var(--cyan-accent)' }} />
             <h2 style={{ fontSize: '1.25rem', fontWeight: 700 }}>Report Lost/Found</h2>
           </div>
           <button style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'var(--light-text)' }} onClick={onClose}>
@@ -461,7 +467,7 @@ export default function ReportWizard({ onClose }) {
 
         <div className="wizard-footer">
           {step > 1 ? (
-            <button className="btn btn-secondary" onClick={handleBack} disabled={publishLoading}>
+            <button className="btn btn-secondary" style={{ borderRadius: '10px' }} onClick={handleBack} disabled={publishLoading}>
               Back
             </button>
           ) : (
@@ -471,6 +477,7 @@ export default function ReportWizard({ onClose }) {
           {step < 5 ? (
             <button 
               className="btn btn-primary" 
+              style={{ borderRadius: '10px' }}
               onClick={handleNext} 
               disabled={type === 'found' && step === 1 && moderationLoading}
             >
@@ -478,7 +485,7 @@ export default function ReportWizard({ onClose }) {
               <ArrowRight size={16} />
             </button>
           ) : (
-            <button className="btn btn-primary" onClick={handlePublish} disabled={publishLoading} style={{ background: '#00b894' }}>
+            <button className="btn btn-primary" onClick={handlePublish} disabled={publishLoading} style={{ background: 'var(--success-color)', borderRadius: '10px' }}>
               {publishLoading ? (
                 <Loader2 className="spinner" size={16} style={{ width: 16, height: 16 }} />
               ) : (

@@ -35,7 +35,7 @@ export default function TabLayout() {
           name="index"
           options={{
             title: 'Home',
-            tabBarTestID: 'tab-home',
+            tabBarButtonTestID: 'tab-home',
             tabBarIcon: ({ color, focused }) => (
               <Ionicons size={24} name={focused ? "home" : "home-outline"} color={color} />
             ),
@@ -45,7 +45,7 @@ export default function TabLayout() {
           name="search"
           options={{
             title: 'Search',
-            tabBarTestID: 'tab-search',
+            tabBarButtonTestID: 'tab-search',
             tabBarIcon: ({ color, focused }) => (
               <Ionicons size={24} name={focused ? "search" : "search-outline"} color={color} />
             ),
@@ -55,7 +55,7 @@ export default function TabLayout() {
           name="lost"
           options={{
             title: 'Lost Report',
-            tabBarTestID: 'tab-lost',
+            tabBarButtonTestID: 'tab-lost',
             tabBarIcon: ({ color, focused }) => (
               <Ionicons size={24} name={focused ? "warning" : "warning-outline"} color={color} />
             ),
@@ -65,7 +65,7 @@ export default function TabLayout() {
           name="found"
           options={{
             title: 'Found Report',
-            tabBarTestID: 'tab-found',
+            tabBarButtonTestID: 'tab-found',
             tabBarIcon: ({ color, focused }) => (
               <Ionicons size={24} name={focused ? "checkmark-circle" : "checkmark-circle-outline"} color={color} />
             ),
@@ -75,7 +75,7 @@ export default function TabLayout() {
           name="chat"
           options={{
             title: 'Chat',
-            tabBarTestID: 'tab-chat',
+            tabBarButtonTestID: 'tab-chat',
             tabBarIcon: ({ color, focused }) => (
               <Ionicons size={24} name={focused ? "chatbubbles" : "chatbubbles-outline"} color={color} />
             ),

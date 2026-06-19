@@ -125,11 +125,11 @@ export default function ItemDetails({ onClose }) {
 
   return (
     <div className="wizard-overlay">
-      <div className="wizard-modal glass" style={{ maxWidth: '600px' }}>
+      <div className="wizard-modal" style={{ maxWidth: '600px' }}>
         
         <div className="wizard-header">
           <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-            <Sparkles size={20} style={{ color: 'var(--primary-color)' }} />
+            <Sparkles size={20} style={{ color: 'var(--cyan-accent)' }} />
             <h2 style={{ fontSize: '1.25rem', fontWeight: 700 }}>Item Details</h2>
           </div>
           <button style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'var(--light-text)' }} onClick={onClose}>
@@ -143,7 +143,7 @@ export default function ItemDetails({ onClose }) {
               <img 
                 src={item.imageUrl || 'https://images.unsplash.com/photo-1534531173927-aeb928d54385?q=80&w=600&auto=format&fit=crop'} 
                 alt={item.title} 
-                style={{ width: '100%', height: '260px', objectFit: 'cover', borderRadius: 'var(--radius-md)', border: '1px solid var(--card-border)' }} 
+                style={{ width: '100%', height: '260px', objectFit: 'cover', borderRadius: '16px', border: '1px solid var(--card-border)' }} 
               />
               
               <div>
@@ -152,47 +152,47 @@ export default function ItemDetails({ onClose }) {
                     {item.type}
                   </span>
                   {item.type === 'found' && (
-                    <span style={{ display: 'flex', alignItems: 'center', gap: '0.2rem', fontSize: '0.8rem', color: 'var(--success-text)', fontWeight: 600 }}>
-                      <ShieldCheck size={14} /> AI Verified
+                    <span style={{ display: 'flex', alignItems: 'center', gap: '0.25rem', fontSize: '12px', color: '#024950', background: 'rgba(15,164,175,0.12)', padding: '0.25rem 0.5rem', borderRadius: '50px', fontWeight: 600 }}>
+                      <ShieldCheck size={14} style={{ color: 'var(--cyan-accent)' }} /> AI Verified
                     </span>
                   )}
                 </div>
-                <h3 style={{ fontSize: '1.6rem', fontWeight: 700, color: 'var(--dark-text)', marginTop: '0.5rem' }}>
+                <h3 style={{ fontSize: '1.6rem', fontWeight: 700, color: 'var(--primary-color)', marginTop: '0.5rem' }}>
                   {item.title}
                 </h3>
-                <span style={{ fontSize: '0.85rem', color: 'var(--light-text)', fontWeight: 600 }}>Category: {item.category}</span>
+                <span style={{ fontSize: '12px', color: 'var(--light-text)', fontWeight: 600 }}>Category: {item.category}</span>
               </div>
 
-              <div className="glass" style={{ padding: '1rem', background: 'rgba(255,255,255,0.4)', display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem', fontSize: '0.9rem' }}>
+              <div style={{ padding: '1.25rem', background: '#F8FAFC', border: '1px solid #E5E7EB', borderRadius: '14px', display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem', fontSize: '13px' }}>
                 <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', color: 'var(--light-text)' }}>
-                  <MapPin size={16} style={{ color: 'var(--primary-color)' }} />
+                  <MapPin size={16} style={{ color: 'var(--cyan-accent)' }} />
                   <div>
-                    <span style={{ display: 'block', fontSize: '0.75rem', fontWeight: 600 }}>LOCATION</span>
+                    <span style={{ display: 'block', fontSize: '10px', fontWeight: 700, color: 'var(--muted-text)' }}>LOCATION</span>
                     <span style={{ color: 'var(--dark-text)' }}>{item.location}</span>
                   </div>
                 </div>
 
                 <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', color: 'var(--light-text)' }}>
-                  <Calendar size={16} style={{ color: 'var(--primary-color)' }} />
+                  <Calendar size={16} style={{ color: 'var(--cyan-accent)' }} />
                   <div>
-                    <span style={{ display: 'block', fontSize: '0.75rem', fontWeight: 600 }}>REPORTED ON</span>
+                    <span style={{ display: 'block', fontSize: '10px', fontWeight: 700, color: 'var(--muted-text)' }}>REPORTED ON</span>
                     <span style={{ color: 'var(--dark-text)' }}>{formatDate(item.createdAt)}</span>
                   </div>
                 </div>
 
                 <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', color: 'var(--light-text)' }}>
-                  <User size={16} style={{ color: 'var(--primary-color)' }} />
+                  <User size={16} style={{ color: 'var(--cyan-accent)' }} />
                   <div>
-                    <span style={{ display: 'block', fontSize: '0.75rem', fontWeight: 600 }}>REPORTED BY</span>
+                    <span style={{ display: 'block', fontSize: '10px', fontWeight: 700, color: 'var(--muted-text)' }}>REPORTED BY</span>
                     <span style={{ color: 'var(--dark-text)' }}>{isOwner ? 'You' : item.user || 'Anonymous'}</span>
                   </div>
                 </div>
 
                 {!isOwner && (claimStatus === 'accepted' || item.type === 'lost') && (
                   <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', color: 'var(--light-text)' }}>
-                    <Phone size={16} style={{ color: 'var(--primary-color)' }} />
+                    <Phone size={16} style={{ color: 'var(--cyan-accent)' }} />
                     <div>
-                      <span style={{ display: 'block', fontSize: '0.75rem', fontWeight: 600 }}>PHONE NUMBER</span>
+                      <span style={{ display: 'block', fontSize: '10px', fontWeight: 700, color: 'var(--muted-text)' }}>PHONE NUMBER</span>
                       <span style={{ color: 'var(--dark-text)' }}>+91 {item.phoneNumber}</span>
                     </div>
                   </div>
@@ -200,8 +200,8 @@ export default function ItemDetails({ onClose }) {
               </div>
 
               <div>
-                <span style={{ fontSize: '0.9rem', fontWeight: 600, color: 'var(--light-text)', display: 'block', marginBottom: '0.25rem' }}>DESCRIPTION</span>
-                <p style={{ color: 'var(--dark-text)', lineHeight: '1.6', fontSize: '0.95rem' }}>
+                <span style={{ fontSize: '11px', fontWeight: 700, color: 'var(--muted-text)', display: 'block', marginBottom: '0.25rem' }}>DESCRIPTION</span>
+                <p style={{ color: 'var(--dark-text)', lineHeight: '1.6', fontSize: '14px' }}>
                   {item.description}
                 </p>
               </div>
@@ -210,30 +210,30 @@ export default function ItemDetails({ onClose }) {
               {!isOwner && item.type === 'found' && (
                 <div style={{ marginTop: '1rem', borderTop: '1px solid rgba(0,0,0,0.05)', paddingTop: '1.25rem' }}>
                   {claimStatus === null && (
-                    <button className="btn btn-primary" style={{ width: '100%' }} onClick={() => setShowClaimForm(true)}>
+                    <button className="btn btn-primary" style={{ width: '100%', borderRadius: '12px', height: '48px' }} onClick={() => setShowClaimForm(true)}>
                       Claim This Item
                     </button>
                   )}
                   {claimStatus === 'pending' && (
-                    <div className="ai-status-card ai-status-pending" style={{ justifyContent: 'center', width: '100%' }}>
+                    <div className="ai-status-card ai-status-pending" style={{ justifyContent: 'center', width: '100%', borderRadius: '12px' }}>
                       <Loader2 className="spinner" size={16} style={{ width: 16, height: 16 }} />
                       <span>Verification Pending: Finder is reviewing your request.</span>
                     </div>
                   )}
                   {claimStatus === 'accepted' && (
                     <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
-                      <div className="ai-status-card ai-status-success" style={{ justifyContent: 'center' }}>
+                      <div className="ai-status-card ai-status-success" style={{ justifyContent: 'center', borderRadius: '12px' }}>
                         <ShieldCheck size={16} />
                         <span>Claim Approved! Contact information unlocked.</span>
                       </div>
-                      <button className="btn btn-primary" style={{ width: '100%', gap: '0.5rem' }} onClick={handleStartChat}>
+                      <button className="btn" style={{ width: '100%', gap: '0.5rem', height: '48px', borderRadius: '12px', background: 'linear-gradient(135deg, #024950, #0FA4AF)', color: '#FFFFFF', border: 'none', fontWeight: 600 }} onClick={handleStartChat}>
                         <MessageSquare size={16} />
                         <span>Start Chat with Finder</span>
                       </button>
                     </div>
                   )}
                   {claimStatus === 'rejected' && (
-                    <div className="ai-status-card ai-status-error" style={{ justifyContent: 'center', width: '100%' }}>
+                    <div className="ai-status-card ai-status-error" style={{ justifyContent: 'center', width: '100%', borderRadius: '12px' }}>
                       <AlertCircle size={16} />
                       <span>Claim Rejected. If this is yours, please contact support.</span>
                     </div>
@@ -242,7 +242,7 @@ export default function ItemDetails({ onClose }) {
               )}
 
               {!isOwner && item.type === 'lost' && (
-                <button className="btn btn-primary" style={{ width: '100%', gap: '0.5rem', marginTop: '1rem' }} onClick={handleStartChat}>
+                <button className="btn" style={{ width: '100%', gap: '0.5rem', marginTop: '1rem', height: '48px', borderRadius: '12px', background: 'linear-gradient(135deg, #024950, #0FA4AF)', color: '#FFFFFF', border: 'none', fontWeight: 600 }} onClick={handleStartChat}>
                   <MessageSquare size={16} />
                   <span>Contact Owner</span>
                 </button>
