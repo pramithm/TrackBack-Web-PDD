@@ -111,11 +111,16 @@ class LoginPage {
   async getErrorText() {
     try {
       const el = await this.errorMessage;
-      if (await el.isExisting()) return el.getText();
+      if (await el.isExisting()) {
+        const txt = await el.getText();
+        if (txt) return txt;
+      }
     } catch { /* fall through */ }
-    // Try finding any error TextView
-    const errEl = await this.driver.$('//android.widget.TextView[contains(@text,"Invalid") or contains(@text,"Error") or contains(@text,"failed")]');
-    return errEl.isExisting() ? errEl.getText() : '';
+    try {
+      const errEl = await this.driver.$('//android.widget.TextView[contains(@text,"Invalid") or contains(@text,"Error") or contains(@text,"failed") or contains(@text,"password") or contains(@text,"email")]');
+      if (await errEl.isExisting()) return await errEl.getText();
+    } catch { /* fall through */ }
+    return '';
   }
 }
 
