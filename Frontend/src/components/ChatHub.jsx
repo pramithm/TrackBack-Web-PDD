@@ -1,6 +1,9 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useAppStore } from '../../../Backend/store/useAppStore';
 import { chatService } from '../../../Backend/services/chatService';
+import { userService } from '../../../Backend/services/userService';
+import { rtdb } from '../../../Backend/config/firebase';
+import { ref, onValue, set } from 'firebase/database';
 import { 
   Send, 
   AlertTriangle, 
@@ -11,12 +14,17 @@ import {
   Search, 
   Lock, 
   Plus, 
-  MoreVertical 
+  MoreVertical,
+  Flag,
+  UserX,
+  UserCheck
 } from 'lucide-react';
 import './Chat.css';
 
 export default function ChatHub() {
   const user = useAppStore((state) => state.user);
+  const selectedChatId = useAppStore((state) => state.selectedChatId);
+  const setSelectedChatId = useAppStore((state) => state.setSelectedChatId);
   
   const [chats, setChats] = useState([]);
   const [selectedChat, setSelectedChat] = useState(null);
@@ -29,9 +37,21 @@ export default function ChatHub() {
   const [sending, setSending] = useState(false);
   const [errorBanner, setErrorBanner] = useState('');
 
+  // Blocking & Reporting States
+  const [isPartnerBlocked, setIsPartnerBlocked] = useState(false);
+  const [amIBlocked, setAmIBlocked] = useState(false);
+  const [showOptionsDropdown, setShowOptionsDropdown] = useState(false);
+  const [showReportModal, setShowReportModal] = useState(false);
+  const [reportReason, setReportReason] = useState('Spam');
+  const [reportDetails, setReportDetails] = useState('');
+  const [reporting, setReporting] = useState(false);
+  const [blockedUids, setBlockedUids] = useState([]);
+
+  const dropdownRef = useRef(null);
+
   const messagesEndRef = useRef(null);
 
-  // 1. Listen to active conversations list & seed mock chats matching message.png
+  // 1. Listen to active conversations list, group them, and filter out system messages
   useEffect(() => {
     let unsubscribe = () => {};
     
@@ -45,7 +65,7 @@ export default function ChatHub() {
             itemImage: 'https://images.unsplash.com/photo-1583863788434-e58a36330cf0?q=80&w=200&auto=format&fit=crop',
             lastMessage: 'Hii',
             lastMessageTime: '07:10 PM',
-            partnerName: 'Me',
+            partnerName: 'Sarah',
             participants: { partner: true }
           },
           {
@@ -54,7 +74,7 @@ export default function ChatHub() {
             itemImage: 'https://images.unsplash.com/photo-1615663245857-ac93bb7c39e7?q=80&w=200&auto=format&fit=crop',
             lastMessage: 'Kf',
             lastMessageTime: 'Yesterday',
-            partnerName: 'User',
+            partnerName: 'John Doe',
             participants: { partner: true }
           },
           {
@@ -63,57 +83,89 @@ export default function ChatHub() {
             itemImage: 'https://images.unsplash.com/photo-1590658268037-6bf12165a8df?q=80&w=200&auto=format&fit=crop',
             lastMessage: 'Haii',
             lastMessageTime: 'Tue',
-            partnerName: 'Me',
-            participants: { partner: true }
-          },
-          {
-            id: 'chat_demo_4',
-            itemTitle: 'bottle',
-            itemImage: 'https://images.unsplash.com/photo-1602143407151-7111542de6e8?q=80&w=200&auto=format&fit=crop',
-            lastMessage: 'hiihiihi',
-            lastMessageTime: 'Mon',
-            partnerName: 'User',
-            participants: { partner: true }
-          },
-          {
-            id: 'chat_demo_5',
-            itemTitle: 'Mobile',
-            itemImage: 'https://images.unsplash.com/photo-1511707171634-5f897ff02aa9?q=80&w=200&auto=format&fit=crop',
-            lastMessage: 'hii',
-            lastMessageTime: '23 Oct',
-            partnerName: 'Me',
+            partnerName: 'Alex',
             participants: { partner: true }
           }
         ];
         
-        // Merge real database conversations and mock presentation conversations
-        const combined = data.length > 0 ? data.map((c, i) => ({
-          ...c,
-          itemTitle: i === 0 ? 'Adapter 45W' : c.itemTitle,
-          lastMessage: i === 0 ? 'Hii' : c.lastMessage
-        })) : mockChats;
+        // Group and de-duplicate by partner ID
+        const uniqueChatsMap = {};
+        const chatsToProcess = data.length > 0 ? data : mockChats;
+
+        chatsToProcess.forEach((chat) => {
+          const partnerId = Object.keys(chat.participants || {}).find(id => id !== user.uid) || 'partner';
+          
+          // Filter out System messages, notifications, or system logs from appearing in conversations list
+          if (
+            chat.id === 'SYSTEM' || 
+            partnerId === 'SYSTEM' || 
+            chat.lastMessage?.includes('🚫 SYSTEM') || 
+            chat.lastMessage?.includes('⚠️ SYSTEM') ||
+            chat.isSystem
+          ) {
+            return;
+          }
+          
+          const existing = uniqueChatsMap[partnerId];
+          // Keep the one with the latest lastMessageTime
+          if (!existing || chat.lastMessageTime > existing.lastMessageTime) {
+            uniqueChatsMap[partnerId] = chat;
+          }
+        });
+
+        const combined = Object.values(uniqueChatsMap).sort((a, b) => b.lastMessageTime - a.lastMessageTime);
         
         setChats(combined);
         setLoadingChats(false);
         
-        // Auto select first chat
-        if (combined.length > 0 && !selectedChat) {
+        // Auto select chat if selectedChatId is set in store
+        if (selectedChatId) {
+          const target = combined.find(c => c.id === selectedChatId);
+          if (target) {
+            setSelectedChat(target);
+          } else {
+            // Find by partner ID fallback
+            const targetChat = data.find(c => c.id === selectedChatId);
+            if (targetChat) {
+              const partnerId = Object.keys(targetChat.participants || {}).find(id => id !== user.uid);
+              const uniqueTarget = combined.find(c => Object.keys(c.participants || {}).includes(partnerId));
+              if (uniqueTarget) {
+                setSelectedChat(uniqueTarget);
+              }
+            }
+          }
+        } else if (combined.length > 0 && !selectedChat) {
           setSelectedChat(combined[0]);
         }
       });
     }
 
     return () => unsubscribe();
-  }, [user]);
+  }, [user, selectedChatId]);
 
-  // 2. Listen to messages when a chat is selected
+  // Reset selectedChatId when selectedChat is successfully set
+  useEffect(() => {
+    if (selectedChat) {
+      localStorage.setItem(`lastRead_${selectedChat.id}`, Date.now().toString());
+      if (selectedChatId === selectedChat.id) {
+        setSelectedChatId(null);
+      }
+    }
+  }, [selectedChat, selectedChatId]);
+
+  // 2. Listen to messages and block status when a chat is selected
   useEffect(() => {
     let unsubscribeMessages = () => {};
     let unsubscribeMetadata = () => {};
+    let unsubscribeBlock1 = () => {};
+    let unsubscribeBlock2 = () => {};
     
+    setIsPartnerBlocked(false);
+    setAmIBlocked(false);
+
     if (selectedChat) {
       if (selectedChat.id.startsWith('chat_demo_')) {
-        // Load mock messages inside chat container to match screen details
+        // Load mock messages inside chat container
         setMessages([
           {
             id: 'msg_demo_1',
@@ -140,14 +192,117 @@ export default function ChatHub() {
         unsubscribeMetadata = chatService.listenToChatMetadata(selectedChat.id, (meta) => {
           setChatMetadata(meta);
         });
+
+        // Listen to block status in real time
+        const partnerId = Object.keys(selectedChat.participants || {}).find(id => id !== user?.uid);
+        if (partnerId) {
+          const blockRef1 = ref(rtdb, `blocks/${user.uid}/${partnerId}`);
+          unsubscribeBlock1 = onValue(blockRef1, (snap) => {
+            setIsPartnerBlocked(snap.val() === true);
+          });
+          
+          const blockRef2 = ref(rtdb, `blocks/${partnerId}/${user.uid}`);
+          unsubscribeBlock2 = onValue(blockRef2, (snap) => {
+            setAmIBlocked(snap.val() === true);
+          });
+        }
       }
     }
 
     return () => {
       unsubscribeMessages();
       unsubscribeMetadata();
+      unsubscribeBlock1();
+      unsubscribeBlock2();
     };
-  }, [selectedChat]);
+  }, [selectedChat, user]);
+
+  // Close dropdown on click outside
+  useEffect(() => {
+    function handleClickOutside(event) {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+        setShowOptionsDropdown(false);
+      }
+    }
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, []);
+
+  // Listen to blocked users UIDs for list tags
+  useEffect(() => {
+    if (user) {
+      const blocksRef = ref(rtdb, `blocks/${user.uid}`);
+      const unsubscribe = onValue(blocksRef, (snap) => {
+        const val = snap.val();
+        if (!val) {
+          setBlockedUids([]);
+          return;
+        }
+        setBlockedUids(Object.keys(val).filter(k => val[k] === true));
+      });
+      return () => unsubscribe();
+    }
+  }, [user]);
+
+  const handleBlockToggle = async () => {
+    setShowOptionsDropdown(false);
+    if (!selectedChat) return;
+    
+    // Check if demo chat
+    if (selectedChat.id.startsWith('chat_demo_')) {
+      setIsPartnerBlocked(!isPartnerBlocked);
+      alert(isPartnerBlocked ? 'User unblocked successfully (Demo).' : 'User blocked successfully (Demo).');
+      return;
+    }
+
+    const partnerId = Object.keys(selectedChat.participants || {}).find(id => id !== user?.uid);
+    if (!partnerId) return;
+
+    try {
+      if (isPartnerBlocked) {
+        await userService.unblockUser(partnerId);
+        alert('User unblocked successfully.');
+      } else {
+        if (window.confirm(`Are you sure you want to block ${getPartnerName(selectedChat)}? You will not be able to send or receive messages from them.`)) {
+          await userService.blockUser(partnerId);
+          alert('User blocked successfully.');
+        }
+      }
+    } catch (err) {
+      console.error(err);
+      alert('Failed to update block state: ' + err.message);
+    }
+  };
+
+  const handleReportSubmit = async (e) => {
+    e.preventDefault();
+    if (!selectedChat) return;
+
+    // Check if demo chat
+    if (selectedChat.id.startsWith('chat_demo_')) {
+      alert(`[DEMO REPORT SUCCESS] Reason: ${reportReason}\nDetails: ${reportDetails}`);
+      setShowReportModal(false);
+      setReportDetails('');
+      return;
+    }
+
+    const partnerId = Object.keys(selectedChat.participants || {}).find(id => id !== user?.uid);
+    if (!partnerId) return;
+
+    setReporting(true);
+    try {
+      const partnerName = getPartnerName(selectedChat);
+      await userService.reportUser(partnerId, partnerName, reportReason, reportDetails);
+      alert('User reported successfully. Administrators have been notified.');
+      setShowReportModal(false);
+      setReportDetails('');
+    } catch (err) {
+      console.error(err);
+      alert('Failed to submit report: ' + err.message);
+    } finally {
+      setReporting(false);
+    }
+  };
 
   const scrollToBottom = () => {
     setTimeout(() => {
@@ -291,7 +446,12 @@ export default function ChatHub() {
 
                   <div className="chat-item-info" style={{ fontFamily: "'Inter', sans-serif" }}>
                     <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                      <span className="chat-item-name" style={{ fontFamily: "'Manrope', sans-serif", fontSize: '15px', fontWeight: 600, color: '#111827' }}>{getPartnerName(chat)}</span>
+                      <span className="chat-item-name" style={{ fontFamily: "'Manrope', sans-serif", fontSize: '15px', fontWeight: 600, color: '#111827' }}>
+                        {getPartnerName(chat)}
+                        {blockedUids.includes(Object.keys(chat.participants || {}).find(id => id !== user?.uid)) && (
+                          <span style={{ fontSize: '11px', color: '#EF4444', marginLeft: '6px', fontWeight: 700 }}>(Blocked)</span>
+                        )}
+                      </span>
                       <span style={{ fontSize: '12px', color: '#6B7280', fontWeight: 400 }}>{displayTime}</span>
                     </div>
                     <span style={{ fontSize: '13px', fontWeight: 500, color: '#0FA4AF' }}>
@@ -353,9 +513,80 @@ export default function ChatHub() {
                   <span>AI Moderated</span>
                 </div>
 
-                <button style={{ background: 'none', border: 'none', color: '#003135', cursor: 'pointer', padding: 0 }}>
-                  <MoreVertical size={20} />
-                </button>
+                <div style={{ position: 'relative' }} ref={dropdownRef}>
+                  <button 
+                    onClick={() => setShowOptionsDropdown(!showOptionsDropdown)}
+                    style={{ background: 'none', border: 'none', color: '#003135', cursor: 'pointer', padding: 0, display: 'flex', alignItems: 'center' }}
+                  >
+                    <MoreVertical size={20} />
+                  </button>
+                  {showOptionsDropdown && (
+                    <div 
+                      className="glass"
+                      style={{ 
+                        position: 'absolute', 
+                        top: '100%', 
+                        right: '0', 
+                        background: '#FFFFFF', 
+                        border: '1px solid #E2E8F0', 
+                        borderRadius: '8px', 
+                        padding: '4px', 
+                        boxShadow: '0 4px 12px rgba(0,0,0,0.08)',
+                        zIndex: 150,
+                        width: '150px',
+                        marginTop: '8px'
+                      }}
+                    >
+                      <button 
+                        onClick={handleBlockToggle}
+                        style={{ 
+                          width: '100%', 
+                          display: 'flex', 
+                          alignItems: 'center', 
+                          gap: '0.5rem', 
+                          padding: '8px 12px', 
+                          background: 'none', 
+                          border: 'none', 
+                          color: '#374151', 
+                          fontWeight: 600,
+                          fontSize: '13px',
+                          cursor: 'pointer',
+                          textAlign: 'left'
+                        }}
+                      >
+                        {isPartnerBlocked ? (
+                          <>
+                            <UserCheck size={14} style={{ color: '#059669' }} /> Unblock User
+                          </>
+                        ) : (
+                          <>
+                            <UserX size={14} style={{ color: '#EF4444' }} /> Block User
+                          </>
+                        )}
+                      </button>
+                      
+                      <button 
+                        onClick={() => { setShowReportModal(true); setShowOptionsDropdown(false); }}
+                        style={{ 
+                          width: '100%', 
+                          display: 'flex', 
+                          alignItems: 'center', 
+                          gap: '0.5rem', 
+                          padding: '8px 12px', 
+                          background: 'none', 
+                          border: 'none', 
+                          color: '#EF4444', 
+                          fontWeight: 600,
+                          fontSize: '13px',
+                          cursor: 'pointer',
+                          textAlign: 'left'
+                        }}
+                      >
+                        <Flag size={14} /> Report User
+                      </button>
+                    </div>
+                  )}
+                </div>
               </div>
             </div>
 
@@ -364,6 +595,32 @@ export default function ChatHub() {
               <div className="chat-warning-banner" style={{ fontFamily: "'Inter', sans-serif" }}>
                 <AlertTriangle size={16} />
                 <span>{errorBanner}</span>
+              </div>
+            )}
+
+            {/* Blocked User Warning Banner */}
+            {(isPartnerBlocked || amIBlocked) && (
+              <div 
+                className="chat-warning-banner" 
+                style={{ 
+                  fontFamily: "'Inter', sans-serif", 
+                  background: '#FEF2F2', 
+                  color: '#EF4444', 
+                  borderBottom: '1px solid #FEE2E2',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '6px',
+                  justifyContent: 'center',
+                  padding: '10px 16px'
+                }}
+              >
+                <ShieldAlert size={16} />
+                <span>
+                  {isPartnerBlocked 
+                    ? 'You have blocked this user. Unblock them from the options menu to send messages.' 
+                    : 'This user has blocked you. You cannot reply to this conversation.'
+                  }
+                </span>
               </div>
             )}
 
@@ -463,16 +720,16 @@ export default function ChatHub() {
                 <input
                   type="text"
                   className="form-input"
-                  placeholder="Type a message regarding return arrangements..."
+                  placeholder={(isPartnerBlocked || amIBlocked) ? "Messaging is disabled for blocked users." : "Type a message regarding return arrangements..."}
                   value={inputText}
                   onChange={(e) => setInputText(e.target.value)}
-                  disabled={sending}
+                  disabled={sending || isPartnerBlocked || amIBlocked}
                   style={{
                     width: '100%',
                     height: '44px',
                     borderRadius: '50px',
                     border: '1px solid #E2E8F0',
-                    background: '#F8FAFC',
+                    background: (isPartnerBlocked || amIBlocked) ? '#F1F5F9' : '#F8FAFC',
                     padding: '0 18px',
                     fontSize: '0.9rem',
                     color: '#003135',
@@ -485,19 +742,19 @@ export default function ChatHub() {
               {/* Pill Send Button */}
               <button 
                 type="submit" 
-                disabled={sending || !inputText.trim()}
+                disabled={sending || !inputText.trim() || isPartnerBlocked || amIBlocked}
                 style={{ 
                   width: '44px', 
                   height: '44px', 
                   borderRadius: '50%', 
-                  background: '#0FA4AF', 
+                  background: (isPartnerBlocked || amIBlocked) ? '#94A3B8' : '#0FA4AF', 
                   border: 'none', 
                   display: 'flex', 
                   alignItems: 'center', 
                   justifyContent: 'center',
                   color: '#FFFFFF',
-                  cursor: 'pointer',
-                  boxShadow: '0 4px 12px rgba(15, 164, 175, 0.2)'
+                  cursor: (isPartnerBlocked || amIBlocked) ? 'default' : 'pointer',
+                  boxShadow: (isPartnerBlocked || amIBlocked) ? 'none' : '0 4px 12px rgba(15, 164, 175, 0.2)'
                 }}
               >
                 {sending ? <Loader2 className="spinner" size={16} /> : <Send size={16} style={{ marginLeft: '2px' }} />}
@@ -512,6 +769,76 @@ export default function ChatHub() {
           </div>
         )}
       </div>
+
+      {/* Report User Modal overlay */}
+      {showReportModal && (
+        <div className="wizard-overlay" style={{ zIndex: 1000 }}>
+          <div className="wizard-modal" style={{ maxWidth: '400px', padding: '20px' }}>
+            <div className="wizard-header" style={{ borderBottom: '1px solid #E2E8F0', paddingBottom: '10px', marginBottom: '15px' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                <ShieldAlert size={20} style={{ color: 'var(--accent-color)' }} />
+                <h3 style={{ margin: 0, fontSize: '16px', fontWeight: 700 }}>Report User</h3>
+              </div>
+              <button 
+                style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#9CA3AF' }} 
+                onClick={() => setShowReportModal(false)}
+              >
+                <X size={18} />
+              </button>
+            </div>
+            
+            <form onSubmit={handleReportSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+              <div className="form-group">
+                <label className="form-label" style={{ fontWeight: 600 }}>Reason for Report</label>
+                <select 
+                  className="form-select"
+                  value={reportReason}
+                  onChange={(e) => setReportReason(e.target.value)}
+                  required
+                >
+                  <option value="Spam">Spam</option>
+                  <option value="Harassment">Harassment</option>
+                  <option value="Fake Claim">Fake Claim</option>
+                  <option value="Suspicious Activity">Suspicious Activity</option>
+                  <option value="Other">Other</option>
+                </select>
+              </div>
+              
+              <div className="form-group">
+                <label className="form-label" style={{ fontWeight: 600 }}>Description / Details</label>
+                <textarea 
+                  className="form-textarea"
+                  rows="3"
+                  placeholder="Please provide details about the safety concern..."
+                  value={reportDetails}
+                  onChange={(e) => setReportDetails(e.target.value)}
+                  required
+                />
+              </div>
+              
+              <div style={{ display: 'flex', gap: '10px', marginTop: '10px' }}>
+                <button 
+                  type="button" 
+                  className="btn btn-secondary" 
+                  style={{ flex: 1 }} 
+                  onClick={() => setShowReportModal(false)}
+                  disabled={reporting}
+                >
+                  Cancel
+                </button>
+                <button 
+                  type="submit" 
+                  className="btn btn-primary" 
+                  style={{ flex: 1, background: 'var(--accent-color)' }}
+                  disabled={reporting}
+                >
+                  {reporting ? 'Submitting...' : 'Submit Report'}
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

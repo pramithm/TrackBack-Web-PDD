@@ -3,6 +3,8 @@ import { useAppStore } from '../../../Backend/store/useAppStore';
 import { aiService } from '../../../Backend/services/aiService';
 import { requestService } from '../../../Backend/services/requestService';
 import { chatService } from '../../../Backend/services/chatService';
+import { rtdb } from '../../../Backend/config/firebase';
+import { ref, get } from 'firebase/database';
 import { X, Calendar, MapPin, Phone, User, ShieldCheck, HelpCircle, Loader2, Sparkles, MessageSquare, AlertCircle } from 'lucide-react';
 
 export default function ItemDetails({ onClose }) {
@@ -106,6 +108,21 @@ export default function ItemDetails({ onClose }) {
 
   const handleStartChat = async () => {
     try {
+      // Check block status
+      const blockRef1 = ref(rtdb, `blocks/${user.uid}/${item.userId}`);
+      const blockSnap1 = await get(blockRef1);
+      const blockRef2 = ref(rtdb, `blocks/${item.userId}/${user.uid}`);
+      const blockSnap2 = await get(blockRef2);
+      
+      if (blockSnap1.exists() && blockSnap1.val() === true) {
+        alert('You have blocked this user. Please unblock them in settings to start a conversation.');
+        return;
+      }
+      if (blockSnap2.exists() && blockSnap2.val() === true) {
+        alert('This user has blocked you. Start chat is disabled.');
+        return;
+      }
+
       const chatId = await chatService.getOrCreateChat(item.userId, item);
       setActiveTab('chats');
       onClose();

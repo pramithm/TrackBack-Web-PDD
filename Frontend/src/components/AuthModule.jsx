@@ -7,6 +7,7 @@ import {
 } from 'firebase/auth';
 import { userService } from '../../../Backend/services/userService';
 import { useAppStore } from '../../../Backend/store/useAppStore';
+import Logo from './Logo';
 import { 
   KeyRound, 
   Mail, 
@@ -200,9 +201,8 @@ export default function AuthModule() {
     <div style={{ display: 'flex', flexDirection: 'column', width: '100%' }}>
       {/* Header Navbar */}
       <header className="landing-header">
-        <div className="landing-logo">
-          <Sparkles size={26} style={{ color: '#0FA4AF' }} />
-          <span>TrackBack</span>
+        <div className="landing-logo" style={{ display: 'flex', alignItems: 'center' }}>
+          <Logo size={36} showText={true} textColor="#003135" />
         </div>
         <nav className="landing-nav">
           <a href="#how" className="landing-nav-link">How it Works</a>
@@ -408,8 +408,8 @@ export default function AuthModule() {
       </button>
 
       <div className="auth-card">
-        <div className="auth-badge-icon">
-          <ShieldCheck size={28} />
+        <div className="auth-badge-icon" style={{ background: 'transparent', width: 'auto', height: 'auto', marginBottom: '1rem', display: 'flex', justifyContent: 'center' }}>
+          <Logo size={56} />
         </div>
         <h2 className="auth-title">Welcome back</h2>
         <p className="auth-subtitle">Sign in to your TrackBack account to manage your reports</p>
@@ -510,8 +510,8 @@ export default function AuthModule() {
       </button>
 
       <div className="auth-card">
-        <div className="auth-badge-icon">
-          <ShieldCheck size={28} />
+        <div className="auth-badge-icon" style={{ background: 'transparent', width: 'auto', height: 'auto', marginBottom: '1rem', display: 'flex', justifyContent: 'center' }}>
+          <Logo size={56} />
         </div>
         <h2 className="auth-title">Create Account</h2>
         <p className="auth-subtitle">Join the community to find and recover items</p>
@@ -604,8 +604,8 @@ export default function AuthModule() {
       </button>
 
       <div className="auth-card">
-        <div className="auth-badge-icon">
-          <ShieldCheck size={28} />
+        <div className="auth-badge-icon" style={{ background: 'transparent', width: 'auto', height: 'auto', marginBottom: '1rem', display: 'flex', justifyContent: 'center' }}>
+          <Logo size={56} />
         </div>
         <h2 className="auth-title">Reset Password</h2>
         <p className="auth-subtitle">We will send you a password reset link</p>
@@ -639,8 +639,8 @@ export default function AuthModule() {
   const renderVerify = () => (
     <div className="auth-centered-container">
       <div className="auth-card">
-        <div className="auth-badge-icon">
-          <ShieldCheck size={28} />
+        <div className="auth-badge-icon" style={{ background: 'transparent', width: 'auto', height: 'auto', marginBottom: '1rem', display: 'flex', justifyContent: 'center' }}>
+          <Logo size={56} />
         </div>
         <h2 className="auth-title">Verify Profile</h2>
         <p className="auth-subtitle">All users must complete profile setup to interact on the platform.</p>

@@ -137,17 +137,6 @@ export default function HomeFeed() {
               <List size={16} />
             </button>
           </div>
-
-          <div style={{ width: '1px', height: '24px', background: '#E2E8F0' }} />
-
-          <button style={{ background: 'none', border: 'none', color: '#636E72', position: 'relative', cursor: 'pointer', padding: 0 }}>
-            <Bell size={20} />
-            <div style={{ position: 'absolute', top: '-2px', right: '-2px', width: '6px', height: '6px', background: '#EF4444', borderRadius: '50%' }} />
-          </button>
-
-          <button style={{ background: 'none', border: 'none', color: '#636E72', cursor: 'pointer', padding: 0 }}>
-            <Settings size={20} />
-          </button>
         </div>
       </div>
 

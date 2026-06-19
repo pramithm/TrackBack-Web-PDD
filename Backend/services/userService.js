@@ -1,5 +1,5 @@
 import { rtdb, auth } from '../config/firebase';
-import { ref, set, get, update } from 'firebase/database';
+import { ref, set, get, update, push, onValue } from 'firebase/database';
 import { cloudinaryService } from './cloudinaryService';
 
 const USERS_PATH = 'users';
@@ -67,5 +67,63 @@ export const userService = {
     const blockRef = ref(rtdb, `blocks/${user.uid}/${targetUid}`);
     const snapshot = await get(blockRef);
     return snapshot.exists();
+  },
+
+  reportUser: async (reportedUid, reportedName, reason, details = '') => {
+    const user = auth.currentUser;
+    if (!user) throw new Error('Not authenticated');
+    
+    let reporterName = 'Anonymous User';
+    try {
+      const reporterProfileRef = ref(rtdb, `${USERS_PATH}/${user.uid}`);
+      const reporterSnap = await get(reporterProfileRef);
+      if (reporterSnap.exists()) {
+        reporterName = reporterSnap.val().name || 'User';
+      }
+    } catch (e) {
+      console.error('Error fetching reporter details:', e);
+    }
+    
+    const reportsRef = ref(rtdb, 'reports');
+    const newReportRef = push(reportsRef);
+    const timestamp = Date.now();
+    
+    await set(newReportRef, {
+      id: newReportRef.key,
+      reporterId: user.uid,
+      reporterName: reporterName,
+      reportedId: reportedUid,
+      reportedName: reportedName || 'Reported User',
+      reason: reason,
+      details: details,
+      timestamp: timestamp,
+      status: 'Pending' // 'Pending' | 'Reviewed' | 'Resolved'
+    });
+    return true;
+  },
+
+  listenToReports: (callback) => {
+    const reportsRef = ref(rtdb, 'reports');
+    return onValue(reportsRef, (snapshot) => {
+      const data = snapshot.val();
+      if (!data) {
+        callback([]);
+        return;
+      }
+      const reports = Object.keys(data).map(key => ({
+        ...data[key],
+        id: key
+      })).sort((a, b) => b.timestamp - a.timestamp);
+      callback(reports);
+    });
+  },
+
+  updateReportStatus: async (reportId, status) => {
+    const reportRef = ref(rtdb, `reports/${reportId}`);
+    await update(reportRef, {
+      status,
+      updatedAt: Date.now()
+    });
+    return true;
   }
 };

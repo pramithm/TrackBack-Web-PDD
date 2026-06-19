@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { useAppStore } from '../../../Backend/store/useAppStore';
 import { auth } from '../../../Backend/config/firebase';
 import { signOut } from 'firebase/auth';
+import Logo from './Logo';
 import { 
   Home, 
   AlertCircle, 
@@ -35,17 +36,15 @@ export default function Sidebar({ onCreateReport }) {
     { id: 'chats', name: 'Messages', icon: Mail },
   ];
 
+  if (localStorage.getItem('adminMode') === 'true') {
+    menuItems.push({ id: 'admin-dashboard', name: 'Admin Dashboard', icon: ShieldCheck });
+  }
+
   return (
     <div className="sidebar" style={{ display: 'flex', flexDirection: 'column', height: '100vh', justifyContent: 'space-between' }}>
       <div>
-        <div className="sidebar-logo" style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', marginBottom: '2.5rem' }}>
-          <div style={{ width: '36px', height: '36px', borderRadius: '50%', background: '#003135', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#FFFFFF' }}>
-            <ShieldCheck size={20} />
-          </div>
-          <div style={{ display: 'flex', flexDirection: 'column' }}>
-            <span style={{ fontFamily: 'Manrope, sans-serif', fontWeight: 800, fontSize: '1.4rem', color: '#003135', letterSpacing: '-0.02em', lineHeight: 1.1 }}>TrackBack</span>
-            <span style={{ fontFamily: 'Manrope, sans-serif', fontSize: '0.7rem', color: '#636E72', fontWeight: 600, letterSpacing: '0.05em', textTransform: 'uppercase' }}>Lost & Found</span>
-          </div>
+        <div className="sidebar-logo" style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', marginBottom: '2.5rem', cursor: 'pointer' }} onClick={() => setActiveTab('feed')}>
+          <Logo size={36} showText={true} />
         </div>
 
         <div className="sidebar-menu" style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
@@ -86,8 +85,10 @@ export default function Sidebar({ onCreateReport }) {
               background: 'rgba(15, 164, 175, 0.08)', 
               borderRadius: '16px',
               border: '1px solid rgba(15, 164, 175, 0.15)',
-              margin: 'auto 0 0 0'
+              margin: 'auto 0 0 0',
+              cursor: 'pointer'
             }}
+            onClick={() => setActiveTab('profile')}
           >
             <img 
               src={user.photoURL || `https://api.dicebear.com/7.x/adventurer/svg?seed=${user.name}`} 
@@ -104,7 +105,7 @@ export default function Sidebar({ onCreateReport }) {
               </span>
             </div>
             <button 
-              onClick={() => setShowLogoutConfirm(!showLogoutConfirm)} 
+              onClick={(e) => { e.stopPropagation(); setShowLogoutConfirm(!showLogoutConfirm); }} 
               style={{ background: 'none', border: 'none', color: '#003135', cursor: 'pointer', display: 'flex', alignItems: 'center', padding: 0 }}
             >
               <MoreVertical size={18} />
