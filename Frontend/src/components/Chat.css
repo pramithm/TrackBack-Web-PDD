@@ -3,14 +3,14 @@
   height: calc(100vh - 120px);
   overflow: hidden;
   background: #FFFFFF;
-  border: 1px solid #E5E7EB;
-  border-radius: 20px;
+  border: 1px solid #E2E8F0;
+  border-radius: 16px;
   box-shadow: var(--shadow-sm);
 }
 
 .chat-list-panel {
-  width: 360px;
-  border-right: 1px solid #E5E7EB;
+  width: 340px;
+  border-right: 1px solid #E2E8F0;
   display: flex;
   flex-direction: column;
   height: 100%;
@@ -18,10 +18,11 @@
 }
 
 .chat-list-header {
-  padding: 20px 24px;
-  border-bottom: 1px solid #E5E7EB;
-  font-weight: 700;
-  font-size: 18px;
+  padding: 16px 20px;
+  border-bottom: 1px solid #E2E8F0;
+  font-family: 'Manrope', sans-serif;
+  font-weight: 600;
+  font-size: 16px;
   color: var(--primary-color);
   letter-spacing: -0.01em;
 }
@@ -36,7 +37,7 @@
 }
 
 .chat-list-item {
-  padding: 16px;
+  padding: 12px;
   display: flex;
   gap: 12px;
   align-items: center;
@@ -55,17 +56,17 @@
 }
 
 .chat-list-item.active {
-  background: #AFDDE5;
+  background: rgba(15, 164, 175, 0.08);
   border-left-color: #0FA4AF;
-  color: #003135;
+  color: #111827;
 }
 
 .chat-list-item.active .chat-item-name {
-  color: #003135;
+  color: #111827;
 }
 
 .chat-list-item.active .chat-item-msg {
-  color: #024950;
+  color: #6B7280;
 }
 
 .chat-item-img {
@@ -110,8 +111,8 @@
 }
 
 .chat-window-header {
-  padding: 16px 24px;
-  border-bottom: 1px solid #E5E7EB;
+  padding: 12px 20px;
+  border-bottom: 1px solid #E2E8F0;
   display: flex;
   align-items: center;
   gap: 1rem;
@@ -119,19 +120,19 @@
 }
 
 .chat-window-title {
-  font-weight: 700;
+  font-weight: 600;
   font-size: 16px;
   color: var(--primary-color);
 }
 
 .chat-window-subtitle {
-  font-size: 12px;
+  font-size: 13px;
   color: var(--light-text);
 }
 
 .chat-messages-log {
   flex-grow: 1;
-  padding: 24px;
+  padding: 20px;
   overflow-y: auto;
   display: flex;
   flex-direction: column;
@@ -152,11 +153,11 @@
 }
 
 .chat-bubble {
-  max-width: 70%;
-  padding: 12px 18px;
-  border-radius: 18px;
+  max-width: 65%;
+  padding: 10px 16px;
+  border-radius: 12px;
   font-size: 14px;
-  line-height: 1.5;
+  line-height: 1.4;
   box-shadow: none;
 }
 

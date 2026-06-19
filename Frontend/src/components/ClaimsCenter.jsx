@@ -118,9 +118,9 @@ export default function ClaimsCenter() {
 
   return (
     <div className="fade-in" style={{ width: '100%' }}>
-      <div style={{ marginBottom: '2.5rem' }}>
-        <h1 style={{ fontSize: '36px', fontWeight: 700, color: 'var(--primary-color)', letterSpacing: '-0.02em' }}>Claims Center</h1>
-        <p style={{ color: 'var(--light-text)', fontSize: '14px', marginTop: '0.25rem' }}>Manage ownership claim requests and verify claimants via precision AI analysis.</p>
+      <div style={{ marginBottom: '1.5rem' }}>
+        <h1 style={{ fontFamily: "'Manrope', sans-serif", fontSize: '32px', fontWeight: 700, color: 'var(--primary-color)', letterSpacing: '-0.02em', marginBottom: '0.25rem' }}>Claims Center</h1>
+        <p style={{ fontFamily: "'Inter', sans-serif", color: '#6B7280', fontSize: '15px', fontWeight: 400 }}>Manage ownership claim requests and verify claimants via precision AI analysis.</p>
       </div>
 
       {/* Sub tabs capsule selector matching claim.png */}
@@ -129,10 +129,10 @@ export default function ClaimsCenter() {
           display: 'flex', 
           padding: '0.35rem', 
           gap: '0.25rem', 
-          marginBottom: '2.5rem', 
+          marginBottom: '1.5rem', 
           maxWidth: '360px', 
           background: '#E2E8F0', 
-          borderRadius: '10px' 
+          borderRadius: '8px' 
         }}
       >
         <button
@@ -195,18 +195,18 @@ export default function ClaimsCenter() {
                 key={req.id} 
                 className="glass" 
                 style={{ 
-                  padding: '24px', 
+                  padding: '16px 20px', 
                   display: 'flex', 
-                  gap: '2rem', 
+                  gap: '1.5rem', 
                   background: '#FFFFFF', 
                   border: '1px solid #E2E8F0', 
-                  borderRadius: '20px', 
-                  boxShadow: '0 4px 16px rgba(0,0,0,0.03)',
+                  borderRadius: '16px', 
+                  boxShadow: 'var(--shadow-sm)',
                   position: 'relative'
                 }}
               >
                 {/* Left Side: Item Image with "Lost 2 days ago" badge overlay */}
-                <div style={{ position: 'relative', width: '150px', height: '150px', borderRadius: '16px', overflow: 'hidden', flexShrink: 0 }}>
+                <div style={{ position: 'relative', width: '150px', height: '150px', borderRadius: '12px', overflow: 'hidden', flexShrink: 0 }}>
                   <img 
                     src={req.itemImage || 'https://images.unsplash.com/photo-1534531173927-aeb928d54385?q=80&w=600&auto=format&fit=crop'} 
                     alt={req.itemTitle} 
@@ -224,22 +224,22 @@ export default function ClaimsCenter() {
                       boxShadow: '0 2px 6px rgba(0,0,0,0.1)'
                     }}
                   >
-                    <span style={{ fontSize: '10px', fontWeight: 700, color: '#003135', whiteSpace: 'nowrap' }}>
+                    <span style={{ fontSize: '10px', fontWeight: 700, color: '#003135', whiteSpace: 'nowrap', fontFamily: "'Inter', sans-serif" }}>
                       Lost 2 days ago
                     </span>
                   </div>
                 </div>
                 
                 {/* Main Content Area */}
-                <div style={{ flexGrow: 1, display: 'flex', flexDirection: 'column', gap: '1rem', minWidth: '250px' }}>
+                <div style={{ flexGrow: 1, display: 'flex', flexDirection: 'column', gap: '0.75rem', minWidth: '250px' }}>
                   <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
                     <div>
-                      <h3 style={{ fontSize: '1.25rem', fontWeight: 700, color: '#003135', letterSpacing: '-0.02em', marginBottom: '0.25rem' }}>{req.itemTitle}</h3>
-                      <span style={{ fontSize: '13px', color: '#636E72', fontWeight: 500 }}>
-                        Claimant: <strong style={{ color: '#003135' }}>{req.claimerName}</strong>
+                      <h3 style={{ fontFamily: "'Manrope', sans-serif", fontSize: '20px', fontWeight: 600, color: '#111827', marginBottom: '0.25rem', letterSpacing: '-0.015em' }}>{req.itemTitle}</h3>
+                      <span style={{ fontFamily: "'Inter', sans-serif", fontSize: '13px', color: '#6B7280', fontWeight: 400 }}>
+                        Claimant: <strong style={{ color: '#111827', fontWeight: 600 }}>{req.claimerName}</strong>
                       </span>
                     </div>
-                    <span style={{ fontSize: '12px', color: '#94A3B8', fontWeight: 500 }}>
+                    <span style={{ fontFamily: "'Inter', sans-serif", fontSize: '13px', color: '#6B7280', fontWeight: 400 }}>
                       {formatDate(req.createdAt)}
                     </span>
                   </div>

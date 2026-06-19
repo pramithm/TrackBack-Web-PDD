@@ -58,24 +58,25 @@ export default function HomeFeed() {
   return (
     <div className="fade-in" style={{ width: '100%' }}>
       {/* Top Navbar */}
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '2.5rem', gap: '1rem', width: '100%' }}>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.25rem', gap: '1rem', width: '100%' }}>
         {/* Search & Filter */}
         <div style={{ display: 'flex', gap: '0.75rem', flexGrow: 1, maxWidth: '600px', alignItems: 'center' }}>
           <div style={{ position: 'relative', flexGrow: 1 }}>
-            <Search size={18} style={{ position: 'absolute', left: '16px', top: '15px', color: '#94A3B8' }} />
+            <Search size={18} style={{ position: 'absolute', left: '16px', top: '13px', color: '#94A3B8' }} />
             <input
               type="text"
               className="search-input"
               style={{
                 width: '100%',
-                height: '48px',
-                borderRadius: '50px',
-                border: '1px solid #E2E8F0',
-                background: '#F1F5F9',
+                height: '44px',
+                borderRadius: '8px',
+                border: '1px solid #D1D5DB',
+                background: '#FFFFFF',
                 paddingLeft: '3.25rem',
-                fontSize: '0.9rem',
+                fontSize: '15px',
                 outline: 'none',
-                color: 'var(--dark-text)'
+                color: '#111827',
+                fontFamily: "'Inter', sans-serif"
               }}
               placeholder="Search for items, locations, or tags..."
               value={searchTerm}
@@ -85,16 +86,17 @@ export default function HomeFeed() {
           <button 
             className="btn" 
             style={{ 
-              height: '48px', 
-              borderRadius: '50px', 
+              height: '44px', 
+              borderRadius: '8px', 
               background: '#003135', 
               color: '#FFFFFF', 
               padding: '0 1.25rem',
               display: 'flex',
               alignItems: 'center',
               gap: '0.5rem',
-              fontSize: '0.9rem',
-              fontWeight: 600
+              fontSize: '15px',
+              fontWeight: 600,
+              fontFamily: "'Inter', sans-serif"
             }}
             onClick={() => setTypeFilter(prev => prev === 'all' ? 'found' : prev === 'found' ? 'lost' : 'all')}
           >
@@ -149,41 +151,50 @@ export default function HomeFeed() {
         </div>
       </div>
 
+      {/* Page Title & Description */}
+      <div style={{ marginBottom: '1.5rem' }}>
+        <h1 style={{ fontFamily: 'Manrope, sans-serif', fontSize: '32px', fontWeight: 700, color: '#003135', marginBottom: '0.25rem' }}>Discover Board</h1>
+        <p style={{ fontFamily: 'Inter, sans-serif', fontSize: '15px', fontWeight: 400, color: '#6B7280' }}>
+          Explore lost and found reports submitted by the community.
+        </p>
+      </div>
+
       {/* Hero Banner matching screen.png */}
       <div 
         style={{
           background: 'linear-gradient(135deg, #003135, #024950)',
-          borderRadius: '24px',
-          padding: '2.5rem 3rem',
+          borderRadius: '16px',
+          padding: '1.5rem 2rem',
           color: '#FFFFFF',
-          marginBottom: '2.5rem',
+          marginBottom: '1.5rem',
           position: 'relative',
           overflow: 'hidden',
           display: 'flex',
           justifyContent: 'space-between',
           alignItems: 'center',
-          boxShadow: '0 15px 30px rgba(0, 49, 53, 0.15)'
+          boxShadow: 'none'
         }}
       >
-        <div style={{ maxWidth: '60%', zIndex: 2 }}>
+        <div style={{ maxWidth: '65%', zIndex: 2 }}>
           <div 
             style={{ 
-              background: '#0FA4AF', 
+              background: 'rgba(255, 255, 255, 0.15)', 
               color: '#FFFFFF', 
               fontSize: '11px', 
               fontWeight: 700, 
-              padding: '4px 10px', 
-              borderRadius: '50px', 
+              padding: '3px 8px', 
+              borderRadius: '4px', 
               display: 'inline-block',
-              marginBottom: '1rem',
+              marginBottom: '0.5rem',
               letterSpacing: '0.05em',
-              textTransform: 'uppercase'
+              textTransform: 'uppercase',
+              fontFamily: "'Inter', sans-serif"
             }}
           >
             Latest Update
           </div>
-          <h2 style={{ fontSize: '3.5rem', fontWeight: 900, color: '#FFFFFF', letterSpacing: '-0.03em', lineHeight: 1.0, marginBottom: '1rem' }}>R</h2>
-          <p style={{ fontSize: '0.95rem', color: '#AFDDE5', lineHeight: 1.5 }}>
+          <h2 style={{ fontFamily: 'Manrope, sans-serif', fontSize: '22px', fontWeight: 600, color: '#FFFFFF', marginBottom: '0.5rem', letterSpacing: '-0.02em' }}>Community Lost & Found</h2>
+          <p style={{ fontFamily: "'Inter', sans-serif", fontSize: '14px', color: '#AFDDE5', lineHeight: '1.4' }}>
             Our community is growing. Use the Discover Board to help others find what they've lost.
           </p>
         </div>
@@ -191,22 +202,21 @@ export default function HomeFeed() {
         {/* Visual Mockup on the right */}
         <div 
           style={{
-            width: '280px',
-            height: '140px',
-            background: 'rgba(255, 255, 255, 0.1)',
-            border: '1px solid rgba(255, 255, 255, 0.15)',
-            borderRadius: '16px',
+            width: '200px',
+            height: '100px',
+            background: 'rgba(255, 255, 255, 0.08)',
+            border: '1px solid rgba(255, 255, 255, 0.12)',
+            borderRadius: '12px',
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
-            zIndex: 1,
-            boxShadow: 'inset 0 0 20px rgba(255, 255, 255, 0.05)'
+            zIndex: 1
           }}
         >
-          <div style={{ width: '80%', opacity: 0.25, display: 'flex', flexDirection: 'column', gap: '8px' }}>
-            <div style={{ height: '6px', background: '#fff', borderRadius: '3px' }} />
-            <div style={{ height: '6px', background: '#fff', borderRadius: '3px', width: '80%' }} />
-            <div style={{ height: '6px', background: '#fff', borderRadius: '3px', width: '50%' }} />
+          <div style={{ width: '70%', opacity: 0.2, display: 'flex', flexDirection: 'column', gap: '6px' }}>
+            <div style={{ height: '4px', background: '#fff', borderRadius: '2px' }} />
+            <div style={{ height: '4px', background: '#fff', borderRadius: '2px', width: '80%' }} />
+            <div style={{ height: '4px', background: '#fff', borderRadius: '2px', width: '50%' }} />
           </div>
         </div>
       </div>
@@ -327,13 +337,13 @@ export default function HomeFeed() {
                   gap: '16px',
                   padding: '16px',
                   background: '#FFFFFF',
-                  borderRadius: '24px',
+                  borderRadius: '16px',
                   border: '1px solid #E2E8F0',
-                  boxShadow: '0 4px 16px rgba(0,0,0,0.03)'
+                  boxShadow: 'var(--shadow-sm)'
                 }}
               >
                 {/* Image Container with Badges */}
-                <div style={{ position: 'relative', width: viewMode === 'list' ? '180px' : '100%', height: viewMode === 'list' ? '120px' : '220px', borderRadius: '16px', overflow: 'hidden' }}>
+                <div style={{ position: 'relative', width: viewMode === 'list' ? '180px' : '100%', height: viewMode === 'list' ? '120px' : '220px', borderRadius: '12px', overflow: 'hidden' }}>
                   <img 
                     src={item.imageUrl || 'https://images.unsplash.com/photo-1534531173927-aeb928d54385?q=80&w=600&auto=format&fit=crop'} 
                     alt={item.title} 
@@ -364,7 +374,7 @@ export default function HomeFeed() {
                         background: item.type === 'found' ? '#10B981' : '#EF4444' 
                       }} 
                     />
-                    <span style={{ fontSize: '10px', fontWeight: 800, color: '#003135', textTransform: 'uppercase', letterSpacing: '0.02em' }}>
+                    <span style={{ fontSize: '10px', fontWeight: 800, color: '#003135', textTransform: 'uppercase', letterSpacing: '0.02em', fontFamily: "'Inter', sans-serif" }}>
                       {item.type}
                     </span>
                   </div>
@@ -395,23 +405,23 @@ export default function HomeFeed() {
 
                 {/* Card Content */}
                 <div style={{ display: 'flex', flexDirection: 'column', flexGrow: 1, padding: '4px' }}>
-                  <h3 style={{ fontSize: '1.15rem', fontWeight: 700, color: '#003135', marginBottom: '0.35rem', letterSpacing: '-0.015em' }}>{item.title}</h3>
-                  <p style={{ color: '#636E72', fontSize: '0.9rem', display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden', textOverflow: 'ellipsis', lineHeight: '1.4', marginBottom: '1rem', height: '2.5rem' }}>
+                  <h3 style={{ fontFamily: "'Manrope', sans-serif", fontSize: '20px', fontWeight: 600, color: '#111827', marginBottom: '0.35rem', letterSpacing: '-0.015em' }}>{item.title}</h3>
+                  <p style={{ fontFamily: "'Inter', sans-serif", color: '#6B7280', fontSize: '14px', display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden', textOverflow: 'ellipsis', lineHeight: '1.4', marginBottom: '1rem', height: '2.5rem', fontWeight: 400 }}>
                     {item.description}
                   </p>
 
                   <div style={{ width: '100%', height: '1px', background: '#F1F5F9', marginBottom: '0.75rem' }} />
 
                   {/* Location & Time Footer */}
-                  <div style={{ display: 'flex', flexDirection: 'column', gap: '0.4rem' }}>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', color: '#636E72', fontSize: '12.5px' }}>
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '0.4rem', fontFamily: "'Inter', sans-serif" }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', color: '#6B7280', fontSize: '13px' }}>
                       <MapPin size={14} style={{ color: '#0FA4AF' }} />
-                      <span style={{ fontWeight: 500 }}>{displayLocation}</span>
+                      <span style={{ fontWeight: 400 }}>{displayLocation}</span>
                     </div>
                     <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '0.5rem' }}>
-                      <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', color: '#636E72', fontSize: '12.5px' }}>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', color: '#6B7280', fontSize: '13px' }}>
                         <Calendar size={14} style={{ color: '#0FA4AF' }} />
-                        <span style={{ fontWeight: 500 }}>{dateString}</span>
+                        <span style={{ fontWeight: 400 }}>{dateString}</span>
                       </div>
                       {subtitleLabel}
                     </div>

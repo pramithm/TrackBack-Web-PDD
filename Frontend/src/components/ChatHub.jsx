@@ -289,15 +289,15 @@ export default function ChatHub() {
                     </div>
                   </div>
 
-                  <div className="chat-item-info">
+                  <div className="chat-item-info" style={{ fontFamily: "'Inter', sans-serif" }}>
                     <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                      <span className="chat-item-name" style={{ fontWeight: 700, color: '#003135' }}>{getPartnerName(chat)}</span>
-                      <span style={{ fontSize: '10px', color: '#94A3B8' }}>{displayTime}</span>
+                      <span className="chat-item-name" style={{ fontFamily: "'Manrope', sans-serif", fontSize: '15px', fontWeight: 600, color: '#111827' }}>{getPartnerName(chat)}</span>
+                      <span style={{ fontSize: '12px', color: '#6B7280', fontWeight: 400 }}>{displayTime}</span>
                     </div>
-                    <span style={{ fontSize: '12px', fontWeight: 600, color: '#0FA4AF' }}>
+                    <span style={{ fontSize: '13px', fontWeight: 500, color: '#0FA4AF' }}>
                       Item: {chat.itemTitle}
                     </span>
-                    <span className="chat-item-msg" style={{ fontSize: '12px', color: '#636E72', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+                    <span className="chat-item-msg" style={{ fontSize: '13px', color: '#6B7280', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', fontWeight: 400 }}>
                       {chat.lastMessage || 'Start a conversation...'}
                     </span>
                   </div>
@@ -325,8 +325,8 @@ export default function ChatHub() {
                   style={{ width: '40px', height: '40px', objectFit: 'cover', borderRadius: '50%', border: '1px solid #E2E8F0' }} 
                 />
                 <div>
-                  <div className="chat-window-title" style={{ fontWeight: 700, color: '#003135' }}>{getPartnerName(selectedChat)}</div>
-                  <div className="chat-window-subtitle" style={{ fontSize: '12px', color: '#636E72', fontWeight: 500 }}>Item: {selectedChat.itemTitle}</div>
+                  <div className="chat-window-title" style={{ fontFamily: "'Manrope', sans-serif", fontSize: '16px', fontWeight: 600, color: '#111827' }}>{getPartnerName(selectedChat)}</div>
+                  <div className="chat-window-subtitle" style={{ fontFamily: "'Inter', sans-serif", fontSize: '13px', color: '#6B7280', fontWeight: 400 }}>Item: {selectedChat.itemTitle}</div>
                 </div>
               </div>
               
@@ -337,7 +337,7 @@ export default function ChatHub() {
                     border: '1.5px solid rgba(15, 164, 175, 0.4)', 
                     color: '#0FA4AF', 
                     background: 'transparent', 
-                    fontWeight: 700, 
+                    fontWeight: 600, 
                     fontSize: '11px', 
                     borderRadius: '50px', 
                     padding: '4px 12px', 
@@ -345,7 +345,8 @@ export default function ChatHub() {
                     display: 'flex',
                     alignItems: 'center',
                     gap: '4px',
-                    textTransform: 'uppercase'
+                    textTransform: 'uppercase',
+                    fontFamily: "'Inter', sans-serif"
                   }}
                 >
                   <ShieldCheck size={13} />
@@ -360,7 +361,7 @@ export default function ChatHub() {
 
             {/* Error Banner */}
             {errorBanner && (
-              <div className="chat-warning-banner">
+              <div className="chat-warning-banner" style={{ fontFamily: "'Inter', sans-serif" }}>
                 <AlertTriangle size={16} />
                 <span>{errorBanner}</span>
               </div>
@@ -375,10 +376,11 @@ export default function ChatHub() {
                     background: 'rgba(15, 164, 175, 0.1)', 
                     color: '#024950', 
                     fontSize: '11px', 
-                    fontWeight: 700, 
+                    fontWeight: 600, 
                     padding: '4px 12px', 
                     borderRadius: '50px',
-                    letterSpacing: '0.03em'
+                    letterSpacing: '0.03em',
+                    fontFamily: "'Inter', sans-serif"
                   }}
                 >
                   TODAY
@@ -394,13 +396,13 @@ export default function ChatHub() {
                       style={{
                         background: isOutgoing ? '#0FA4AF' : '#E2E8F0',
                         color: isOutgoing ? '#FFFFFF' : '#003135',
-                        borderRadius: '16px',
+                        borderRadius: '12px',
                         padding: '10px 16px',
                         maxWidth: '65%'
                       }}
                     >
-                      <p style={{ margin: 0, fontSize: '13.5px' }}>{msg.text}</p>
-                      <span style={{ display: 'block', fontSize: '9px', opacity: 0.8, textAlign: 'right', marginTop: '4px' }}>
+                      <p style={{ margin: 0, fontSize: '14px', fontFamily: "'Inter', sans-serif", fontWeight: 400, lineHeight: 1.4 }}>{msg.text}</p>
+                      <span style={{ display: 'block', fontSize: '9px', opacity: 0.8, textAlign: 'right', marginTop: '4px', fontFamily: "'Inter', sans-serif" }}>
                         {chatMetadata ? new Date(msg.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : '07:10 PM'}
                       </span>
                     </div>
@@ -418,12 +420,13 @@ export default function ChatHub() {
                   gap: '0.5rem', 
                   marginTop: 'auto', 
                   padding: '2rem 1.5rem',
-                  color: '#94A3B8',
-                  textAlign: 'center'
+                  color: '#6B7280',
+                  textAlign: 'center',
+                  fontFamily: "'Inter', sans-serif"
                 }}
               >
                 <Lock size={20} style={{ opacity: 0.6 }} />
-                <span style={{ fontSize: '12px', lineHeight: '1.5', maxWidth: '340px' }}>
+                <span style={{ fontSize: '12px', lineHeight: '1.5', maxWidth: '340px', fontWeight: 400 }}>
                   Messaging is encrypted and moderated for your safety. Never share personal financial information.
                 </span>
               </div>

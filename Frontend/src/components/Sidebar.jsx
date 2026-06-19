@@ -43,8 +43,8 @@ export default function Sidebar({ onCreateReport }) {
             <ShieldCheck size={20} />
           </div>
           <div style={{ display: 'flex', flexDirection: 'column' }}>
-            <span style={{ fontWeight: 800, fontSize: '1.4rem', color: '#003135', letterSpacing: '-0.02em', lineHeight: 1.1 }}>TrackBack</span>
-            <span style={{ fontSize: '0.7rem', color: '#636E72', fontWeight: 600, letterSpacing: '0.05em', textTransform: 'uppercase' }}>Lost & Found</span>
+            <span style={{ fontFamily: 'Manrope, sans-serif', fontWeight: 800, fontSize: '1.4rem', color: '#003135', letterSpacing: '-0.02em', lineHeight: 1.1 }}>TrackBack</span>
+            <span style={{ fontFamily: 'Manrope, sans-serif', fontSize: '0.7rem', color: '#636E72', fontWeight: 600, letterSpacing: '0.05em', textTransform: 'uppercase' }}>Lost & Found</span>
           </div>
         </div>
 
