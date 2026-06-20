@@ -124,6 +124,7 @@
   position: relative;
   transition: all 0.2s ease;
   padding: 0;
+  flex-shrink: 0;
 }
 
 .icon-btn-circle:hover {
@@ -467,4 +468,31 @@
   opacity: 0;
   transition: opacity 0.2s ease;
 }
+
+/* Dashboard Top Header Alignment & View Mode Buttons */
+.view-mode-toggle {
+  display: flex;
+  background: #F1F5F9;
+  padding: 4px;
+  border-radius: 8px;
+  border: 1px solid #E2E8F0;
+  height: 40px;
+  align-items: center;
+  gap: 2px;
+  flex-shrink: 0;
+}
+
+.view-mode-btn {
+  padding: 6px;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 30px;
+  width: 30px;
+  transition: all 0.2s ease;
+}
+
 

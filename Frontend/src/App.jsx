@@ -1,6 +1,6 @@
 import React, { useEffect, useState, useRef } from 'react';
 import { auth, rtdb } from '../../Backend/config/firebase';
-import { onAuthStateChanged } from 'firebase/auth';
+import { onAuthStateChanged, signOut } from 'firebase/auth';
 import { ref, onValue, set } from 'firebase/database';
 import { useAppStore } from '../../Backend/store/useAppStore';
 import { userService } from '../../Backend/services/userService';
@@ -31,7 +31,9 @@ import {
   Check,
   MoreVertical,
   LogOut,
-  ShieldAlert
+  ShieldAlert,
+  Grid,
+  List
 } from 'lucide-react';
 import './App.css';
 
@@ -41,12 +43,15 @@ function App() {
   const isInitializing = useAppStore((state) => state.isInitializing);
   const items = useAppStore((state) => state.items);
   const activeTab = useAppStore((state) => state.activeTab);
+  const viewMode = useAppStore((state) => state.viewMode);
+  const setViewMode = useAppStore((state) => state.setViewMode);
   
   const setUser = useAppStore((state) => state.setUser);
   const setInitializing = useAppStore((state) => state.setInitializing);
   const setItems = useAppStore((state) => state.setItems);
   const setSelectedItem = useAppStore((state) => state.setSelectedItem);
   const selectedItem = useAppStore((state) => state.selectedItem);
+  const logout = useAppStore((state) => state.logout);
 
   const [showWizard, setShowWizard] = useState(false);
   const [profileName, setProfileName] = useState('');
@@ -67,6 +72,7 @@ function App() {
   });
   const [showNotifications, setShowNotifications] = useState(false);
   const [activeNotificationTab, setActiveNotificationTab] = useState('requests'); // 'requests' | 'messages'
+  const [messageClearCounter, setMessageClearCounter] = useState(0);
 
   // Settings State
   const [settingsTab, setSettingsTab] = useState('personal'); // 'personal' | 'blocked'
@@ -294,6 +300,26 @@ function App() {
     }
   };
 
+  const handleClearRequests = () => {
+    if (requestNotifications.length === 0) return;
+    if (window.confirm('Are you sure you want to clear all request notifications?')) {
+      const idsToClear = requestNotifications.map(n => n.id);
+      const updated = [...clearedRequestIds, ...idsToClear];
+      setClearedRequestIds(updated);
+      localStorage.setItem('clearedRequestIds', JSON.stringify(updated));
+    }
+  };
+
+  const handleClearMessages = () => {
+    if (messageNotifications.length === 0) return;
+    if (window.confirm('Are you sure you want to clear all message notifications?')) {
+      messageNotifications.forEach(notif => {
+        localStorage.setItem(`lastRead_${notif.id}`, Date.now().toString());
+      });
+      setMessageClearCounter(prev => prev + 1);
+    }
+  };
+
   const renderMyReports = () => {
     const myItems = items.filter(item => item.userId === user.uid);
     return (
@@ -516,24 +542,6 @@ function App() {
                   )}
                 </div>
               </div>
-
-              <div style={{ borderTop: '1px solid #F1F5F9', paddingTop: '1.5rem' }}>
-                <h3 style={{ fontSize: '1.2rem', fontWeight: 700, marginBottom: '0.5rem', color: 'var(--primary-color)' }}>Developer Admin Console</h3>
-                <p style={{ color: 'var(--light-text)', fontSize: '13px', marginBottom: '1rem' }}>
-                  Activate administrative dashboard access to inspect, review, and moderate reported safety violations.
-                </p>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
-                  <label style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', fontWeight: 600, cursor: 'pointer' }}>
-                    <input 
-                      type="checkbox" 
-                      checked={adminMode}
-                      onChange={(e) => handleToggleAdminMode(e.target.checked)}
-                      style={{ width: '18px', height: '18px', accentColor: 'var(--cyan-accent)' }}
-                    />
-                    <span>Toggle Admin Dashboard in Sidebar</span>
-                  </label>
-                </div>
-              </div>
             </div>
           )}
         </div>
@@ -747,6 +755,35 @@ function App() {
             )}
           </button>
 
+          {activeTab === 'feed' && (
+            <div className="view-mode-toggle">
+              <button 
+                className="view-mode-btn"
+                onClick={() => setViewMode('grid')}
+                style={{ 
+                  background: viewMode === 'grid' ? '#FFFFFF' : 'transparent', 
+                  color: viewMode === 'grid' ? '#003135' : '#94A3B8',
+                  boxShadow: viewMode === 'grid' ? '0 1px 3px rgba(0,0,0,0.1)' : 'none'
+                }}
+                title="Grid View"
+              >
+                <Grid size={16} />
+              </button>
+              <button 
+                className="view-mode-btn"
+                onClick={() => setViewMode('list')}
+                style={{ 
+                  background: viewMode === 'list' ? '#FFFFFF' : 'transparent', 
+                  color: viewMode === 'list' ? '#003135' : '#94A3B8',
+                  boxShadow: viewMode === 'list' ? '0 1px 3px rgba(0,0,0,0.1)' : 'none'
+                }}
+                title="List View"
+              >
+                <List size={16} />
+              </button>
+            </div>
+          )}
+
           <button 
             className="icon-btn-circle" 
             onClick={() => useAppStore.getState().setActiveTab('profile')}
@@ -785,55 +822,97 @@ function App() {
 
               <div className="notification-list">
                 {activeNotificationTab === 'requests' && (
-                  requestNotifications.length > 0 ? (
-                    requestNotifications.map(notif => (
-                      <div 
-                        key={notif.id} 
-                        className={`notification-item ${notif.status === 'pending' ? 'unread' : ''}`}
-                        onClick={notif.onClick}
-                      >
-                        <span className="notification-item-text">{notif.text}</span>
-                        <span className="notification-item-time">
-                          {new Date(notif.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
-                        </span>
-                        {notif.clearable && (
-                          <button 
-                            className="notification-item-clear"
-                            title="Clear notification"
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              const updated = [...clearedRequestIds, notif.id];
-                              setClearedRequestIds(updated);
-                              localStorage.setItem('clearedRequestIds', JSON.stringify(updated));
-                            }}
-                          >
-                            <X size={12} />
-                          </button>
-                        )}
+                  <>
+                    {requestNotifications.length > 0 && (
+                      <div style={{ display: 'flex', justifyContent: 'flex-end', padding: '8px 16px', borderBottom: '1px solid #F1F5F9', background: '#F8FAFC' }}>
+                        <button 
+                          onClick={handleClearRequests}
+                          style={{
+                            background: 'none',
+                            border: 'none',
+                            color: '#EF4444',
+                            fontSize: '11px',
+                            fontWeight: 600,
+                            cursor: 'pointer',
+                            padding: '2px 6px',
+                            borderRadius: '4px'
+                          }}
+                        >
+                          Clear All Requests
+                        </button>
                       </div>
-                    ))
-                  ) : (
-                    <div className="notification-empty">No new claim requests.</div>
-                  )
+                    )}
+                    {requestNotifications.length > 0 ? (
+                      requestNotifications.map(notif => (
+                        <div 
+                          key={notif.id} 
+                          className={`notification-item ${notif.status === 'pending' ? 'unread' : ''}`}
+                          onClick={notif.onClick}
+                        >
+                          <span className="notification-item-text">{notif.text}</span>
+                          <span className="notification-item-time">
+                            {new Date(notif.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                          </span>
+                          {notif.clearable && (
+                            <button 
+                              className="notification-item-clear"
+                              title="Clear notification"
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                const updated = [...clearedRequestIds, notif.id];
+                                setClearedRequestIds(updated);
+                                localStorage.setItem('clearedRequestIds', JSON.stringify(updated));
+                              }}
+                            >
+                              <X size={12} />
+                            </button>
+                          )}
+                        </div>
+                      ))
+                    ) : (
+                      <div className="notification-empty">No new claim requests.</div>
+                    )}
+                  </>
                 )}
 
                 {activeNotificationTab === 'messages' && (
-                  messageNotifications.length > 0 ? (
-                    messageNotifications.map(notif => (
-                      <div 
-                        key={notif.id} 
-                        className="notification-item unread"
-                        onClick={notif.onClick}
-                      >
-                        <span className="notification-item-text">{notif.text}</span>
-                        <span className="notification-item-time">
-                          {new Date(notif.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
-                        </span>
+                  <>
+                    {messageNotifications.length > 0 && (
+                      <div style={{ display: 'flex', justifyContent: 'flex-end', padding: '8px 16px', borderBottom: '1px solid #F1F5F9', background: '#F8FAFC' }}>
+                        <button 
+                          onClick={handleClearMessages}
+                          style={{
+                            background: 'none',
+                            border: 'none',
+                            color: '#EF4444',
+                            fontSize: '11px',
+                            fontWeight: 600,
+                            cursor: 'pointer',
+                            padding: '2px 6px',
+                            borderRadius: '4px'
+                          }}
+                        >
+                          Clear All Messages
+                        </button>
                       </div>
-                    ))
-                  ) : (
-                    <div className="notification-empty">No unread chat messages.</div>
-                  )
+                    )}
+                    {messageNotifications.length > 0 ? (
+                      messageNotifications.map(notif => (
+                        <div 
+                          key={notif.id} 
+                          className="notification-item unread"
+                          onClick={notif.onClick}
+                        >
+                          <span className="notification-item-text">{notif.text}</span>
+                          <span className="notification-item-time">
+                            {new Date(notif.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                          </span>
+                        </div>
+                      ))
+                    ) : (
+                      <div className="notification-empty">No unread chat messages.</div>
+                    )}
+                  </>
                 )}
               </div>
             </div>

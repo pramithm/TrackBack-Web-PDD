@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { useAppStore } from '../../../Backend/store/useAppStore';
+import { userService } from '../../../Backend/services/userService';
 import { 
   Search, 
   MapPin, 
@@ -10,7 +11,8 @@ import {
   List, 
   Bell, 
   Settings, 
-  Heart, 
+  ShieldAlert, 
+  X,
   ChevronDown, 
   Plus 
 } from 'lucide-react';
@@ -18,13 +20,38 @@ import {
 export default function HomeFeed() {
   const items = useAppStore((state) => state.items);
   const setSelectedItem = useAppStore((state) => state.setSelectedItem);
+  const viewMode = useAppStore((state) => state.viewMode);
+  const setViewMode = useAppStore((state) => state.setViewMode);
   
   const [searchTerm, setSearchTerm] = useState('');
   const [typeFilter, setTypeFilter] = useState('all'); // 'all' | 'lost' | 'found'
   const [categoryFilter, setCategoryFilter] = useState('all'); // 'all' | categories
   const [sortBy, setSortBy] = useState('Most Recent');
-  const [viewMode, setViewMode] = useState('grid'); // 'grid' | 'list'
   const [likedItems, setLikedItems] = useState({});
+
+  const [reportingItem, setReportingItem] = useState(null);
+  const [reportReason, setReportReason] = useState('Spam listings');
+  const [reportComments, setReportComments] = useState('');
+  const [submittingReport, setSubmittingReport] = useState(false);
+
+  const handleReportSubmit = async (e) => {
+    e.preventDefault();
+    if (!reportingItem) return;
+
+    setSubmittingReport(true);
+    try {
+      await userService.reportItem(reportingItem.id, reportingItem.title, reportReason, reportComments);
+      alert('Item reported successfully. Admin review is pending.');
+      setReportingItem(null);
+      setReportReason('Spam listings');
+      setReportComments('');
+    } catch (err) {
+      console.error(err);
+      alert('Failed to submit report: ' + err.message);
+    } finally {
+      setSubmittingReport(false);
+    }
+  };
 
   const categories = ['Electronics', 'Pets', 'Accessories', 'Documents', 'Other'];
 
@@ -103,40 +130,6 @@ export default function HomeFeed() {
             <SlidersHorizontal size={16} />
             <span>Filters</span>
           </button>
-        </div>
-
-        {/* View Mode & Nav Icons */}
-        <div style={{ display: 'flex', alignItems: 'center', gap: '1.25rem' }}>
-          <div style={{ display: 'flex', background: '#F1F5F9', padding: '4px', borderRadius: '8px', border: '1px solid #E2E8F0' }}>
-            <button 
-              onClick={() => setViewMode('grid')}
-              style={{ 
-                padding: '6px', 
-                background: viewMode === 'grid' ? '#FFFFFF' : 'transparent', 
-                border: 'none', 
-                borderRadius: '6px', 
-                cursor: 'pointer',
-                color: viewMode === 'grid' ? '#003135' : '#94A3B8',
-                display: 'flex'
-              }}
-            >
-              <Grid size={16} />
-            </button>
-            <button 
-              onClick={() => setViewMode('list')}
-              style={{ 
-                padding: '6px', 
-                background: viewMode === 'list' ? '#FFFFFF' : 'transparent', 
-                border: 'none', 
-                borderRadius: '6px', 
-                cursor: 'pointer',
-                color: viewMode === 'list' ? '#003135' : '#94A3B8',
-                display: 'flex'
-              }}
-            >
-              <List size={16} />
-            </button>
-          </div>
         </div>
       </div>
 
@@ -368,9 +361,12 @@ export default function HomeFeed() {
                     </span>
                   </div>
 
-                  {/* Right Heart Button */}
+                  {/* Report Button */}
                   <button 
-                    onClick={(e) => handleLike(item.id, e)}
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      setReportingItem(item);
+                    }}
                     style={{ 
                       position: 'absolute', 
                       top: '12px', 
@@ -385,10 +381,11 @@ export default function HomeFeed() {
                       justifyContent: 'center',
                       cursor: 'pointer',
                       boxShadow: '0 2px 8px rgba(0,0,0,0.08)',
-                      color: isLiked ? '#EF4444' : '#94A3B8'
+                      color: '#EF4444'
                     }}
+                    title="Report Item"
                   >
-                    <Heart size={16} fill={isLiked ? '#EF4444' : 'none'} />
+                    <ShieldAlert size={16} />
                   </button>
                 </div>
 
@@ -425,6 +422,120 @@ export default function HomeFeed() {
           <SlidersHorizontal size={48} style={{ color: '#0FA4AF', opacity: 0.5, marginBottom: '1rem' }} />
           <h3 style={{ fontSize: '18px', fontWeight: 600, color: '#003135' }}>No items found</h3>
           <p style={{ marginTop: '0.5rem', fontSize: '14px' }}>Try modifying your search keywords or active filters.</p>
+        </div>
+      )}
+
+      {/* Report Item Modal */}
+      {reportingItem && (
+        <div className="wizard-overlay" style={{ zIndex: 1000, position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, background: 'rgba(0,0,0,0.5)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+          <div className="wizard-modal" style={{ maxWidth: '400px', width: '90%', padding: '24px', background: '#FFFFFF', borderRadius: '16px', border: '1px solid #E2E8F0', boxShadow: '0 20px 25px -5px rgba(0,0,0,0.1)' }}>
+            <div className="wizard-header" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderBottom: '1px solid #E2E8F0', paddingBottom: '12px', marginBottom: '16px' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                <ShieldAlert size={20} style={{ color: '#EF4444' }} />
+                <h3 style={{ margin: 0, fontSize: '18px', fontWeight: 700, fontFamily: 'Manrope, sans-serif', color: '#003135' }}>Report Item</h3>
+              </div>
+              <button 
+                style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#9CA3AF' }} 
+                onClick={() => {
+                  setReportingItem(null);
+                  setReportReason('Spam listings');
+                  setReportComments('');
+                }}
+              >
+                <X size={18} />
+              </button>
+            </div>
+            
+            <form onSubmit={handleReportSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+              <div className="form-group" style={{ display: 'flex', flexDirection: 'column', gap: '6px', marginBottom: 0 }}>
+                <label className="form-label" style={{ fontWeight: 600, fontSize: '14px', fontFamily: 'Inter, sans-serif', color: '#374151' }}>Reason for Report</label>
+                <select 
+                  className="form-select"
+                  value={reportReason}
+                  onChange={(e) => setReportReason(e.target.value)}
+                  required
+                  style={{
+                    width: '100%',
+                    height: '40px',
+                    borderRadius: '8px',
+                    border: '1px solid #D1D5DB',
+                    padding: '0 10px',
+                    fontSize: '14px',
+                    fontFamily: 'Inter, sans-serif'
+                  }}
+                >
+                  <option value="Spam listings">Spam listings</option>
+                  <option value="Offensive/Inappropriate content">Offensive/Inappropriate content</option>
+                  <option value="Incorrect item information">Incorrect item information</option>
+                  <option value="Claim verification issues">Claim verification issues</option>
+                </select>
+              </div>
+              
+              <div className="form-group" style={{ display: 'flex', flexDirection: 'column', gap: '6px', marginBottom: 0 }}>
+                <label className="form-label" style={{ fontWeight: 600, fontSize: '14px', fontFamily: 'Inter, sans-serif', color: '#374151' }}>Comments (Optional)</label>
+                <textarea 
+                  className="form-textarea"
+                  rows="3"
+                  placeholder="Please provide details about your report..."
+                  value={reportComments}
+                  onChange={(e) => setReportComments(e.target.value)}
+                  style={{
+                    width: '100%',
+                    borderRadius: '8px',
+                    border: '1px solid #D1D5DB',
+                    padding: '10px',
+                    fontSize: '14px',
+                    fontFamily: 'Inter, sans-serif',
+                    resize: 'vertical'
+                  }}
+                />
+              </div>
+              
+              <div style={{ display: 'flex', gap: '10px', marginTop: '10px' }}>
+                <button 
+                  type="button" 
+                  className="btn btn-secondary" 
+                  style={{ 
+                    flex: 1, 
+                    height: '40px', 
+                    borderRadius: '8px', 
+                    border: '1px solid #D1D5DB', 
+                    background: '#FFFFFF', 
+                    color: '#374151',
+                    fontSize: '14px',
+                    fontWeight: 600,
+                    cursor: 'pointer'
+                  }} 
+                  onClick={() => {
+                    setReportingItem(null);
+                    setReportReason('Spam listings');
+                    setReportComments('');
+                  }}
+                  disabled={submittingReport}
+                >
+                  Cancel
+                </button>
+                <button 
+                  type="submit" 
+                  className="btn btn-primary" 
+                  style={{ 
+                    flex: 1, 
+                    height: '40px', 
+                    borderRadius: '8px', 
+                    border: 'none', 
+                    background: '#EF4444', 
+                    color: '#FFFFFF',
+                    fontSize: '14px',
+                    fontWeight: 600,
+                    cursor: 'pointer'
+                  }}
+                  disabled={submittingReport}
+                >
+                  {submittingReport ? 'Submitting...' : 'Submit Report'}
+                </button>
+              </div>
+            </form>
+          </div>
         </div>
       )}
     </div>

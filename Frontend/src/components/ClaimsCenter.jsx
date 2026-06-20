@@ -22,6 +22,28 @@ export default function ClaimsCenter() {
   const [requests, setRequests] = useState([]);
   const [loading, setLoading] = useState(true);
   const [actionLoading, setActionLoading] = useState(null); // ID of request being accepted/rejected
+  const [clearedClaimIds, setClearedClaimIds] = useState(() => {
+    try {
+      return JSON.parse(localStorage.getItem('clearedClaimIds') || '[]');
+    } catch {
+      return [];
+    }
+  });
+
+  const visibleRequests = requests.filter(req => !clearedClaimIds.includes(req.id));
+  const completedClosedClaims = visibleRequests.filter(req => 
+    req.status === 'accepted' || req.status === 'rejected'
+  );
+  const completedClosedCount = completedClosedClaims.length;
+
+  const handleClearClaims = () => {
+    if (window.confirm('Are you sure you want to clear all completed/closed claim notifications?')) {
+      const idsToClear = completedClosedClaims.map(req => req.id);
+      const updated = [...clearedClaimIds, ...idsToClear];
+      setClearedClaimIds(updated);
+      localStorage.setItem('clearedClaimIds', JSON.stringify(updated));
+    }
+  };
 
   useEffect(() => {
     let unsubscribe = () => {};
@@ -123,71 +145,97 @@ export default function ClaimsCenter() {
         <p style={{ fontFamily: "'Inter', sans-serif", color: '#6B7280', fontSize: '15px', fontWeight: 400 }}>Manage ownership claim requests and verify claimants via precision AI analysis.</p>
       </div>
 
-      {/* Sub tabs capsule selector matching claim.png */}
-      <div 
-        style={{ 
-          display: 'flex', 
-          padding: '0.35rem', 
-          gap: '0.25rem', 
-          marginBottom: '1.5rem', 
-          maxWidth: '360px', 
-          background: '#E2E8F0', 
-          borderRadius: '8px' 
-        }}
-      >
-        <button
-          onClick={() => setActiveSubTab('incoming')}
+      {/* Sub tabs capsule selector with Clear button */}
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem', flexWrap: 'wrap', gap: '1rem' }}>
+        <div 
           style={{ 
-            flex: 1, 
-            padding: '0.6rem 1rem', 
+            display: 'flex', 
+            padding: '0.35rem', 
+            gap: '0.25rem', 
+            maxWidth: '360px', 
+            background: '#E2E8F0', 
             borderRadius: '8px',
-            border: 'none',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            gap: '0.5rem',
-            fontWeight: 600,
-            fontSize: '0.88rem',
-            cursor: 'pointer',
-            background: activeSubTab === 'incoming' ? '#003135' : 'transparent',
-            color: activeSubTab === 'incoming' ? '#FFFFFF' : '#636E72',
-            transition: 'all 0.2s'
+            flexGrow: 1
           }}
         >
-          <ArrowDownLeft size={16} />
-          <span>Received ({activeSubTab === 'incoming' ? requests.length : 3})</span>
-        </button>
-        <button
-          onClick={() => setActiveSubTab('outgoing')}
-          style={{ 
-            flex: 1, 
-            padding: '0.6rem 1rem', 
-            borderRadius: '8px',
-            border: 'none',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            gap: '0.5rem',
-            fontWeight: 600,
-            fontSize: '0.88rem',
-            cursor: 'pointer',
-            background: activeSubTab === 'outgoing' ? '#003135' : 'transparent',
-            color: activeSubTab === 'outgoing' ? '#FFFFFF' : '#636E72',
-            transition: 'all 0.2s'
-          }}
-        >
-          <ArrowUpRight size={16} />
-          <span>My Claims ({activeSubTab === 'outgoing' ? requests.length : 2})</span>
-        </button>
+          <button
+            onClick={() => setActiveSubTab('incoming')}
+            style={{ 
+              flex: 1, 
+              padding: '0.6rem 1rem', 
+              borderRadius: '8px',
+              border: 'none',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              gap: '0.5rem',
+              fontWeight: 600,
+              fontSize: '0.88rem',
+              cursor: 'pointer',
+              background: activeSubTab === 'incoming' ? '#003135' : 'transparent',
+              color: activeSubTab === 'incoming' ? '#FFFFFF' : '#636E72',
+              transition: 'all 0.2s'
+            }}
+          >
+            <ArrowDownLeft size={16} />
+            <span>Received ({activeSubTab === 'incoming' ? visibleRequests.length : 3})</span>
+          </button>
+          <button
+            onClick={() => setActiveSubTab('outgoing')}
+            style={{ 
+              flex: 1, 
+              padding: '0.6rem 1rem', 
+              borderRadius: '8px',
+              border: 'none',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              gap: '0.5rem',
+              fontWeight: 600,
+              fontSize: '0.88rem',
+              cursor: 'pointer',
+              background: activeSubTab === 'outgoing' ? '#003135' : 'transparent',
+              color: activeSubTab === 'outgoing' ? '#FFFFFF' : '#636E72',
+              transition: 'all 0.2s'
+            }}
+          >
+            <ArrowUpRight size={16} />
+            <span>My Claims ({activeSubTab === 'outgoing' ? visibleRequests.length : 2})</span>
+          </button>
+        </div>
+
+        {completedClosedCount > 0 && (
+          <button
+            onClick={handleClearClaims}
+            style={{
+              padding: '0.6rem 1.25rem',
+              borderRadius: '8px',
+              border: '1px solid #E2E8F0',
+              background: '#FFFFFF',
+              color: '#EF4444',
+              fontWeight: 600,
+              fontSize: '0.88rem',
+              cursor: 'pointer',
+              display: 'flex',
+              alignItems: 'center',
+              gap: '0.5rem',
+              transition: 'all 0.2s'
+            }}
+            onMouseEnter={(e) => e.target.style.background = '#FEF2F2'}
+            onMouseLeave={(e) => e.target.style.background = '#FFFFFF'}
+          >
+            Clear Completed Claims
+          </button>
+        )}
       </div>
 
       {loading ? (
         <div style={{ display: 'flex', justifyContent: 'center', padding: '4rem' }}>
           <Loader2 className="spinner" size={32} />
         </div>
-      ) : requests.length > 0 ? (
+      ) : visibleRequests.length > 0 ? (
         <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem', width: '100%' }}>
-          {requests.map((req) => {
+          {visibleRequests.map((req) => {
             const verificationType = req.mockType || 'qa';
 
             return (
@@ -412,7 +460,7 @@ export default function ClaimsCenter() {
           })}
         </div>
       ) : (
-        <div className="glass" style={{ padding: '4rem 2rem', textAlign: 'center', color: '#636E72', background: '#FFFFFF', border: '1px solid #E2E8F0', borderRadius: '24px' }}>
+        <div className="glass" style={{ padding: '4rem 2rem', textAlign: 'center', color: '#636E72', background: '#FFFFFF', border: '1px solid #E2E8F0', borderRadius: '24px', width: '100%' }}>
           <Inbox size={48} style={{ color: '#0FA4AF', opacity: 0.5, marginBottom: '1rem' }} />
           <h3 style={{ fontSize: '18px', fontWeight: 600, color: '#003135' }}>No claim requests</h3>
           <p style={{ marginTop: '0.5rem', fontSize: '14px' }}>You don't have any incoming or outgoing claims at this time.</p>

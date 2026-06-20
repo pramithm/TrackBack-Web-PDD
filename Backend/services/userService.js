@@ -102,6 +102,39 @@ export const userService = {
     return true;
   },
 
+  reportItem: async (itemId, itemTitle, reason, details = '') => {
+    const user = auth.currentUser;
+    if (!user) throw new Error('Not authenticated');
+    
+    let reporterName = 'Anonymous User';
+    try {
+      const reporterProfileRef = ref(rtdb, `${USERS_PATH}/${user.uid}`);
+      const reporterSnap = await get(reporterProfileRef);
+      if (reporterSnap.exists()) {
+        reporterName = reporterSnap.val().name || 'User';
+      }
+    } catch (e) {
+      console.error('Error fetching reporter details:', e);
+    }
+    
+    const reportsRef = ref(rtdb, 'reports');
+    const newReportRef = push(reportsRef);
+    const timestamp = Date.now();
+    
+    await set(newReportRef, {
+      id: newReportRef.key,
+      reporterId: user.uid,
+      reporterName: reporterName,
+      reportedId: itemId,
+      reportedName: `Item: ${itemTitle}`,
+      reason: reason,
+      details: details,
+      timestamp: timestamp,
+      status: 'Pending'
+    });
+    return true;
+  },
+
   listenToReports: (callback) => {
     const reportsRef = ref(rtdb, 'reports');
     return onValue(reportsRef, (snapshot) => {
