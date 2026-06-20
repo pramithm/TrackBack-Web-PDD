@@ -1,37 +1,37 @@
 [
   {
     "name": "should load the TrackBack landing page",
-    "status": "failed",
-    "duration": 20430,
-    "error": "Landing page did not load — Sign In button not found\nWait timed out after 20089ms",
-    "screenshotPath": "Screenshots/FAIL_should_load_the_TrackBack_landing_page_1781695706690.png"
+    "status": "passed",
+    "duration": 768,
+    "error": null,
+    "screenshotPath": null
   },
   {
     "name": "should navigate to the login form",
-    "status": "failed",
-    "duration": 20227,
-    "error": "Waiting for element to be located By(css selector, *[id=\"landing-signin-btn\"])\nWait timed out after 20188ms",
-    "screenshotPath": "Screenshots/FAIL_should_navigate_to_the_login_form_1781695726946.png"
+    "status": "passed",
+    "duration": 790,
+    "error": null,
+    "screenshotPath": null
   },
   {
     "name": "should login with valid credentials and reach the dashboard",
-    "status": "failed",
-    "duration": 20178,
-    "error": "Waiting for element to be located By(css selector, *[id=\"landing-signin-btn\"])\nWait timed out after 20149ms",
-    "screenshotPath": "Screenshots/FAIL_should_login_with_valid_credentials_and_reach_the_dashboard_1781695747163.png"
+    "status": "passed",
+    "duration": 2648,
+    "error": null,
+    "screenshotPath": null
   },
   {
     "name": "should reject invalid credentials with an error message",
-    "status": "failed",
-    "duration": 20175,
-    "error": "Waiting for element to be located By(css selector, *[id=\"landing-signin-btn\"])\nWait timed out after 20152ms",
-    "screenshotPath": "Screenshots/FAIL_should_reject_invalid_credentials_with_an_error_message_1781695767378.png"
+    "status": "passed",
+    "duration": 1136,
+    "error": null,
+    "screenshotPath": null
   },
   {
     "name": "should open the sign-up form from landing",
-    "status": "failed",
-    "duration": 20177,
-    "error": "Waiting for element to be located By(css selector, *[id=\"landing-signup-btn\"])\nWait timed out after 20155ms",
-    "screenshotPath": "Screenshots/FAIL_should_open_the_sign_up_form_from_landing_1781695787594.png"
+    "status": "passed",
+    "duration": 1058,
+    "error": null,
+    "screenshotPath": null
   }
 ]
