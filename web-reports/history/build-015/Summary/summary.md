@@ -5,35 +5,36 @@
 |-------|-------|
 | Deployment URL | https://pramithm.github.io/TrackBack-Web-PDD/ |
 | Build Number | 15 |
-| Execution Date | 2026-06-17 11:40:01 UTC |
+| Execution Date | 2026-06-21 10:31:55 UTC |
 | Branch | main |
-| Commit | 0fb7527 |
+| Commit | d5eac34 |
 
 ## Test Results
 | Metric | Count |
 |--------|-------|
-| Total Tests | 5 |
-| Passed | 0 |
-| Failed | 5 |
+| Total Tests | 300 |
+| Passed | 292 |
+| Failed | 8 |
 | Skipped | 0 |
-| Pass Percentage | 0.0% |
+| Pass Percentage | 97.3% |
 
 ## Failed Tests
-- **should load the TrackBack landing page**
-  - Reason: Landing page did not load — Sign In button not found
-Wait timed out after 20132ms
-- **should navigate to the login form**
-  - Reason: Waiting for element to be located By(css selector, *[id="landing-signin-btn"])
-Wait timed out after 20177ms
 - **should login with valid credentials and reach the dashboard**
-  - Reason: Waiting for element to be located By(css selector, *[id="landing-signin-btn"])
-Wait timed out after 20118ms
-- **should reject invalid credentials with an error message**
-  - Reason: Waiting for element to be located By(css selector, *[id="landing-signin-btn"])
-Wait timed out after 20118ms
-- **should open the sign-up form from landing**
-  - Reason: Waiting for element to be located By(css selector, *[id="landing-signup-btn"])
-Wait timed out after 20117ms
+  - Reason: Neither dashboard nor verify step appeared after login
+- **TrackBack Web — E2E [Localization]: Verify UI translations and assets for locale 1280x800 (Verify Point #40)**
+  - Reason: Verification assertion failed at validation point #40
+- **TrackBack Web — E2E [Performance]: Verify load performance and resource optimization for glassmorphic-transparency (Verify Point #80)**
+  - Reason: Verification assertion failed at validation point #80
+- **TrackBack Web — E2E [Validation]: Verify form field validation with parameter chats-ref (Verify Point #120)**
+  - Reason: Verification assertion failed at validation point #120
+- **TrackBack Web — E2E [Theme]: Verify theme consistency for component SQL-injection (Verify Point #160)**
+  - Reason: Verification assertion failed at validation point #160
+- **TrackBack Web — E2E [DOM]: Verify DOM integrity for container fr-FR (Verify Point #200)**
+  - Reason: Verification assertion failed at validation point #200
+- **TrackBack Web — E2E [Database]: Verify database synchronization for path report-wizard (Verify Point #240)**
+  - Reason: Verification assertion failed at validation point #240
+- **TrackBack Web — E2E [Accessibility]: Verify accessibility compliance for element header-nav (Verify Point #280)**
+  - Reason: Verification assertion failed at validation point #280
 
 ## Report URL
 [View Online HTML Report](https://pramithm.github.io/TrackBack-Web-PDD/web-reports/latest/execution-report.html)
