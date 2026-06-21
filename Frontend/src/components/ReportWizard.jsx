@@ -3,10 +3,13 @@ import { useAppStore } from '../../../Backend/store/useAppStore';
 import { aiService } from '../../../Backend/services/aiService';
 import { itemService } from '../../../Backend/services/itemService';
 import { Upload, X, Loader2, ShieldCheck, AlertCircle, Sparkles, HelpCircle, Check, ArrowRight } from 'lucide-react';
+import { errorHelper } from '../services/errorHelper';
 import './Wizard.css';
 
 export default function ReportWizard({ onClose }) {
   const user = useAppStore((state) => state.user);
+  const isOffline = useAppStore((state) => state.isOffline);
+  const showToast = useAppStore((state) => state.showToast);
   
   const [step, setStep] = useState(1);
   const [type, setType] = useState('found'); // 'found' | 'lost'
@@ -33,6 +36,15 @@ export default function ReportWizard({ onClose }) {
   const [questionsLoading, setQuestionsLoading] = useState(false);
   const [publishLoading, setPublishLoading] = useState(false);
   const [error, setError] = useState('');
+
+  const [fieldErrors, setFieldErrors] = useState({
+    image: '',
+    title: '',
+    description: '',
+    location: '',
+    phone: '',
+    questions: ''
+  });
 
   const fileInputRef = useRef(null);
   const categories = ['Electronics', 'Wallets & Purses', 'Keys', 'Documents', 'Pets', 'Other'];
@@ -64,46 +76,71 @@ export default function ReportWizard({ onClose }) {
   };
 
   const handleNext = () => {
+    setFieldErrors({ image: '', title: '', description: '', location: '', phone: '', questions: '' });
+    setError('');
+    let hasErrors = false;
+
     if (step === 1) {
       if (type === 'found' && !imageFile) {
-        setError('Please upload an image of the found item.');
-        return;
+        setFieldErrors(prev => ({ ...prev, image: 'Please upload an image of the found item.' }));
+        hasErrors = true;
       }
       if (type === 'found' && moderationResult && !moderationResult.verified) {
-        setError('Please upload a valid item image. The current image was rejected.');
-        return;
+        setFieldErrors(prev => ({ ...prev, image: 'Please upload a valid item image. The current image was rejected.' }));
+        hasErrors = true;
       }
-      setStep(2);
+      if (!hasErrors) setStep(2);
     } else if (step === 2) {
-      if (!title.trim() || !description.trim()) {
-        setError('Please fill in both title and description.');
-        return;
+      const errors = {};
+      if (!title.trim()) {
+        errors.title = 'Item Title is required.';
+        hasErrors = true;
       }
-      setStep(3);
-    } else if (step === 3) {
-      if (!location.trim() || !phone.trim()) {
-        setError('Please fill in both location and phone number.');
-        return;
+      if (!description.trim()) {
+        errors.description = 'Description is required.';
+        hasErrors = true;
       }
-      setError('');
-      if (type === 'found') {
-        setStep(4);
+      if (hasErrors) {
+        setFieldErrors(prev => ({ ...prev, ...errors }));
       } else {
-        setStep(5); // Skip questions for lost items
+        setStep(3);
+      }
+    } else if (step === 3) {
+      const errors = {};
+      if (!location.trim()) {
+        errors.location = 'Location / Address is required.';
+        hasErrors = true;
+      }
+      if (!phone.trim()) {
+        errors.phone = 'Contact Mobile Number is required.';
+        hasErrors = true;
+      } else if (phone.length < 10 || !/^\d+$/.test(phone)) {
+        errors.phone = 'Please enter a valid 10-digit mobile number.';
+        hasErrors = true;
+      }
+      if (hasErrors) {
+        setFieldErrors(prev => ({ ...prev, ...errors }));
+      } else {
+        setError('');
+        if (type === 'found') {
+          setStep(4);
+        } else {
+          setStep(5); // Skip questions for lost items
+        }
       }
     } else if (step === 4) {
       // Validate questions
       const emptyQuestion = questions.some(q => !q.q.trim() || !q.a.trim());
       if (emptyQuestion) {
-        setError('Please complete all 3 verification questions and answers.');
-        return;
+        setFieldErrors(prev => ({ ...prev, questions: 'Please complete all 3 verification questions and answers.' }));
+        hasErrors = true;
       }
-      setError('');
-      setStep(5);
+      if (!hasErrors) setStep(5);
     }
   };
 
   const handleBack = () => {
+    setFieldErrors({ image: '', title: '', description: '', location: '', phone: '', questions: '' });
     setError('');
     if (step === 5 && type === 'lost') {
       setStep(3);
@@ -113,6 +150,10 @@ export default function ReportWizard({ onClose }) {
   };
 
   const handlePublish = async () => {
+    if (isOffline) {
+      showToast('Network connection unavailable. Please check your connection.', 'error');
+      return;
+    }
     setPublishLoading(true);
     setError('');
     
@@ -137,14 +178,14 @@ export default function ReportWizard({ onClose }) {
       const result = await itemService.addItem(itemData);
 
       if (result.success) {
-        alert('Your report has been successfully published!');
+        showToast('Your report has been successfully published!', 'success');
         onClose();
       } else {
-        setError(result.error || 'Failed to submit report. Please try again.');
+        setError(errorHelper.getFriendlyMessage(result.error));
       }
     } catch (err) {
       console.error(err);
-      setError('An error occurred during submission.');
+      setError(errorHelper.getFriendlyMessage(err));
     } finally {
       setPublishLoading(false);
     }
@@ -238,6 +279,7 @@ export default function ReportWizard({ onClose }) {
           )}
         </div>
       )}
+      {fieldErrors.image && <span className="inline-field-error" style={{ textAlign: 'center', marginTop: '12px' }}>{fieldErrors.image}</span>}
     </div>
   );
 
@@ -252,9 +294,10 @@ export default function ReportWizard({ onClose }) {
           className="form-input"
           placeholder="e.g. Black iPhone 13 Pro Max"
           value={title}
-          onChange={(e) => { setTitle(e.target.value); setError(''); }}
+          onChange={(e) => { setTitle(e.target.value); setError(''); setFieldErrors(prev => ({ ...prev, title: '' })); }}
           required
         />
+        {fieldErrors.title && <span className="inline-field-error">{fieldErrors.title}</span>}
       </div>
 
       <div className="form-group">
@@ -277,9 +320,10 @@ export default function ReportWizard({ onClose }) {
           rows="4"
           placeholder="Describe key details. (Keep specifics secret if it is a found item so that the verification questions remain useful!)"
           value={description}
-          onChange={(e) => { setDescription(e.target.value); setError(''); }}
+          onChange={(e) => { setDescription(e.target.value); setError(''); setFieldErrors(prev => ({ ...prev, description: '' })); }}
           required
         />
+        {fieldErrors.description && <span className="inline-field-error">{fieldErrors.description}</span>}
       </div>
     </div>
   );
@@ -295,7 +339,7 @@ export default function ReportWizard({ onClose }) {
           className="form-input"
           placeholder="e.g. Near CCD Cafe, Terminal 2 Airport"
           value={location}
-          onChange={(e) => { setLocation(e.target.value); setError(''); }}
+          onChange={(e) => { setLocation(e.target.value); setError(''); setFieldErrors(prev => ({ ...prev, location: '' })); }}
           required
         />
         <button
@@ -303,16 +347,22 @@ export default function ReportWizard({ onClose }) {
           className="btn btn-secondary"
           style={{ alignSelf: 'flex-start', padding: '0.5rem 1rem', fontSize: '0.8rem', marginTop: '0.5rem', borderRadius: '10px' }}
           onClick={() => {
+            if (isOffline) {
+              showToast('Network connection unavailable. Cannot detect location.', 'error');
+              return;
+            }
             navigator.geolocation.getCurrentPosition(
               (pos) => {
                 setLocation(`Lat: ${pos.coords.latitude.toFixed(4)}, Lon: ${pos.coords.longitude.toFixed(4)}`);
+                setFieldErrors(prev => ({ ...prev, location: '' }));
               },
-              (err) => alert('Could not access current location.')
+              (err) => showToast('Could not access current location.', 'warning')
             );
           }}
         >
           Detect My Location
         </button>
+        {fieldErrors.location && <span className="inline-field-error">{fieldErrors.location}</span>}
       </div>
 
       <div className="form-group">
@@ -326,11 +376,12 @@ export default function ReportWizard({ onClose }) {
             className="form-input"
             placeholder="00000 00000"
             value={phone}
-            onChange={(e) => { setPhone(e.target.value); setError(''); }}
+            onChange={(e) => { setPhone(e.target.value); setError(''); setFieldErrors(prev => ({ ...prev, phone: '' })); }}
             maxLength={10}
             required
           />
         </div>
+        {fieldErrors.phone && <span className="inline-field-error">{fieldErrors.phone}</span>}
       </div>
     </div>
   );
@@ -359,17 +410,18 @@ export default function ReportWizard({ onClose }) {
             style={{ fontWeight: 500 }}
             placeholder={`Question ${idx + 1}`}
             value={q.q}
-            onChange={(e) => handleQuestionChange(idx, 'q', e.target.value)}
+            onChange={(e) => { handleQuestionChange(idx, 'q', e.target.value); setFieldErrors(prev => ({ ...prev, questions: '' })); }}
           />
           <input
             type="text"
             className="form-input"
             placeholder={`Expected Answer for Question ${idx + 1}`}
             value={q.a}
-            onChange={(e) => handleQuestionChange(idx, 'a', e.target.value)}
+            onChange={(e) => { handleQuestionChange(idx, 'a', e.target.value); setFieldErrors(prev => ({ ...prev, questions: '' })); }}
           />
         </div>
       ))}
+      {fieldErrors.questions && <span className="inline-field-error" style={{ textAlign: 'center', marginTop: '12px' }}>{fieldErrors.questions}</span>}
     </div>
   );
 

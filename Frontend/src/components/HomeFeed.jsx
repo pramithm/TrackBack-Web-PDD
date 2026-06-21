@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
 import { useAppStore } from '../../../Backend/store/useAppStore';
 import { userService } from '../../../Backend/services/userService';
+import { itemService } from '../../../Backend/services/itemService';
+import { errorHelper } from '../services/errorHelper';
 import { 
   Search, 
   MapPin, 
@@ -22,6 +24,8 @@ export default function HomeFeed() {
   const setSelectedItem = useAppStore((state) => state.setSelectedItem);
   const viewMode = useAppStore((state) => state.viewMode);
   const setViewMode = useAppStore((state) => state.setViewMode);
+  const isOffline = useAppStore((state) => state.isOffline);
+  const showToast = useAppStore((state) => state.showToast);
   
   const [searchTerm, setSearchTerm] = useState('');
   const [typeFilter, setTypeFilter] = useState('all'); // 'all' | 'lost' | 'found'
@@ -38,16 +42,21 @@ export default function HomeFeed() {
     e.preventDefault();
     if (!reportingItem) return;
 
+    if (isOffline) {
+      showToast('Network connection unavailable. Cannot submit report.', 'error');
+      return;
+    }
+
     setSubmittingReport(true);
     try {
-      await userService.reportItem(reportingItem.id, reportingItem.title, reportReason, reportComments);
-      alert('Item reported successfully. Admin review is pending.');
+      await itemService.reportItem(reportingItem.id, reportingItem.title, reportingItem.type, reportReason, reportComments);
+      showToast('Item reported successfully. Admin review is pending.', 'success');
       setReportingItem(null);
       setReportReason('Spam listings');
       setReportComments('');
     } catch (err) {
       console.error(err);
-      alert('Failed to submit report: ' + err.message);
+      showToast('Failed to submit report: ' + errorHelper.getFriendlyMessage(err), 'error');
     } finally {
       setSubmittingReport(false);
     }

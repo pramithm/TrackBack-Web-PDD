@@ -137,26 +137,82 @@ export const userService = {
 
   listenToReports: (callback) => {
     const reportsRef = ref(rtdb, 'reports');
-    return onValue(reportsRef, (snapshot) => {
-      const data = snapshot.val();
-      if (!data) {
-        callback([]);
-        return;
-      }
-      const reports = Object.keys(data).map(key => ({
-        ...data[key],
+    const reportedItemsRef = ref(rtdb, 'reportedItems');
+    
+    let reportsData = {};
+    let reportedItemsData = {};
+    
+    const triggerCallback = () => {
+      const standardReports = Object.keys(reportsData).map(key => ({
+        ...reportsData[key],
         id: key
-      })).sort((a, b) => b.timestamp - a.timestamp);
-      callback(reports);
+      }));
+      
+      const itemReports = [];
+      Object.keys(reportedItemsData).forEach(itemId => {
+        const itemVal = reportedItemsData[itemId];
+        if (itemVal && itemVal.reports) {
+          Object.keys(itemVal.reports).forEach(reporterId => {
+            const reportVal = itemVal.reports[reporterId];
+            itemReports.push({
+              id: `reportedItems|${itemId}|${reporterId}`,
+              reporterId: reporterId,
+              reporterName: reportVal.reporterName || 'Anonymous User',
+              reportedId: itemId,
+              reportedName: `Item: ${itemVal.itemTitle || 'Unknown Item'}`,
+              reason: reportVal.reason || 'Not specified',
+              details: reportVal.message || reportVal.details || '',
+              timestamp: reportVal.timestamp || Date.now(),
+              status: reportVal.status || 'Pending'
+            });
+          });
+        }
+      });
+      
+      const allReports = [...standardReports, ...itemReports].sort((a, b) => b.timestamp - a.timestamp);
+      callback(allReports);
+    };
+
+    const unsubReports = onValue(reportsRef, (snapshot) => {
+      reportsData = snapshot.val() || {};
+      triggerCallback();
     });
+
+    const unsubReportedItems = onValue(reportedItemsRef, (snapshot) => {
+      reportedItemsData = snapshot.val() || {};
+      triggerCallback();
+    });
+
+    return () => {
+      unsubReports();
+      unsubReportedItems();
+    };
   },
 
   updateReportStatus: async (reportId, status) => {
-    const reportRef = ref(rtdb, `reports/${reportId}`);
-    await update(reportRef, {
-      status,
-      updatedAt: Date.now()
-    });
-    return true;
+    try {
+      if (typeof reportId === 'string' && reportId.startsWith('reportedItems|')) {
+        const parts = reportId.split('|');
+        if (parts.length === 3) {
+          const itemId = parts[1];
+          const reporterId = parts[2];
+          const reportRef = ref(rtdb, `reportedItems/${itemId}/reports/${reporterId}`);
+          await update(reportRef, {
+            status,
+            updatedAt: Date.now()
+          });
+          return true;
+        }
+      }
+      const reportRef = ref(rtdb, `reports/${reportId}`);
+      await update(reportRef, {
+        status,
+        updatedAt: Date.now()
+      });
+      return true;
+    } catch (error) {
+      console.error('Error updating report status:', error);
+      throw error;
+    }
   }
 };

@@ -35,8 +35,23 @@ onAuthStateChanged(auth, async (firebaseUser) => {
   if (firebaseUser) {
     try {
       console.log('[AuthStore] Fetching profile for UID:', firebaseUser.uid);
-      const profile = await userService.getUserProfile(firebaseUser.uid);
+      let profile = await userService.getUserProfile(firebaseUser.uid);
       console.log('[AuthStore] Profile fetched:', profile);
+      
+      // If Firebase Auth says email is verified but DB doesn't, sync it
+      if (profile && firebaseUser.emailVerified && !profile.emailVerified) {
+        try {
+          await userService.updateUserProfile(firebaseUser.uid, {
+            emailVerified: true,
+            isEmailVerified: true,
+          });
+          profile.emailVerified = true;
+          profile.isEmailVerified = true;
+        } catch (syncErr) {
+          console.error('[AuthStore] Error syncing emailVerified to DB:', syncErr);
+        }
+      }
+
       if (profile) {
         updateState({
           user: {
@@ -109,6 +124,38 @@ export const useAuth = () => {
               email: currentUser.email,
               emailVerified: currentUser.emailVerified,
               ...profile,
+            },
+          });
+        }
+      }
+    },
+    reloadUser: async () => {
+      const currentUser = auth.currentUser;
+      if (currentUser) {
+        await currentUser.reload();
+        const refreshedUser = auth.currentUser;
+        if (refreshedUser) {
+          let profile = await userService.getUserProfile(refreshedUser.uid);
+          
+          if (profile && refreshedUser.emailVerified && !profile.emailVerified) {
+            try {
+              await userService.updateUserProfile(refreshedUser.uid, {
+                emailVerified: true,
+                isEmailVerified: true,
+              });
+              profile.emailVerified = true;
+              profile.isEmailVerified = true;
+            } catch (syncErr) {
+              console.error('[AuthStore] Error syncing emailVerified to DB during reload:', syncErr);
+            }
+          }
+
+          updateState({
+            user: {
+              uid: refreshedUser.uid,
+              email: refreshedUser.email,
+              emailVerified: refreshedUser.emailVerified,
+              ...(profile || { isProfileVerified: false }),
             },
           });
         }

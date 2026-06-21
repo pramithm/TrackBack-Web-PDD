@@ -22,6 +22,8 @@ import { Item } from '@/src/services/itemService';
 import { requestService } from '@/src/services/requestService';
 import { chatService } from '@/src/services/chatService';
 import { aiService } from '@/src/services/aiService';
+import { connectivity } from '@/src/services/connectivity';
+import { errorHelper } from '@/src/services/errorHelper';
 
 export default function ItemDetailsScreen() {
   const { id } = useLocalSearchParams<{ id: string }>();
@@ -30,6 +32,7 @@ export default function ItemDetailsScreen() {
 
   const [item, setItem] = useState<Item | null>(null);
   const [loading, setLoading] = useState(true);
+  const [errorState, setErrorState] = useState<'not_found' | 'offline' | 'error' | null>(null);
   const [claimStatus, setClaimStatus] = useState<'pending' | 'accepted' | 'rejected' | null>(null);
   
   // Claim Form States
@@ -49,6 +52,16 @@ export default function ItemDetailsScreen() {
 
     const fetchItemDetails = async () => {
       try {
+        setLoading(true);
+        setErrorState(null);
+
+        const isOnline = await connectivity.checkOnline();
+        if (!isOnline) {
+          setErrorState('offline');
+          setLoading(false);
+          return;
+        }
+
         console.log(`[ItemDetails] Fetching item ID: ${id}`);
         const itemRef = ref(rtdb, `items/${id}`);
         const snapshot = await get(itemRef);
@@ -84,12 +97,11 @@ export default function ItemDetailsScreen() {
             setClaimStatus(status);
           }
         } else {
-          Alert.alert('Error', 'Item not found.');
-          router.back();
+          setErrorState('not_found');
         }
       } catch (err: any) {
         console.error('[ItemDetails] Error fetching details:', err);
-        Alert.alert('Error', 'Failed to load item details.');
+        setErrorState('error');
       } finally {
         setLoading(false);
       }
@@ -112,6 +124,12 @@ export default function ItemDetailsScreen() {
 
     if (answers.some(a => !a || a.trim().length === 0)) {
       setFormError('Please answer all questions.');
+      return;
+    }
+
+    const isOnline = await connectivity.checkOnline();
+    if (!isOnline) {
+      setFormError('Network connection unavailable. Please check your internet connection and try again.');
       return;
     }
 
@@ -139,7 +157,8 @@ export default function ItemDetailsScreen() {
     } catch (err: any) {
       console.error(err);
       setIsVerified(false);
-      setFormError('Failed to verify answers: ' + (err.message || err));
+      const friendlyMsg = errorHelper.getFriendlyMessage(err);
+      setFormError('Failed to verify answers: ' + friendlyMsg);
     } finally {
       setVerifying(false);
     }
@@ -147,6 +166,13 @@ export default function ItemDetailsScreen() {
 
   const handleClaimSubmit = async () => {
     if (!item) return;
+
+    const isOnline = await connectivity.checkOnline();
+    if (!isOnline) {
+      setFormError('Network connection unavailable. Please check your internet connection and try again.');
+      return;
+    }
+
     setVerifying(true);
 
     try {
@@ -171,11 +197,13 @@ export default function ItemDetailsScreen() {
           ]
         );
       } else {
-        setFormError('Failed to send claim request: ' + claimResult.error);
+        const friendlyMsg = errorHelper.getFriendlyMessage(claimResult.error);
+        setFormError(friendlyMsg);
       }
     } catch (err: any) {
       console.error(err);
-      setFormError('Failed to submit claim: ' + (err.message || err));
+      const friendlyMsg = errorHelper.getFriendlyMessage(err);
+      setFormError(friendlyMsg);
     } finally {
       setVerifying(false);
     }
@@ -183,6 +211,13 @@ export default function ItemDetailsScreen() {
 
   const handleStartChat = async () => {
     if (!item) return;
+
+    const isOnline = await connectivity.checkOnline();
+    if (!isOnline) {
+      Alert.alert('Offline', 'Network connection unavailable. Please check your internet connection and try again.');
+      return;
+    }
+
     try {
       setLoading(true);
       const chatId = await chatService.getOrCreateChat(item.userId, item);
@@ -196,7 +231,8 @@ export default function ItemDetailsScreen() {
     } catch (err: any) {
       setLoading(false);
       console.error(err);
-      Alert.alert('Chat Error', 'Failed to start chat: ' + err.message);
+      const friendlyMsg = errorHelper.getFriendlyMessage(err);
+      Alert.alert('Chat Error', friendlyMsg);
     }
   };
 
@@ -209,15 +245,52 @@ export default function ItemDetailsScreen() {
   if (loading) {
     return (
       <View style={styles.centered}>
-        <ActivityIndicator size="large" color="#9A2E17" />
+        <ActivityIndicator size="large" color="#345C72" />
       </View>
     );
   }
 
-  if (!item) {
+  if (errorState === 'offline') {
     return (
-      <View style={styles.centered}>
-        <Text style={styles.errorText}>Item not found.</Text>
+      <View style={styles.errorContainer}>
+        <Ionicons name="cloud-offline-outline" size={64} color="#345C72" style={{ marginBottom: 16 }} />
+        <Text style={styles.errorTitle}>You're Offline</Text>
+        <Text style={styles.errorDescription}>
+          Please check your internet connection and try again.
+        </Text>
+        <TouchableOpacity style={styles.backButton} onPress={() => router.back()}>
+          <Text style={styles.backButtonText}>Go Back</Text>
+        </TouchableOpacity>
+      </View>
+    );
+  }
+
+  if (errorState === 'not_found' || !item) {
+    return (
+      <View style={styles.errorContainer}>
+        <Ionicons name="alert-circle-outline" size={64} color="#345C72" style={{ marginBottom: 16 }} />
+        <Text style={styles.errorTitle}>Item Not Found</Text>
+        <Text style={styles.errorDescription}>
+          The item you are looking for may have been removed, or is no longer available.
+        </Text>
+        <TouchableOpacity style={styles.backButton} onPress={() => router.back()}>
+          <Text style={styles.backButtonText}>Go Back</Text>
+        </TouchableOpacity>
+      </View>
+    );
+  }
+
+  if (errorState === 'error') {
+    return (
+      <View style={styles.errorContainer}>
+        <Ionicons name="warning-outline" size={64} color="#EF4444" style={{ marginBottom: 16 }} />
+        <Text style={styles.errorTitle}>Load Error</Text>
+        <Text style={styles.errorDescription}>
+          Failed to load item details. Please try again.
+        </Text>
+        <TouchableOpacity style={styles.backButton} onPress={() => router.back()}>
+          <Text style={styles.backButtonText}>Go Back</Text>
+        </TouchableOpacity>
       </View>
     );
   }
@@ -245,7 +318,7 @@ export default function ItemDetailsScreen() {
                 <Image source={{ uri: item.imageUrl }} style={styles.claimItemImage} contentFit="cover" />
               ) : (
                 <View style={[styles.claimItemImage, styles.claimItemImageFallback]}>
-                  <Ionicons name="images-outline" size={24} color="#94A3B8" />
+                  <Ionicons name="images-outline" size={24} color="#8E9CA3" />
                 </View>
               )}
               <View style={styles.claimItemDetails}>
@@ -273,7 +346,7 @@ export default function ItemDetailsScreen() {
                 <TextInput
                   style={styles.claimTextInput}
                   placeholder="Your answer..."
-                  placeholderTextColor="#94A3B8"
+                  placeholderTextColor="#8E9CA3"
                   value={answers[idx] || ''}
                   onChangeText={(text) => {
                     const updated = [...answers];
@@ -290,7 +363,7 @@ export default function ItemDetailsScreen() {
             {/* Answers Matched Banner */}
             {isVerified && (
               <View style={styles.matchedBanner}>
-                <Ionicons name="checkmark-circle" size={20} color="#047857" style={{ marginRight: 8 }} />
+                <Ionicons name="checkmark-circle" size={20} color="#566252" style={{ marginRight: 8 }} />
                 <Text style={styles.matchedBannerText}>Answers matched!</Text>
               </View>
             )}
@@ -360,7 +433,7 @@ export default function ItemDetailsScreen() {
               <Image source={{ uri: item.imageUrl }} style={styles.heroImage} contentFit="cover" />
             ) : (
               <View style={styles.fallbackContainer}>
-                <Ionicons name="images-outline" size={80} color="#94A3B8" />
+                <Ionicons name="images-outline" size={80} color="#8E9CA3" />
                 <Text style={styles.fallbackText}>No Photo Provided</Text>
               </View>
             )}
@@ -371,7 +444,7 @@ export default function ItemDetailsScreen() {
               onPress={() => router.back()}
               activeOpacity={0.8}
             >
-              <Ionicons name="arrow-back" size={24} color="#1A1A1A" />
+              <Ionicons name="arrow-back" size={24} color="#2B353A" />
             </TouchableOpacity>
 
             {/* Type Badge Overlay */}
@@ -403,7 +476,7 @@ export default function ItemDetailsScreen() {
             <View style={styles.metaCard}>
               <View style={styles.metaRow}>
                 <View style={styles.metaIconWrapper}>
-                  <Ionicons name="location-outline" size={20} color="#9A2E17" />
+                  <Ionicons name="location-outline" size={20} color="#345C72" />
                 </View>
                 <View style={styles.metaTextWrapper}>
                   <Text style={styles.metaLabel}>LOCATION</Text>
@@ -415,7 +488,7 @@ export default function ItemDetailsScreen() {
 
               <View style={styles.metaRow}>
                 <View style={styles.metaIconWrapper}>
-                  <Ionicons name="calendar-outline" size={20} color="#9A2E17" />
+                  <Ionicons name="calendar-outline" size={20} color="#345C72" />
                 </View>
                 <View style={styles.metaTextWrapper}>
                   <Text style={styles.metaLabel}>REPORTED ON</Text>
@@ -427,7 +500,7 @@ export default function ItemDetailsScreen() {
 
               <View style={styles.metaRow}>
                 <View style={styles.metaIconWrapper}>
-                  <Ionicons name="person-outline" size={20} color="#9A2E17" />
+                  <Ionicons name="person-outline" size={20} color="#345C72" />
                 </View>
                 <View style={styles.metaTextWrapper}>
                   <Text style={styles.metaLabel}>REPORTED BY</Text>
@@ -441,7 +514,7 @@ export default function ItemDetailsScreen() {
                   <View style={styles.metaDivider} />
                   <View style={styles.metaRow}>
                     <View style={styles.metaIconWrapper}>
-                      <Ionicons name="call-outline" size={20} color="#9A2E17" />
+                      <Ionicons name="call-outline" size={20} color="#345C72" />
                     </View>
                     <View style={styles.metaTextWrapper}>
                       <Text style={styles.metaLabel}>PHONE NUMBER</Text>
@@ -462,7 +535,7 @@ export default function ItemDetailsScreen() {
             <View style={styles.actionsContainer}>
               {isOwner ? (
                 <View style={styles.ownerBadge}>
-                  <Ionicons name="create-outline" size={18} color="#9A2E17" />
+                  <Ionicons name="create-outline" size={18} color="#345C72" />
                   <Text style={styles.ownerBadgeText}>Your Reported Item</Text>
                 </View>
               ) : (
@@ -539,25 +612,25 @@ export default function ItemDetailsScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#EFF6F6',
+    backgroundColor: '#F0F5FA',
   },
   centered: {
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: '#EFF6F6',
+    backgroundColor: '#F0F5FA',
   },
   errorText: {
     fontSize: 16,
-    color: '#636E72',
-    fontWeight: 'bold',
+    color: '#56646E',
+    fontFamily: 'PlusJakartaSans-Bold',
   },
   scrollContent: {
     paddingBottom: 40,
   },
   imageContainer: {
     height: 300,
-    backgroundColor: '#F1F5F9',
+    backgroundColor: '#E6F0F6',
     position: 'relative',
   },
   heroImage: {
@@ -571,9 +644,9 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   fallbackText: {
-    color: '#94A3B8',
+    color: '#8E9CA3',
     marginTop: 10,
-    fontWeight: 'bold',
+    fontFamily: 'PlusJakartaSans-Bold',
   },
   backBtnOverlay: {
     position: 'absolute',
@@ -582,13 +655,13 @@ const styles = StyleSheet.create({
     width: 40,
     height: 40,
     borderRadius: 20,
-    backgroundColor: 'rgba(255, 255, 255, 0.9)',
+    backgroundColor: 'rgba(255, 255, 255, 0.95)',
     justifyContent: 'center',
     alignItems: 'center',
     shadowColor: '#000000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.05,
+    shadowRadius: 8,
     elevation: 4,
   },
   typeBadgeOverlay: {
@@ -600,15 +673,19 @@ const styles = StyleSheet.create({
     borderRadius: 20,
   },
   badgeLost: {
-    backgroundColor: '#F27A35',
+    backgroundColor: '#FFD6D6',
+    borderWidth: 1,
+    borderColor: '#EABABA',
   },
   badgeFound: {
-    backgroundColor: '#9A2E17',
+    backgroundColor: '#E1EEDD',
+    borderWidth: 1,
+    borderColor: '#C7D7BF',
   },
   typeBadgeText: {
-    color: '#FFFFFF',
+    color: '#345C72',
     fontSize: 12,
-    fontWeight: '900',
+    fontFamily: 'PlusJakartaSans-Bold',
     letterSpacing: 1.2,
   },
   body: {
@@ -623,39 +700,44 @@ const styles = StyleSheet.create({
     gap: 12,
   },
   title: {
-    fontSize: 24,
-    fontWeight: 'bold',
-    color: '#1A1A1A',
+    fontSize: 26,
+    fontFamily: 'PlayfairDisplay-Bold',
+    color: '#2B353A',
     marginBottom: 6,
   },
   categorySubText: {
     fontSize: 14,
-    color: '#636E72',
-    fontWeight: '600',
+    color: '#56646E',
+    fontFamily: 'PlusJakartaSans-SemiBold',
   },
   aiBadge: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: '#E6FBF3',
+    backgroundColor: '#E1EEDD',
     paddingHorizontal: 10,
     paddingVertical: 6,
     borderRadius: 8,
     borderWidth: 1,
-    borderColor: '#A7F3D0',
+    borderColor: '#C7D7BF',
   },
   aiBadgeText: {
-    color: '#10B981',
+    color: '#566252',
     fontSize: 12,
-    fontWeight: '700',
+    fontFamily: 'PlusJakartaSans-Bold',
     marginLeft: 4,
   },
   metaCard: {
     backgroundColor: '#FFFFFF',
-    borderRadius: 20,
+    borderRadius: 24,
     padding: 16,
     borderWidth: 1,
-    borderColor: '#E2E8F0',
+    borderColor: '#D3E2EC',
     marginBottom: 24,
+    shadowColor: '#000000',
+    shadowOffset: { width: 0, height: 8 },
+    shadowOpacity: 0.04,
+    shadowRadius: 20,
+    elevation: 2,
   },
   metaRow: {
     flexDirection: 'row',
@@ -664,8 +746,8 @@ const styles = StyleSheet.create({
   metaIconWrapper: {
     width: 36,
     height: 36,
-    borderRadius: 8,
-    backgroundColor: '#FFF5F5',
+    borderRadius: 12,
+    backgroundColor: '#E6F0F6',
     justifyContent: 'center',
     alignItems: 'center',
     marginRight: 12,
@@ -675,19 +757,19 @@ const styles = StyleSheet.create({
   },
   metaLabel: {
     fontSize: 10,
-    fontWeight: 'bold',
-    color: '#94A3B8',
+    fontFamily: 'PlusJakartaSans-Bold',
+    color: '#8E9CA3',
     letterSpacing: 0.5,
     marginBottom: 2,
   },
   metaValue: {
     fontSize: 14,
-    fontWeight: '700',
-    color: '#2D3436',
+    fontFamily: 'PlusJakartaSans-Bold',
+    color: '#2B353A',
   },
   metaDivider: {
     height: 1,
-    backgroundColor: '#F1F5F9',
+    backgroundColor: '#E3EEF5',
     marginVertical: 12,
   },
   section: {
@@ -695,14 +777,15 @@ const styles = StyleSheet.create({
   },
   sectionHeader: {
     fontSize: 12,
-    fontWeight: 'bold',
-    color: '#94A3B8',
+    fontFamily: 'PlusJakartaSans-Bold',
+    color: '#8E9CA3',
     letterSpacing: 1.0,
     marginBottom: 10,
   },
   descriptionText: {
     fontSize: 15,
-    color: '#2D3436',
+    color: '#56646E',
+    fontFamily: 'PlusJakartaSans-Regular',
     lineHeight: 22,
   },
   actionsContainer: {
@@ -712,39 +795,39 @@ const styles = StyleSheet.create({
   ownerBadge: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: '#FFF5F5',
+    backgroundColor: '#E6F0F6',
     paddingVertical: 12,
     paddingHorizontal: 20,
-    borderRadius: 12,
+    borderRadius: 16,
     borderWidth: 1,
-    borderColor: '#FEE2E2',
+    borderColor: '#D3E2EC',
     width: '100%',
     justifyContent: 'center',
   },
   ownerBadgeText: {
-    color: '#9A2E17',
-    fontWeight: 'bold',
+    color: '#345C72',
+    fontFamily: 'PlusJakartaSans-Bold',
     fontSize: 15,
     marginLeft: 8,
   },
   primaryBtn: {
     height: 52,
-    backgroundColor: '#9A2E17',
+    backgroundColor: '#345C72',
     borderRadius: 16,
     justifyContent: 'center',
     alignItems: 'center',
     flexDirection: 'row',
     width: '100%',
-    shadowColor: '#9A2E17',
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.2,
-    shadowRadius: 8,
+    shadowColor: '#345C72',
+    shadowOffset: { width: 0, height: 6 },
+    shadowOpacity: 0.1,
+    shadowRadius: 16,
     elevation: 3,
   },
   primaryBtnText: {
     color: '#FFFFFF',
     fontSize: 16,
-    fontWeight: 'bold',
+    fontFamily: 'PlusJakartaSans-Bold',
   },
   statusCard: {
     flexDirection: 'row',
@@ -755,70 +838,70 @@ const styles = StyleSheet.create({
     width: '100%',
   },
   statusPending: {
-    backgroundColor: '#FEF3C7',
-    borderColor: '#FDE68A',
+    backgroundColor: '#FFF4D8',
+    borderColor: '#E3EEF5',
   },
   statusSuccess: {
-    backgroundColor: '#D1FAE5',
-    borderColor: '#A7F3D0',
+    backgroundColor: '#E1EEDD',
+    borderColor: '#C7D7BF',
   },
   statusError: {
-    backgroundColor: '#FEE2E2',
-    borderColor: '#FCA5A5',
+    backgroundColor: '#FFE2E2',
+    borderColor: '#FFE2E2',
   },
   statusTextPending: {
-    color: '#D97706',
+    color: '#A56A00',
     fontSize: 14,
-    fontWeight: '700',
+    fontFamily: 'PlusJakartaSans-Bold',
     flex: 1,
   },
   statusTextSuccess: {
-    color: '#047857',
+    color: '#566252',
     fontSize: 14,
-    fontWeight: '700',
+    fontFamily: 'PlusJakartaSans-Bold',
     flex: 1,
   },
   statusTextError: {
-    color: '#B91C1C',
+    color: '#B42318',
     fontSize: 14,
-    fontWeight: '700',
+    fontFamily: 'PlusJakartaSans-Bold',
     flex: 1,
   },
   formContainer: {
     backgroundColor: '#FFFFFF',
-    borderRadius: 20,
+    borderRadius: 24,
     padding: 20,
     borderWidth: 1,
-    borderColor: '#E2E8F0',
+    borderColor: '#D3E2EC',
   },
   formHeaderCard: {
     flexDirection: 'row',
-    backgroundColor: '#EFF6F6',
+    backgroundColor: '#E6F0F6',
     padding: 12,
-    borderRadius: 12,
+    borderRadius: 16,
     alignItems: 'center',
     marginBottom: 20,
   },
   formHeaderTitle: {
-    color: '#9A2E17',
+    color: '#345C72',
     fontSize: 13,
-    fontWeight: '700',
+    fontFamily: 'PlusJakartaSans-Bold',
     flex: 1,
   },
   errorAlert: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: '#FEF2F2',
+    backgroundColor: '#FFE2E2',
     padding: 10,
-    borderRadius: 8,
+    borderRadius: 16,
     marginBottom: 16,
     borderWidth: 1,
-    borderColor: '#FEE2E2',
+    borderColor: '#FFE2E2',
   },
   errorAlertText: {
-    color: '#EF4444',
+    color: '#B42318',
     fontSize: 13,
-    fontWeight: '600',
+    fontFamily: 'PlusJakartaSans-SemiBold',
     flex: 1,
   },
   inputGroup: {
@@ -826,19 +909,20 @@ const styles = StyleSheet.create({
   },
   inputLabel: {
     fontSize: 14,
-    fontWeight: '700',
-    color: '#2D3436',
+    fontFamily: 'PlusJakartaSans-Bold',
+    color: '#2B353A',
     marginBottom: 8,
   },
   textInput: {
-    backgroundColor: '#F8FAFC',
+    backgroundColor: '#E6F0F6',
     borderWidth: 1,
-    borderColor: '#E2E8F0',
-    borderRadius: 12,
+    borderColor: '#D3E2EC',
+    borderRadius: 16,
     height: 46,
     paddingHorizontal: 12,
     fontSize: 14,
-    color: '#1A1A1A',
+    fontFamily: 'PlusJakartaSans-Regular',
+    color: '#2B353A',
   },
   textArea: {
     height: 100,
@@ -849,26 +933,27 @@ const styles = StyleSheet.create({
   feedbackCard: {
     flexDirection: 'row',
     padding: 14,
-    borderRadius: 12,
+    borderRadius: 16,
     borderWidth: 1,
     marginBottom: 20,
   },
   feedbackSuccess: {
-    backgroundColor: '#D1FAE5',
-    borderColor: '#A7F3D0',
+    backgroundColor: '#E1EEDD',
+    borderColor: '#C7D7BF',
   },
   feedbackError: {
-    backgroundColor: '#FEE2E2',
-    borderColor: '#FCA5A5',
+    backgroundColor: '#FFE2E2',
+    borderColor: '#FFE2E2',
   },
   feedbackScoreText: {
     fontSize: 14,
-    fontWeight: 'bold',
+    fontFamily: 'PlusJakartaSans-Bold',
     marginBottom: 4,
   },
   feedbackReasonText: {
     fontSize: 12,
-    color: '#475569',
+    color: '#56646E',
+    fontFamily: 'PlusJakartaSans-Regular',
     lineHeight: 16,
   },
   formActions: {
@@ -878,31 +963,31 @@ const styles = StyleSheet.create({
   cancelBtn: {
     flex: 1,
     height: 48,
-    borderRadius: 12,
+    borderRadius: 16,
     borderWidth: 2,
-    borderColor: '#9A2E17',
+    borderColor: '#345C72',
     justifyContent: 'center',
     alignItems: 'center',
   },
   cancelBtnText: {
-    color: '#9A2E17',
-    fontWeight: 'bold',
+    color: '#345C72',
+    fontFamily: 'PlusJakartaSans-Bold',
     fontSize: 15,
   },
   submitBtn: {
     flex: 2,
     height: 48,
-    backgroundColor: '#9A2E17',
-    borderRadius: 12,
+    backgroundColor: '#345C72',
+    borderRadius: 16,
     justifyContent: 'center',
     alignItems: 'center',
   },
   submitBtnDisabled: {
-    backgroundColor: '#CBD5E1',
+    backgroundColor: '#DDE8F0',
   },
   submitBtnText: {
     color: '#FFFFFF',
-    fontWeight: 'bold',
+    fontFamily: 'PlusJakartaSans-Bold',
     fontSize: 15,
   },
   webStyleHack: {
@@ -910,7 +995,7 @@ const styles = StyleSheet.create({
   },
   claimFormContainer: {
     flex: 1,
-    backgroundColor: '#EFF6F6',
+    backgroundColor: '#F0F5FA',
   },
   claimHeader: {
     paddingHorizontal: 20,
@@ -919,13 +1004,14 @@ const styles = StyleSheet.create({
   },
   claimTitle: {
     fontSize: 28,
-    fontWeight: 'bold',
-    color: '#1E293B',
+    fontFamily: 'PlayfairDisplay-Bold',
+    color: '#2B353A',
     marginBottom: 6,
   },
   claimSubtitle: {
     fontSize: 14,
-    color: '#64748B',
+    color: '#56646E',
+    fontFamily: 'PlusJakartaSans-Regular',
     lineHeight: 20,
   },
   claimScrollContent: {
@@ -934,8 +1020,8 @@ const styles = StyleSheet.create({
   },
   claimItemCard: {
     flexDirection: 'row',
-    backgroundColor: '#E2E8F0',
-    borderRadius: 16,
+    backgroundColor: '#E6F0F6',
+    borderRadius: 24,
     padding: 12,
     alignItems: 'center',
     marginTop: 16,
@@ -947,7 +1033,7 @@ const styles = StyleSheet.create({
     borderRadius: 12,
   },
   claimItemImageFallback: {
-    backgroundColor: '#CBD5E1',
+    backgroundColor: '#DDE8F0',
     justifyContent: 'center',
     alignItems: 'center',
   },
@@ -957,105 +1043,109 @@ const styles = StyleSheet.create({
   },
   claimItemBadge: {
     fontSize: 10,
-    fontWeight: 'bold',
-    color: '#EA580C',
+    fontFamily: 'PlusJakartaSans-Bold',
+    color: '#345C72',
     letterSpacing: 0.5,
     marginBottom: 2,
   },
   claimItemTitle: {
     fontSize: 16,
-    fontWeight: 'bold',
-    color: '#1E293B',
+    fontFamily: 'PlayfairDisplay-Bold',
+    color: '#2B353A',
     marginBottom: 2,
   },
   claimItemLocation: {
     fontSize: 12,
-    color: '#64748B',
+    color: '#56646E',
+    fontFamily: 'PlusJakartaSans-Regular',
   },
   questionCard: {
     backgroundColor: '#FFFFFF',
-    borderRadius: 16,
+    borderRadius: 24,
     padding: 16,
     marginBottom: 16,
+    borderWidth: 1,
+    borderColor: '#D3E2EC',
     shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.05,
-    shadowRadius: 4,
+    shadowOffset: { width: 0, height: 8 },
+    shadowOpacity: 0.04,
+    shadowRadius: 20,
     elevation: 2,
   },
   questionText: {
     fontSize: 15,
-    fontWeight: '700',
-    color: '#1E293B',
+    fontFamily: 'PlusJakartaSans-Bold',
+    color: '#2B353A',
     marginBottom: 12,
   },
   claimTextInput: {
-    backgroundColor: '#EFF6F6',
-    borderRadius: 12,
+    backgroundColor: '#E6F0F6',
+    borderRadius: 16,
     height: 48,
     paddingHorizontal: 16,
     fontSize: 14,
-    color: '#1E293B',
+    fontFamily: 'PlusJakartaSans-Regular',
+    color: '#2B353A',
   },
   matchedBanner: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
-    backgroundColor: '#D1FAE5',
-    borderColor: '#A7F3D0',
+    backgroundColor: '#E1EEDD',
+    borderColor: '#C7D7BF',
     borderWidth: 1,
-    borderRadius: 12,
+    borderRadius: 16,
     padding: 12,
     marginBottom: 16,
   },
   matchedBannerText: {
-    color: '#047857',
-    fontWeight: 'bold',
+    color: '#566252',
+    fontFamily: 'PlusJakartaSans-Bold',
     fontSize: 14,
   },
   claimFooter: {
     paddingHorizontal: 20,
     paddingVertical: 16,
-    backgroundColor: '#EFF6F6',
+    backgroundColor: '#F0F5FA',
   },
   verifyBtn: {
     height: 52,
-    backgroundColor: '#F27A35',
+    backgroundColor: '#345C72',
     borderRadius: 16,
     justifyContent: 'center',
     alignItems: 'center',
-    shadowColor: '#F27A35',
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.2,
-    shadowRadius: 6,
+    shadowColor: '#345C72',
+    shadowOffset: { width: 0, height: 6 },
+    shadowOpacity: 0.1,
+    shadowRadius: 16,
     elevation: 3,
   },
   verifyBtnDisabled: {
-    backgroundColor: '#FDBA74',
+    backgroundColor: '#DDE8F0',
     shadowOpacity: 0,
     elevation: 0,
   },
   verifyBtnText: {
     color: '#FFFFFF',
     fontSize: 16,
-    fontWeight: 'bold',
+    fontFamily: 'PlusJakartaSans-Bold',
   },
   sendRequestBtn: {
     height: 52,
-    backgroundColor: '#9A2E17',
+    backgroundColor: '#345C72',
     borderRadius: 16,
     justifyContent: 'center',
     alignItems: 'center',
-    shadowColor: '#9A2E17',
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.2,
-    shadowRadius: 6,
+    shadowColor: '#345C72',
+    shadowOffset: { width: 0, height: 6 },
+    shadowOpacity: 0.1,
+    shadowRadius: 16,
     elevation: 3,
   },
   sendRequestBtnText: {
     color: '#FFFFFF',
     fontSize: 16,
-    fontWeight: 'bold',
+    fontFamily: 'PlusJakartaSans-Bold',
   },
   cancelLinkBtn: {
     alignItems: 'center',
@@ -1063,8 +1153,48 @@ const styles = StyleSheet.create({
     marginTop: 8,
   },
   cancelLinkLabel: {
-    color: '#64748B',
+    color: '#56646E',
     fontSize: 15,
-    fontWeight: '600',
+    fontFamily: 'PlusJakartaSans-SemiBold',
+  },
+  errorContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: '#F0F5FA',
+    paddingHorizontal: 32,
+  },
+  errorTitle: {
+    fontSize: 22,
+    fontFamily: 'PlayfairDisplay-Bold',
+    color: '#2B353A',
+    marginBottom: 8,
+    textAlign: 'center',
+  },
+  errorDescription: {
+    fontSize: 14,
+    color: '#56646E',
+    fontFamily: 'PlusJakartaSans-Regular',
+    textAlign: 'center',
+    lineHeight: 20,
+    marginBottom: 24,
+  },
+  backButton: {
+    height: 48,
+    backgroundColor: '#345C72',
+    borderRadius: 16,
+    justifyContent: 'center',
+    alignItems: 'center',
+    paddingHorizontal: 24,
+    shadowColor: '#345C72',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.1,
+    shadowRadius: 8,
+    elevation: 3,
+  },
+  backButtonText: {
+    color: '#FFFFFF',
+    fontSize: 15,
+    fontFamily: 'PlusJakartaSans-Bold',
   }
 });

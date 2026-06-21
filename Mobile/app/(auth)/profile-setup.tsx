@@ -1,20 +1,26 @@
 import React, { useState, useEffect } from 'react';
 import { StyleSheet, View, Text, TextInput, TouchableOpacity, ActivityIndicator, KeyboardAvoidingView, ScrollView, Platform, Image } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import * as ImagePicker from 'expo-image-picker';
 import { useAuth, logoutUser } from '@/src/store/authStore';
 import { userService } from '@/src/services/userService';
+import { Colors, CornerRadius, Shadows, Fonts } from '@/constants/theme';
+import { connectivity } from '@/src/services/connectivity';
+import { errorHelper } from '@/src/services/errorHelper';
+
+const GENDERS = ['Male', 'Female', 'Non-binary', 'Prefer not to say'];
 
 export default function ProfileSetupScreen() {
-  const router = useRouter();
   const { user, refreshProfile } = useAuth();
+  const theme = Colors.light;
   
   const [name, setName] = useState(user?.name || '');
   const [phone, setPhone] = useState(user?.phone || '');
   const [college, setCollege] = useState(user?.college || '');
   const [avatarUri, setAvatarUri] = useState<string | null>(user?.photoURL || null);
+  const [age, setAge] = useState(user?.age ? String(user.age) : '');
+  const [gender, setGender] = useState(user?.gender || '');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
 
@@ -25,6 +31,13 @@ export default function ProfileSetupScreen() {
     if (user?.photoURL && !avatarUri) {
       setAvatarUri(user.photoURL);
     }
+    if (user?.age && !age) {
+      setAge(String(user.age));
+    }
+    if (user?.gender && !gender) {
+      setGender(user.gender);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [user]);
 
   const handlePickImage = async () => {
@@ -51,36 +64,68 @@ export default function ProfileSetupScreen() {
   };
 
   const handleSaveProfile = async () => {
-    if (!name.trim()) {
+    const trimmedName = name.trim();
+    const trimmedPhone = phone.trim();
+    const trimmedCollege = college.trim();
+    const trimmedAge = age.trim();
+
+    if (!trimmedName) {
       setError('Please enter your full name.');
       return;
     }
-    if (!phone.trim() || phone.length < 10) {
+    if (!trimmedPhone || trimmedPhone.length < 10) {
       setError('Please enter a valid phone number (at least 10 digits).');
       return;
     }
-    if (!college.trim()) {
+    if (!trimmedCollege) {
       setError('Please enter your college or area.');
       return;
     }
+    if (!trimmedAge) {
+      setError('Please enter your age.');
+      return;
+    }
+    const ageNum = parseInt(trimmedAge, 10);
+    if (isNaN(ageNum) || ageNum < 13 || ageNum > 120) {
+      setError('Please enter a valid age (13–120).');
+      return;
+    }
+    if (!gender) {
+      setError('Please select your gender.');
+      return;
+    }
+
+    setLoading(true);
+    setError('');
 
     try {
-      setLoading(true);
-      setError('');
+      const isOnline = await connectivity.checkOnline();
+      if (!isOnline) {
+        setError('Network connection unavailable. Please check your internet connection and try again.');
+        setLoading(false);
+        return;
+      }
 
-      let finalPhotoURL = user?.photoURL || `https://api.dicebear.com/7.x/adventurer/svg?seed=${encodeURIComponent(name.trim())}`;
+      let finalPhotoURL = user?.photoURL || `https://api.dicebear.com/7.x/adventurer/svg?seed=${encodeURIComponent(trimmedName)}`;
 
       if (avatarUri && avatarUri !== user?.photoURL) {
         console.log('Uploading chosen avatar to Cloudinary...');
-        finalPhotoURL = await userService.uploadProfilePicture(user!.uid, avatarUri);
+        try {
+          finalPhotoURL = await userService.uploadProfilePicture(user!.uid, avatarUri);
+        } catch (uploadErr) {
+          throw new Error('Unable to upload image. Please try again.');
+        }
       }
 
       console.log('Updating profile in Realtime Database...');
       await userService.updateUserProfile(user!.uid, {
-        name: name.trim(),
-        phone: phone.trim(),
-        phoneNumber: phone.trim(),
-        college: college.trim(),
+        name: trimmedName,
+        phone: trimmedPhone,
+        phoneNumber: trimmedPhone,
+        college: trimmedCollege,
+        location: trimmedCollege, // location maps to college for backward compatibility
+        age: ageNum,
+        gender: gender,
         photoURL: finalPhotoURL,
         isProfileVerified: true,
       });
@@ -91,7 +136,8 @@ export default function ProfileSetupScreen() {
       // RootLayout will automatically pick up the isProfileVerified change and redirect to (tabs)
     } catch (err: any) {
       console.error(err);
-      setError(err.message || 'An error occurred while saving your profile.');
+      const friendlyMsg = errorHelper.getFriendlyMessage(err);
+      setError(friendlyMsg);
     } finally {
       setLoading(false);
     }
@@ -108,22 +154,26 @@ export default function ProfileSetupScreen() {
         behavior={Platform.OS === 'ios' ? 'padding' : 'height'} 
         style={styles.keyboardView}
       >
-        <ScrollView contentContainerStyle={styles.scrollContent} keyboardShouldPersistTaps="handled">
+        <ScrollView contentContainerStyle={styles.scrollContent} keyboardShouldPersistTaps="handled" showsVerticalScrollIndicator={false}>
           {/* Header */}
           <View style={styles.header}>
             <TouchableOpacity onPress={handleBack} style={styles.backBtn}>
-              <Ionicons name="arrow-back" size={24} color="#1A1A1A" />
+              <Ionicons name="arrow-back" size={24} color={theme.text} />
             </TouchableOpacity>
-            <Text style={styles.headerTitle}>Complete Profile</Text>
+            <Text style={styles.headerTitle}>Final Step</Text>
             <View style={{ width: 40 }} /> {/* Spacer to balance arrow back */}
           </View>
 
-          {/* Progress Bar (3 segments) */}
+          {/* Progress Bar (3 segments — all active: this is the final step) */}
           <View style={styles.progressBar}>
             <View style={[styles.progressSegment, styles.segmentActive]} />
             <View style={[styles.progressSegment, styles.segmentActive]} />
-            <View style={[styles.progressSegment, styles.segmentInactive]} />
+            <View style={[styles.progressSegment, styles.segmentActive]} />
           </View>
+
+          {/* Section title */}
+          <Text style={styles.sectionTitle}>Upload Your Profile Picture</Text>
+          <Text style={styles.sectionSubtitle}>This helps others recognize you. You can update it anytime.</Text>
 
           {/* Form Card */}
           <View style={styles.card}>
@@ -134,7 +184,7 @@ export default function ProfileSetupScreen() {
                   <Image source={{ uri: avatarUri }} style={styles.avatarImage} />
                 ) : (
                   <View style={styles.avatarPlaceholder}>
-                    <Ionicons name="person" size={50} color="#CBD5E1" />
+                    <Ionicons name="person" size={50} color={theme.textMuted} />
                   </View>
                 )}
                 <View style={styles.cameraBadge}>
@@ -157,11 +207,11 @@ export default function ProfileSetupScreen() {
                 <TextInput
                   style={styles.input}
                   placeholder="Enter your name"
-                  placeholderTextColor="#999"
+                  placeholderTextColor={theme.textMuted}
                   value={name}
                   onChangeText={setName}
                 />
-                <Ionicons name="person-outline" size={20} color="#94A3B8" style={styles.inputIcon} />
+                <Ionicons name="person-outline" size={20} color={theme.textMuted} style={styles.inputIcon} />
               </View>
             </View>
 
@@ -171,12 +221,12 @@ export default function ProfileSetupScreen() {
                 <TextInput
                   style={styles.input}
                   placeholder="+1 (555) 000-0000"
-                  placeholderTextColor="#999"
+                  placeholderTextColor={theme.textMuted}
                   value={phone}
                   onChangeText={setPhone}
                   keyboardType="phone-pad"
                 />
-                <Ionicons name="call-outline" size={20} color="#94A3B8" style={styles.inputIcon} />
+                <Ionicons name="call-outline" size={20} color={theme.textMuted} style={styles.inputIcon} />
               </View>
             </View>
 
@@ -186,17 +236,58 @@ export default function ProfileSetupScreen() {
                 <TextInput
                   style={styles.input}
                   placeholder="e.g. Stanford University"
-                  placeholderTextColor="#999"
+                  placeholderTextColor={theme.textMuted}
                   value={college}
                   onChangeText={setCollege}
                 />
-                <Ionicons name="location-outline" size={20} color="#94A3B8" style={styles.inputIcon} />
+                <Ionicons name="location-outline" size={20} color={theme.textMuted} style={styles.inputIcon} />
+              </View>
+            </View>
+
+            <View style={styles.inputGroup}>
+              <Text style={styles.inputLabel}>Age</Text>
+              <View style={styles.inputWrapper}>
+                <TextInput
+                  style={styles.input}
+                  placeholder="e.g. 21"
+                  placeholderTextColor={theme.textMuted}
+                  value={age}
+                  onChangeText={setAge}
+                  keyboardType="number-pad"
+                  maxLength={3}
+                />
+                <Ionicons name="calendar-outline" size={20} color={theme.textMuted} style={styles.inputIcon} />
+              </View>
+            </View>
+
+            <View style={styles.inputGroup}>
+              <Text style={styles.inputLabel}>Gender</Text>
+              <View style={styles.genderSelectWrapper}>
+                {GENDERS.map((g) => (
+                  <TouchableOpacity
+                    key={g}
+                    style={[
+                      styles.genderSelectOption,
+                      gender === g && styles.genderSelectOptionActive,
+                    ]}
+                    onPress={() => setGender(g)}
+                  >
+                    <Text
+                      style={[
+                        styles.genderSelectOptionText,
+                        gender === g && styles.genderSelectOptionTextActive,
+                      ]}
+                    >
+                      {g}
+                    </Text>
+                  </TouchableOpacity>
+                ))}
               </View>
             </View>
 
             {/* Info Box */}
             <View style={styles.infoBox}>
-              <Ionicons name="information-circle" size={22} color="#FE6363" style={styles.infoIcon} />
+              <Ionicons name="information-circle" size={22} color={theme.primary} style={styles.infoIcon} />
               <Text style={styles.infoText}>
                 Your location helps us connect you with people in your immediate community to return lost items faster.
               </Text>
@@ -229,7 +320,7 @@ export default function ProfileSetupScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#EFF6F6',
+    backgroundColor: Colors.light.background,
   },
   keyboardView: {
     flex: 1,
@@ -237,7 +328,7 @@ const styles = StyleSheet.create({
   scrollContent: {
     flexGrow: 1,
     paddingHorizontal: 24,
-    paddingBottom: 40,
+    paddingBottom: 80,
   },
   header: {
     flexDirection: 'row',
@@ -249,9 +340,9 @@ const styles = StyleSheet.create({
     padding: 8,
   },
   headerTitle: {
-    fontSize: 20,
-    fontWeight: 'bold',
-    color: '#1E293B',
+    fontSize: 22,
+    fontFamily: Fonts.headings.bold,
+    color: Colors.light.text,
   },
   progressBar: {
     flexDirection: 'row',
@@ -264,20 +355,16 @@ const styles = StyleSheet.create({
     borderRadius: 3,
   },
   segmentActive: {
-    backgroundColor: '#FE6363',
+    backgroundColor: Colors.light.primary,
   },
   segmentInactive: {
-    backgroundColor: '#F8D7D7',
+    backgroundColor: Colors.light.divider,
   },
   card: {
-    backgroundColor: '#FFFFFF',
-    borderRadius: 24,
+    backgroundColor: Colors.light.surface,
+    borderRadius: CornerRadius.cards,
     padding: 24,
-    shadowColor: '#000000',
-    shadowOffset: { width: 0, height: 8 },
-    shadowOpacity: 0.04,
-    shadowRadius: 16,
-    elevation: 3,
+    ...Shadows.cards,
     marginTop: 12,
     marginBottom: 24,
   },
@@ -305,11 +392,11 @@ const styles = StyleSheet.create({
     width: 110,
     height: 110,
     borderRadius: 55,
-    backgroundColor: '#F1F5F9',
+    backgroundColor: Colors.light.surfaceSecondary,
     justifyContent: 'center',
     alignItems: 'center',
     borderWidth: 1,
-    borderColor: '#E2E8F0',
+    borderColor: Colors.light.border,
   },
   cameraBadge: {
     position: 'absolute',
@@ -318,7 +405,7 @@ const styles = StyleSheet.create({
     width: 32,
     height: 32,
     borderRadius: 16,
-    backgroundColor: '#FE6363',
+    backgroundColor: Colors.light.primary,
     justifyContent: 'center',
     alignItems: 'center',
     borderWidth: 2,
@@ -336,6 +423,7 @@ const styles = StyleSheet.create({
   errorText: {
     color: '#D63031',
     fontSize: 14,
+    fontFamily: Fonts.body.regular,
     flex: 1,
   },
   inputGroup: {
@@ -343,34 +431,35 @@ const styles = StyleSheet.create({
   },
   inputLabel: {
     fontSize: 14,
-    fontWeight: 'bold',
-    color: '#64748B',
+    fontFamily: Fonts.body.semiBold,
+    color: Colors.light.textSecondary,
     marginBottom: 8,
   },
   inputWrapper: {
     flexDirection: 'row',
     alignItems: 'center',
     borderWidth: 1,
-    borderColor: '#E2E8F0',
-    borderRadius: 12,
-    height: 52,
-    backgroundColor: '#FAFAFA',
+    borderColor: Colors.light.border,
+    borderRadius: CornerRadius.inputs,
+    height: 56,
+    backgroundColor: Colors.light.surface,
     paddingHorizontal: 16,
   },
   input: {
     flex: 1,
     height: '100%',
-    color: '#1E293B',
+    color: Colors.light.text,
     fontSize: 16,
+    fontFamily: Fonts.body.regular,
   },
   inputIcon: {
     marginLeft: 8,
   },
   infoBox: {
     flexDirection: 'row',
-    backgroundColor: '#FDF2F2',
+    backgroundColor: Colors.light.surfaceSecondary,
     padding: 16,
-    borderRadius: 16,
+    borderRadius: CornerRadius.inputs,
     alignItems: 'flex-start',
     marginTop: 8,
     gap: 12,
@@ -381,32 +470,70 @@ const styles = StyleSheet.create({
   infoText: {
     flex: 1,
     fontSize: 13,
-    color: '#64748B',
+    fontFamily: Fonts.body.regular,
+    color: Colors.light.textSecondary,
     lineHeight: 18,
   },
   saveBtn: {
     height: 56,
-    backgroundColor: '#FE6363',
-    borderRadius: 16,
+    backgroundColor: Colors.light.primary,
+    borderRadius: CornerRadius.buttons,
     justifyContent: 'center',
     alignItems: 'center',
-    shadowColor: '#FE6363',
-    shadowOffset: { width: 0, height: 6 },
-    shadowOpacity: 0.3,
-    shadowRadius: 10,
-    elevation: 5,
+    ...Shadows.buttons,
   },
   saveBtnText: {
     color: '#FFFFFF',
     fontSize: 18,
-    fontWeight: 'bold',
+    fontFamily: Fonts.body.bold,
   },
   disclaimerText: {
     fontSize: 12,
-    color: '#94A3B8',
+    fontFamily: Fonts.body.regular,
+    color: Colors.light.textMuted,
     textAlign: 'center',
     marginTop: 24,
     lineHeight: 18,
     paddingHorizontal: 16,
+  },
+  sectionTitle: {
+    fontSize: 22,
+    fontFamily: Fonts.headings.bold,
+    color: Colors.light.text,
+    marginBottom: 4,
+    marginTop: 8,
+  },
+  sectionSubtitle: {
+    fontSize: 14,
+    fontFamily: Fonts.body.regular,
+    color: Colors.light.textSecondary,
+    marginBottom: 20,
+    lineHeight: 20,
+  },
+  genderSelectWrapper: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    gap: 8,
+    marginTop: 4,
+  },
+  genderSelectOption: {
+    paddingVertical: 8,
+    paddingHorizontal: 12,
+    borderRadius: 20,
+    borderWidth: 1,
+    borderColor: Colors.light.border,
+    backgroundColor: Colors.light.surface,
+  },
+  genderSelectOptionActive: {
+    borderColor: Colors.light.primary,
+    backgroundColor: 'rgba(52, 92, 114, 0.08)',
+  },
+  genderSelectOptionText: {
+    fontSize: 13,
+    fontFamily: Fonts.body.semiBold,
+    color: Colors.light.textSecondary,
+  },
+  genderSelectOptionTextActive: {
+    color: Colors.light.primary,
   },
 });

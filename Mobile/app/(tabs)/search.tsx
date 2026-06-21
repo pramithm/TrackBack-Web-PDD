@@ -18,6 +18,8 @@ import { useRouter } from 'expo-router';
 import { useAuth, logoutUser } from '@/src/store/authStore';
 import { itemService, Item } from '@/src/services/itemService';
 import { requestService } from '@/src/services/requestService';
+import { connectivity } from '@/src/services/connectivity';
+import { errorHelper } from '@/src/services/errorHelper';
 
 interface CategoryConfig {
   id: string;
@@ -34,64 +36,64 @@ const CATEGORY_LIST: CategoryConfig[] = [
     name: 'Electronics',
     dbCategories: ['Electronics'],
     icon: 'hardware-chip-outline',
-    color: '#F27A35',
-    bgColor: '#FFF3EB',
+    color: '#345C72',
+    bgColor: '#E6F0F6',
   },
   {
     id: 'wallets_bags',
     name: 'Wallets & Bags',
     dbCategories: ['Wallets', 'Bags', 'Wallets & Purses'],
     icon: 'briefcase-outline',
-    color: '#10B981',
-    bgColor: '#E6FBF3',
+    color: '#566252',
+    bgColor: '#E1EEDD',
   },
   {
     id: 'keys',
     name: 'Keys',
     dbCategories: ['Keys'],
     icon: 'key-outline',
-    color: '#8B5CF6',
-    bgColor: '#F5F3FF',
+    color: '#665D53',
+    bgColor: '#F3E5D8',
   },
   {
     id: 'pets',
     name: 'Pets',
     dbCategories: ['Pets'],
     icon: 'paw-outline',
-    color: '#D97706',
-    bgColor: '#FEF3C7',
+    color: '#A56A00',
+    bgColor: '#FFF4D8',
   },
   {
     id: 'documents',
     name: 'Documents',
     dbCategories: ['Documents'],
     icon: 'document-text-outline',
-    color: '#3B82F6',
-    bgColor: '#EFF6FF',
+    color: '#4682B4',
+    bgColor: '#E2EEF8',
   },
   {
     id: 'jewelry',
     name: 'Jewelry',
     dbCategories: ['Jewelry'],
     icon: 'diamond-outline',
-    color: '#EC4899',
-    bgColor: '#FDF2F8',
+    color: '#7C5454',
+    bgColor: '#FFD6D6',
   },
   {
     id: 'clothing',
     name: 'Clothing',
     dbCategories: ['Clothing'],
     icon: 'shirt-outline',
-    color: '#06B6D4',
-    bgColor: '#ECFEFF',
+    color: '#2E5B70',
+    bgColor: '#EBF4F8',
   },
   {
     id: 'other',
     name: 'Other',
     dbCategories: ['Other'],
     icon: 'help-circle-outline',
-    color: '#6B7280',
-    bgColor: '#F3F4F6',
+    color: '#8E9CA3',
+    bgColor: '#F0F5FA',
   },
 ];
 
@@ -136,7 +138,6 @@ export default function SearchScreen() {
     });
 
     items.forEach(item => {
-      // Find which category config this item belongs to
       const catConfig = CATEGORY_LIST.find(cat =>
         cat.dbCategories.some(
           dbCat => dbCat.toLowerCase() === (item.category || '').toLowerCase()
@@ -156,14 +157,29 @@ export default function SearchScreen() {
     return counts;
   }, [items]);
 
-  // Handle Logout context menu
   const handleLogout = () => {
     Alert.alert(
       'Log Out',
       'Are you sure you want to log out of TrackBack?',
       [
         { text: 'Cancel', style: 'cancel' },
-        { text: 'Log Out', style: 'destructive', onPress: async () => await logoutUser() }
+        {
+          text: 'Log Out',
+          style: 'destructive',
+          onPress: async () => {
+            const isOnline = await connectivity.checkOnline();
+            if (!isOnline) {
+              Alert.alert('Offline', 'Network connection unavailable. Please check your internet connection.');
+              return;
+            }
+            try {
+              await logoutUser();
+            } catch (err: any) {
+              const friendlyMsg = errorHelper.getFriendlyMessage(err);
+              Alert.alert('Error', 'Failed to log out: ' + friendlyMsg);
+            }
+          }
+        }
       ]
     );
   };
@@ -171,16 +187,13 @@ export default function SearchScreen() {
   // Filter items based on search text, category config, and type
   const filteredItems = useMemo(() => {
     return items.filter(item => {
-      // 1. Type Filter
       const matchesType = selectedType === 'both' || item.type === selectedType;
       if (!matchesType) return false;
 
-      // 2. Category Filter
       if (selectedCategory) {
         const matchesCategory = selectedCategory.dbCategories.some(
           dbCat => dbCat.toLowerCase() === (item.category || '').toLowerCase()
         );
-        // Fallback for "Other" category to catch unmatched categories in database
         if (selectedCategory.id === 'other') {
           const matchedAnyOther = CATEGORY_LIST.filter(c => c.id !== 'other').some(c =>
             c.dbCategories.some(
@@ -193,7 +206,6 @@ export default function SearchScreen() {
         }
       }
 
-      // 3. Search Text Filter
       if (searchText.trim().length > 0) {
         const queryStr = searchText.toLowerCase();
         const titleMatch = (item.title || '').toLowerCase().includes(queryStr);
@@ -230,7 +242,7 @@ export default function SearchScreen() {
         activeOpacity={0.7}
       >
         <View style={[styles.iconContainer, { backgroundColor: cat.bgColor }]}>
-          <Ionicons name={cat.icon as any} size={28} color={cat.color} />
+          <Ionicons name={cat.icon as any} size={24} color={cat.color} />
         </View>
         <Text style={styles.categoryName}>{cat.name}</Text>
         <Text style={styles.categoryCount}>
@@ -251,7 +263,6 @@ export default function SearchScreen() {
 
   const renderResultCard = ({ item }: { item: Item }) => {
     const isLost = item.type === 'lost';
-    // Get appropriate category icon
     const catConfig = CATEGORY_LIST.find(c =>
       c.dbCategories.some(
         dbCat => dbCat.toLowerCase() === (item.category || '').toLowerCase()
@@ -266,14 +277,14 @@ export default function SearchScreen() {
             <Image source={{ uri: item.imageUrl }} style={styles.resultCardImage} contentFit="cover" />
           ) : (
             <View style={styles.resultCardFallback}>
-              <Ionicons name={iconName as any} size={40} color="#94A3B8" />
+              <Ionicons name={iconName as any} size={40} color="#8E9CA3" />
               <Text style={styles.resultFallbackText}>{item.category}</Text>
             </View>
           )}
 
           {/* Type Badge */}
           <View style={[styles.badge, isLost ? styles.badgeLost : styles.badgeFound]}>
-            <Text style={styles.badgeText}>
+            <Text style={[styles.badgeText, isLost ? styles.badgeTextLost : styles.badgeTextFound]}>
               {isLost ? 'LOST ITEM' : 'FOUND ITEM'}
             </Text>
           </View>
@@ -283,14 +294,14 @@ export default function SearchScreen() {
           <Text style={styles.resultCardTitle} numberOfLines={1}>{item.title}</Text>
           
           <View style={styles.resultInfoRow}>
-            <Ionicons name="location-outline" size={14} color="#636E72" />
+            <Ionicons name="location-outline" size={14} color="#56646E" />
             <Text style={styles.resultInfoText} numberOfLines={1}>
               {item.location || 'Unknown Location'}
             </Text>
           </View>
 
           <View style={styles.resultInfoRow}>
-            <Ionicons name="time-outline" size={14} color="#636E72" />
+            <Ionicons name="time-outline" size={14} color="#56646E" />
             <Text style={styles.resultInfoText}>
               {formatDate(item.createdAt)}
             </Text>
@@ -327,7 +338,7 @@ export default function SearchScreen() {
             style={styles.headerIcon}
             onPress={() => router.push('/notifications' as any)}
           >
-            <Ionicons name="notifications-outline" size={24} color="#2D3436" />
+            <Ionicons name="notifications-outline" size={24} color="#56646E" />
             {pendingCount > 0 && (
               <View style={styles.bellBadge}>
                 <Text style={styles.bellBadgeText}>{pendingCount}</Text>
@@ -335,7 +346,7 @@ export default function SearchScreen() {
             )}
           </TouchableOpacity>
           <TouchableOpacity style={styles.headerIcon}>
-            <Ionicons name="ellipsis-vertical" size={24} color="#2D3436" />
+            <Ionicons name="ellipsis-vertical" size={24} color="#56646E" />
           </TouchableOpacity>
         </View>
       </View>
@@ -343,18 +354,18 @@ export default function SearchScreen() {
       {/* Search Bar Input Container */}
       <View style={styles.searchContainer}>
         <View style={styles.searchBox}>
-          <Ionicons name="search-outline" size={20} color="#94A3B8" style={styles.searchIcon} />
+          <Ionicons name="search-outline" size={20} color="#8E9CA3" style={styles.searchIcon} />
           <TextInput
             style={styles.searchInput}
             placeholder="Search title, description, location..."
-            placeholderTextColor="#94A3B8"
+            placeholderTextColor="#8E9CA3"
             value={searchText}
             onChangeText={setSearchText}
             returnKeyType="search"
           />
           {searchText.length > 0 && (
             <TouchableOpacity onPress={() => setSearchText('')} style={styles.clearIcon}>
-              <Ionicons name="close-circle" size={18} color="#94A3B8" />
+              <Ionicons name="close-circle" size={18} color="#8E9CA3" />
             </TouchableOpacity>
           )}
         </View>
@@ -362,7 +373,7 @@ export default function SearchScreen() {
 
       {loading ? (
         <View style={styles.centered}>
-          <ActivityIndicator size="large" color="#9A2E17" />
+          <ActivityIndicator size="large" color="#345C72" />
         </View>
       ) : !isSearchActive ? (
         /* CATEGORIES SCREEN STATE */
@@ -389,7 +400,7 @@ export default function SearchScreen() {
                 style={styles.backBtn}
                 onPress={() => setSelectedCategory(null)}
               >
-                <Ionicons name="arrow-back" size={20} color="#9A2E17" />
+                <Ionicons name="arrow-back" size={20} color="#345C72" />
               </TouchableOpacity>
               <View>
                 <Text style={styles.resultsTitle}>
@@ -431,7 +442,7 @@ export default function SearchScreen() {
           {/* Result cards list */}
           {filteredItems.length === 0 ? (
             <View style={styles.emptyResults}>
-              <Ionicons name="search-outline" size={54} color="#94A3B8" />
+              <Ionicons name="search-outline" size={54} color="#8E9CA3" />
               <Text style={styles.emptyResultsTitle}>No matching items</Text>
               <Text style={styles.emptyResultsSubtitle}>
                 Try typing a different keyword or removing the filters.
@@ -455,23 +466,25 @@ export default function SearchScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#EFF6F6',
+    backgroundColor: '#F0F5FA',
   },
   headerBar: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    paddingHorizontal: 16,
-    height: 56,
+    paddingHorizontal: 20,
+    height: 64,
     borderBottomWidth: 1,
-    borderBottomColor: '#E2E8F0',
+    borderBottomColor: '#E3EEF5',
     backgroundColor: '#FFFFFF',
   },
   avatarWrapper: {
-    width: 36,
-    height: 36,
-    borderRadius: 18,
+    width: 40,
+    height: 40,
+    borderRadius: 20,
     overflow: 'hidden',
+    borderWidth: 1,
+    borderColor: '#D3E2EC',
   },
   avatar: {
     width: '100%',
@@ -480,19 +493,19 @@ const styles = StyleSheet.create({
   avatarFallback: {
     width: '100%',
     height: '100%',
-    backgroundColor: '#9A2E17',
+    backgroundColor: '#345C72',
     justifyContent: 'center',
     alignItems: 'center',
   },
   avatarFallbackText: {
     color: '#FFFFFF',
-    fontWeight: 'bold',
+    fontFamily: 'PlusJakartaSans-Bold',
     fontSize: 16,
   },
   headerTitle: {
-    fontSize: 22,
-    fontWeight: 'bold',
-    color: '#9A2E17',
+    fontSize: 24,
+    fontFamily: 'PlayfairDisplay-Bold',
+    color: '#345C72',
     letterSpacing: 0.3,
   },
   headerRight: {
@@ -501,24 +514,29 @@ const styles = StyleSheet.create({
     gap: 12,
   },
   headerIcon: {
-    padding: 4,
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+    backgroundColor: '#F0F5FA',
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   searchContainer: {
     paddingHorizontal: 20,
     paddingVertical: 12,
     backgroundColor: '#FFFFFF',
     borderBottomWidth: 1,
-    borderBottomColor: '#E2E8F0',
+    borderBottomColor: '#E3EEF5',
   },
   searchBox: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: '#F8FAFC',
+    backgroundColor: '#E6F0F6',
     borderWidth: 1,
-    borderColor: '#E2E8F0',
-    borderRadius: 12,
+    borderColor: '#D3E2EC',
+    borderRadius: 16,
     height: 48,
-    paddingHorizontal: 12,
+    paddingHorizontal: 16,
   },
   searchIcon: {
     marginRight: 8,
@@ -526,7 +544,8 @@ const styles = StyleSheet.create({
   searchInput: {
     flex: 1,
     fontSize: 15,
-    color: '#1A1A1A',
+    fontFamily: 'PlusJakartaSans-Regular',
+    color: '#2B353A',
     height: '100%',
     padding: 0,
   },
@@ -540,13 +559,13 @@ const styles = StyleSheet.create({
   },
   scrollContent: {
     paddingHorizontal: 20,
-    paddingTop: 20,
-    paddingBottom: 24,
+    paddingTop: 24,
+    paddingBottom: 110,
   },
   sectionTitle: {
-    fontSize: 20,
-    fontWeight: 'bold',
-    color: '#1A1A1A',
+    fontSize: 24,
+    fontFamily: 'PlayfairDisplay-Bold',
+    color: '#2B353A',
     marginBottom: 16,
   },
   gridContainer: {
@@ -557,41 +576,42 @@ const styles = StyleSheet.create({
   },
   categoryCard: {
     backgroundColor: '#FFFFFF',
-    borderRadius: 16,
+    borderRadius: 24,
     padding: 16,
     width: '48%',
-    marginBottom: 12,
+    marginBottom: 16,
     borderWidth: 1,
-    borderColor: '#E2E8F0',
+    borderColor: '#D3E2EC',
     shadowColor: '#000000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.02,
-    shadowRadius: 4,
-    elevation: 1.5,
+    shadowOffset: { width: 0, height: 8 },
+    shadowOpacity: 0.04,
+    shadowRadius: 20,
+    elevation: 2,
   },
   iconContainer: {
     width: 44,
     height: 44,
-    borderRadius: 10,
+    borderRadius: 12,
     justifyContent: 'center',
     alignItems: 'center',
     marginBottom: 12,
   },
   categoryName: {
     fontSize: 15,
-    fontWeight: '700',
-    color: '#1A1A1A',
+    fontFamily: 'PlusJakartaSans-Bold',
+    color: '#2B353A',
     marginBottom: 4,
   },
   categoryCount: {
     fontSize: 12,
-    color: '#636E72',
-    fontWeight: '500',
+    color: '#56646E',
+    fontFamily: 'PlusJakartaSans-Medium',
   },
   categorySubCount: {
     fontSize: 11,
-    color: '#94A3B8',
+    color: '#8E9CA3',
     marginTop: 2,
+    fontFamily: 'PlusJakartaSans-Regular',
   },
   resultsContainer: {
     flex: 1,
@@ -602,7 +622,7 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     paddingHorizontal: 20,
     paddingTop: 16,
-    paddingBottom: 10,
+    paddingBottom: 12,
   },
   resultsHeaderLeft: {
     flexDirection: 'row',
@@ -616,98 +636,101 @@ const styles = StyleSheet.create({
     borderRadius: 18,
     backgroundColor: '#FFFFFF',
     borderWidth: 1,
-    borderColor: '#E2E8F0',
+    borderColor: '#D3E2EC',
     justifyContent: 'center',
     alignItems: 'center',
   },
   resultsTitle: {
-    fontSize: 18,
-    fontWeight: 'bold',
-    color: '#1A1A1A',
+    fontSize: 20,
+    fontFamily: 'PlayfairDisplay-Bold',
+    color: '#2B353A',
   },
   resultsSubtitle: {
     fontSize: 13,
-    color: '#636E72',
+    fontFamily: 'PlusJakartaSans-Regular',
+    color: '#56646E',
   },
   clearFiltersBtn: {
     paddingVertical: 6,
     paddingHorizontal: 12,
   },
   clearFiltersText: {
-    color: '#9A2E17',
+    color: '#345C72',
     fontSize: 14,
-    fontWeight: '700',
+    fontFamily: 'PlusJakartaSans-Bold',
   },
   typeFilterRow: {
     flexDirection: 'row',
     paddingHorizontal: 20,
-    paddingBottom: 12,
+    paddingBottom: 16,
     gap: 8,
   },
   typeFilterPill: {
     paddingHorizontal: 16,
     paddingVertical: 8,
-    borderRadius: 20,
+    borderRadius: 999,
     borderWidth: 1,
   },
   typeFilterPillActive: {
-    backgroundColor: '#9A2E17',
-    borderColor: '#9A2E17',
+    backgroundColor: '#E0ECF4',
+    borderColor: '#345C72',
   },
   typeFilterPillInactive: {
     backgroundColor: '#FFFFFF',
-    borderColor: '#E2E8F0',
+    borderColor: '#D3E2EC',
   },
   typeFilterText: {
     fontSize: 13,
-    fontWeight: '600',
+    fontFamily: 'PlusJakartaSans-Medium',
   },
   typeFilterTextActive: {
-    color: '#FFFFFF',
+    color: '#345C72',
+    fontFamily: 'PlusJakartaSans-SemiBold',
   },
   typeFilterTextInactive: {
-    color: '#2D3436',
+    color: '#56646E',
   },
   emptyResults: {
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
     paddingHorizontal: 40,
-    paddingBottom: 80,
+    paddingBottom: 110,
   },
   emptyResultsTitle: {
-    fontSize: 18,
-    fontWeight: 'bold',
-    color: '#2D3436',
+    fontSize: 20,
+    fontFamily: 'PlayfairDisplay-Bold',
+    color: '#2B353A',
     marginTop: 16,
     marginBottom: 8,
   },
   emptyResultsSubtitle: {
     fontSize: 14,
-    color: '#636E72',
+    fontFamily: 'PlusJakartaSans-Regular',
+    color: '#56646E',
     textAlign: 'center',
     lineHeight: 20,
   },
   resultsListContent: {
     paddingHorizontal: 20,
-    paddingBottom: 24,
+    paddingBottom: 110,
   },
   resultCard: {
     backgroundColor: '#FFFFFF',
-    borderRadius: 20,
+    borderRadius: 24,
     marginBottom: 16,
     overflow: 'hidden',
     shadowColor: '#000000',
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.03,
-    shadowRadius: 10,
+    shadowOffset: { width: 0, height: 8 },
+    shadowOpacity: 0.04,
+    shadowRadius: 20,
     elevation: 2,
     borderWidth: 1,
-    borderColor: '#E2E8F0',
+    borderColor: '#D3E2EC',
   },
   resultCardHeader: {
     height: 150,
-    backgroundColor: '#F1F5F9',
+    backgroundColor: '#E6F0F6',
     position: 'relative',
   },
   resultCardImage: {
@@ -721,9 +744,9 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   resultFallbackText: {
-    color: '#94A3B8',
+    color: '#8E9CA3',
     marginTop: 8,
-    fontWeight: '600',
+    fontFamily: 'PlusJakartaSans-SemiBold',
     fontSize: 14,
   },
   badge: {
@@ -732,27 +755,35 @@ const styles = StyleSheet.create({
     left: 12,
     paddingHorizontal: 12,
     paddingVertical: 6,
-    borderRadius: 50,
+    borderRadius: 999,
+    borderWidth: 1,
   },
   badgeLost: {
-    backgroundColor: '#F27A35',
+    backgroundColor: '#FFD6D6',
+    borderColor: '#EABABA',
   },
   badgeFound: {
-    backgroundColor: '#9A2E17',
+    backgroundColor: '#E1EEDD',
+    borderColor: '#C7D7BF',
   },
   badgeText: {
-    color: '#FFFFFF',
-    fontSize: 11,
-    fontWeight: 'bold',
-    letterSpacing: 0.5,
+    fontSize: 10,
+    fontFamily: 'PlusJakartaSans-Bold',
+    letterSpacing: 0.8,
+  },
+  badgeTextLost: {
+    color: '#7C5454',
+  },
+  badgeTextFound: {
+    color: '#566252',
   },
   resultCardBody: {
     padding: 16,
   },
   resultCardTitle: {
     fontSize: 18,
-    fontWeight: 'bold',
-    color: '#1A1A1A',
+    fontFamily: 'PlayfairDisplay-Bold',
+    color: '#2B353A',
     marginBottom: 8,
   },
   resultInfoRow: {
@@ -762,21 +793,27 @@ const styles = StyleSheet.create({
     marginBottom: 6,
   },
   resultInfoText: {
-    color: '#636E72',
+    color: '#56646E',
+    fontFamily: 'PlusJakartaSans-Regular',
     fontSize: 13,
   },
   detailsBtn: {
     height: 42,
-    backgroundColor: '#9A2E17',
-    borderRadius: 10,
+    backgroundColor: '#345C72',
+    borderRadius: 16,
     justifyContent: 'center',
     alignItems: 'center',
     marginTop: 10,
+    shadowColor: '#345C72',
+    shadowOpacity: 0.1,
+    shadowRadius: 16,
+    shadowOffset: { width: 0, height: 6 },
+    elevation: 3,
   },
   detailsBtnText: {
     color: '#FFFFFF',
-    fontSize: 14,
-    fontWeight: 'bold',
+    fontSize: 13,
+    fontFamily: 'PlusJakartaSans-Bold',
   },
   bellBadge: {
     position: 'absolute',
@@ -792,6 +829,6 @@ const styles = StyleSheet.create({
   bellBadgeText: {
     color: '#FFFFFF',
     fontSize: 10,
-    fontWeight: 'bold',
+    fontFamily: 'PlusJakartaSans-Bold',
   },
 });

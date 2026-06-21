@@ -19,14 +19,27 @@ export default function Sidebar({ onCreateReport }) {
   const logout = useAppStore((state) => state.logout);
   const activeTab = useAppStore((state) => state.activeTab);
   const setActiveTab = useAppStore((state) => state.setActiveTab);
+  const isOffline = useAppStore((state) => state.isOffline);
+  const showToast = useAppStore((state) => state.showToast);
+  const showConfirm = useAppStore((state) => state.showConfirm);
 
   const [showLogoutConfirm, setShowLogoutConfirm] = useState(false);
 
   const handleLogout = async () => {
-    if (window.confirm('Are you sure you want to log out?')) {
-      await signOut(auth);
-      logout();
-    }
+    setShowLogoutConfirm(false);
+    showConfirm(
+      'Log Out',
+      'Are you sure you want to log out?',
+      async () => {
+        try {
+          await signOut(auth);
+          logout();
+        } catch (err) {
+          console.error(err);
+          logout(); // Fallback to local logout
+        }
+      }
+    );
   };
 
   const menuItems = [

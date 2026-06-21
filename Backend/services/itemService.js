@@ -150,7 +150,8 @@ export const itemService = {
         reporterName,
         timestamp: Date.now(),
         reason: reason || 'Not specified',
-        message: message || ''
+        message: message || '',
+        status: 'Pending'
       });
 
       return { success: true };

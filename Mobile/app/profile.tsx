@@ -19,6 +19,10 @@ import * as ImagePicker from 'expo-image-picker';
 import { useAuth, logoutUser } from '@/src/store/authStore';
 import { userService } from '@/src/services/userService';
 import { itemService } from '@/src/services/itemService';
+import { connectivity } from '@/src/services/connectivity';
+import { errorHelper } from '@/src/services/errorHelper';
+
+const GENDERS = ['Male', 'Female', 'Non-binary', 'Prefer not to say'];
 
 export default function ProfileScreen() {
   const router = useRouter();
@@ -38,6 +42,8 @@ export default function ProfileScreen() {
   const [editLocation, setEditLocation] = useState(user?.location || user?.college || '');
   const [editBio, setEditBio] = useState(user?.bio || '');
   const [newAvatarUri, setNewAvatarUri] = useState<string | null>(user?.photoURL || null);
+  const [editAge, setEditAge] = useState(user?.age ? String(user.age) : '');
+  const [editGender, setEditGender] = useState(user?.gender || '');
   
   // Loading and Error States
   const [saving, setSaving] = useState(false);
@@ -72,10 +78,13 @@ export default function ProfileScreen() {
       setEditLocation(user.location || user.college || '');
       setEditBio(user.bio || '');
       setNewAvatarUri(user.photoURL || null);
+      setEditAge(user.age ? String(user.age) : '');
+      setEditGender(user.gender || '');
     }
   }, [user, isEditing]);
 
   const handlePickImage = async () => {
+    if (saving) return;
     try {
       const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
       if (status !== 'granted') {
@@ -105,12 +114,34 @@ export default function ProfileScreen() {
       setError('Please enter your full name.');
       return;
     }
+    if (editName.trim().length < 2) {
+      setError('Name must be at least 2 characters long.');
+      return;
+    }
     if (!editPhone.trim()) {
       setError('Please enter your phone number.');
       return;
     }
+    const cleanedPhone = editPhone.replace(/\D/g, '');
+    if (cleanedPhone.length < 10) {
+      setError('Phone number must be at least 10 digits.');
+      return;
+    }
     if (!editLocation.trim()) {
       setError('Please enter your location.');
+      return;
+    }
+    if (editAge.trim()) {
+      const ageNum = parseInt(editAge, 10);
+      if (isNaN(ageNum) || ageNum < 13 || ageNum > 120) {
+        setError('Please enter a valid age (13–120).');
+        return;
+      }
+    }
+
+    const isOnline = await connectivity.checkOnline();
+    if (!isOnline) {
+      setError('Network connection unavailable. Please check your internet connection.');
       return;
     }
 
@@ -136,6 +167,8 @@ export default function ProfileScreen() {
         college: editLocation.trim(), // college maps to location for backward compatibility
         bio: editBio.trim(),
         photoURL: finalPhotoURL,
+        age: editAge.trim() ? parseInt(editAge, 10) : undefined,
+        gender: editGender || undefined,
       });
 
       // Sync store auth state
@@ -145,7 +178,8 @@ export default function ProfileScreen() {
       Alert.alert('Profile Saved', 'Your profile details have been updated successfully.');
     } catch (err: any) {
       console.error('[ProfileScreen] Error saving profile:', err);
-      setError(err.message || 'Failed to update profile.');
+      const friendlyMsg = errorHelper.getFriendlyMessage(err);
+      setError(friendlyMsg);
     } finally {
       setSaving(false);
     }
@@ -163,8 +197,11 @@ export default function ProfileScreen() {
   };
 
   const sendPasswordReset = async () => {
-    // If auth store or custom service has a password reset function, call it.
-    // For now, since they are logged in, we can direct them or mock success.
+    const isOnline = await connectivity.checkOnline();
+    if (!isOnline) {
+      Alert.alert('Offline', 'Network connection unavailable. Please check your internet connection.');
+      return;
+    }
     Alert.alert('Reset Link Sent', 'A password reset instructions email has been sent to ' + user?.email);
   };
 
@@ -208,7 +245,7 @@ export default function ProfileScreen() {
       <View style={styles.statsCard}>
         <View style={styles.statColumn}>
           {loadingStats ? (
-            <ActivityIndicator size="small" color="#9A2E17" />
+            <ActivityIndicator size="small" color="#345C72" />
           ) : (
             <Text style={styles.statValue}>{foundCount}</Text>
           )}
@@ -219,7 +256,7 @@ export default function ProfileScreen() {
 
         <View style={styles.statColumn}>
           {loadingStats ? (
-            <ActivityIndicator size="small" color="#9A2E17" />
+            <ActivityIndicator size="small" color="#345C72" />
           ) : (
             <Text style={styles.statValue}>{lostCount}</Text>
           )}
@@ -233,6 +270,35 @@ export default function ProfileScreen() {
           <Text style={styles.statLabel}>Trust</Text>
         </View>
       </View>
+      {/* Personal Information Section */}
+      <View style={styles.sectionContainer}>
+        <Text style={styles.sectionHeader}>PERSONAL INFORMATION</Text>
+        <View style={styles.detailsCard}>
+          <View style={styles.detailRow}>
+            <Ionicons name="call-outline" size={20} color="#345C72" style={styles.detailIcon} />
+            <Text style={styles.detailLabel}>Phone Number</Text>
+            <Text style={styles.detailValue}>{user?.phone || user?.phoneNumber || 'N/A'}</Text>
+          </View>
+          <View style={styles.detailDivider} />
+          <View style={styles.detailRow}>
+            <Ionicons name="calendar-outline" size={20} color="#345C72" style={styles.detailIcon} />
+            <Text style={styles.detailLabel}>Age</Text>
+            <Text style={styles.detailValue}>{user?.age ? `${user.age} years old` : 'N/A'}</Text>
+          </View>
+          <View style={styles.detailDivider} />
+          <View style={styles.detailRow}>
+            <Ionicons name="transgender-outline" size={20} color="#345C72" style={styles.detailIcon} />
+            <Text style={styles.detailLabel}>Gender</Text>
+            <Text style={styles.detailValue}>{user?.gender || 'N/A'}</Text>
+          </View>
+          <View style={styles.detailDivider} />
+          <View style={styles.detailRow}>
+            <Ionicons name="location-outline" size={20} color="#345C72" style={styles.detailIcon} />
+            <Text style={styles.detailLabel}>Location</Text>
+            <Text style={styles.detailValue}>{user?.location || user?.college || 'N/A'}</Text>
+          </View>
+        </View>
+      </View>
 
       {/* Manage My Activity Section */}
       <View style={styles.sectionContainer}>
@@ -244,14 +310,14 @@ export default function ProfileScreen() {
         >
           <View style={styles.cardItemLeft}>
             <View style={styles.iconWrapper}>
-              <Ionicons name="reader-outline" size={24} color="#9A2E17" />
+              <Ionicons name="reader-outline" size={24} color="#345C72" />
             </View>
             <View style={styles.cardItemTextContent}>
               <Text style={styles.cardItemTitle}>My Reports</Text>
               <Text style={styles.cardItemSub}>View, edit, or resolve your posts</Text>
             </View>
           </View>
-          <Ionicons name="arrow-forward" size={18} color="#9A2E17" />
+          <Ionicons name="arrow-forward" size={18} color="#345C72" />
         </TouchableOpacity>
       </View>
 
@@ -267,16 +333,16 @@ export default function ProfileScreen() {
         >
           <View style={styles.cardItemLeft}>
             <View style={styles.iconWrapper}>
-              <Ionicons name="shield-checkmark-outline" size={24} color="#9A2E17" />
+              <Ionicons name="shield-checkmark-outline" size={24} color="#345C72" />
             </View>
             <View style={styles.cardItemTextContent}>
               <Text style={styles.cardItemTitle}>Security</Text>
               <Text style={styles.cardItemSub}>Password and verification</Text>
             </View>
           </View>
-          <Ionicons name="arrow-forward" size={18} color="#9A2E17" />
+          <Ionicons name="arrow-forward" size={18} color="#345C72" />
         </TouchableOpacity>
-
+ 
         {/* Notifications */}
         <TouchableOpacity
           style={[styles.cardItem, styles.marginBtn]}
@@ -285,14 +351,32 @@ export default function ProfileScreen() {
         >
           <View style={styles.cardItemLeft}>
             <View style={styles.iconWrapper}>
-              <Ionicons name="notifications-outline" size={24} color="#9A2E17" />
+              <Ionicons name="notifications-outline" size={24} color="#345C72" />
             </View>
             <View style={styles.cardItemTextContent}>
               <Text style={styles.cardItemTitle}>Notifications</Text>
               <Text style={styles.cardItemSub}>Alerts for item matches</Text>
             </View>
           </View>
-          <Ionicons name="arrow-forward" size={18} color="#9A2E17" />
+          <Ionicons name="arrow-forward" size={18} color="#345C72" />
+        </TouchableOpacity>
+
+        {/* Blocked Users */}
+        <TouchableOpacity
+          style={[styles.cardItem, styles.marginBtn]}
+          onPress={() => router.push('/blocked-users' as any)}
+          activeOpacity={0.7}
+        >
+          <View style={styles.cardItemLeft}>
+            <View style={styles.iconWrapper}>
+              <Ionicons name="ban-outline" size={24} color="#345C72" />
+            </View>
+            <View style={styles.cardItemTextContent}>
+              <Text style={styles.cardItemTitle}>Blocked Users</Text>
+              <Text style={styles.cardItemSub}>Manage blocked chat contacts</Text>
+            </View>
+          </View>
+          <Ionicons name="arrow-forward" size={18} color="#345C72" />
         </TouchableOpacity>
 
         {/* Log Out */}
@@ -304,14 +388,14 @@ export default function ProfileScreen() {
         >
           <View style={styles.cardItemLeft}>
             <View style={styles.iconWrapper}>
-              <Ionicons name="log-out-outline" size={24} color="#D63031" />
+              <Ionicons name="log-out-outline" size={24} color="#B42318" />
             </View>
             <View style={styles.cardItemTextContent}>
-              <Text style={[styles.cardItemTitle, { color: '#D63031' }]}>Log Out</Text>
+              <Text style={[styles.cardItemTitle, { color: '#B42318' }]}>Log Out</Text>
               <Text style={styles.cardItemSub}>Log out of your account</Text>
             </View>
           </View>
-          <Ionicons name="arrow-forward" size={18} color="#D63031" />
+          <Ionicons name="arrow-forward" size={18} color="#B42318" />
         </TouchableOpacity>
       </View>
     </ScrollView>
@@ -335,7 +419,7 @@ export default function ProfileScreen() {
               </View>
             )}
             <View style={styles.cameraBadge}>
-              <Ionicons name="camera-outline" size={16} color="#9A2E17" />
+              <Ionicons name="camera-outline" size={16} color="#345C72" />
             </View>
           </TouchableOpacity>
           <TouchableOpacity onPress={handlePickImage} activeOpacity={0.7}>
@@ -346,7 +430,7 @@ export default function ProfileScreen() {
         {/* Validation Errors */}
         {error ? (
           <View style={styles.errorContainer}>
-            <Ionicons name="alert-circle-outline" size={20} color="#D63031" />
+            <Ionicons name="alert-circle-outline" size={20} color="#B42318" />
             <Text style={styles.errorText}>{error}</Text>
           </View>
         ) : null}
@@ -355,13 +439,14 @@ export default function ProfileScreen() {
         <View style={styles.formGroup}>
           <Text style={styles.fieldLabel}>Full Name</Text>
           <View style={styles.inputContainer}>
-            <Ionicons name="person-outline" size={20} color="#636E72" style={styles.fieldIcon} />
+            <Ionicons name="person-outline" size={20} color="#8E9CA3" style={styles.fieldIcon} />
             <TextInput
               style={styles.textInput}
               value={editName}
               onChangeText={setEditName}
               placeholder="Maredukonda Pramith"
               placeholderTextColor="#999"
+              editable={!saving}
             />
           </View>
         </View>
@@ -369,7 +454,7 @@ export default function ProfileScreen() {
         <View style={styles.formGroup}>
           <Text style={styles.fieldLabel}>Email Address (Locked)</Text>
           <View style={[styles.inputContainer, styles.lockedInput]}>
-            <Ionicons name="mail-outline" size={20} color="#999" style={styles.fieldIcon} />
+            <Ionicons name="mail-outline" size={20} color="#8E9CA3" style={styles.fieldIcon} />
             <TextInput
               style={[styles.textInput, styles.lockedText]}
               value={user?.email || ''}
@@ -383,7 +468,7 @@ export default function ProfileScreen() {
         <View style={styles.formGroup}>
           <Text style={styles.fieldLabel}>Phone Number</Text>
           <View style={styles.inputContainer}>
-            <Ionicons name="call-outline" size={20} color="#636E72" style={styles.fieldIcon} />
+            <Ionicons name="call-outline" size={20} color="#8E9CA3" style={styles.fieldIcon} />
             <TextInput
               style={styles.textInput}
               value={editPhone}
@@ -391,6 +476,7 @@ export default function ProfileScreen() {
               keyboardType="phone-pad"
               placeholder="9989439387"
               placeholderTextColor="#999"
+              editable={!saving}
             />
           </View>
         </View>
@@ -398,14 +484,58 @@ export default function ProfileScreen() {
         <View style={styles.formGroup}>
           <Text style={styles.fieldLabel}>Location</Text>
           <View style={styles.inputContainer}>
-            <Ionicons name="location-outline" size={20} color="#636E72" style={styles.fieldIcon} />
+            <Ionicons name="location-outline" size={20} color="#8E9CA3" style={styles.fieldIcon} />
             <TextInput
               style={styles.textInput}
               value={editLocation}
               onChangeText={setEditLocation}
               placeholder="Warangal Telangana India"
               placeholderTextColor="#999"
+              editable={!saving}
             />
+          </View>
+        </View>
+
+        <View style={styles.formGroup}>
+          <Text style={styles.fieldLabel}>Age</Text>
+          <View style={styles.inputContainer}>
+            <Ionicons name="calendar-outline" size={20} color="#8E9CA3" style={styles.fieldIcon} />
+            <TextInput
+              style={styles.textInput}
+              value={editAge}
+              onChangeText={setEditAge}
+              keyboardType="number-pad"
+              placeholder="e.g. 21"
+              placeholderTextColor="#999"
+              editable={!saving}
+              maxLength={3}
+            />
+          </View>
+        </View>
+
+        <View style={styles.formGroup}>
+          <Text style={styles.fieldLabel}>Gender</Text>
+          <View style={styles.genderSelectWrapper}>
+            {GENDERS.map((g) => (
+              <TouchableOpacity
+                key={g}
+                style={[
+                  styles.genderSelectOption,
+                  editGender === g && styles.genderSelectOptionActive,
+                ]}
+                onPress={() => setEditGender(g)}
+                disabled={saving}
+              >
+                <Text
+                  style={[
+                    styles.genderSelectOptionText,
+                    editGender === g && styles.genderSelectOptionTextActive,
+                  ]}
+                >
+                  {g}
+                </Text>
+              </TouchableOpacity>
+            ))}
           </View>
         </View>
 
@@ -420,6 +550,7 @@ export default function ProfileScreen() {
               numberOfLines={4}
               placeholder="Tell us a bit about yourself..."
               placeholderTextColor="#999"
+              editable={!saving}
             />
           </View>
         </View>
@@ -441,14 +572,14 @@ export default function ProfileScreen() {
           }}
           style={styles.backBtn}
         >
-          <Ionicons name="chevron-back" size={26} color="#2D3436" />
+          <Ionicons name="chevron-back" size={26} color="#345C72" />
         </TouchableOpacity>
         <Text style={styles.headerTitle}>{isEditing ? 'Edit Profile' : 'Profile'}</Text>
         
         {isEditing ? (
           <TouchableOpacity onPress={handleSaveProfile} disabled={saving} style={styles.saveBtn}>
             {saving ? (
-              <ActivityIndicator size="small" color="#9A2E17" />
+              <ActivityIndicator size="small" color="#345C72" />
             ) : (
               <Text style={styles.saveBtnText}>Save</Text>
             )}
@@ -467,17 +598,17 @@ export default function ProfileScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#EFF6F6',
+    backgroundColor: '#F0F5FA',
   },
   headerBar: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
     paddingHorizontal: 16,
-    paddingVertical: 12,
+    height: 64,
     borderBottomWidth: 1,
-    borderBottomColor: 'rgba(154, 46, 23, 0.08)',
-    backgroundColor: '#EFF6F6',
+    borderBottomColor: '#E3EEF5',
+    backgroundColor: '#FFFFFF',
   },
   backBtn: {
     padding: 8,
@@ -487,8 +618,8 @@ const styles = StyleSheet.create({
   },
   headerTitle: {
     fontSize: 20,
-    fontWeight: 'bold',
-    color: '#2D3436',
+    fontFamily: 'PlayfairDisplay-Bold',
+    color: '#345C72',
   },
   saveBtn: {
     paddingHorizontal: 12,
@@ -496,13 +627,13 @@ const styles = StyleSheet.create({
   },
   saveBtnText: {
     fontSize: 16,
-    fontWeight: 'bold',
-    color: '#9A2E17',
+    fontFamily: 'PlusJakartaSans-Bold',
+    color: '#345C72',
   },
   scrollContent: {
     paddingHorizontal: 24,
     paddingTop: 24,
-    paddingBottom: 40,
+    paddingBottom: 110,
   },
   avatarSection: {
     alignItems: 'center',
@@ -521,14 +652,14 @@ const styles = StyleSheet.create({
     width: 110,
     height: 110,
     borderRadius: 55,
-    backgroundColor: '#E2E8F0',
+    backgroundColor: '#E6F0F6',
     justifyContent: 'center',
     alignItems: 'center',
   },
   avatarPlaceholderText: {
     fontSize: 48,
-    fontWeight: 'bold',
-    color: '#64748B',
+    fontFamily: 'PlusJakartaSans-Bold',
+    color: '#8E9CA3',
   },
   cameraBadge: {
     position: 'absolute',
@@ -539,7 +670,7 @@ const styles = StyleSheet.create({
     borderRadius: 16,
     backgroundColor: '#FFFFFF',
     borderWidth: 1.5,
-    borderColor: '#9A2E17',
+    borderColor: '#345C72',
     justifyContent: 'center',
     alignItems: 'center',
     shadowColor: '#000',
@@ -550,32 +681,33 @@ const styles = StyleSheet.create({
   },
   nameText: {
     fontSize: 22,
-    fontWeight: 'bold',
-    color: '#1E293B',
+    fontFamily: 'PlayfairDisplay-Bold',
+    color: '#2B353A',
     marginBottom: 4,
   },
   emailText: {
     fontSize: 14,
-    color: '#64748B',
+    color: '#56646E',
+    fontFamily: 'PlusJakartaSans-Regular',
     marginBottom: 16,
   },
   editBtn: {
     paddingHorizontal: 28,
     paddingVertical: 8,
-    borderRadius: 20,
+    borderRadius: 24,
     borderWidth: 1,
-    borderColor: '#9A2E17',
+    borderColor: '#345C72',
     backgroundColor: '#FFFFFF',
   },
   editBtnText: {
     fontSize: 14,
-    fontWeight: 'bold',
-    color: '#9A2E17',
+    fontFamily: 'PlusJakartaSans-Bold',
+    color: '#345C72',
   },
   tapToChangeText: {
     fontSize: 14,
-    fontWeight: 'bold',
-    color: '#9A2E17',
+    fontFamily: 'PlusJakartaSans-Bold',
+    color: '#345C72',
     marginTop: 4,
   },
   statsCard: {
@@ -586,11 +718,13 @@ const styles = StyleSheet.create({
     shadowColor: '#000000',
     shadowOffset: { width: 0, height: 8 },
     shadowOpacity: 0.04,
-    shadowRadius: 16,
-    elevation: 3,
+    shadowRadius: 20,
+    elevation: 2,
     marginBottom: 24,
     alignItems: 'center',
     justifyContent: 'space-evenly',
+    borderWidth: 1,
+    borderColor: '#D3E2EC',
   },
   statColumn: {
     flex: 1,
@@ -599,26 +733,27 @@ const styles = StyleSheet.create({
   },
   statValue: {
     fontSize: 20,
-    fontWeight: 'bold',
-    color: '#9A2E17',
+    fontFamily: 'PlusJakartaSans-Bold',
+    color: '#345C72',
     marginBottom: 2,
   },
   statLabel: {
     fontSize: 12,
-    color: '#64748B',
+    color: '#56646E',
+    fontFamily: 'PlusJakartaSans-Regular',
   },
   statDivider: {
     width: 1,
     height: 32,
-    backgroundColor: 'rgba(154, 46, 23, 0.12)',
+    backgroundColor: 'rgba(52, 92, 114, 0.12)',
   },
   sectionContainer: {
     marginBottom: 24,
   },
   sectionHeader: {
     fontSize: 12,
-    fontWeight: 'bold',
-    color: '#9A2E17',
+    fontFamily: 'PlusJakartaSans-Bold',
+    color: '#345C72',
     marginBottom: 10,
     letterSpacing: 0.5,
   },
@@ -627,12 +762,14 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'space-between',
     backgroundColor: '#FFFFFF',
-    borderRadius: 20,
+    borderRadius: 24,
     padding: 16,
+    borderWidth: 1,
+    borderColor: '#D3E2EC',
     shadowColor: '#000000',
-    shadowOffset: { width: 0, height: 6 },
-    shadowOpacity: 0.03,
-    shadowRadius: 12,
+    shadowOffset: { width: 0, height: 8 },
+    shadowOpacity: 0.04,
+    shadowRadius: 20,
     elevation: 2,
   },
   marginBtn: {
@@ -651,13 +788,14 @@ const styles = StyleSheet.create({
   },
   cardItemTitle: {
     fontSize: 16,
-    fontWeight: 'bold',
-    color: '#1E293B',
+    fontFamily: 'PlusJakartaSans-Bold',
+    color: '#2B353A',
     marginBottom: 2,
   },
   cardItemSub: {
     fontSize: 12,
-    color: '#64748B',
+    color: '#56646E',
+    fontFamily: 'PlusJakartaSans-Regular',
   },
   keyboardView: {
     flex: 1,
@@ -667,23 +805,23 @@ const styles = StyleSheet.create({
   },
   fieldLabel: {
     fontSize: 14,
-    fontWeight: 'bold',
-    color: '#64748B',
+    fontFamily: 'PlusJakartaSans-Bold',
+    color: '#56646E',
     marginBottom: 8,
   },
   inputContainer: {
     flexDirection: 'row',
     alignItems: 'center',
     borderWidth: 1,
-    borderColor: '#9A2E17',
-    borderRadius: 12,
+    borderColor: '#D3E2EC',
+    borderRadius: 16,
     height: 52,
-    backgroundColor: '#FFFFFF',
+    backgroundColor: '#E6F0F6',
     paddingHorizontal: 16,
   },
   lockedInput: {
-    borderColor: 'rgba(154, 46, 23, 0.2)',
-    backgroundColor: '#FDF2F2',
+    borderColor: 'rgba(52, 92, 114, 0.2)',
+    backgroundColor: '#DDE8F0',
   },
   bioInputContainer: {
     height: 100,
@@ -696,11 +834,12 @@ const styles = StyleSheet.create({
   textInput: {
     flex: 1,
     height: '100%',
-    color: '#1E293B',
+    color: '#2B353A',
     fontSize: 15,
+    fontFamily: 'PlusJakartaSans-Regular',
   },
   lockedText: {
-    color: '#718096',
+    color: '#8E9CA3',
   },
   bioTextInput: {
     height: '100%',
@@ -709,15 +848,78 @@ const styles = StyleSheet.create({
   errorContainer: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: 'rgba(214, 48, 49, 0.08)',
+    backgroundColor: '#FFE2E2',
     padding: 12,
-    borderRadius: 12,
+    borderRadius: 16,
     marginBottom: 16,
     gap: 8,
   },
   errorText: {
-    color: '#D63031',
+    color: '#B42318',
     fontSize: 14,
     flex: 1,
+    fontFamily: 'PlusJakartaSans-SemiBold',
+  },
+  detailsCard: {
+    backgroundColor: '#FFFFFF',
+    borderRadius: 24,
+    padding: 16,
+    borderWidth: 1,
+    borderColor: '#D3E2EC',
+    shadowColor: '#000000',
+    shadowOffset: { width: 0, height: 8 },
+    shadowOpacity: 0.04,
+    shadowRadius: 20,
+    elevation: 2,
+  },
+  detailRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingVertical: 10,
+  },
+  detailIcon: {
+    marginRight: 12,
+  },
+  detailLabel: {
+    fontSize: 14,
+    fontFamily: 'PlusJakartaSans-Bold',
+    color: '#56646E',
+    flex: 1,
+  },
+  detailValue: {
+    fontSize: 15,
+    fontFamily: 'PlusJakartaSans-SemiBold',
+    color: '#2B353A',
+  },
+  detailDivider: {
+    height: 1,
+    backgroundColor: 'rgba(52, 92, 114, 0.08)',
+    marginHorizontal: 4,
+  },
+  genderSelectWrapper: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    gap: 8,
+    marginTop: 4,
+  },
+  genderSelectOption: {
+    paddingVertical: 8,
+    paddingHorizontal: 12,
+    borderRadius: 20,
+    borderWidth: 1,
+    borderColor: '#D3E2EC',
+    backgroundColor: '#FFFFFF',
+  },
+  genderSelectOptionActive: {
+    borderColor: '#345C72',
+    backgroundColor: 'rgba(52, 92, 114, 0.08)',
+  },
+  genderSelectOptionText: {
+    fontSize: 13,
+    fontFamily: 'PlusJakartaSans-SemiBold',
+    color: '#56646E',
+  },
+  genderSelectOptionTextActive: {
+    color: '#345C72',
   },
 });

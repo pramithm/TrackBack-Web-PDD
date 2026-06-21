@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { StyleSheet, View, Text, FlatList, TouchableOpacity, Modal, ScrollView, Alert, ActivityIndicator, Platform } from 'react-native';
+import { StyleSheet, View, Text, FlatList, TouchableOpacity, Modal, ScrollView, Alert, ActivityIndicator, Platform, TextInput } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Image } from 'expo-image';
 import { Ionicons } from '@expo/vector-icons';
@@ -26,7 +26,8 @@ export default function HomeScreen() {
   // Report Modal States
   const [reportModalVisible, setReportModalVisible] = useState(false);
   const [reportingItem, setReportingItem] = useState<Item | null>(null);
-  const [reportReason, setReportReason] = useState('Spam / Fake Post');
+  const [reportReason, setReportReason] = useState('Answer not verified');
+  const [reportComment, setReportComment] = useState('');
 
   const [pendingCount, setPendingCount] = useState(0);
 
@@ -68,7 +69,7 @@ export default function HomeScreen() {
         reportingItem.title,
         reportingItem.type,
         reportReason,
-        'Reported from mobile home feed.'
+        reportComment.trim() || 'Reported from mobile home feed.'
       );
       if (res.success) {
         Alert.alert('Report Submitted', 'Thank you. We will investigate this report shortly.');
@@ -80,6 +81,7 @@ export default function HomeScreen() {
     } finally {
       setReportModalVisible(false);
       setReportingItem(null);
+      setReportComment('');
     }
   };
 
@@ -136,7 +138,7 @@ export default function HomeScreen() {
 
           {/* Type Badge */}
           <View style={[styles.badge, isLost ? styles.badgeLost : styles.badgeFound]}>
-            <Text style={styles.badgeText}>
+            <Text style={[styles.badgeText, isLost ? styles.badgeTextLost : styles.badgeTextFound]}>
               {isLost ? 'LOST ITEM' : 'FOUND ITEM'}
             </Text>
           </View>
@@ -146,6 +148,8 @@ export default function HomeScreen() {
             style={styles.reportBtn} 
             onPress={() => {
               setReportingItem(item);
+              setReportReason('Answer not verified');
+              setReportComment('');
               setReportModalVisible(true);
             }}
           >
@@ -205,7 +209,7 @@ export default function HomeScreen() {
             style={styles.headerIcon}
             onPress={() => router.push('/notifications' as any)}
           >
-            <Ionicons name="notifications-outline" size={24} color="#2D3436" />
+            <Ionicons name="notifications-outline" size={24} color="#56646E" />
             {pendingCount > 0 && (
               <View style={styles.bellBadge}>
                 <Text style={styles.bellBadgeText}>{pendingCount}</Text>
@@ -213,7 +217,7 @@ export default function HomeScreen() {
             )}
           </TouchableOpacity>
           <TouchableOpacity onPress={handleLogout} style={styles.headerIcon}>
-            <Ionicons name="ellipsis-vertical" size={24} color="#2D3436" />
+            <Ionicons name="ellipsis-vertical" size={24} color="#56646E" />
           </TouchableOpacity>
         </View>
       </View>
@@ -225,14 +229,14 @@ export default function HomeScreen() {
           style={styles.filterBtn}
           onPress={() => setFilterModalVisible(true)}
         >
-          <Ionicons name="options-outline" size={24} color="#9A2E17" />
+          <Ionicons name="options-outline" size={24} color="#345C72" />
         </TouchableOpacity>
       </View>
 
       {/* Feed List */}
       {loading ? (
         <View style={styles.centered}>
-          <ActivityIndicator size="large" color="#9A2E17" />
+          <ActivityIndicator size="large" color="#345C72" />
         </View>
       ) : filteredItems.length === 0 ? (
         <ScrollView contentContainerStyle={styles.emptyContainer}>
@@ -318,7 +322,7 @@ export default function HomeScreen() {
                     onPress={() => setSortBy('newest')}
                   >
                     <Text style={[styles.sortText, sortBy === 'newest' && styles.sortTextActive]}>Newest First</Text>
-                    {sortBy === 'newest' && <Ionicons name="checkmark" size={20} color="#F27A35" />}
+                    {sortBy === 'newest' && <Ionicons name="checkmark" size={20} color="#345C72" />}
                   </TouchableOpacity>
                   <View style={styles.sortDivider} />
                   <TouchableOpacity 
@@ -326,7 +330,7 @@ export default function HomeScreen() {
                     onPress={() => setSortBy('oldest')}
                   >
                     <Text style={[styles.sortText, sortBy === 'oldest' && styles.sortTextActive]}>Oldest First</Text>
-                    {sortBy === 'oldest' && <Ionicons name="checkmark" size={20} color="#F27A35" />}
+                    {sortBy === 'oldest' && <Ionicons name="checkmark" size={20} color="#345C72" />}
                   </TouchableOpacity>
                 </View>
               </View>
@@ -365,25 +369,40 @@ export default function HomeScreen() {
       >
         <View style={styles.dialogOverlay}>
           <View style={styles.dialogBox}>
-            <Text style={styles.dialogTitle}>Report Item</Text>
-            <Text style={styles.dialogSubtitle}>
-              Please select the reason you want to report "{reportingItem?.title}":
-            </Text>
+            <Text style={styles.dialogTitle}>Report Post</Text>
+            
+            <Text style={styles.selectReasonLabel}>Select Reason:</Text>
 
             <View style={styles.reasonsList}>
-              {['Spam / Fake Post', 'Inappropriate Content', 'Fraud Attempt', 'Item Already Returned'].map((reason) => (
-                <TouchableOpacity
-                  key={reason}
-                  style={styles.reasonOption}
-                  onPress={() => setReportReason(reason)}
-                >
-                  <View style={styles.radioOuter}>
-                    {reportReason === reason && <View style={styles.radioInner} />}
-                  </View>
-                  <Text style={styles.reasonText}>{reason}</Text>
-                </TouchableOpacity>
-              ))}
+              {['Answer not verified', 'Report Spam', 'Other (Manually describe below)'].map((reason) => {
+                const isActive = reportReason === reason;
+                return (
+                  <TouchableOpacity
+                    key={reason}
+                    style={[styles.reasonOption, isActive && styles.reasonOptionActive]}
+                    onPress={() => setReportReason(reason)}
+                    activeOpacity={0.8}
+                  >
+                    <View style={[styles.radioOuter, isActive && styles.radioOuterActive]}>
+                      {isActive && <View style={styles.radioInner} />}
+                    </View>
+                    <Text style={[styles.reasonText, isActive && styles.reasonTextActive]}>{reason}</Text>
+                  </TouchableOpacity>
+                );
+              })}
             </View>
+
+            <Text style={styles.commentLabel}>Additional Details / Message:</Text>
+            <TextInput
+              style={styles.commentInput}
+              placeholder="Type your explanation or manual reason here..."
+              placeholderTextColor="#8E9CA3"
+              value={reportComment}
+              onChangeText={setReportComment}
+              multiline={true}
+              numberOfLines={4}
+              textAlignVertical="top"
+            />
 
             <View style={styles.dialogActions}>
               <TouchableOpacity 
@@ -391,7 +410,9 @@ export default function HomeScreen() {
                 onPress={() => {
                   setReportModalVisible(false);
                   setReportingItem(null);
+                  setReportComment('');
                 }}
+                activeOpacity={0.8}
               >
                 <Text style={styles.dialogCancelText}>Cancel</Text>
               </TouchableOpacity>
@@ -399,8 +420,9 @@ export default function HomeScreen() {
               <TouchableOpacity 
                 style={styles.dialogReport}
                 onPress={submitReport}
+                activeOpacity={0.8}
               >
-                <Text style={styles.dialogReportText}>Report</Text>
+                <Text style={styles.dialogReportText}>Submit Report</Text>
               </TouchableOpacity>
             </View>
           </View>
@@ -413,23 +435,25 @@ export default function HomeScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#EFF6F6',
+    backgroundColor: '#F0F5FA',
   },
   headerBar: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    paddingHorizontal: 16,
-    height: 56,
+    paddingHorizontal: 20,
+    height: 64,
     borderBottomWidth: 1,
-    borderBottomColor: '#E2E8F0',
+    borderBottomColor: '#E3EEF5',
     backgroundColor: '#FFFFFF',
   },
   avatarWrapper: {
-    width: 36,
-    height: 36,
-    borderRadius: 18,
+    width: 40,
+    height: 40,
+    borderRadius: 20,
     overflow: 'hidden',
+    borderWidth: 1,
+    borderColor: '#D3E2EC',
   },
   avatar: {
     width: '100%',
@@ -438,19 +462,19 @@ const styles = StyleSheet.create({
   avatarFallback: {
     width: '100%',
     height: '100%',
-    backgroundColor: '#9A2E17',
+    backgroundColor: '#345C72',
     justifyContent: 'center',
     alignItems: 'center',
   },
   avatarFallbackText: {
     color: '#FFFFFF',
-    fontWeight: 'bold',
+    fontFamily: 'PlusJakartaSans-Bold',
     fontSize: 16,
   },
   headerTitle: {
-    fontSize: 22,
-    fontWeight: 'bold',
-    color: '#9A2E17',
+    fontSize: 24,
+    fontFamily: 'PlayfairDisplay-Bold',
+    color: '#345C72',
     letterSpacing: 0.3,
   },
   headerRight: {
@@ -459,34 +483,39 @@ const styles = StyleSheet.create({
     gap: 12,
   },
   headerIcon: {
-    padding: 4,
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+    backgroundColor: '#F0F5FA',
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   subHeader: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    paddingHorizontal: 20,
-    paddingTop: 20,
-    paddingBottom: 12,
+    paddingHorizontal: 24,
+    paddingTop: 24,
+    paddingBottom: 16,
   },
   subTitle: {
-    fontSize: 22,
-    fontWeight: 'bold',
-    color: '#1A1A1A',
+    fontSize: 24,
+    fontFamily: 'PlayfairDisplay-Bold',
+    color: '#2B353A',
   },
   filterBtn: {
     width: 44,
     height: 44,
-    borderRadius: 12,
+    borderRadius: 16,
     backgroundColor: '#FFFFFF',
     borderWidth: 1,
-    borderColor: '#E2E8F0',
+    borderColor: '#D3E2EC',
     justifyContent: 'center',
     alignItems: 'center',
     shadowColor: '#000000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.03,
-    shadowRadius: 4,
+    shadowOffset: { width: 0, height: 8 },
+    shadowOpacity: 0.04,
+    shadowRadius: 20,
     elevation: 2,
   },
   centered: {
@@ -502,38 +531,39 @@ const styles = StyleSheet.create({
     paddingBottom: 60,
   },
   emptyTitle: {
-    fontSize: 20,
-    fontWeight: 'bold',
-    color: '#2D3436',
+    fontSize: 22,
+    fontFamily: 'PlayfairDisplay-Bold',
+    color: '#2B353A',
     marginTop: 16,
     marginBottom: 8,
   },
   emptySubtitle: {
     fontSize: 15,
-    color: '#636E72',
+    fontFamily: 'PlusJakartaSans-Regular',
+    color: '#56646E',
     textAlign: 'center',
     lineHeight: 22,
   },
   listContent: {
     paddingHorizontal: 20,
-    paddingBottom: 24,
+    paddingBottom: 110,
   },
   card: {
     backgroundColor: '#FFFFFF',
-    borderRadius: 20,
-    marginBottom: 20,
+    borderRadius: 24,
+    marginBottom: 24,
     overflow: 'hidden',
     shadowColor: '#000000',
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.03,
-    shadowRadius: 10,
+    shadowOffset: { width: 0, height: 8 },
+    shadowOpacity: 0.04,
+    shadowRadius: 20,
     elevation: 3,
     borderWidth: 1,
-    borderColor: '#E2E8F0',
+    borderColor: '#D3E2EC',
   },
   cardHeader: {
-    height: 180,
-    backgroundColor: '#F1F5F9',
+    height: 200,
+    backgroundColor: '#E6F0F6',
     position: 'relative',
   },
   cardImage: {
@@ -547,35 +577,43 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   fallbackText: {
-    color: '#94A3B8',
+    color: '#8E9CA3',
     marginTop: 8,
-    fontWeight: '600',
+    fontFamily: 'PlusJakartaSans-SemiBold',
     fontSize: 14,
   },
   badge: {
     position: 'absolute',
-    top: 12,
-    left: 12,
-    paddingHorizontal: 12,
+    top: 16,
+    left: 16,
+    paddingHorizontal: 14,
     paddingVertical: 6,
-    borderRadius: 50,
+    borderRadius: 999,
+    borderWidth: 1,
   },
   badgeLost: {
-    backgroundColor: '#F27A35',
+    backgroundColor: '#FFD6D6',
+    borderColor: '#EABABA',
   },
   badgeFound: {
-    backgroundColor: '#9A2E17',
+    backgroundColor: '#E1EEDD',
+    borderColor: '#C7D7BF',
   },
   badgeText: {
-    color: '#FFFFFF',
-    fontSize: 11,
-    fontWeight: 'bold',
-    letterSpacing: 0.5,
+    fontSize: 10,
+    fontFamily: 'PlusJakartaSans-Bold',
+    letterSpacing: 0.8,
+  },
+  badgeTextLost: {
+    color: '#7C5454',
+  },
+  badgeTextFound: {
+    color: '#566252',
   },
   reportBtn: {
     position: 'absolute',
-    top: 12,
-    right: 12,
+    top: 16,
+    right: 16,
     width: 36,
     height: 36,
     borderRadius: 18,
@@ -583,18 +621,18 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     shadowColor: '#000000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.05,
+    shadowRadius: 8,
     elevation: 2,
   },
   cardBody: {
-    padding: 16,
+    padding: 20,
   },
   cardTitle: {
-    fontSize: 20,
-    fontWeight: 'bold',
-    color: '#1A1A1A',
+    fontSize: 22,
+    fontFamily: 'PlayfairDisplay-Bold',
+    color: '#2B353A',
     marginBottom: 10,
   },
   infoRow: {
@@ -604,33 +642,44 @@ const styles = StyleSheet.create({
     marginBottom: 8,
   },
   infoText: {
-    color: '#636E72',
+    color: '#56646E',
+    fontFamily: 'PlusJakartaSans-Regular',
     fontSize: 14,
   },
   detailsBtn: {
     height: 48,
-    backgroundColor: '#9A2E17',
-    borderRadius: 12,
+    backgroundColor: '#345C72',
+    borderRadius: 16,
     justifyContent: 'center',
     alignItems: 'center',
-    marginTop: 12,
+    marginTop: 16,
+    shadowColor: '#345C72',
+    shadowOpacity: 0.1,
+    shadowRadius: 16,
+    shadowOffset: { width: 0, height: 6 },
+    elevation: 3,
   },
   detailsBtnText: {
     color: '#FFFFFF',
-    fontSize: 16,
-    fontWeight: 'bold',
+    fontSize: 15,
+    fontFamily: 'PlusJakartaSans-Bold',
   },
   modalOverlay: {
     flex: 1,
-    backgroundColor: 'rgba(0, 0, 0, 0.4)',
+    backgroundColor: 'rgba(43, 53, 58, 0.4)',
     justifyContent: 'flex-end',
   },
   filterSheet: {
     backgroundColor: '#FFFFFF',
-    borderTopLeftRadius: 28,
-    borderTopRightRadius: 28,
+    borderTopLeftRadius: 32,
+    borderTopRightRadius: 32,
     maxHeight: '80%',
-    paddingBottom: Platform.OS === 'ios' ? 32 : 24,
+    paddingBottom: Platform.OS === 'ios' ? 36 : 28,
+    shadowColor: '#000000',
+    shadowOpacity: 0.08,
+    shadowRadius: 30,
+    shadowOffset: { width: 0, height: -12 },
+    elevation: 10,
   },
   sheetHeader: {
     flexDirection: 'row',
@@ -639,12 +688,12 @@ const styles = StyleSheet.create({
     paddingHorizontal: 24,
     paddingVertical: 20,
     borderBottomWidth: 1,
-    borderBottomColor: '#F1F5F9',
+    borderBottomColor: '#E3EEF5',
   },
   sheetTitle: {
     fontSize: 22,
-    fontWeight: 'bold',
-    color: '#1A1A1A',
+    fontFamily: 'PlayfairDisplay-Bold',
+    color: '#2B353A',
   },
   sheetContent: {
     paddingHorizontal: 24,
@@ -655,8 +704,8 @@ const styles = StyleSheet.create({
   },
   sectionLabel: {
     fontSize: 16,
-    fontWeight: 'bold',
-    color: '#2D3436',
+    fontFamily: 'PlusJakartaSans-SemiBold',
+    color: '#2B353A',
     marginBottom: 12,
   },
   pillsRow: {
@@ -671,30 +720,31 @@ const styles = StyleSheet.create({
   pill: {
     paddingHorizontal: 16,
     paddingVertical: 10,
-    borderRadius: 50,
+    borderRadius: 999,
     borderWidth: 1,
   },
   pillActive: {
-    backgroundColor: '#F27A35',
-    borderColor: '#F27A35',
+    backgroundColor: '#E0ECF4',
+    borderColor: '#345C72',
   },
   pillInactive: {
     backgroundColor: '#FFFFFF',
-    borderColor: '#E2E8F0',
+    borderColor: '#D3E2EC',
   },
   pillText: {
     fontSize: 14,
-    fontWeight: '600',
+    fontFamily: 'PlusJakartaSans-Medium',
   },
   pillTextActive: {
-    color: '#FFFFFF',
+    color: '#345C72',
+    fontFamily: 'PlusJakartaSans-SemiBold',
   },
   pillTextInactive: {
-    color: '#2D3436',
+    color: '#56646E',
   },
   sortCard: {
     borderWidth: 1,
-    borderColor: '#E2E8F0',
+    borderColor: '#D3E2EC',
     borderRadius: 16,
     backgroundColor: '#FFFFFF',
     overflow: 'hidden',
@@ -708,16 +758,16 @@ const styles = StyleSheet.create({
   },
   sortText: {
     fontSize: 15,
-    color: '#2D3436',
-    fontWeight: '500',
+    color: '#56646E',
+    fontFamily: 'PlusJakartaSans-Medium',
   },
   sortTextActive: {
-    color: '#F27A35',
-    fontWeight: 'bold',
+    color: '#345C72',
+    fontFamily: 'PlusJakartaSans-Bold',
   },
   sortDivider: {
     height: 1,
-    backgroundColor: '#E2E8F0',
+    backgroundColor: '#E3EEF5',
   },
   sheetActions: {
     flexDirection: 'row',
@@ -725,113 +775,167 @@ const styles = StyleSheet.create({
     paddingHorizontal: 24,
     paddingTop: 16,
     borderTopWidth: 1,
-    borderTopColor: '#F1F5F9',
+    borderTopColor: '#E3EEF5',
   },
   resetBtn: {
     flex: 1,
     height: 52,
     backgroundColor: '#FFFFFF',
-    borderWidth: 2,
-    borderColor: '#9A2E17',
+    borderWidth: 1.5,
+    borderColor: '#345C72',
     borderRadius: 16,
     justifyContent: 'center',
     alignItems: 'center',
   },
   resetBtnText: {
-    color: '#9A2E17',
-    fontSize: 16,
-    fontWeight: 'bold',
+    color: '#345C72',
+    fontSize: 15,
+    fontFamily: 'PlusJakartaSans-Bold',
   },
   applyBtn: {
     flex: 2,
     height: 52,
-    backgroundColor: '#9A2E17',
+    backgroundColor: '#345C72',
     borderRadius: 16,
     justifyContent: 'center',
     alignItems: 'center',
+    shadowColor: '#345C72',
+    shadowOpacity: 0.1,
+    shadowRadius: 16,
+    shadowOffset: { width: 0, height: 6 },
+    elevation: 3,
   },
   applyBtnText: {
     color: '#FFFFFF',
-    fontSize: 16,
-    fontWeight: 'bold',
+    fontSize: 15,
+    fontFamily: 'PlusJakartaSans-Bold',
   },
   dialogOverlay: {
     flex: 1,
-    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+    backgroundColor: 'rgba(43, 53, 58, 0.5)',
     justifyContent: 'center',
     alignItems: 'center',
-    paddingHorizontal: 32,
+    paddingHorizontal: 24,
   },
   dialogBox: {
     backgroundColor: '#FFFFFF',
     borderRadius: 24,
     padding: 24,
     width: '100%',
+    shadowColor: '#000000',
+    shadowOpacity: 0.08,
+    shadowRadius: 30,
+    shadowOffset: { width: 0, height: 12 },
+    elevation: 6,
   },
   dialogTitle: {
-    fontSize: 20,
-    fontWeight: 'bold',
-    color: '#1A1A1A',
-    marginBottom: 8,
-  },
-  dialogSubtitle: {
-    fontSize: 14,
-    color: '#636E72',
-    lineHeight: 20,
+    fontSize: 24,
+    fontFamily: 'PlayfairDisplay-Bold',
+    color: '#2B353A',
     marginBottom: 20,
+    textAlign: 'center',
+  },
+  selectReasonLabel: {
+    fontSize: 14,
+    fontFamily: 'PlusJakartaSans-Bold',
+    color: '#56646E',
+    marginBottom: 12,
   },
   reasonsList: {
-    gap: 12,
-    marginBottom: 24,
+    gap: 8,
+    marginBottom: 20,
   },
   reasonOption: {
     flexDirection: 'row',
     alignItems: 'center',
     gap: 12,
+    paddingVertical: 12,
+    paddingHorizontal: 16,
+    borderRadius: 12,
+    borderWidth: 1,
+    borderColor: 'transparent',
+  },
+  reasonOptionActive: {
+    backgroundColor: '#E6F0F6',
+    borderColor: '#D3E2EC',
   },
   radioOuter: {
     width: 20,
     height: 20,
     borderRadius: 10,
     borderWidth: 2,
-    borderColor: '#9A2E17',
+    borderColor: '#8E9CA3',
     justifyContent: 'center',
     alignItems: 'center',
+  },
+  radioOuterActive: {
+    borderColor: '#345C72',
   },
   radioInner: {
     width: 10,
     height: 10,
     borderRadius: 5,
-    backgroundColor: '#9A2E17',
+    backgroundColor: '#345C72',
   },
   reasonText: {
     fontSize: 15,
-    color: '#2D3436',
+    fontFamily: 'PlusJakartaSans-Medium',
+    color: '#56646E',
+  },
+  reasonTextActive: {
+    color: '#345C72',
+    fontFamily: 'PlusJakartaSans-Bold',
+  },
+  commentLabel: {
+    fontSize: 14,
+    fontFamily: 'PlusJakartaSans-Bold',
+    color: '#56646E',
+    marginBottom: 8,
+    marginTop: 4,
+  },
+  commentInput: {
+    borderWidth: 1,
+    borderColor: '#D3E2EC',
+    borderRadius: 12,
+    padding: 12,
+    height: 100,
+    backgroundColor: '#FFFFFF',
+    fontSize: 15,
+    fontFamily: 'PlusJakartaSans-Regular',
+    color: '#2B353A',
+    marginBottom: 24,
   },
   dialogActions: {
     flexDirection: 'row',
-    justifyContent: 'flex-end',
-    gap: 16,
+    gap: 12,
   },
   dialogCancel: {
-    paddingVertical: 10,
-    paddingHorizontal: 16,
+    flex: 1,
+    height: 48,
+    backgroundColor: '#E6F0F6',
+    borderRadius: 12,
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderWidth: 1,
+    borderColor: '#D3E2EC',
   },
   dialogCancelText: {
-    color: '#636E72',
-    fontSize: 16,
-    fontWeight: 'bold',
+    color: '#345C72',
+    fontSize: 15,
+    fontFamily: 'PlusJakartaSans-Bold',
   },
   dialogReport: {
-    backgroundColor: '#D63031',
-    paddingVertical: 10,
-    paddingHorizontal: 20,
+    flex: 1,
+    height: 48,
+    backgroundColor: '#345C72',
     borderRadius: 12,
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   dialogReportText: {
     color: '#FFFFFF',
-    fontSize: 16,
-    fontWeight: 'bold',
+    fontSize: 15,
+    fontFamily: 'PlusJakartaSans-Bold',
   },
   bellBadge: {
     position: 'absolute',
@@ -847,6 +951,6 @@ const styles = StyleSheet.create({
   bellBadgeText: {
     color: '#FFFFFF',
     fontSize: 10,
-    fontWeight: 'bold',
+    fontFamily: 'PlusJakartaSans-Bold',
   },
 });

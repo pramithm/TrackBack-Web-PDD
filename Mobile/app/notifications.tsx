@@ -18,6 +18,8 @@ import { useRouter } from 'expo-router';
 import { useAuth } from '@/src/store/authStore';
 import { requestService, ClaimRequest } from '@/src/services/requestService';
 import { chatService } from '@/src/services/chatService';
+import { connectivity } from '@/src/services/connectivity';
+import { errorHelper } from '@/src/services/errorHelper';
 
 export default function NotificationsScreen() {
   const router = useRouter();
@@ -65,6 +67,12 @@ export default function NotificationsScreen() {
   }, [user]);
 
   const handleAccept = async (request: ClaimRequest) => {
+    const isOnline = await connectivity.checkOnline();
+    if (!isOnline) {
+      Alert.alert('Offline', 'Network connection unavailable. Please check your internet connection and try again.');
+      return;
+    }
+
     setActionLoading(request.id);
     try {
       // 1. Accept request in DB
@@ -93,13 +101,20 @@ export default function NotificationsScreen() {
       Alert.alert('Success', `You approved ${request.claimerName}'s claim. Tap Chat to discuss return.`);
     } catch (err: any) {
       console.error(err);
-      Alert.alert('Error', 'Failed to accept request: ' + err.message);
+      const friendlyMsg = errorHelper.getFriendlyMessage(err);
+      Alert.alert('Error', 'Failed to accept request: ' + friendlyMsg);
     } finally {
       setActionLoading(null);
     }
   };
 
   const handleReject = async (request: ClaimRequest) => {
+    const isOnline = await connectivity.checkOnline();
+    if (!isOnline) {
+      Alert.alert('Offline', 'Network connection unavailable. Please check your internet connection and try again.');
+      return;
+    }
+
     Alert.alert(
       'Reject Request',
       `Are you sure you want to reject ${request.claimerName}'s claim for "${request.itemTitle}"?`,
@@ -109,6 +124,12 @@ export default function NotificationsScreen() {
           text: 'Reject',
           style: 'destructive',
           onPress: async () => {
+            const isOnlineStill = await connectivity.checkOnline();
+            if (!isOnlineStill) {
+              Alert.alert('Offline', 'Network connection unavailable. Please check your internet connection.');
+              return;
+            }
+
             setActionLoading(request.id);
             try {
               await requestService.updateRequestStatus(request.id, 'rejected');
@@ -121,7 +142,8 @@ export default function NotificationsScreen() {
               Alert.alert('Success', 'The request was rejected.');
             } catch (err: any) {
               console.error(err);
-              Alert.alert('Error', 'Failed to reject request: ' + err.message);
+              const friendlyMsg = errorHelper.getFriendlyMessage(err);
+              Alert.alert('Error', 'Failed to reject request: ' + friendlyMsg);
             } finally {
               setActionLoading(null);
             }
@@ -132,6 +154,12 @@ export default function NotificationsScreen() {
   };
 
   const handleChat = async (request: ClaimRequest) => {
+    const isOnline = await connectivity.checkOnline();
+    if (!isOnline) {
+      Alert.alert('Offline', 'Network connection unavailable. Please check your internet connection and try again.');
+      return;
+    }
+
     setActionLoading(request.id);
     setReviewModalVisible(false);
     try {
@@ -145,31 +173,40 @@ export default function NotificationsScreen() {
       await requestService.clearRequests([request.id]);
     } catch (err: any) {
       console.error(err);
-      Alert.alert('Error', 'Failed to open chat: ' + err.message);
+      const friendlyMsg = errorHelper.getFriendlyMessage(err);
+      Alert.alert('Error', 'Failed to open chat: ' + friendlyMsg);
     } finally {
       setActionLoading(null);
     }
   };
 
   const handleClearAll = () => {
-    if (requests.length === 0) return;
+    const completedRequests = requests.filter(r => r.status !== 'pending');
+    if (completedRequests.length === 0) return;
     Alert.alert(
       'Clear Notifications',
-      'Are you sure you want to clear all notifications from the center?',
+      'Are you sure you want to clear all completed/claimed notifications?',
       [
         { text: 'Cancel', style: 'cancel' },
         {
-          text: 'Clear All',
+          text: 'Clear Completed',
           style: 'destructive',
           onPress: async () => {
+            const isOnline = await connectivity.checkOnline();
+            if (!isOnline) {
+              Alert.alert('Offline', 'Network connection unavailable. Please check your internet connection and try again.');
+              return;
+            }
+
             setActionLoading('clear-all');
             try {
-              const ids = requests.map((r) => r.id);
+              const ids = completedRequests.map((r) => r.id);
               await requestService.clearRequests(ids);
-              Alert.alert('Success', 'Notifications cleared.');
+              Alert.alert('Success', 'Completed notifications cleared.');
             } catch (err: any) {
               console.error(err);
-              Alert.alert('Error', 'Failed to clear notifications: ' + err.message);
+              const friendlyMsg = errorHelper.getFriendlyMessage(err);
+              Alert.alert('Error', 'Failed to clear notifications: ' + friendlyMsg);
             } finally {
               setActionLoading(null);
             }
@@ -220,7 +257,7 @@ export default function NotificationsScreen() {
           <Image source={{ uri: item.itemImage }} style={styles.itemThumb} contentFit="cover" />
         ) : (
           <View style={styles.itemThumbFallback}>
-            <Ionicons name="images-outline" size={24} color="#94A3B8" />
+            <Ionicons name="images-outline" size={24} color="#8E9CA3" />
           </View>
         )}
 
@@ -243,7 +280,39 @@ export default function NotificationsScreen() {
           </View>
         </View>
 
-        <Ionicons name="chevron-forward" size={20} color="#94A3B8" style={styles.chevron} />
+        {!isPending ? (
+          <TouchableOpacity
+            style={{ padding: 8 }}
+            disabled={actionLoading !== null}
+            onPress={async (e) => {
+              e.stopPropagation();
+              const isOnline = await connectivity.checkOnline();
+              if (!isOnline) {
+                Alert.alert('Offline', 'Network connection unavailable. Please check your internet connection.');
+                return;
+              }
+
+              setActionLoading(item.id);
+              try {
+                await requestService.clearRequests([item.id]);
+                Alert.alert('Success', 'Notification cleared.');
+              } catch (err: any) {
+                const friendlyMsg = errorHelper.getFriendlyMessage(err);
+                Alert.alert('Error', 'Failed to clear notification: ' + friendlyMsg);
+              } finally {
+                setActionLoading(null);
+              }
+            }}
+          >
+            {actionLoading === item.id ? (
+              <ActivityIndicator size="small" color="#EF4444" />
+            ) : (
+              <Ionicons name="trash-outline" size={20} color="#EF4444" />
+            )}
+          </TouchableOpacity>
+        ) : (
+          <Ionicons name="chevron-forward" size={20} color="#8E9CA3" style={styles.chevron} />
+        )}
       </TouchableOpacity>
     );
   };
@@ -261,9 +330,12 @@ export default function NotificationsScreen() {
         <TouchableOpacity 
           style={styles.headerBtn} 
           onPress={handleClearAll}
-          disabled={requests.length === 0 || actionLoading !== null}
+          disabled={!requests.some(r => r.status !== 'pending') || actionLoading !== null}
         >
-          <Text style={[styles.clearText, requests.length === 0 && styles.clearTextDisabled]}>
+          <Text style={[
+            styles.clearText, 
+            (!requests.some(r => r.status !== 'pending') || actionLoading !== null) && styles.clearTextDisabled
+          ]}>
             Clear
           </Text>
         </TouchableOpacity>
@@ -272,11 +344,11 @@ export default function NotificationsScreen() {
       {/* Main Notification Content */}
       {loading ? (
         <View style={styles.centered}>
-          <ActivityIndicator size="large" color="#9A2E17" />
+          <ActivityIndicator size="large" color="#345C72" />
         </View>
       ) : requests.length === 0 ? (
         <ScrollView contentContainerStyle={styles.emptyContainer}>
-          <Ionicons name="notifications-off-outline" size={72} color="#94A3B8" />
+          <Ionicons name="notifications-off-outline" size={72} color="#8E9CA3" />
           <Text style={styles.emptyTitle}>No New Notifications</Text>
           <Text style={styles.emptySubtitle}>
             When other users request to claim your found items, those requests will appear here.
@@ -307,7 +379,7 @@ export default function NotificationsScreen() {
                   {selectedRequest.finderId === user?.uid ? 'Review Claim Request' : 'Claim Request Status'}
                 </Text>
                 <TouchableOpacity onPress={() => setReviewModalVisible(false)}>
-                  <Ionicons name="close" size={24} color="#475569" />
+                  <Ionicons name="close" size={24} color="#8E9CA3" />
                 </TouchableOpacity>
               </View>
 
@@ -318,7 +390,7 @@ export default function NotificationsScreen() {
                     <Image source={{ uri: selectedRequest.itemImage }} style={styles.modalItemImage} contentFit="cover" />
                   ) : (
                     <View style={[styles.modalItemImage, styles.modalItemFallback]}>
-                      <Ionicons name="images-outline" size={24} color="#94A3B8" />
+                      <Ionicons name="images-outline" size={24} color="#8E9CA3" />
                     </View>
                   )}
                   <View style={{ flex: 1, marginLeft: 12 }}>
@@ -413,16 +485,16 @@ export default function NotificationsScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#EFF6F6',
+    backgroundColor: '#F0F5FA',
   },
   headerBar: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
     paddingHorizontal: 16,
-    height: 56,
+    height: 64,
     borderBottomWidth: 1,
-    borderBottomColor: '#E2E8F0',
+    borderBottomColor: '#E3EEF5',
     backgroundColor: '#FFFFFF',
   },
   headerBtn: {
@@ -431,22 +503,22 @@ const styles = StyleSheet.create({
     minWidth: 50,
   },
   backText: {
-    color: '#9A2E17',
+    color: '#345C72',
     fontSize: 16,
-    fontWeight: 'bold',
+    fontFamily: 'PlusJakartaSans-Bold',
   },
   headerTitle: {
-    fontSize: 19,
-    fontWeight: 'bold',
-    color: '#9A2E17',
+    fontSize: 20,
+    fontFamily: 'PlayfairDisplay-Bold',
+    color: '#345C72',
   },
   clearText: {
-    color: '#9A2E17',
+    color: '#345C72',
     fontSize: 16,
-    fontWeight: 'bold',
+    fontFamily: 'PlusJakartaSans-Bold',
   },
   clearTextDisabled: {
-    color: '#CBD5E1',
+    color: '#DDE8F0',
   },
   centered: {
     flex: 1,
@@ -462,34 +534,35 @@ const styles = StyleSheet.create({
   },
   emptyTitle: {
     fontSize: 20,
-    fontWeight: 'bold',
-    color: '#2D3436',
+    fontFamily: 'PlayfairDisplay-Bold',
+    color: '#2B353A',
     marginTop: 20,
     marginBottom: 8,
   },
   emptySubtitle: {
     fontSize: 15,
-    color: '#636E72',
+    color: '#56646E',
+    fontFamily: 'PlusJakartaSans-Regular',
     textAlign: 'center',
     lineHeight: 22,
   },
   listContent: {
     paddingHorizontal: 16,
     paddingTop: 16,
-    paddingBottom: 24,
+    paddingBottom: 110,
   },
   card: {
     backgroundColor: '#FFFFFF',
-    borderRadius: 20,
+    borderRadius: 24,
     padding: 12,
     marginBottom: 12,
     shadowColor: '#000000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.02,
-    shadowRadius: 6,
+    shadowOffset: { width: 0, height: 8 },
+    shadowOpacity: 0.04,
+    shadowRadius: 20,
     elevation: 2,
     borderWidth: 1,
-    borderColor: '#E2E8F0',
+    borderColor: '#D3E2EC',
     flexDirection: 'row',
     alignItems: 'center',
   },
@@ -497,13 +570,13 @@ const styles = StyleSheet.create({
     width: 64,
     height: 64,
     borderRadius: 12,
-    backgroundColor: '#F1F5F9',
+    backgroundColor: '#E6F0F6',
   },
   itemThumbFallback: {
     width: 64,
     height: 64,
     borderRadius: 12,
-    backgroundColor: '#F1F5F9',
+    backgroundColor: '#E6F0F6',
     justifyContent: 'center',
     alignItems: 'center',
   },
@@ -514,56 +587,57 @@ const styles = StyleSheet.create({
   },
   cardTitle: {
     fontSize: 15,
-    fontWeight: 'bold',
-    color: '#1A1A1A',
+    fontFamily: 'PlusJakartaSans-Bold',
+    color: '#2B353A',
   },
   cardSubtitle: {
     fontSize: 13,
-    color: '#636E72',
+    color: '#56646E',
+    fontFamily: 'PlusJakartaSans-Regular',
     marginTop: 2,
   },
   statusBadge: {
     alignSelf: 'flex-start',
     paddingHorizontal: 8,
     paddingVertical: 3,
-    borderRadius: 6,
+    borderRadius: 8,
     marginTop: 6,
   },
   badgePending: {
-    backgroundColor: '#FFEBE3',
+    backgroundColor: '#FFF4D8',
   },
   badgeAccepted: {
-    backgroundColor: '#E6FBF3',
+    backgroundColor: '#E1EEDD',
   },
   badgeRejected: {
-    backgroundColor: '#FEE2E2',
+    backgroundColor: '#FFE2E2',
   },
   statusText: {
     fontSize: 11,
-    fontWeight: '900',
+    fontFamily: 'PlusJakartaSans-Bold',
     letterSpacing: 0.5,
   },
   statusTextPending: {
-    color: '#EA580C',
+    color: '#A56A00',
   },
   statusTextAccepted: {
-    color: '#047857',
+    color: '#566252',
   },
   statusTextRejected: {
-    color: '#B91C1C',
+    color: '#B42318',
   },
   chevron: {
     marginLeft: 'auto',
   },
   modalOverlay: {
     flex: 1,
-    backgroundColor: 'rgba(0, 0, 0, 0.4)',
+    backgroundColor: 'rgba(43, 53, 58, 0.4)',
     justifyContent: 'center',
     alignItems: 'center',
   },
   modalContent: {
     backgroundColor: '#FFFFFF',
-    borderRadius: 24,
+    borderRadius: 32,
     width: '90%',
     maxHeight: '80%',
     padding: 20,
@@ -578,42 +652,43 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     marginBottom: 16,
     borderBottomWidth: 1,
-    borderBottomColor: '#F1F5F9',
+    borderBottomColor: '#E3EEF5',
     paddingBottom: 12,
   },
   modalTitle: {
     fontSize: 18,
-    fontWeight: 'bold',
-    color: '#1E293B',
+    fontFamily: 'PlayfairDisplay-Bold',
+    color: '#2B353A',
   },
   modalItemCard: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: '#F8FAFC',
-    borderRadius: 16,
+    backgroundColor: '#E6F0F6',
+    borderRadius: 24,
     padding: 12,
     borderWidth: 1,
-    borderColor: '#E2E8F0',
+    borderColor: '#D3E2EC',
     marginBottom: 16,
   },
   modalItemImage: {
     width: 50,
     height: 50,
-    borderRadius: 8,
+    borderRadius: 12,
   },
   modalItemFallback: {
-    backgroundColor: '#E2E8F0',
+    backgroundColor: '#DDE8F0',
     justifyContent: 'center',
     alignItems: 'center',
   },
   modalItemTitle: {
     fontSize: 15,
-    fontWeight: 'bold',
-    color: '#1E293B',
+    fontFamily: 'PlayfairDisplay-Bold',
+    color: '#2B353A',
   },
   modalItemTime: {
     fontSize: 12,
-    color: '#94A3B8',
+    color: '#8E9CA3',
+    fontFamily: 'PlusJakartaSans-Regular',
     marginTop: 2,
   },
   detailRow: {
@@ -621,36 +696,37 @@ const styles = StyleSheet.create({
   },
   detailLabel: {
     fontSize: 11,
-    fontWeight: 'bold',
-    color: '#94A3B8',
+    fontFamily: 'PlusJakartaSans-Bold',
+    color: '#8E9CA3',
     letterSpacing: 0.5,
     textTransform: 'uppercase',
   },
   detailValue: {
     fontSize: 14,
-    color: '#1E293B',
-    fontWeight: '700',
+    color: '#2B353A',
+    fontFamily: 'PlusJakartaSans-Bold',
     marginTop: 2,
   },
   messageContainer: {
-    backgroundColor: '#FFF5F5',
+    backgroundColor: '#E6F0F6',
     borderWidth: 1,
-    borderColor: '#FEE2E2',
-    borderRadius: 16,
+    borderColor: '#D3E2EC',
+    borderRadius: 24,
     padding: 14,
     marginTop: 12,
     marginBottom: 16,
   },
   messageHeader: {
     fontSize: 10,
-    fontWeight: '900',
-    color: '#9A2E17',
+    fontFamily: 'PlusJakartaSans-Bold',
+    color: '#345C72',
     letterSpacing: 0.5,
     marginBottom: 6,
   },
   messageBody: {
     fontSize: 13,
-    color: '#475569',
+    color: '#56646E',
+    fontFamily: 'PlusJakartaSans-Regular',
     lineHeight: 18,
   },
   modalFooter: {
@@ -662,7 +738,7 @@ const styles = StyleSheet.create({
   },
   modalBtn: {
     height: 48,
-    borderRadius: 14,
+    borderRadius: 16,
     justifyContent: 'center',
     alignItems: 'center',
     flexDirection: 'row',
@@ -670,41 +746,41 @@ const styles = StyleSheet.create({
   modalRejectBtn: {
     flex: 1,
     borderWidth: 1.5,
-    borderColor: '#EF4444',
+    borderColor: '#B42318',
     backgroundColor: '#FFFFFF',
   },
   modalRejectText: {
-    color: '#EF4444',
+    color: '#B42318',
     fontSize: 14,
-    fontWeight: 'bold',
+    fontFamily: 'PlusJakartaSans-Bold',
   },
   modalAcceptBtn: {
     flex: 2,
-    backgroundColor: '#10B981',
+    backgroundColor: '#345C72',
   },
   modalAcceptText: {
     color: '#FFFFFF',
     fontSize: 14,
-    fontWeight: 'bold',
+    fontFamily: 'PlusJakartaSans-Bold',
   },
   modalChatBtn: {
     width: '100%',
-    backgroundColor: '#9A2E17',
+    backgroundColor: '#345C72',
   },
   modalChatText: {
     color: '#FFFFFF',
     fontSize: 14,
-    fontWeight: 'bold',
+    fontFamily: 'PlusJakartaSans-Bold',
   },
   modalCloseBtn: {
     width: '100%',
-    backgroundColor: '#F1F5F9',
+    backgroundColor: '#E6F0F6',
     borderWidth: 1,
-    borderColor: '#E2E8F0',
+    borderColor: '#D3E2EC',
   },
   modalCloseText: {
-    color: '#475569',
+    color: '#345C72',
     fontSize: 14,
-    fontWeight: 'bold',
+    fontFamily: 'PlusJakartaSans-Bold',
   }
 });

@@ -49,6 +49,21 @@ export const chatService = {
         throw new Error('This chat has been blocked by AI moderation.');
       }
 
+      const partnerId = Object.keys(chatData?.participants || {}).find(uid => uid !== currentUserId) || '';
+      if (partnerId) {
+        const blockRef1 = ref(rtdb, `blocks/${currentUserId}/${partnerId}`);
+        const blockSnap1 = await get(blockRef1);
+        if (blockSnap1.exists() && blockSnap1.val() === true) {
+          throw new Error('You have blocked this user.');
+        }
+
+        const blockRef2 = ref(rtdb, `blocks/${partnerId}/${currentUserId}`);
+        const blockSnap2 = await get(blockRef2);
+        if (blockSnap2.exists() && blockSnap2.val() === true) {
+          throw new Error('This user has blocked you.');
+        }
+      }
+
       const analysis = await aiService.analyzeChatMessage(text, itemTitle || chatData?.itemTitle || "the item");
 
       if (!analysis.isAppropriate) {

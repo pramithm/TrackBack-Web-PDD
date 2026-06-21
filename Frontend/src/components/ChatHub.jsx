@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { useAppStore } from '../../../Backend/store/useAppStore';
 import { chatService } from '../../../Backend/services/chatService';
 import { userService } from '../../../Backend/services/userService';
+import { errorHelper } from '../services/errorHelper';
 import { rtdb } from '../../../Backend/config/firebase';
 import { ref, onValue, set } from 'firebase/database';
 import { 
@@ -17,7 +18,8 @@ import {
   MoreVertical,
   Flag,
   UserX,
-  UserCheck
+  UserCheck,
+  X
 } from 'lucide-react';
 import './Chat.css';
 
@@ -25,6 +27,9 @@ export default function ChatHub() {
   const user = useAppStore((state) => state.user);
   const selectedChatId = useAppStore((state) => state.selectedChatId);
   const setSelectedChatId = useAppStore((state) => state.setSelectedChatId);
+  const isOffline = useAppStore((state) => state.isOffline);
+  const showToast = useAppStore((state) => state.showToast);
+  const showConfirm = useAppStore((state) => state.showConfirm);
   
   const [chats, setChats] = useState([]);
   const [selectedChat, setSelectedChat] = useState(null);
@@ -50,6 +55,70 @@ export default function ChatHub() {
   const dropdownRef = useRef(null);
 
   const messagesEndRef = useRef(null);
+
+  // Cleared Chats States
+  const [clearedMap, setClearedMap] = useState({});
+  const [isSelectingForClear, setIsSelectingForClear] = useState(false);
+  const [selectedChatIds, setSelectedChatIds] = useState([]);
+
+  // Load cleared chats from localStorage on load
+  useEffect(() => {
+    if (user) {
+      const stored = localStorage.getItem(`clearedChats_${user.uid}`);
+      try {
+        setClearedMap(stored ? JSON.parse(stored) : {});
+      } catch (e) {
+        setClearedMap({});
+      }
+    }
+  }, [user]);
+
+  // Remove chat from cleared map when opened/selected
+  useEffect(() => {
+    if (selectedChat && user) {
+      const stored = localStorage.getItem(`clearedChats_${user.uid}`);
+      let currentMap = {};
+      try {
+        currentMap = stored ? JSON.parse(stored) : {};
+      } catch (e) {}
+
+      if (currentMap[selectedChat.id]) {
+        delete currentMap[selectedChat.id];
+        setClearedMap(currentMap);
+        localStorage.setItem(`clearedChats_${user.uid}`, JSON.stringify(currentMap));
+      }
+    }
+  }, [selectedChat, user]);
+
+  const handleClearAllChats = () => {
+    if (!user) return;
+    const now = Date.now();
+    const updatedMap = { ...clearedMap };
+    chats.forEach(chat => {
+      updatedMap[chat.id] = now;
+    });
+    setClearedMap(updatedMap);
+    localStorage.setItem(`clearedChats_${user.uid}`, JSON.stringify(updatedMap));
+    setSelectedChat(null);
+    showToast('All chats cleared successfully.', 'success');
+  };
+
+  const handleClearSelectedChats = (chatIdsToClear) => {
+    if (!user || !chatIdsToClear || chatIdsToClear.length === 0) return;
+    const now = Date.now();
+    const updatedMap = { ...clearedMap };
+    chatIdsToClear.forEach(id => {
+      updatedMap[id] = now;
+    });
+    setClearedMap(updatedMap);
+    localStorage.setItem(`clearedChats_${user.uid}`, JSON.stringify(updatedMap));
+    
+    if (selectedChat && chatIdsToClear.includes(selectedChat.id)) {
+      setSelectedChat(null);
+    }
+    
+    showToast('Selected chats cleared successfully.', 'success');
+  };
 
   // 1. Listen to active conversations list, group them, and filter out system messages
   useEffect(() => {
@@ -247,11 +316,16 @@ export default function ChatHub() {
   const handleBlockToggle = async () => {
     setShowOptionsDropdown(false);
     if (!selectedChat) return;
+
+    if (isOffline) {
+      showToast('Network connection unavailable. Cannot update block status.', 'error');
+      return;
+    }
     
     // Check if demo chat
     if (selectedChat.id.startsWith('chat_demo_')) {
       setIsPartnerBlocked(!isPartnerBlocked);
-      alert(isPartnerBlocked ? 'User unblocked successfully (Demo).' : 'User blocked successfully (Demo).');
+      showToast(isPartnerBlocked ? 'User unblocked successfully (Demo).' : 'User blocked successfully (Demo).', 'success');
       return;
     }
 
@@ -261,16 +335,25 @@ export default function ChatHub() {
     try {
       if (isPartnerBlocked) {
         await userService.unblockUser(partnerId);
-        alert('User unblocked successfully.');
+        showToast('User unblocked successfully.', 'success');
       } else {
-        if (window.confirm(`Are you sure you want to block ${getPartnerName(selectedChat)}? You will not be able to send or receive messages from them.`)) {
-          await userService.blockUser(partnerId);
-          alert('User blocked successfully.');
-        }
+        showConfirm(
+          'Block User',
+          `Are you sure you want to block ${getPartnerName(selectedChat)}? You will not be able to send or receive messages from them.`,
+          async () => {
+            try {
+              await userService.blockUser(partnerId);
+              showToast('User blocked successfully.', 'success');
+            } catch (err) {
+              console.error(err);
+              showToast('Failed to update block state: ' + errorHelper.getFriendlyMessage(err), 'error');
+            }
+          }
+        );
       }
     } catch (err) {
       console.error(err);
-      alert('Failed to update block state: ' + err.message);
+      showToast('Failed to update block state: ' + errorHelper.getFriendlyMessage(err), 'error');
     }
   };
 
@@ -278,9 +361,14 @@ export default function ChatHub() {
     e.preventDefault();
     if (!selectedChat) return;
 
+    if (isOffline) {
+      showToast('Network connection unavailable. Cannot submit report.', 'error');
+      return;
+    }
+
     // Check if demo chat
     if (selectedChat.id.startsWith('chat_demo_')) {
-      alert(`[DEMO REPORT SUCCESS] Reason: ${reportReason}\nDetails: ${reportDetails}`);
+      showToast(`[DEMO REPORT SUCCESS] Reason: ${reportReason}`, 'success');
       setShowReportModal(false);
       setReportDetails('');
       return;
@@ -293,26 +381,31 @@ export default function ChatHub() {
     try {
       const partnerName = getPartnerName(selectedChat);
       await userService.reportUser(partnerId, partnerName, reportReason, reportDetails);
-      alert('User reported successfully. Administrators have been notified.');
+      showToast('User reported successfully. Administrators have been notified.', 'success');
       setShowReportModal(false);
       setReportDetails('');
     } catch (err) {
       console.error(err);
-      alert('Failed to submit report: ' + err.message);
+      showToast('Failed to submit report: ' + errorHelper.getFriendlyMessage(err), 'error');
     } finally {
       setReporting(false);
     }
   };
 
-  const scrollToBottom = () => {
+  function scrollToBottom() {
     setTimeout(() => {
       messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
     }, 100);
-  };
+  }
 
   const handleSendMessage = async (e) => {
     e.preventDefault();
     if (!inputText.trim() || sending) return;
+
+    if (isOffline) {
+      showToast('Network connection unavailable. Cannot send messages.', 'error');
+      return;
+    }
 
     const textToSend = inputText.trim();
     setInputText('');
@@ -340,7 +433,8 @@ export default function ChatHub() {
       scrollToBottom();
     } catch (err) {
       console.error(err);
-      setErrorBanner(err.message || 'Message failed to send.');
+      setErrorBanner(errorHelper.getFriendlyMessage(err));
+      showToast('Failed to send message: ' + errorHelper.getFriendlyMessage(err), 'error');
       setTimeout(() => {
         setErrorBanner('');
       }, 6000);
@@ -357,7 +451,13 @@ export default function ChatHub() {
     return chat.participantNames[partnerId] || 'User';
   };
 
-  const filteredChats = chats.filter(chat => 
+  const visibleChats = chats.filter(chat => {
+    const clearedAt = clearedMap[chat.id];
+    if (!clearedAt) return true;
+    return chat.lastMessageTime > clearedAt;
+  });
+
+  const filteredChats = visibleChats.filter(chat => 
     chat.itemTitle.toLowerCase().includes(searchQuery.toLowerCase()) || 
     getPartnerName(chat).toLowerCase().includes(searchQuery.toLowerCase())
   );
@@ -366,9 +466,87 @@ export default function ChatHub() {
     <div className="chat-container glass fade-in" style={{ height: 'calc(100vh - 100px)', border: '1px solid #E2E8F0', boxShadow: '0 4px 16px rgba(0,0,0,0.03)' }}>
       {/* Left Chat List Panel */}
       <div className="chat-list-panel" style={{ width: '340px' }}>
-        <div className="chat-list-header" style={{ borderBottom: '1px solid #E2E8F0', padding: '20px' }}>
-          Conversations
+        <div className="chat-list-header" style={{ borderBottom: '1px solid #E2E8F0', padding: '16px 20px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+          <span>Conversations</span>
+          {chats.length > 0 && !isSelectingForClear && (
+            <button 
+              onClick={() => setIsSelectingForClear(true)}
+              style={{
+                background: 'none',
+                border: 'none',
+                color: '#EF4444',
+                fontSize: '13px',
+                fontWeight: 600,
+                cursor: 'pointer',
+                padding: '4px 8px',
+                borderRadius: '6px',
+                transition: 'background 0.2s'
+              }}
+              onMouseEnter={(e) => e.target.style.background = '#FEF2F2'}
+              onMouseLeave={(e) => e.target.style.background = 'none'}
+            >
+              Clear Chats
+            </button>
+          )}
         </div>
+
+        {isSelectingForClear && (
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', padding: '12px 16px', background: '#F8FAFC', borderBottom: '1px solid #E2E8F0' }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+              <span style={{ fontSize: '12px', fontWeight: 600, color: '#475569' }}>
+                Select chats to clear ({selectedChatIds.length} selected)
+              </span>
+              <button 
+                onClick={() => {
+                  setIsSelectingForClear(false);
+                  setSelectedChatIds([]);
+                }}
+                style={{ background: 'none', border: 'none', color: '#64748B', fontSize: '11px', cursor: 'pointer', fontWeight: 600 }}
+              >
+                Cancel
+              </button>
+            </div>
+            <div style={{ display: 'flex', gap: '8px' }}>
+              <button 
+                onClick={() => {
+                  showConfirm(
+                    'Clear All Chats',
+                    'Are you sure you want to clear all conversations?',
+                    () => {
+                      handleClearAllChats();
+                      setIsSelectingForClear(false);
+                      setSelectedChatIds([]);
+                    }
+                  );
+                }}
+                style={{ flex: 1, padding: '6px 12px', background: '#F1F5F9', border: '1px solid #CBD5E1', borderRadius: '6px', color: '#475569', fontSize: '11px', fontWeight: 600, cursor: 'pointer' }}
+              >
+                Clear All
+              </button>
+              <button 
+                onClick={() => {
+                  if (selectedChatIds.length === 0) {
+                    showToast('Please select at least one chat to clear.', 'warning');
+                    return;
+                  }
+                  showConfirm(
+                    'Clear Selected Chats',
+                    `Are you sure you want to clear the ${selectedChatIds.length} selected conversation(s)?`,
+                    () => {
+                      handleClearSelectedChats(selectedChatIds);
+                      setIsSelectingForClear(false);
+                      setSelectedChatIds([]);
+                    }
+                  );
+                }}
+                style={{ flex: 1, padding: '6px 12px', background: '#EF4444', border: 'none', borderRadius: '6px', color: '#FFFFFF', fontSize: '11px', fontWeight: 600, cursor: 'pointer' }}
+                disabled={selectedChatIds.length === 0}
+              >
+                Clear Selected
+              </button>
+            </div>
+          </div>
+        )}
         
         {/* Search bar inside conversations panel */}
         <div style={{ padding: '12px 16px', borderBottom: '1px solid #F1F5F9' }}>
@@ -402,66 +580,98 @@ export default function ChatHub() {
             filteredChats.map((chat) => {
               const isActive = selectedChat?.id === chat.id;
               const displayTime = chat.lastMessageTime || '07:10 PM';
+              const isChecked = selectedChatIds.includes(chat.id);
+              
               return (
-                <button
+                <div
                   key={chat.id}
-                  className={`chat-list-item ${isActive ? 'active' : ''}`}
-                  onClick={() => setSelectedChat(chat)}
-                  style={{
-                    padding: '12px 16px',
-                    borderRadius: '16px',
-                    border: 'none',
-                    display: 'flex',
-                    alignItems: 'center',
-                    gap: '12px',
-                    background: isActive ? 'rgba(15, 164, 175, 0.08)' : 'transparent',
-                    borderLeft: isActive ? '4px solid #0FA4AF' : '4px solid transparent'
-                  }}
+                  style={{ display: 'flex', alignItems: 'center', gap: '8px', width: '100%', marginBottom: '4px' }}
                 >
-                  {/* Thumbnail Avatar with small overlapping indicator */}
-                  <div style={{ position: 'relative', width: '48px', height: '48px', flexShrink: 0 }}>
-                    <img 
-                      src={chat.itemImage || 'https://images.unsplash.com/photo-1534531173927-aeb928d54385?q=80&w=200&auto=format&fit=crop'} 
-                      alt="" 
-                      style={{ width: '100%', height: '100%', objectFit: 'cover', borderRadius: '50%', border: '1px solid #E2E8F0' }} 
-                    />
-                    <div 
-                      style={{ 
-                        position: 'absolute', 
-                        bottom: '0', 
-                        right: '0', 
-                        width: '16px', 
-                        height: '16px', 
-                        borderRadius: '50%', 
-                        background: '#003135',
-                        border: '2.5px solid #FFFFFF',
-                        display: 'flex',
-                        alignItems: 'center',
-                        justifyContent: 'center'
+                  {isSelectingForClear && (
+                    <input 
+                      type="checkbox"
+                      checked={isChecked}
+                      onChange={() => {
+                        if (isChecked) {
+                          setSelectedChatIds(selectedChatIds.filter(id => id !== chat.id));
+                        } else {
+                          setSelectedChatIds([...selectedChatIds, chat.id]);
+                        }
                       }}
-                    >
-                      <ShieldCheck size={9} style={{ color: '#FFFFFF' }} />
+                      style={{ width: '18px', height: '18px', cursor: 'pointer', accentColor: '#EF4444', marginLeft: '8px', flexShrink: 0 }}
+                    />
+                  )}
+                  <button
+                    className={`chat-list-item ${isActive ? 'active' : ''}`}
+                    onClick={() => {
+                      if (isSelectingForClear) {
+                        if (isChecked) {
+                          setSelectedChatIds(selectedChatIds.filter(id => id !== chat.id));
+                        } else {
+                          setSelectedChatIds([...selectedChatIds, chat.id]);
+                        }
+                      } else {
+                        setSelectedChat(chat);
+                      }
+                    }}
+                    style={{
+                      flexGrow: 1,
+                      padding: '12px 16px',
+                      borderRadius: '16px',
+                      border: 'none',
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: '12px',
+                      background: isActive ? 'rgba(15, 164, 175, 0.08)' : 'transparent',
+                      borderLeft: isActive ? '4px solid #0FA4AF' : '4px solid transparent',
+                      textAlign: 'left'
+                    }}
+                  >
+                    {/* Thumbnail Avatar with small overlapping indicator */}
+                    <div style={{ position: 'relative', width: '48px', height: '48px', flexShrink: 0 }}>
+                      <img 
+                        src={chat.itemImage || 'https://images.unsplash.com/photo-1534531173927-aeb928d54385?q=80&w=200&auto=format&fit=crop'} 
+                        alt="" 
+                        style={{ width: '100%', height: '100%', objectFit: 'cover', borderRadius: '50%', border: '1px solid #E2E8F0' }} 
+                      />
+                      <div 
+                        style={{ 
+                          position: 'absolute', 
+                          bottom: '0', 
+                          right: '0', 
+                          width: '16px', 
+                          height: '16px', 
+                          borderRadius: '50%', 
+                          background: '#003135',
+                          border: '2.5px solid #FFFFFF',
+                          display: 'flex',
+                          alignItems: 'center',
+                          justifyContent: 'center'
+                        }}
+                      >
+                        <ShieldCheck size={9} style={{ color: '#FFFFFF' }} />
+                      </div>
                     </div>
-                  </div>
 
-                  <div className="chat-item-info" style={{ fontFamily: "'Inter', sans-serif" }}>
-                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                      <span className="chat-item-name" style={{ fontFamily: "'Manrope', sans-serif", fontSize: '15px', fontWeight: 600, color: '#111827' }}>
-                        {getPartnerName(chat)}
-                        {blockedUids.includes(Object.keys(chat.participants || {}).find(id => id !== user?.uid)) && (
-                          <span style={{ fontSize: '11px', color: '#EF4444', marginLeft: '6px', fontWeight: 700 }}>(Blocked)</span>
-                        )}
+                    <div className="chat-item-info" style={{ fontFamily: "'Inter', sans-serif", flexGrow: 1, minWidth: 0 }}>
+                      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                        <span className="chat-item-name" style={{ fontFamily: "'Manrope', sans-serif", fontSize: '15px', fontWeight: 600, color: '#111827', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', maxWidth: '140px' }}>
+                          {chat.itemTitle || getPartnerName(chat)}
+                          {blockedUids.includes(Object.keys(chat.participants || {}).find(id => id !== user?.uid)) && (
+                            <span style={{ fontSize: '11px', color: '#EF4444', marginLeft: '6px', fontWeight: 700 }}>(Blocked)</span>
+                          )}
+                        </span>
+                        <span style={{ fontSize: '12px', color: '#6B7280', fontWeight: 400 }}>{displayTime}</span>
+                      </div>
+                      <span style={{ fontSize: '12px', fontWeight: 500, color: '#0FA4AF', display: 'block', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+                        Discussing recovery
                       </span>
-                      <span style={{ fontSize: '12px', color: '#6B7280', fontWeight: 400 }}>{displayTime}</span>
+                      <span className="chat-item-msg" style={{ fontSize: '13px', color: '#6B7280', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', fontWeight: 400, display: 'block' }}>
+                        {chat.lastMessage || 'Start a conversation...'}
+                      </span>
                     </div>
-                    <span style={{ fontSize: '13px', fontWeight: 500, color: '#0FA4AF' }}>
-                      Item: {chat.itemTitle}
-                    </span>
-                    <span className="chat-item-msg" style={{ fontSize: '13px', color: '#6B7280', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', fontWeight: 400 }}>
-                      {chat.lastMessage || 'Start a conversation...'}
-                    </span>
-                  </div>
-                </button>
+                  </button>
+                </div>
               );
             })
           ) : (
@@ -485,7 +695,7 @@ export default function ChatHub() {
                   style={{ width: '40px', height: '40px', objectFit: 'cover', borderRadius: '50%', border: '1px solid #E2E8F0' }} 
                 />
                 <div>
-                  <div className="chat-window-title" style={{ fontFamily: "'Manrope', sans-serif", fontSize: '16px', fontWeight: 600, color: '#111827' }}>{getPartnerName(selectedChat)}</div>
+                  <div className="chat-window-title" style={{ fontFamily: "'Manrope', sans-serif", fontSize: '16px', fontWeight: 600, color: '#111827' }}>{selectedChat.itemTitle || getPartnerName(selectedChat)}</div>
                   <div className="chat-window-subtitle" style={{ fontFamily: "'Inter', sans-serif", fontSize: '13px', color: '#6B7280', fontWeight: 400 }}>Item: {selectedChat.itemTitle}</div>
                 </div>
               </div>
@@ -699,7 +909,13 @@ export default function ChatHub() {
               {/* Plus attach button */}
               <button 
                 type="button"
-                onClick={() => alert('Attachment upload action.')}
+                onClick={() => {
+                  if (isOffline) {
+                    showToast('Network connection unavailable. Cannot upload attachment.', 'error');
+                    return;
+                  }
+                  showToast('Attachment uploads are a demo action.', 'info');
+                }}
                 style={{ 
                   width: '44px', 
                   height: '44px', 

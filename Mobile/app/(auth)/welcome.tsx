@@ -3,9 +3,11 @@ import { StyleSheet, View, Text, TouchableOpacity } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
+import { Colors, CornerRadius, Shadows, Fonts } from '@/constants/theme';
 
 export default function WelcomeScreen() {
   const router = useRouter();
+  const theme = Colors.light;
 
   return (
     <SafeAreaView style={styles.container}>
@@ -13,7 +15,7 @@ export default function WelcomeScreen() {
         {/* Logo Container */}
         <View style={styles.logoContainer}>
           <View style={styles.pinBg}>
-            <Ionicons name="location" size={48} color="#9A2E17" />
+            <Ionicons name="location" size={48} color={theme.primary} />
           </View>
           <Text style={styles.logoText}>TrackBack</Text>
         </View>
@@ -31,14 +33,14 @@ export default function WelcomeScreen() {
         <View style={styles.featuresRow}>
           <View style={styles.featureItem}>
             <View style={styles.iconCircle}>
-              <Ionicons name="search" size={28} color="#F27A35" />
+              <Ionicons name="search" size={28} color={theme.primary} />
             </View>
             <Text style={styles.featureLabel}>Find</Text>
           </View>
 
           <View style={styles.featureItem}>
             <View style={styles.iconCircle}>
-              <Ionicons name="hand-left" size={28} color="#9A2E17" />
+              <Ionicons name="hand-left" size={28} color={theme.primary} />
             </View>
             <Text style={styles.featureLabel}>Help</Text>
           </View>
@@ -62,7 +64,7 @@ export default function WelcomeScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#EFF6F6',
+    backgroundColor: Colors.light.background,
   },
   content: {
     flex: 1,
@@ -80,11 +82,11 @@ const styles = StyleSheet.create({
     width: 90,
     height: 90,
     borderRadius: 45,
-    backgroundColor: 'rgba(154, 46, 23, 0.08)',
+    backgroundColor: 'rgba(52, 92, 114, 0.08)',
     justifyContent: 'center',
     alignItems: 'center',
     marginBottom: 16,
-    shadowColor: '#9A2E17',
+    shadowColor: Colors.light.primary,
     shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.1,
     shadowRadius: 8,
@@ -92,8 +94,8 @@ const styles = StyleSheet.create({
   },
   logoText: {
     fontSize: 34,
-    fontWeight: 'bold',
-    color: '#9A2E17',
+    fontFamily: Fonts.headings.bold,
+    color: Colors.light.primary,
     letterSpacing: 0.5,
   },
   headingContainer: {
@@ -103,22 +105,23 @@ const styles = StyleSheet.create({
   },
   title: {
     fontSize: 28,
-    fontWeight: 'bold',
-    color: '#1A1A1A',
+    fontFamily: Fonts.headings.bold,
+    color: Colors.light.text,
     textAlign: 'center',
     lineHeight: 36,
   },
   underline: {
-    width: 60,
-    height: 4,
-    backgroundColor: '#F27A35',
+    width: 40,
+    height: 3,
+    backgroundColor: Colors.light.primary,
     borderRadius: 2,
     marginTop: 12,
     marginBottom: 20,
   },
   subtitle: {
     fontSize: 16,
-    color: '#636E72',
+    fontFamily: Fonts.body.regular,
+    color: Colors.light.textSecondary,
     textAlign: 'center',
     fontStyle: 'italic',
     lineHeight: 24,
@@ -137,37 +140,29 @@ const styles = StyleSheet.create({
     width: 64,
     height: 64,
     borderRadius: 32,
-    backgroundColor: '#FFFFFF',
+    backgroundColor: Colors.light.surface,
     justifyContent: 'center',
     alignItems: 'center',
-    shadowColor: '#000000',
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.05,
-    shadowRadius: 6,
-    elevation: 3,
+    ...Shadows.cards,
     marginBottom: 8,
   },
   featureLabel: {
     fontSize: 15,
-    fontWeight: '600',
-    color: '#2D3436',
+    fontFamily: Fonts.body.semiBold,
+    color: Colors.light.text,
   },
   button: {
     width: '100%',
     height: 56,
-    backgroundColor: '#9A2E17',
-    borderRadius: 16,
+    backgroundColor: Colors.light.primary,
+    borderRadius: CornerRadius.buttons,
     justifyContent: 'center',
     alignItems: 'center',
-    shadowColor: '#9A2E17',
-    shadowOffset: { width: 0, height: 6 },
-    shadowOpacity: 0.3,
-    shadowRadius: 10,
-    elevation: 5,
+    ...Shadows.buttons,
   },
   buttonText: {
     color: '#FFFFFF',
     fontSize: 18,
-    fontWeight: 'bold',
+    fontFamily: Fonts.body.bold,
   },
 });

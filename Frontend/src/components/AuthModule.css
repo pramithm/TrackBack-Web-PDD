@@ -893,3 +893,60 @@
   font-size: 0.85rem;
   margin-bottom: 1.5rem;
 }
+
+/* Email Verification Styles */
+.auth-verify-email-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  background: #F1F5F9;
+  color: #475569;
+  padding: 0.5rem 1rem;
+  border-radius: 50px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  margin: 0 auto 1.5rem;
+  box-sizing: border-box;
+}
+
+.auth-verify-message-container {
+  background: #EFF6F6;
+  border: 1px solid #C5E9EC;
+  padding: 1rem;
+  border-radius: 12px;
+  margin-bottom: 1.5rem;
+  text-align: center;
+}
+
+.auth-verify-message {
+  color: #024950;
+  font-size: 0.9rem;
+  line-height: 1.5;
+  margin: 0;
+}
+
+.btn-auth-secondary {
+  width: 100%;
+  height: 52px;
+  background: #FFFFFF;
+  color: #003135;
+  border-radius: 10px;
+  border: 1.5px solid #003135;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  transition: all 0.2s ease;
+}
+
+.btn-auth-secondary:hover {
+  background: #F8FAFC;
+}
+
+.btn-auth-secondary:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}

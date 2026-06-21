@@ -20,6 +20,8 @@ import { useRouter } from 'expo-router';
 import { useAuth } from '@/src/store/authStore';
 import { itemService, Item } from '@/src/services/itemService';
 import { aiService, ExpectedQA } from '@/src/services/aiService';
+import { connectivity } from '@/src/services/connectivity';
+import { errorHelper } from '@/src/services/errorHelper';
 
 const CATEGORIES = ['Electronics', 'Wallets', 'Keys', 'Bags', 'Pets', 'Documents', 'Jewelry', 'Clothing', 'Other'];
 
@@ -83,6 +85,7 @@ export default function FoundReportScreen() {
   useEffect(() => {
     if (showHistory && user) {
       setHistoryLoading(true);
+      setError('');
       itemService.getItemsByUser(user.uid)
         .then((items) => {
           const foundItems = items.filter(item => item.type === 'found');
@@ -90,6 +93,7 @@ export default function FoundReportScreen() {
         })
         .catch((err) => {
           console.error('[FoundReportScreen] Error fetching history:', err);
+          setError(errorHelper.getFriendlyMessage(err));
         })
         .finally(() => {
           setHistoryLoading(false);
@@ -141,6 +145,13 @@ export default function FoundReportScreen() {
     setError('');
 
     try {
+      const isOnline = await connectivity.checkOnline();
+      if (!isOnline) {
+        setModerationError('Network connection unavailable. Please check your internet connection.');
+        setModerationLoading(false);
+        return;
+      }
+
       console.log('[FoundReport] Launching Gemini Image moderation...');
       const res = await aiService.moderateImage(imageUri);
       
@@ -153,7 +164,7 @@ export default function FoundReportScreen() {
       }
     } catch (err: any) {
       console.error(err);
-      setModerationError('Image moderation analysis failed. Please try again.');
+      setModerationError(errorHelper.getFriendlyMessage(err));
     } finally {
       setModerationLoading(false);
     }
@@ -171,6 +182,13 @@ export default function FoundReportScreen() {
 
     setQuestionsLoading(true);
     try {
+      const isOnline = await connectivity.checkOnline();
+      if (!isOnline) {
+        Alert.alert('Offline', 'Network connection unavailable. Please check your internet connection.');
+        setQuestionsLoading(false);
+        return;
+      }
+
       console.log('[FoundReport] Requesting AI questions...');
       const generated = await aiService.generateQuestions(imageUri);
       if (generated && generated.length > 0) {
@@ -248,6 +266,13 @@ export default function FoundReportScreen() {
     setError('');
 
     try {
+      const isOnline = await connectivity.checkOnline();
+      if (!isOnline) {
+        setError('Network connection unavailable. Please check your internet connection and try again.');
+        setPublishing(false);
+        return;
+      }
+
       const locString = buildingName.trim() + (floorRoom.trim() ? `, ${floorRoom.trim()}` : '');
       const finalLocation = locString || autoAddress || 'Unknown location';
       
@@ -273,11 +298,11 @@ export default function FoundReportScreen() {
         resetForm();
         router.replace('/(tabs)/' as any);
       } else {
-        setError(result.error || 'Failed to submit report. Please try again.');
+        setError(errorHelper.getFriendlyMessage(result.error));
       }
     } catch (err: any) {
       console.error(err);
-      setError('An error occurred during submission: ' + (err.message || err));
+      setError(errorHelper.getFriendlyMessage(err));
     } finally {
       setPublishing(false);
     }
@@ -335,10 +360,10 @@ export default function FoundReportScreen() {
 
   if (showHistory) {
     return (
-      <SafeAreaView style={styles.container}>
+      <SafeAreaView style={styles.container} edges={['top', 'bottom']}>
         <View style={styles.headerBar}>
           <TouchableOpacity style={styles.backBtnHeader} onPress={() => setShowHistory(false)}>
-            <Ionicons name="arrow-back" size={24} color="#9A2E17" />
+            <Ionicons name="arrow-back" size={24} color="#345C72" />
           </TouchableOpacity>
           <Text style={styles.headerTitle}>My Found Reports</Text>
           <View style={{ width: 44 }} />
@@ -346,7 +371,7 @@ export default function FoundReportScreen() {
 
         {historyLoading ? (
           <View style={styles.centered}>
-            <ActivityIndicator size="large" color="#9A2E17" />
+            <ActivityIndicator size="large" color="#345C72" />
           </View>
         ) : userReports.length === 0 ? (
           <View style={styles.emptyContainer}>
@@ -366,7 +391,7 @@ export default function FoundReportScreen() {
                     <Image source={{ uri: item.imageUrl }} style={styles.historyThumb} contentFit="cover" />
                   ) : (
                     <View style={styles.historyThumbFallback}>
-                      <Ionicons name="gift-outline" size={20} color="#94A3B8" />
+                      <Ionicons name="gift-outline" size={20} color="#8E9CA3" />
                     </View>
                   )}
                   <View style={{ flex: 1 }}>
@@ -393,7 +418,7 @@ export default function FoundReportScreen() {
         <View style={styles.headerBar}>
           {step > 1 && (
             <TouchableOpacity onPress={() => setStep(step - 1)} style={styles.backBtnHeader}>
-              <Ionicons name="arrow-back" size={24} color="#9A2E17" />
+              <Ionicons name="arrow-back" size={24} color="#345C72" />
             </TouchableOpacity>
           )}
           <Text style={styles.headerTitle}>
@@ -442,14 +467,14 @@ export default function FoundReportScreen() {
                   onPress={() => setStep(2)}
                   activeOpacity={0.8}
                 >
-                  <View style={[styles.menuIconContainer, { backgroundColor: '#FEE2E2' }]}>
-                    <Ionicons name="add" size={24} color="#9A2E17" />
+                  <View style={[styles.menuIconContainer, { backgroundColor: '#E0ECF4' }]}>
+                    <Ionicons name="add" size={24} color="#345C72" />
                   </View>
                   <View style={styles.menuTextContainer}>
                     <Text style={styles.menuTitle}>Create New Report</Text>
                     <Text style={styles.menuDesc}>Submit a new found item to the community</Text>
                   </View>
-                  <Ionicons name="chevron-forward" size={20} color="#CBD5E1" />
+                  <Ionicons name="chevron-forward" size={20} color="#8E9CA3" />
                 </TouchableOpacity>
 
                 <TouchableOpacity
@@ -457,14 +482,14 @@ export default function FoundReportScreen() {
                   onPress={() => setShowHistory(true)}
                   activeOpacity={0.8}
                 >
-                  <View style={[styles.menuIconContainer, { backgroundColor: '#FFF3EB' }]}>
-                    <Ionicons name="list" size={24} color="#F27A35" />
+                  <View style={[styles.menuIconContainer, { backgroundColor: '#FFF4D8' }]}>
+                    <Ionicons name="list" size={24} color="#A56A00" />
                   </View>
                   <View style={styles.menuTextContainer}>
                     <Text style={styles.menuTitle}>View History</Text>
                     <Text style={styles.menuDesc}>Check your previously uploaded found items</Text>
                   </View>
-                  <Ionicons name="chevron-forward" size={20} color="#CBD5E1" />
+                  <Ionicons name="chevron-forward" size={20} color="#8E9CA3" />
                 </TouchableOpacity>
               </View>
 
@@ -491,7 +516,7 @@ export default function FoundReportScreen() {
                 <TextInput
                   style={styles.textInput}
                   placeholder="e.g. Blue ink pen, keys, wallet"
-                  placeholderTextColor="#94A3B8"
+                  placeholderTextColor="#8E9CA3"
                   value={title}
                   onChangeText={(t) => { setTitle(t); setError(''); }}
                 />
@@ -592,7 +617,7 @@ export default function FoundReportScreen() {
                   onPress={() => handlePickImage(true)}
                   activeOpacity={0.7}
                 >
-                  <Ionicons name="camera-outline" size={28} color="#9A2E17" />
+                  <Ionicons name="camera-outline" size={28} color="#345C72" />
                   <Text style={styles.pickerBoxText}>Take Photo</Text>
                 </TouchableOpacity>
 
@@ -601,7 +626,7 @@ export default function FoundReportScreen() {
                   onPress={() => handlePickImage(false)}
                   activeOpacity={0.7}
                 >
-                  <Ionicons name="image-outline" size={28} color="#9A2E17" />
+                  <Ionicons name="image-outline" size={28} color="#345C72" />
                   <Text style={styles.pickerBoxText}>Gallery</Text>
                 </TouchableOpacity>
               </View>
@@ -621,10 +646,10 @@ export default function FoundReportScreen() {
                   <View style={styles.fileDetailRow}>
                     <Ionicons name="document-attach-outline" size={16} color="#475569" />
                     <Text style={styles.fileNameText} numberOfLines={1}>FoundItem_Photo.jpg</Text>
-                    {imageVerified && <Ionicons name="checkmark-circle" size={16} color="#047857" style={{ marginLeft: 6 }} />}
+                    {imageVerified && <Ionicons name="checkmark-circle" size={16} color="#566252" style={{ marginLeft: 6 }} />}
                   </View>
 
-                   {/* Verify Action Button */}
+                  {/* Verify Action Button */}
                   {!imageVerified ? (
                     <TouchableOpacity
                       style={[styles.verifyButton, moderationLoading && styles.btnDisabled]}
@@ -635,14 +660,14 @@ export default function FoundReportScreen() {
                         <ActivityIndicator size="small" color="#FFFFFF" />
                       ) : (
                         <>
-                          <Ionicons name="sparkles-outline" size={18} color="#FFFFFF" style={{ marginRight: 8 }} />
+                           <Ionicons name="sparkles-outline" size={18} color="#FFFFFF" style={{ marginRight: 8 }} />
                           <Text style={styles.verifyButtonText}>Verify Image</Text>
                         </>
                       )}
                     </TouchableOpacity>
                   ) : (
-                    <View style={[styles.verifiedSafeBadge, { backgroundColor: '#047857' }]}>
-                      <Ionicons name="checkmark-circle" size={16} color="#FFFFFF" style={{ marginRight: 6 }} />
+                    <View style={styles.verifiedSafeBadge}>
+                      <Ionicons name="checkmark-circle" size={16} color="#566252" style={{ marginRight: 6 }} />
                       <Text style={styles.verifiedSafeText}>Photo Added</Text>
                     </View>
                   )}
@@ -660,7 +685,7 @@ export default function FoundReportScreen() {
               <View style={styles.verificationQuestionsSection}>
                 <View style={styles.sectionHeaderRow}>
                   <Text style={styles.sectionTitle}>Verification Questions</Text>
-                  {questionsLoading && <ActivityIndicator size="small" color="#9A2E17" />}
+                  {questionsLoading && <ActivityIndicator size="small" color="#345C72" />}
                 </View>
                 <Text style={styles.sectionSubtitle}>
                   Set questions to help confirm the owner's identity. At least one pair is required.
@@ -672,21 +697,21 @@ export default function FoundReportScreen() {
                       <Text style={styles.questionSlotNum}>QUESTION {idx + 1}</Text>
                       {questions.length > 1 && (
                         <TouchableOpacity onPress={() => handleRemoveQuestion(idx)}>
-                          <Ionicons name="close-circle" size={20} color="#D63031" />
+                          <Ionicons name="close-circle" size={20} color="#B42318" />
                         </TouchableOpacity>
                       )}
                     </View>
                     <TextInput
                       style={[styles.textInput, { marginBottom: 10, fontWeight: '600' }]}
                       placeholder="e.g. What is the brand of the item?"
-                      placeholderTextColor="#94A3B8"
+                      placeholderTextColor="#8E9CA3"
                       value={q.q}
                       onChangeText={(val) => handleQuestionChange(idx, 'q', val)}
                     />
                     <TextInput
                       style={styles.textInput}
                       placeholder="Expected answer (e.g. Inxi, Parker, No markings)"
-                      placeholderTextColor="#94A3B8"
+                      placeholderTextColor="#8E9CA3"
                       value={q.a}
                       onChangeText={(val) => handleQuestionChange(idx, 'a', val)}
                     />
@@ -695,7 +720,7 @@ export default function FoundReportScreen() {
 
                 <View style={styles.questionsControlRow}>
                   <TouchableOpacity style={styles.addQuestionSlotBtn} onPress={handleAddQuestion}>
-                    <Ionicons name="add" size={16} color="#9A2E17" style={{ marginRight: 4 }} />
+                    <Ionicons name="add" size={16} color="#345C72" style={{ marginRight: 4 }} />
                     <Text style={styles.addQuestionSlotText}>Add Question</Text>
                   </TouchableOpacity>
                 </View>
@@ -704,7 +729,7 @@ export default function FoundReportScreen() {
               {/* Quick Tips */}
               <View style={styles.tipsBox}>
                 <View style={styles.tipsHeader}>
-                  <Ionicons name="bulb-outline" size={18} color="#D97706" style={{ marginRight: 6 }} />
+                  <Ionicons name="bulb-outline" size={18} color="#A56A00" style={{ marginRight: 6 }} />
                   <Text style={styles.tipsTitle}>Quick Tips</Text>
                 </View>
                 <Text style={styles.tipBullet}>• Ensure good natural lighting.</Text>
@@ -747,7 +772,7 @@ export default function FoundReportScreen() {
               <View style={styles.inputGroup}>
                 <Text style={styles.inputLabel}>Building Name / Landmark</Text>
                 <View style={styles.iconInputRow}>
-                  <Ionicons name="business-outline" size={20} color="#94A3B8" style={styles.inputFieldIcon} />
+                  <Ionicons name="business-outline" size={20} color="#8E9CA3" style={styles.inputFieldIcon} />
                   <TextInput
                     style={[styles.textInput, { flex: 1, borderLeftWidth: 0, borderTopLeftRadius: 0, borderBottomLeftRadius: 0 }]}
                     placeholder="e.g. Central Library"
@@ -794,13 +819,13 @@ export default function FoundReportScreen() {
                 <View style={[styles.inputGroup, { flex: 1 }]}>
                   <Text style={styles.inputLabel}>Date Found</Text>
                   <View style={styles.iconInputRow}>
-                    <Ionicons name="calendar-outline" size={18} color="#94A3B8" style={styles.inputFieldIcon} />
+                    <Ionicons name="calendar-outline" size={18} color="#8E9CA3" style={styles.inputFieldIcon} />
                     <TextInput
                       style={[styles.textInput, { flex: 1, borderLeftWidth: 0, borderTopLeftRadius: 0, borderBottomLeftRadius: 0 }]}
                       value={dateFound}
                       onChangeText={setDateFound}
                       placeholder="MM/DD/YYYY"
-                      placeholderTextColor="#94A3B8"
+                      placeholderTextColor="#8E9CA3"
                     />
                   </View>
                 </View>
@@ -808,13 +833,13 @@ export default function FoundReportScreen() {
                 <View style={[styles.inputGroup, { flex: 1 }]}>
                   <Text style={styles.inputLabel}>Approx. Time</Text>
                   <View style={styles.iconInputRow}>
-                    <Ionicons name="time-outline" size={18} color="#94A3B8" style={styles.inputFieldIcon} />
+                    <Ionicons name="time-outline" size={18} color="#8E9CA3" style={styles.inputFieldIcon} />
                     <TextInput
                       style={[styles.textInput, { flex: 1, borderLeftWidth: 0, borderTopLeftRadius: 0, borderBottomLeftRadius: 0 }]}
                       value={timeFound}
                       onChangeText={setTimeFound}
                       placeholder="hh:mm A"
-                      placeholderTextColor="#94A3B8"
+                      placeholderTextColor="#8E9CA3"
                     />
                   </View>
                 </View>
@@ -909,16 +934,15 @@ export default function FoundReportScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#EFF6F6',
+    backgroundColor: '#F0F5FA',
   },
   headerBar: {
     flexDirection: 'row',
-    justifyContent: 'space-between',
     alignItems: 'center',
     paddingHorizontal: 20,
-    height: 56,
+    height: 64,
     borderBottomWidth: 1,
-    borderBottomColor: '#E2E8F0',
+    borderBottomColor: '#E3EEF5',
     backgroundColor: '#FFFFFF',
   },
   backBtnHeader: {
@@ -926,25 +950,26 @@ const styles = StyleSheet.create({
     marginRight: 8,
   },
   headerTitle: {
-    fontSize: 18,
-    fontWeight: 'bold',
-    color: '#9A2E17',
+    flex: 1,
+    fontSize: 20,
+    fontFamily: 'PlayfairDisplay-Bold',
+    color: '#345C72',
   },
   resetBtn: {
-    paddingVertical: 4,
-    paddingHorizontal: 8,
+    paddingVertical: 6,
+    paddingHorizontal: 12,
   },
   resetBtnText: {
-    color: '#9A2E17',
-    fontWeight: '700',
+    color: '#345C72',
+    fontFamily: 'PlusJakartaSans-Bold',
     fontSize: 14,
   },
   indicatorWrapper: {
     backgroundColor: '#FFFFFF',
     paddingHorizontal: 20,
-    paddingVertical: 10,
+    paddingVertical: 12,
     borderBottomWidth: 1,
-    borderBottomColor: '#F1F5F9',
+    borderBottomColor: '#E3EEF5',
   },
   stepHeaderRow: {
     flexDirection: 'row',
@@ -953,19 +978,19 @@ const styles = StyleSheet.create({
     marginBottom: 6,
   },
   stepIndicatorText: {
-    fontSize: 12,
-    color: '#94A3B8',
-    fontWeight: 'bold',
+    fontSize: 11,
+    color: '#8E9CA3',
+    fontFamily: 'PlusJakartaSans-Bold',
   },
   stepIndicatorLabel: {
     fontSize: 12,
-    color: '#9A2E17',
-    fontWeight: 'bold',
+    color: '#345C72',
+    fontFamily: 'PlusJakartaSans-Bold',
   },
   stepIndicatorContainer: {
     flexDirection: 'row',
     height: 4,
-    backgroundColor: '#E2E8F0',
+    backgroundColor: '#E6F0F6',
     width: '100%',
     borderRadius: 2,
     overflow: 'hidden',
@@ -976,29 +1001,29 @@ const styles = StyleSheet.create({
     height: '100%',
   },
   indicatorSegmentActive: {
-    backgroundColor: '#9A2E17',
+    backgroundColor: '#345C72',
   },
   indicatorSegmentInactive: {
-    backgroundColor: '#E2E8F0',
+    backgroundColor: '#E6F0F6',
   },
   scrollContent: {
     padding: 20,
-    paddingBottom: 40,
+    paddingBottom: 110,
   },
   errorAlert: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: '#FEF2F2',
+    backgroundColor: '#FFE2E2',
     padding: 12,
-    borderRadius: 12,
+    borderRadius: 16,
     marginBottom: 20,
     borderWidth: 1,
-    borderColor: '#FEE2E2',
+    borderColor: '#FFE2E2',
   },
   errorAlertText: {
-    color: '#D63031',
+    color: '#B42318',
     fontSize: 13,
-    fontWeight: '600',
+    fontFamily: 'PlusJakartaSans-SemiBold',
     flex: 1,
   },
   stepContainer: {
@@ -1006,13 +1031,14 @@ const styles = StyleSheet.create({
   },
   mainWelcomeTitle: {
     fontSize: 28,
-    fontWeight: 'bold',
-    color: '#1A1A1A',
+    fontFamily: 'PlayfairDisplay-Bold',
+    color: '#2B353A',
     marginBottom: 8,
   },
   mainWelcomeSubtitle: {
     fontSize: 15,
-    color: '#636E72',
+    fontFamily: 'PlusJakartaSans-Regular',
+    color: '#56646E',
     lineHeight: 22,
     marginBottom: 24,
   },
@@ -1024,7 +1050,7 @@ const styles = StyleSheet.create({
   welcomeIllustration: {
     width: '100%',
     height: 220,
-    borderRadius: 20,
+    borderRadius: 24,
   },
   homeButtonsContainer: {
     gap: 16,
@@ -1034,14 +1060,14 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     backgroundColor: '#FFFFFF',
-    borderRadius: 20,
+    borderRadius: 24,
     padding: 16,
     borderWidth: 1,
-    borderColor: '#E2E8F0',
+    borderColor: '#D3E2EC',
     shadowColor: '#000000',
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.02,
-    shadowRadius: 8,
+    shadowOffset: { width: 0, height: 8 },
+    shadowOpacity: 0.04,
+    shadowRadius: 20,
     elevation: 2,
   },
   menuIconContainer: {
@@ -1057,39 +1083,42 @@ const styles = StyleSheet.create({
   },
   menuTitle: {
     fontSize: 16,
-    fontWeight: 'bold',
-    color: '#1A1A1A',
+    fontFamily: 'PlusJakartaSans-Bold',
+    color: '#2B353A',
     marginBottom: 4,
   },
   menuDesc: {
     fontSize: 13,
-    color: '#636E72',
+    fontFamily: 'PlusJakartaSans-Regular',
+    color: '#56646E',
   },
   infoNoteBox: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: '#F8FAFC',
-    borderRadius: 14,
-    padding: 12,
+    backgroundColor: '#E6F0F6',
+    borderRadius: 16,
+    padding: 14,
     borderWidth: 1,
-    borderColor: '#F1F5F9',
+    borderColor: '#D3E2EC',
     gap: 8,
   },
   infoNoteText: {
     fontSize: 12,
-    color: '#636E72',
+    fontFamily: 'PlusJakartaSans-Medium',
+    color: '#56646E',
     flex: 1,
     lineHeight: 16,
   },
   stepTitle: {
     fontSize: 22,
-    fontWeight: 'bold',
-    color: '#1A1A1A',
+    fontFamily: 'PlayfairDisplay-Bold',
+    color: '#2B353A',
     marginBottom: 8,
   },
   stepDesc: {
     fontSize: 14,
-    color: '#636E72',
+    fontFamily: 'PlusJakartaSans-Regular',
+    color: '#56646E',
     lineHeight: 20,
     marginBottom: 24,
   },
@@ -1098,19 +1127,20 @@ const styles = StyleSheet.create({
   },
   inputLabel: {
     fontSize: 14,
-    fontWeight: 'bold',
-    color: '#2D3436',
+    fontFamily: 'PlusJakartaSans-Bold',
+    color: '#2B353A',
     marginBottom: 8,
   },
   textInput: {
-    backgroundColor: '#FFFFFF',
+    backgroundColor: '#E6F0F6',
     borderWidth: 1,
-    borderColor: '#E2E8F0',
-    borderRadius: 12,
+    borderColor: '#D3E2EC',
+    borderRadius: 16,
     height: 48,
     paddingHorizontal: 16,
     fontSize: 15,
-    color: '#1A1A1A',
+    fontFamily: 'PlusJakartaSans-Regular',
+    color: '#2B353A',
   },
   categoryGrid: {
     flexDirection: 'row',
@@ -1120,26 +1150,26 @@ const styles = StyleSheet.create({
   categoryPill: {
     paddingHorizontal: 16,
     paddingVertical: 8,
-    borderRadius: 20,
+    borderRadius: 24,
     borderWidth: 1,
   },
   pillActive: {
-    backgroundColor: '#9A2E17',
-    borderColor: '#9A2E17',
+    backgroundColor: '#345C72',
+    borderColor: '#345C72',
   },
   pillInactive: {
     backgroundColor: '#FFFFFF',
-    borderColor: '#E2E8F0',
+    borderColor: '#D3E2EC',
   },
   pillText: {
     fontSize: 13,
-    fontWeight: '600',
+    fontFamily: 'PlusJakartaSans-Bold',
   },
   pillTextActive: {
     color: '#FFFFFF',
   },
   pillTextInactive: {
-    color: '#2D3436',
+    color: '#56646E',
   },
   tagsContainer: {
     flexDirection: 'row',
@@ -1149,23 +1179,25 @@ const styles = StyleSheet.create({
   tagBtn: {
     backgroundColor: '#FFFFFF',
     borderWidth: 1,
-    borderColor: '#E2E8F0',
-    borderRadius: 12,
+    borderColor: '#D3E2EC',
+    borderRadius: 16,
     paddingHorizontal: 12,
     paddingVertical: 8,
   },
   tagText: {
     fontSize: 13,
-    color: '#475569',
-    fontWeight: '500',
+    color: '#56646E',
+    fontFamily: 'PlusJakartaSans-Medium',
   },
   accuracyIllustrationCard: {
-    backgroundColor: '#E5EFF0',
-    borderRadius: 20,
+    backgroundColor: '#E6F0F6',
+    borderRadius: 24,
     padding: 16,
     justifyContent: 'center',
     alignItems: 'center',
     marginTop: 12,
+    borderWidth: 1,
+    borderColor: '#D3E2EC',
   },
   accuracyIllustration: {
     width: '100%',
@@ -1174,8 +1206,8 @@ const styles = StyleSheet.create({
   },
   accuracyText: {
     fontSize: 13,
-    fontWeight: 'bold',
-    color: '#475569',
+    fontFamily: 'PlusJakartaSans-Bold',
+    color: '#56646E',
   },
   uploadButtonsRow: {
     flexDirection: 'row',
@@ -1186,7 +1218,7 @@ const styles = StyleSheet.create({
     flex: 1,
     height: 90,
     borderWidth: 1.5,
-    borderColor: '#9A2E17',
+    borderColor: '#345C72',
     borderStyle: 'dashed',
     borderRadius: 16,
     backgroundColor: '#FFFFFF',
@@ -1196,8 +1228,8 @@ const styles = StyleSheet.create({
   },
   pickerBoxText: {
     fontSize: 13,
-    fontWeight: 'bold',
-    color: '#9A2E17',
+    fontFamily: 'PlusJakartaSans-Bold',
+    color: '#345C72',
   },
   uploadedContainer: {
     marginBottom: 24,
@@ -1205,12 +1237,12 @@ const styles = StyleSheet.create({
   },
   previewCard: {
     height: 180,
-    borderRadius: 16,
+    borderRadius: 24,
     overflow: 'hidden',
     position: 'relative',
-    backgroundColor: '#E2E8F0',
+    backgroundColor: '#E6F0F6',
     borderWidth: 1,
-    borderColor: '#CBD5E1',
+    borderColor: '#D3E2EC',
   },
   previewImage: {
     width: '100%',
@@ -1223,7 +1255,7 @@ const styles = StyleSheet.create({
     width: 32,
     height: 32,
     borderRadius: 16,
-    backgroundColor: 'rgba(0, 0, 0, 0.6)',
+    backgroundColor: 'rgba(43, 53, 58, 0.6)',
     justifyContent: 'center',
     alignItems: 'center',
   },
@@ -1234,15 +1266,15 @@ const styles = StyleSheet.create({
   },
   fileNameText: {
     fontSize: 13,
-    color: '#475569',
-    fontWeight: '500',
+    color: '#56646E',
+    fontFamily: 'PlusJakartaSans-Medium',
     flex: 1,
     marginLeft: 8,
   },
   verifyButton: {
     height: 44,
-    backgroundColor: '#F28C38',
-    borderRadius: 12,
+    backgroundColor: '#345C72',
+    borderRadius: 16,
     justifyContent: 'center',
     alignItems: 'center',
     flexDirection: 'row',
@@ -1250,36 +1282,36 @@ const styles = StyleSheet.create({
   verifyButtonText: {
     color: '#FFFFFF',
     fontSize: 14,
-    fontWeight: 'bold',
+    fontFamily: 'PlusJakartaSans-Bold',
   },
   verifiedSafeBadge: {
     height: 44,
-    backgroundColor: '#10B981',
-    borderRadius: 12,
+    backgroundColor: '#E1EEDD',
+    borderRadius: 16,
     justifyContent: 'center',
     alignItems: 'center',
     flexDirection: 'row',
   },
   verifiedSafeText: {
-    color: '#FFFFFF',
+    color: '#566252',
     fontSize: 14,
-    fontWeight: 'bold',
+    fontFamily: 'PlusJakartaSans-Bold',
   },
   aiStatusCard: {
     flexDirection: 'row',
     alignItems: 'center',
     padding: 12,
-    borderRadius: 12,
+    borderRadius: 16,
     borderWidth: 1,
   },
   aiStatusError: {
-    backgroundColor: '#FEE2E2',
-    borderColor: '#FCA5A5',
+    backgroundColor: '#FFE2E2',
+    borderColor: '#FFE2E2',
   },
   aiStatusTextError: {
-    color: '#B91C1C',
+    color: '#B42318',
     fontSize: 13,
-    fontWeight: '700',
+    fontFamily: 'PlusJakartaSans-Bold',
     flex: 1,
   },
   verificationQuestionsSection: {
@@ -1294,20 +1326,21 @@ const styles = StyleSheet.create({
   },
   sectionTitle: {
     fontSize: 16,
-    fontWeight: 'bold',
-    color: '#1A1A1A',
+    fontFamily: 'PlayfairDisplay-Bold',
+    color: '#2B353A',
   },
   sectionSubtitle: {
     fontSize: 13,
-    color: '#636E72',
+    color: '#56646E',
+    fontFamily: 'PlusJakartaSans-Regular',
     marginBottom: 16,
   },
   questionSlotCard: {
     backgroundColor: '#FFFFFF',
-    borderRadius: 16,
+    borderRadius: 24,
     padding: 14,
     borderWidth: 1,
-    borderColor: '#E2E8F0',
+    borderColor: '#D3E2EC',
     marginBottom: 14,
   },
   questionSlotHeader: {
@@ -1318,8 +1351,8 @@ const styles = StyleSheet.create({
   },
   questionSlotNum: {
     fontSize: 11,
-    fontWeight: 'bold',
-    color: '#9A2E17',
+    fontFamily: 'PlusJakartaSans-Bold',
+    color: '#345C72',
     letterSpacing: 0.5,
   },
   questionsControlRow: {
@@ -1334,36 +1367,36 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     paddingVertical: 8,
     paddingHorizontal: 12,
-    borderRadius: 8,
+    borderRadius: 16,
     borderWidth: 1,
-    borderColor: '#9A2E17',
+    borderColor: '#345C72',
   },
   addQuestionSlotText: {
-    color: '#9A2E17',
+    color: '#345C72',
     fontSize: 12,
-    fontWeight: 'bold',
+    fontFamily: 'PlusJakartaSans-Bold',
   },
   autoQuestionsBtn: {
     flexDirection: 'row',
     alignItems: 'center',
     paddingVertical: 8,
     paddingHorizontal: 12,
-    borderRadius: 8,
+    borderRadius: 16,
     borderWidth: 1,
-    borderColor: '#9A2E17',
-    backgroundColor: '#FFF5F5',
+    borderColor: '#345C72',
+    backgroundColor: '#E0ECF4',
   },
   autoQuestionsText: {
-    color: '#9A2E17',
+    color: '#345C72',
     fontSize: 12,
-    fontWeight: 'bold',
+    fontFamily: 'PlusJakartaSans-Bold',
   },
   tipsBox: {
-    backgroundColor: '#FFFBEB',
-    borderRadius: 16,
+    backgroundColor: '#FFF4D8',
+    borderRadius: 24,
     padding: 16,
     borderWidth: 1,
-    borderColor: '#FEF3C7',
+    borderColor: '#D3E2EC',
     marginTop: 8,
   },
   tipsHeader: {
@@ -1373,23 +1406,24 @@ const styles = StyleSheet.create({
   },
   tipsTitle: {
     fontSize: 14,
-    fontWeight: 'bold',
-    color: '#D97706',
+    fontFamily: 'PlusJakartaSans-Bold',
+    color: '#A56A00',
   },
   tipBullet: {
     fontSize: 13,
-    color: '#B45309',
+    color: '#A56A00',
+    fontFamily: 'PlusJakartaSans-Regular',
     lineHeight: 18,
     marginBottom: 4,
   },
   mapCardViewport: {
     height: 180,
-    backgroundColor: '#E2E8F0',
-    borderRadius: 20,
+    backgroundColor: '#E6F0F6',
+    borderRadius: 24,
     marginBottom: 16,
     position: 'relative',
     borderWidth: 1,
-    borderColor: '#CBD5E1',
+    borderColor: '#D3E2EC',
   },
   mapActionsOverlay: {
     position: 'absolute',
@@ -1412,8 +1446,8 @@ const styles = StyleSheet.create({
   },
   autoDetectButton: {
     height: 48,
-    backgroundColor: '#9A2E17',
-    borderRadius: 12,
+    backgroundColor: '#345C72',
+    borderRadius: 16,
     justifyContent: 'center',
     alignItems: 'center',
     flexDirection: 'row',
@@ -1422,15 +1456,15 @@ const styles = StyleSheet.create({
   autoDetectButtonText: {
     color: '#FFFFFF',
     fontSize: 14,
-    fontWeight: 'bold',
+    fontFamily: 'PlusJakartaSans-Bold',
   },
   iconInputRow: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: '#FFFFFF',
+    backgroundColor: '#E6F0F6',
     borderWidth: 1,
-    borderColor: '#E2E8F0',
-    borderRadius: 12,
+    borderColor: '#D3E2EC',
+    borderRadius: 16,
     overflow: 'hidden',
   },
   inputFieldIcon: {
@@ -1440,36 +1474,36 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     backgroundColor: '#FFFFFF',
-    borderRadius: 16,
+    borderRadius: 24,
     padding: 14,
     borderWidth: 1,
-    borderColor: '#E2E8F0',
+    borderColor: '#D3E2EC',
     marginBottom: 20,
   },
   detectedCircleIcon: {
     width: 36,
     height: 36,
     borderRadius: 18,
-    backgroundColor: '#9A2E17',
+    backgroundColor: '#345C72',
     justifyContent: 'center',
     alignItems: 'center',
   },
   detectedLabel: {
     fontSize: 10,
-    color: '#94A3B8',
-    fontWeight: 'bold',
+    color: '#8E9CA3',
+    fontFamily: 'PlusJakartaSans-Bold',
     letterSpacing: 0.5,
   },
   detectedAddress: {
     fontSize: 13,
-    color: '#2D3436',
-    fontWeight: 'bold',
+    color: '#2B353A',
+    fontFamily: 'PlusJakartaSans-Bold',
     marginTop: 2,
   },
   changeAddressLink: {
-    color: '#9A2E17',
+    color: '#345C72',
     fontSize: 13,
-    fontWeight: 'bold',
+    fontFamily: 'PlusJakartaSans-Bold',
     paddingHorizontal: 4,
   },
   dateTimeRow: {
@@ -1483,8 +1517,8 @@ const styles = StyleSheet.create({
   },
   notWhereIFoundText: {
     fontSize: 13,
-    color: '#94A3B8',
-    fontWeight: 'bold',
+    color: '#8E9CA3',
+    fontFamily: 'PlusJakartaSans-Bold',
   },
   swipeHintContainer: {
     alignItems: 'center',
@@ -1492,8 +1526,8 @@ const styles = StyleSheet.create({
   },
   swipeHintText: {
     fontSize: 11,
-    color: '#94A3B8',
-    fontWeight: 'bold',
+    color: '#8E9CA3',
+    fontFamily: 'PlusJakartaSans-Bold',
   },
   footerBar: {
     flexDirection: 'row',
@@ -1502,29 +1536,30 @@ const styles = StyleSheet.create({
     paddingHorizontal: 16,
     paddingVertical: 12,
     borderTopWidth: 1,
-    borderTopColor: '#E2E8F0',
+    borderTopColor: '#E3EEF5',
     backgroundColor: '#FFFFFF',
     gap: 12,
+    marginBottom: Platform.OS === 'ios' ? 100 : 84,
   },
   backBtn: {
     height: 48,
     paddingHorizontal: 20,
     justifyContent: 'center',
     alignItems: 'center',
-    borderRadius: 12,
+    borderRadius: 16,
     borderWidth: 1,
-    borderColor: '#CBD5E1',
+    borderColor: '#D3E2EC',
   },
   backBtnText: {
-    color: '#475569',
+    color: '#56646E',
     fontSize: 14,
-    fontWeight: 'bold',
+    fontFamily: 'PlusJakartaSans-Bold',
   },
   nextBtn: {
     flex: 1,
     height: 48,
-    backgroundColor: '#9A2E17',
-    borderRadius: 12,
+    backgroundColor: '#345C72',
+    borderRadius: 16,
     justifyContent: 'center',
     alignItems: 'center',
     flexDirection: 'row',
@@ -1532,10 +1567,10 @@ const styles = StyleSheet.create({
   nextBtnText: {
     color: '#FFFFFF',
     fontSize: 14,
-    fontWeight: 'bold',
+    fontFamily: 'PlusJakartaSans-Bold',
   },
   btnDisabled: {
-    backgroundColor: '#CBD5E1',
+    backgroundColor: '#DDE8F0',
   },
   centered: {
     flex: 1,
@@ -1550,27 +1585,34 @@ const styles = StyleSheet.create({
     paddingBottom: 80,
   },
   emptyTitle: {
-    fontSize: 18,
-    fontWeight: 'bold',
-    color: '#2D3436',
+    fontSize: 20,
+    fontFamily: 'PlayfairDisplay-Bold',
+    color: '#2B353A',
     marginTop: 16,
     marginBottom: 8,
   },
   emptySubtitle: {
     fontSize: 14,
-    color: '#636E72',
+    color: '#56646E',
+    fontFamily: 'PlusJakartaSans-Regular',
     textAlign: 'center',
   },
   listContent: {
     padding: 16,
+    paddingBottom: 110,
   },
   historyCard: {
     backgroundColor: '#FFFFFF',
-    borderRadius: 16,
-    padding: 12,
+    borderRadius: 24,
+    padding: 16,
     marginBottom: 12,
     borderWidth: 1,
-    borderColor: '#E2E8F0',
+    borderColor: '#D3E2EC',
+    shadowColor: '#000000',
+    shadowOffset: { width: 0, height: 8 },
+    shadowOpacity: 0.04,
+    shadowRadius: 20,
+    elevation: 2,
   },
   historyCardHeader: {
     flexDirection: 'row',
@@ -1580,29 +1622,31 @@ const styles = StyleSheet.create({
   historyThumb: {
     width: 50,
     height: 50,
-    borderRadius: 8,
+    borderRadius: 12,
   },
   historyThumbFallback: {
     width: 50,
     height: 50,
-    borderRadius: 8,
-    backgroundColor: '#F1F5F9',
+    borderRadius: 12,
+    backgroundColor: '#E6F0F6',
     justifyContent: 'center',
     alignItems: 'center',
   },
   historyTitle: {
     fontSize: 15,
-    fontWeight: 'bold',
-    color: '#1A1A1A',
+    fontFamily: 'PlayfairDisplay-Bold',
+    color: '#2B353A',
   },
   historyMeta: {
     fontSize: 12,
-    color: '#636E72',
+    color: '#56646E',
+    fontFamily: 'PlusJakartaSans-Regular',
     marginTop: 2,
   },
   historyDate: {
     fontSize: 11,
-    color: '#94A3B8',
+    color: '#8E9CA3',
+    fontFamily: 'PlusJakartaSans-Regular',
     marginTop: 2,
   }
 });

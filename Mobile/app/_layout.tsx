@@ -7,6 +7,11 @@ import 'react-native-reanimated';
 
 import { useColorScheme } from '@/hooks/use-color-scheme';
 import { useAuth } from '@/src/store/authStore';
+import { useFonts } from 'expo-font';
+import { Ionicons } from '@expo/vector-icons';
+import * as SplashScreen from 'expo-splash-screen';
+
+SplashScreen.preventAutoHideAsync().catch(() => {});
 
 export const unstable_settings = {
   anchor: '(tabs)',
@@ -45,21 +50,27 @@ function AuthProtectedLayout({ children }: { children: React.ReactNode }) {
         router.replace('/(auth)/welcome' as any);
       }
     } else {
-      // Redirect to profile setup if profile is not completed
-      if (!user?.isProfileVerified) {
+      // Redirect to email verification if not verified
+      if (!user?.emailVerified) {
+        if (segments[1] !== 'email-verification') {
+          console.log('[LayoutGuard] Redirecting to email verification screen...');
+          router.replace('/(auth)/email-verification' as any);
+        }
+      } else if (!user?.isProfileVerified) {
+        // Redirect to profile setup if profile is not completed
         if (segments[1] !== 'profile-setup') {
           console.log('[LayoutGuard] Redirecting to profile setup screen...');
           router.replace('/(auth)/profile-setup' as any);
         }
       } else {
-        // Redirect to tabs if logged in and profile is complete
+        // Redirect to tabs if logged in, email verified, and profile complete
         if (inAuthGroup) {
           console.log('[LayoutGuard] Redirecting to main tabs...');
           router.replace('/(tabs)' as any);
         }
       }
     }
-  }, [isAuthenticated, isInitializing, user?.isProfileVerified, segments, isNavigationReady]);
+  }, [isAuthenticated, isInitializing, user?.emailVerified, user?.isProfileVerified, segments, isNavigationReady]);
 
   return (
     <View style={{ flex: 1 }}>
@@ -73,9 +84,9 @@ function AuthProtectedLayout({ children }: { children: React.ReactNode }) {
           right: 0, 
           justifyContent: 'center', 
           alignItems: 'center', 
-          backgroundColor: '#EFF6F6' 
+          backgroundColor: '#F0F5FA' 
         }}>
-          <ActivityIndicator size="large" color="#9A2E17" />
+          <ActivityIndicator size="large" color="#345C72" />
         </View>
       )}
     </View>
@@ -84,6 +95,44 @@ function AuthProtectedLayout({ children }: { children: React.ReactNode }) {
 
 export default function RootLayout() {
   const colorScheme = useColorScheme();
+  
+  const [fontsLoaded, fontError] = useFonts({
+    // Load Ionicons using both the spread AND explicit key to guarantee correct registration
+    ...Ionicons.font,
+    'Ionicons': require('../node_modules/@expo/vector-icons/build/vendor/react-native-vector-icons/Fonts/Ionicons.ttf'),
+
+    // Keep alias for backwards compatibility with hardcoded font families
+    'PlayfairDisplay-Regular': require('../assets/fonts/Manrope-Regular.ttf'),
+    'PlayfairDisplay-SemiBold': require('../assets/fonts/Manrope-SemiBold.ttf'),
+    'PlayfairDisplay-Bold': require('../assets/fonts/Manrope-Bold.ttf'),
+    'PlusJakartaSans-Regular': require('../assets/fonts/Inter-Regular.ttf'),
+    'PlusJakartaSans-Medium': require('../assets/fonts/Inter-Medium.ttf'),
+    'PlusJakartaSans-SemiBold': require('../assets/fonts/Inter-SemiBold.ttf'),
+    'PlusJakartaSans-Bold': require('../assets/fonts/Inter-Bold.ttf'),
+
+    // Supported new names
+    'Manrope-Regular': require('../assets/fonts/Manrope-Regular.ttf'),
+    'Manrope-SemiBold': require('../assets/fonts/Manrope-SemiBold.ttf'),
+    'Manrope-Bold': require('../assets/fonts/Manrope-Bold.ttf'),
+    'Inter-Regular': require('../assets/fonts/Inter-Regular.ttf'),
+    'Inter-Medium': require('../assets/fonts/Inter-Medium.ttf'),
+    'Inter-SemiBold': require('../assets/fonts/Inter-SemiBold.ttf'),
+    'Inter-Bold': require('../assets/fonts/Inter-Bold.ttf'),
+  });
+
+  useEffect(() => {
+    if (fontsLoaded || fontError) {
+      SplashScreen.hideAsync().catch(() => {});
+    }
+  }, [fontsLoaded, fontError]);
+
+  if (!fontsLoaded && !fontError) {
+    return (
+      <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: '#F0F5FA' }}>
+        <ActivityIndicator size="large" color="#345C72" />
+      </View>
+    );
+  }
 
   return (
     <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
@@ -92,6 +141,7 @@ export default function RootLayout() {
           <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
           <Stack.Screen name="(auth)" options={{ headerShown: false }} />
           <Stack.Screen name="profile" options={{ headerShown: false }} />
+          <Stack.Screen name="blocked-users" options={{ headerShown: false }} />
           <Stack.Screen name="my-reports" options={{ headerShown: false }} />
           <Stack.Screen name="modal" options={{ presentation: 'modal', title: 'Modal' }} />
         </Stack>

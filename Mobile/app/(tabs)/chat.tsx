@@ -7,17 +7,18 @@ import {
   TouchableOpacity,
   ActivityIndicator,
   Alert,
-  ScrollView,
-  Platform
+  ScrollView
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
 import { Image } from 'expo-image';
 import { useRouter } from 'expo-router';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useAuth } from '@/src/store/authStore';
 import { chatService, ChatMetadata } from '@/src/services/chatService';
 import { requestService, ClaimRequest } from '@/src/services/requestService';
-import { userService } from '@/src/services/userService';
+import { connectivity } from '@/src/services/connectivity';
+import { errorHelper } from '@/src/services/errorHelper';
 
 const ChatCard = ({ item, currentUserId, onPress, formatTime }: { 
   item: ChatMetadata; 
@@ -25,21 +26,8 @@ const ChatCard = ({ item, currentUserId, onPress, formatTime }: {
   onPress: () => void; 
   formatTime: (t: number) => string;
 }) => {
-  const partnerId = Object.keys(item.participants).find(id => id !== currentUserId) || '';
-  const [partnerProfile, setPartnerProfile] = useState<any>(null);
-
-  useEffect(() => {
-    if (partnerId) {
-      userService.getUserProfile(partnerId)
-        .then((profile) => {
-          setPartnerProfile(profile);
-        })
-        .catch(err => console.log('Error loading partner profile in list:', err));
-    }
-  }, [partnerId]);
-
-  const partnerName = partnerProfile?.name || item.participantNames[partnerId] || 'User';
-  const partnerPhoto = partnerProfile?.photoURL || null;
+  const itemTitle = item.itemTitle || 'Item';
+  const itemImage = item.itemImage || null;
   const unreadCount = (item.unreadCount && item.unreadCount[currentUserId]) || 0;
 
   return (
@@ -48,17 +36,17 @@ const ChatCard = ({ item, currentUserId, onPress, formatTime }: {
       onPress={onPress}
       activeOpacity={0.8}
     >
-      {partnerPhoto ? (
-        <Image source={{ uri: partnerPhoto }} style={styles.chatAvatar} contentFit="cover" />
+      {itemImage ? (
+        <Image source={{ uri: itemImage }} style={styles.chatAvatar} contentFit="cover" />
       ) : (
         <View style={styles.chatAvatarFallback}>
-          <Text style={styles.avatarLetter}>{partnerName.charAt(0).toUpperCase()}</Text>
+          <Text style={styles.avatarLetter}>{itemTitle.charAt(0).toUpperCase()}</Text>
         </View>
       )}
 
       <View style={styles.chatContent}>
         <View style={styles.chatHeaderRow}>
-          <Text style={styles.partnerName} numberOfLines={1}>{partnerName}</Text>
+          <Text style={styles.partnerName} numberOfLines={1}>{itemTitle}</Text>
           <Text style={styles.chatTime}>{formatTime(item.lastMessageTime)}</Text>
         </View>
         <Text style={styles.lastMessageText} numberOfLines={1}>
@@ -69,7 +57,7 @@ const ChatCard = ({ item, currentUserId, onPress, formatTime }: {
       {unreadCount > 0 && (
         <View style={styles.unreadBadge}>
           <Text style={styles.unreadBadgeText}>
-            {unreadCount} {unreadCount === 1 ? 'New Message' : 'New Messages'}
+            {unreadCount} {unreadCount === 1 ? 'New' : 'New'}
           </Text>
         </View>
       )}
@@ -92,6 +80,112 @@ export default function ChatDashboardScreen() {
   const [requests, setRequests] = useState<ClaimRequest[]>([]);
   const [loading, setLoading] = useState(true);
   const [actionLoading, setActionLoading] = useState<string | null>(null);
+
+  // Cleared Chats States
+  const [clearedMap, setClearedMap] = useState<Record<string, number>>({});
+  const [isSelectingForClear, setIsSelectingForClear] = useState(false);
+  const [selectedChatIds, setSelectedChatIds] = useState<string[]>([]);
+
+  // Load cleared chats from AsyncStorage on load/mount
+  useEffect(() => {
+    if (user) {
+      AsyncStorage.getItem(`clearedChats_${user.uid}`)
+        .then((stored) => {
+          try {
+            setClearedMap(stored ? JSON.parse(stored) : {});
+          } catch {
+            setClearedMap({});
+          }
+        })
+        .catch(() => setClearedMap({}));
+    }
+  }, [user]);
+
+  const saveClearedMap = async (newMap: Record<string, number>) => {
+    if (!user) return;
+    try {
+      setClearedMap(newMap);
+      await AsyncStorage.setItem(`clearedChats_${user.uid}`, JSON.stringify(newMap));
+    } catch (e) {
+      console.error('Error saving cleared chats:', e);
+    }
+  };
+
+  const handleClearAll = async () => {
+    const now = Date.now();
+    const updatedMap = { ...clearedMap };
+    chats.forEach((chat) => {
+      updatedMap[chat.id] = now;
+    });
+    await saveClearedMap(updatedMap);
+    setIsSelectingForClear(false);
+    setSelectedChatIds([]);
+    Alert.alert('Success', 'All chats cleared locally.');
+  };
+
+  const handleClearSelected = async () => {
+    if (selectedChatIds.length === 0) return;
+    const now = Date.now();
+    const updatedMap = { ...clearedMap };
+    selectedChatIds.forEach((id) => {
+      updatedMap[id] = now;
+    });
+    await saveClearedMap(updatedMap);
+    setIsSelectingForClear(false);
+    setSelectedChatIds([]);
+    Alert.alert('Success', 'Selected chats cleared locally.');
+  };
+
+  const handleChatPress = async (chatId: string) => {
+    if (isSelectingForClear) {
+      if (selectedChatIds.includes(chatId)) {
+        setSelectedChatIds(selectedChatIds.filter((id) => id !== chatId));
+      } else {
+        setSelectedChatIds([...selectedChatIds, chatId]);
+      }
+    } else {
+      if (clearedMap[chatId]) {
+        const updatedMap = { ...clearedMap };
+        delete updatedMap[chatId];
+        await saveClearedMap(updatedMap);
+      }
+      router.push(`/chat/${chatId}` as any);
+    }
+  };
+
+  const handleClearChatsPress = () => {
+    Alert.alert(
+      'Clear Chats',
+      'Choose an option to clear chats locally:',
+      [
+        {
+          text: 'Clear All Conversations',
+          style: 'destructive',
+          onPress: () => {
+            Alert.alert(
+              'Clear All Chats',
+              'Are you sure you want to clear all conversations from your view? Messages will not be deleted from the database.',
+              [
+                { text: 'Cancel', style: 'cancel' },
+                { text: 'Clear All', style: 'destructive', onPress: handleClearAll }
+              ]
+            );
+          }
+        },
+        {
+          text: 'Select Conversations to Clear',
+          onPress: () => {
+            setIsSelectingForClear(true);
+            setSelectedChatIds([]);
+          }
+        },
+        {
+          text: 'Cancel',
+          style: 'cancel'
+        }
+      ]
+    );
+  };
 
   // Subscribe to Chats List
   useEffect(() => {
@@ -125,6 +219,12 @@ export default function ChatDashboardScreen() {
   }, [user, activeTab, activeSubTab]);
 
   const handleApproveClaim = async (request: ClaimRequest) => {
+    const isOnline = await connectivity.checkOnline();
+    if (!isOnline) {
+      Alert.alert('Offline', 'Network connection unavailable. Please check your internet connection.');
+      return;
+    }
+
     Alert.alert(
       'Approve Claim',
       `Are you sure you want to approve ${request.claimerName}'s claim for "${request.itemTitle}"? This will enable messaging and contact details sharing.`,
@@ -133,13 +233,19 @@ export default function ChatDashboardScreen() {
         {
           text: 'Approve',
           onPress: async () => {
+            const isOnlineStill = await connectivity.checkOnline();
+            if (!isOnlineStill) {
+              Alert.alert('Offline', 'Network connection unavailable. Please check your internet connection.');
+              return;
+            }
+
             setActionLoading(request.id);
             try {
               // 1. Accept request
               await requestService.updateRequestStatus(request.id, 'accepted');
               
               // 2. Automatically spawn a chat session
-              const chatId = await chatService.getOrCreateChat(request.claimerId, {
+              await chatService.getOrCreateChat(request.claimerId, {
                 id: request.itemId,
                 title: request.itemTitle,
                 imageUrl: request.itemImage || '',
@@ -158,7 +264,8 @@ export default function ChatDashboardScreen() {
               setActiveTab('chats');
             } catch (err: any) {
               console.error(err);
-              Alert.alert('Error', 'Failed to approve claim: ' + err.message);
+              const friendlyMsg = errorHelper.getFriendlyMessage(err);
+              Alert.alert('Error', 'Failed to approve claim: ' + friendlyMsg);
             } finally {
               setActionLoading(null);
             }
@@ -169,6 +276,12 @@ export default function ChatDashboardScreen() {
   };
 
   const handleRejectClaim = async (requestId: string) => {
+    const isOnline = await connectivity.checkOnline();
+    if (!isOnline) {
+      Alert.alert('Offline', 'Network connection unavailable. Please check your internet connection.');
+      return;
+    }
+
     Alert.alert(
       'Reject Claim',
       'Are you sure you want to reject this claim request? The chat will remain locked.',
@@ -178,13 +291,20 @@ export default function ChatDashboardScreen() {
           text: 'Reject',
           style: 'destructive',
           onPress: async () => {
+            const isOnlineStill = await connectivity.checkOnline();
+            if (!isOnlineStill) {
+              Alert.alert('Offline', 'Network connection unavailable. Please check your internet connection.');
+              return;
+            }
+
             setActionLoading(requestId);
             try {
               await requestService.updateRequestStatus(requestId, 'rejected');
               Alert.alert('Claim Rejected', 'The claim request has been rejected.');
             } catch (err: any) {
               console.error(err);
-              Alert.alert('Error', 'Failed to reject claim: ' + err.message);
+              const friendlyMsg = errorHelper.getFriendlyMessage(err);
+              Alert.alert('Error', 'Failed to reject claim: ' + friendlyMsg);
             } finally {
               setActionLoading(null);
             }
@@ -206,13 +326,34 @@ export default function ChatDashboardScreen() {
   };
 
   const renderChatItem = ({ item }: { item: ChatMetadata }) => {
+    const isSelected = selectedChatIds.includes(item.id);
     return (
-      <ChatCard
-        item={item}
-        currentUserId={user?.uid || ''}
-        onPress={() => router.push(`/chat/${item.id}` as any)}
-        formatTime={formatTime}
-      />
+      <View style={styles.chatCardWrapper}>
+        {isSelectingForClear && (
+          <TouchableOpacity
+            style={styles.checkboxContainer}
+            onPress={() => {
+              if (isSelected) {
+                setSelectedChatIds(selectedChatIds.filter((id) => id !== item.id));
+              } else {
+                setSelectedChatIds([...selectedChatIds, item.id]);
+              }
+            }}
+          >
+            <View style={[styles.checkbox, isSelected && styles.checkboxChecked]}>
+              {isSelected && <Ionicons name="checkmark" size={16} color="#FFFFFF" />}
+            </View>
+          </TouchableOpacity>
+        )}
+        <View style={{ flex: 1 }}>
+          <ChatCard
+            item={item}
+            currentUserId={user?.uid || ''}
+            onPress={() => handleChatPress(item.id)}
+            formatTime={formatTime}
+          />
+        </View>
+      </View>
     );
   };
 
@@ -227,7 +368,7 @@ export default function ChatDashboardScreen() {
             <Image source={{ uri: item.itemImage }} style={styles.requestThumb} contentFit="cover" />
           ) : (
             <View style={styles.requestThumbFallback}>
-              <Ionicons name="gift-outline" size={24} color="#94A3B8" />
+              <Ionicons name="gift-outline" size={24} color="#8E9CA3" />
             </View>
           )}
           <View style={{ flex: 1 }}>
@@ -308,7 +449,7 @@ export default function ChatDashboardScreen() {
                 router.push(`/chat/${chatId}` as any);
               }}
             >
-              <Ionicons name="chatbubbles-outline" size={14} color="#9A2E17" style={{ marginRight: 4 }} />
+              <Ionicons name="chatbubbles-outline" size={14} color="#345C72" style={{ marginRight: 4 }} />
               <Text style={styles.openChatBtnText}>Open Chat</Text>
             </TouchableOpacity>
           )}
@@ -317,30 +458,75 @@ export default function ChatDashboardScreen() {
     );
   };
 
+  const visibleChats = chats.filter((chat) => {
+    const clearedAt = clearedMap[chat.id];
+    if (!clearedAt) return true;
+    return chat.lastMessageTime > clearedAt;
+  });
+
   return (
     <SafeAreaView style={styles.container}>
       {/* Top Header Segment Controls */}
       <View style={styles.topTabs}>
-        <TouchableOpacity
-          style={[styles.topTab, activeTab === 'chats' ? styles.topTabActive : styles.topTabInactive]}
-          onPress={() => setActiveTab('chats')}
-        >
-          <Ionicons name="chatbubbles" size={18} color={activeTab === 'chats' ? '#9A2E17' : '#94A3B8'} style={{ marginRight: 6 }} />
-          <Text style={[styles.topTabText, activeTab === 'chats' ? styles.topTabTextActive : styles.topTabTextInactive]}>
-            Messages
-          </Text>
-        </TouchableOpacity>
+        <View style={{ flexDirection: 'row', flex: 1 }}>
+          <TouchableOpacity
+            style={[styles.topTab, activeTab === 'chats' ? styles.topTabActive : styles.topTabInactive]}
+            onPress={() => {
+              if (isSelectingForClear) {
+                setIsSelectingForClear(false);
+                setSelectedChatIds([]);
+              }
+              setActiveTab('chats');
+            }}
+          >
+            <Ionicons name="chatbubbles" size={18} color={activeTab === 'chats' ? '#345C72' : '#8E9CA3'} style={{ marginRight: 6 }} />
+            <Text style={[styles.topTabText, activeTab === 'chats' ? styles.topTabTextActive : styles.topTabTextInactive]}>
+              Messages
+            </Text>
+          </TouchableOpacity>
+ 
+          <TouchableOpacity
+            style={[styles.topTab, activeTab === 'claims' ? styles.topTabActive : styles.topTabInactive]}
+            onPress={() => {
+              if (isSelectingForClear) {
+                setIsSelectingForClear(false);
+                setSelectedChatIds([]);
+              }
+              setActiveTab('claims');
+            }}
+          >
+            <Ionicons name="archive" size={18} color={activeTab === 'claims' ? '#345C72' : '#8E9CA3'} style={{ marginRight: 6 }} />
+            <Text style={[styles.topTabText, activeTab === 'claims' ? styles.topTabTextActive : styles.topTabTextInactive]}>
+              Claims Center
+            </Text>
+          </TouchableOpacity>
+        </View>
 
-        <TouchableOpacity
-          style={[styles.topTab, activeTab === 'claims' ? styles.topTabActive : styles.topTabInactive]}
-          onPress={() => setActiveTab('claims')}
-        >
-          <Ionicons name="archive" size={18} color={activeTab === 'claims' ? '#9A2E17' : '#94A3B8'} style={{ marginRight: 6 }} />
-          <Text style={[styles.topTabText, activeTab === 'claims' ? styles.topTabTextActive : styles.topTabTextInactive]}>
-            Claims Center
-          </Text>
-        </TouchableOpacity>
+        {activeTab === 'chats' && visibleChats.length > 0 && !isSelectingForClear && (
+          <TouchableOpacity 
+            style={styles.headerTrashBtn} 
+            onPress={handleClearChatsPress}
+            activeOpacity={0.7}
+          >
+            <Ionicons name="trash-outline" size={20} color="#EF4444" />
+          </TouchableOpacity>
+        )}
       </View>
+
+      {/* Selection Mode Header Banner */}
+      {isSelectingForClear && activeTab === 'chats' && (
+        <View style={styles.clearSelectionHeader}>
+          <Text style={styles.clearSelectionTitle}>
+            Clear chats locally ({selectedChatIds.length} selected)
+          </Text>
+          <TouchableOpacity onPress={() => {
+            setIsSelectingForClear(false);
+            setSelectedChatIds([]);
+          }}>
+            <Text style={styles.clearSelectionCancel}>Cancel</Text>
+          </TouchableOpacity>
+        </View>
+      )}
 
       {/* Main Body */}
       <View style={{ flex: 1 }}>
@@ -348,11 +534,11 @@ export default function ChatDashboardScreen() {
           /* CHATS LIST VIEW */
           loading ? (
             <View style={styles.centered}>
-              <ActivityIndicator size="large" color="#9A2E17" />
+              <ActivityIndicator size="large" color="#345C72" />
             </View>
-          ) : chats.length === 0 ? (
+          ) : visibleChats.length === 0 ? (
             <ScrollView contentContainerStyle={styles.emptyContainer}>
-              <Ionicons name="chatbubble-ellipses-outline" size={64} color="#CBD5E1" />
+              <Ionicons name="chatbubble-ellipses-outline" size={64} color="#8E9CA3" />
               <Text style={styles.emptyTitle}>No Conversations</Text>
               <Text style={styles.emptySubtitle}>
                 Chats will appear here after a claim request is accepted, or when you contact an owner of a lost report.
@@ -360,7 +546,7 @@ export default function ChatDashboardScreen() {
             </ScrollView>
           ) : (
             <FlatList
-              data={chats}
+              data={visibleChats}
               renderItem={renderChatItem}
               keyExtractor={(item) => item.id}
               contentContainerStyle={styles.listContent}
@@ -376,7 +562,7 @@ export default function ChatDashboardScreen() {
                 style={[styles.subTab, activeSubTab === 'incoming' ? styles.subTabActive : styles.subTabInactive]}
                 onPress={() => setActiveSubTab('incoming')}
               >
-                <Ionicons name="download-outline" size={16} color={activeSubTab === 'incoming' ? '#FFFFFF' : '#475569'} style={{ marginRight: 6 }} />
+                <Ionicons name="download-outline" size={16} color={activeSubTab === 'incoming' ? '#FFFFFF' : '#56646E'} style={{ marginRight: 6 }} />
                 <Text style={[styles.subTabText, activeSubTab === 'incoming' ? styles.subTabTextActive : styles.subTabTextInactive]}>
                   Received
                 </Text>
@@ -386,7 +572,7 @@ export default function ChatDashboardScreen() {
                 style={[styles.subTab, activeSubTab === 'outgoing' ? styles.subTabActive : styles.subTabInactive]}
                 onPress={() => setActiveSubTab('outgoing')}
               >
-                <Ionicons name="send-outline" size={16} color={activeSubTab === 'outgoing' ? '#FFFFFF' : '#475569'} style={{ marginRight: 6 }} />
+                <Ionicons name="send-outline" size={16} color={activeSubTab === 'outgoing' ? '#FFFFFF' : '#56646E'} style={{ marginRight: 6 }} />
                 <Text style={[styles.subTabText, activeSubTab === 'outgoing' ? styles.subTabTextActive : styles.subTabTextInactive]}>
                   My Claims
                 </Text>
@@ -395,11 +581,11 @@ export default function ChatDashboardScreen() {
 
             {loading ? (
               <View style={styles.centered}>
-                <ActivityIndicator size="large" color="#9A2E17" />
+                <ActivityIndicator size="large" color="#345C72" />
               </View>
             ) : requests.length === 0 ? (
               <ScrollView contentContainerStyle={styles.emptyContainer}>
-                <Ionicons name="file-tray-outline" size={64} color="#CBD5E1" />
+                <Ionicons name="file-tray-outline" size={64} color="#8E9CA3" />
                 <Text style={styles.emptyTitle}>No Claim Requests</Text>
                 <Text style={styles.emptySubtitle}>
                   {activeSubTab === 'incoming' 
@@ -419,6 +605,25 @@ export default function ChatDashboardScreen() {
           </View>
         )}
       </View>
+
+      {/* Selection Mode Footer Banner */}
+      {isSelectingForClear && activeTab === 'chats' && (
+        <View style={styles.clearSelectionFooter}>
+          <TouchableOpacity 
+            style={[styles.clearFooterBtn, styles.clearAllBtn]} 
+            onPress={handleClearAll}
+          >
+            <Text style={styles.clearAllBtnText}>Clear All</Text>
+          </TouchableOpacity>
+          <TouchableOpacity 
+            style={[styles.clearFooterBtn, styles.clearSelectedBtn, selectedChatIds.length === 0 && styles.clearSelectedBtnDisabled]} 
+            onPress={handleClearSelected}
+            disabled={selectedChatIds.length === 0}
+          >
+            <Text style={styles.clearSelectedBtnText}>Clear Selected</Text>
+          </TouchableOpacity>
+        </View>
+      )}
     </SafeAreaView>
   );
 }
@@ -426,13 +631,13 @@ export default function ChatDashboardScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#EFF6F6',
+    backgroundColor: '#F0F5FA',
   },
   topTabs: {
     flexDirection: 'row',
-    height: 52,
+    height: 56,
     borderBottomWidth: 1,
-    borderBottomColor: '#E2E8F0',
+    borderBottomColor: '#E3EEF5',
     backgroundColor: '#FFFFFF',
   },
   topTab: {
@@ -444,20 +649,20 @@ const styles = StyleSheet.create({
     borderBottomWidth: 3,
   },
   topTabActive: {
-    borderBottomColor: '#9A2E17',
+    borderBottomColor: '#345C72',
   },
   topTabInactive: {
     borderBottomColor: 'transparent',
   },
   topTabText: {
     fontSize: 14,
-    fontWeight: 'bold',
+    fontFamily: 'PlusJakartaSans-Bold',
   },
   topTabTextActive: {
-    color: '#9A2E17',
+    color: '#345C72',
   },
   topTabTextInactive: {
-    color: '#94A3B8',
+    color: '#8E9CA3',
   },
   subTabs: {
     flexDirection: 'row',
@@ -465,33 +670,33 @@ const styles = StyleSheet.create({
     padding: 10,
     gap: 8,
     borderBottomWidth: 1,
-    borderBottomColor: '#E2E8F0',
+    borderBottomColor: '#E3EEF5',
   },
   subTab: {
     flex: 1,
     flexDirection: 'row',
     height: 38,
-    borderRadius: 10,
+    borderRadius: 16,
     justifyContent: 'center',
     alignItems: 'center',
   },
   subTabActive: {
-    backgroundColor: '#9A2E17',
+    backgroundColor: '#345C72',
   },
   subTabInactive: {
-    backgroundColor: '#FAFAFA',
+    backgroundColor: '#F5F8FA',
     borderWidth: 1,
-    borderColor: '#E2E8F0',
+    borderColor: '#D3E2EC',
   },
   subTabText: {
     fontSize: 13,
-    fontWeight: 'bold',
+    fontFamily: 'PlusJakartaSans-Bold',
   },
   subTabTextActive: {
     color: '#FFFFFF',
   },
   subTabTextInactive: {
-    color: '#475569',
+    color: '#56646E',
   },
   centered: {
     flex: 1,
@@ -506,47 +711,48 @@ const styles = StyleSheet.create({
     paddingBottom: 60,
   },
   emptyTitle: {
-    fontSize: 18,
-    fontWeight: 'bold',
-    color: '#2D3436',
+    fontSize: 20,
+    fontFamily: 'PlayfairDisplay-Bold',
+    color: '#2B353A',
     marginTop: 16,
     marginBottom: 8,
   },
   emptySubtitle: {
     fontSize: 14,
-    color: '#636E72',
+    color: '#56646E',
+    fontFamily: 'PlusJakartaSans-Regular',
     textAlign: 'center',
     lineHeight: 20,
   },
   listContent: {
     padding: 16,
-    paddingBottom: 24,
+    paddingBottom: 110,
   },
   chatCard: {
     flexDirection: 'row',
     backgroundColor: '#FFFFFF',
-    borderRadius: 16,
-    padding: 14,
+    borderRadius: 24,
+    padding: 16,
     marginBottom: 12,
     borderWidth: 1,
-    borderColor: '#E2E8F0',
+    borderColor: '#D3E2EC',
     shadowColor: '#000000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.02,
-    shadowRadius: 4,
-    elevation: 1,
+    shadowOffset: { width: 0, height: 8 },
+    shadowOpacity: 0.04,
+    shadowRadius: 20,
+    elevation: 2,
   },
   chatAvatar: {
     width: 48,
     height: 48,
     borderRadius: 24,
-    backgroundColor: '#F1F5F9',
+    backgroundColor: '#E6F0F6',
   },
   chatAvatarFallback: {
     width: 48,
     height: 48,
     borderRadius: 24,
-    backgroundColor: '#FFF5F5',
+    backgroundColor: '#E0ECF4',
     justifyContent: 'center',
     alignItems: 'center',
   },
@@ -563,38 +769,39 @@ const styles = StyleSheet.create({
   },
   partnerName: {
     fontSize: 16,
-    fontWeight: 'bold',
-    color: '#1A1A1A',
+    fontFamily: 'PlusJakartaSans-Bold',
+    color: '#2B353A',
     flex: 1,
     marginRight: 8,
   },
   chatTime: {
     fontSize: 11,
-    color: '#94A3B8',
-    fontWeight: '500',
+    color: '#8E9CA3',
+    fontFamily: 'PlusJakartaSans-Medium',
   },
   itemTitleLabel: {
     fontSize: 12,
-    color: '#F27A35',
-    fontWeight: '700',
+    color: '#345C72',
+    fontFamily: 'PlusJakartaSans-Bold',
     marginBottom: 2,
   },
   lastMessageText: {
     fontSize: 13,
-    color: '#636E72',
+    color: '#56646E',
+    fontFamily: 'PlusJakartaSans-Regular',
   },
   requestCard: {
     backgroundColor: '#FFFFFF',
-    borderRadius: 20,
+    borderRadius: 24,
     padding: 16,
     marginBottom: 16,
     borderWidth: 1,
-    borderColor: '#E2E8F0',
+    borderColor: '#D3E2EC',
     shadowColor: '#000000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.02,
-    shadowRadius: 4,
-    elevation: 1,
+    shadowOffset: { width: 0, height: 8 },
+    shadowOpacity: 0.04,
+    shadowRadius: 20,
+    elevation: 2,
   },
   requestCardHeader: {
     flexDirection: 'row',
@@ -605,47 +812,48 @@ const styles = StyleSheet.create({
   requestThumb: {
     width: 44,
     height: 44,
-    borderRadius: 8,
-    backgroundColor: '#F1F5F9',
+    borderRadius: 12,
+    backgroundColor: '#E6F0F6',
   },
   requestThumbFallback: {
     width: 44,
     height: 44,
-    borderRadius: 8,
-    backgroundColor: '#F8FAFC',
+    borderRadius: 12,
+    backgroundColor: '#E0ECF4',
     borderWidth: 1,
-    borderColor: '#E2E8F0',
+    borderColor: '#D3E2EC',
     justifyContent: 'center',
     alignItems: 'center',
   },
   requestItemTitle: {
     fontSize: 16,
-    fontWeight: 'bold',
-    color: '#1A1A1A',
+    fontFamily: 'PlayfairDisplay-Bold',
+    color: '#2B353A',
   },
   requestSender: {
     fontSize: 12,
-    color: '#636E72',
-    fontWeight: '500',
+    color: '#56646E',
+    fontFamily: 'PlusJakartaSans-Medium',
   },
   requestDate: {
     fontSize: 11,
-    color: '#94A3B8',
-    fontWeight: '500',
+    color: '#8E9CA3',
+    fontFamily: 'PlusJakartaSans-Medium',
     alignSelf: 'flex-start',
     marginTop: 2,
   },
   requestMessageContainer: {
-    backgroundColor: '#F8FAFC',
-    borderRadius: 12,
+    backgroundColor: '#E6F0F6',
+    borderRadius: 16,
     padding: 12,
     borderWidth: 1,
-    borderColor: '#F1F5F9',
+    borderColor: '#D3E2EC',
     marginBottom: 14,
   },
   requestMessageText: {
     fontSize: 13,
-    color: '#475569',
+    color: '#56646E',
+    fontFamily: 'PlusJakartaSans-Regular',
     lineHeight: 18,
   },
   requestFooter: {
@@ -662,36 +870,36 @@ const styles = StyleSheet.create({
   },
   statusLabel: {
     fontSize: 13,
-    fontWeight: 'bold',
-    color: '#2D3436',
+    fontFamily: 'PlusJakartaSans-Bold',
+    color: '#2B353A',
   },
   statusBadge: {
     paddingHorizontal: 8,
     paddingVertical: 4,
-    borderRadius: 6,
+    borderRadius: 8,
   },
   badgePending: {
-    backgroundColor: '#FEF3C7',
+    backgroundColor: '#FFF4D8',
   },
   badgeSuccess: {
-    backgroundColor: '#D1FAE5',
+    backgroundColor: '#E1EEDD',
   },
   badgeError: {
-    backgroundColor: '#FEE2E2',
+    backgroundColor: '#FFE2E2',
   },
   statusBadgeText: {
     fontSize: 11,
-    fontWeight: '800',
+    fontFamily: 'PlusJakartaSans-Bold',
     letterSpacing: 0.3,
   },
   statusTextPending: {
-    color: '#D97706',
+    color: '#A56A00',
   },
   statusTextSuccess: {
-    color: '#047857',
+    color: '#566252',
   },
   statusTextError: {
-    color: '#B91C1C',
+    color: '#B42318',
   },
   actionRow: {
     flexDirection: 'row',
@@ -700,50 +908,50 @@ const styles = StyleSheet.create({
   actionBtn: {
     height: 34,
     paddingHorizontal: 12,
-    borderRadius: 8,
+    borderRadius: 16,
     justifyContent: 'center',
     alignItems: 'center',
     flexDirection: 'row',
   },
   rejectBtn: {
-    backgroundColor: '#FEF2F2',
+    backgroundColor: '#FFE2E2',
     borderWidth: 1,
-    borderColor: '#FCA5A5',
+    borderColor: '#FFE2E2',
   },
   rejectBtnText: {
-    color: '#B91C1C',
+    color: '#B42318',
     fontSize: 12,
-    fontWeight: 'bold',
+    fontFamily: 'PlusJakartaSans-Bold',
   },
   approveBtn: {
-    backgroundColor: '#10B981',
+    backgroundColor: '#345C72',
   },
   approveBtnText: {
     color: '#FFFFFF',
     fontSize: 12,
-    fontWeight: 'bold',
+    fontFamily: 'PlusJakartaSans-Bold',
   },
   openChatBtn: {
     flexDirection: 'row',
     alignItems: 'center',
     borderWidth: 1.5,
-    borderColor: '#9A2E17',
-    borderRadius: 8,
+    borderColor: '#345C72',
+    borderRadius: 16,
     paddingHorizontal: 12,
     paddingVertical: 6,
   },
   openChatBtnText: {
-    color: '#9A2E17',
+    color: '#345C72',
     fontSize: 12,
-    fontWeight: 'bold',
+    fontFamily: 'PlusJakartaSans-Bold',
   },
   avatarLetter: {
     fontSize: 18,
-    fontWeight: 'bold',
-    color: '#9A2E17',
+    fontFamily: 'PlusJakartaSans-Bold',
+    color: '#345C72',
   },
   unreadBadge: {
-    backgroundColor: '#9A2E17',
+    backgroundColor: '#345C72',
     borderRadius: 12,
     paddingHorizontal: 8,
     paddingVertical: 4,
@@ -754,6 +962,93 @@ const styles = StyleSheet.create({
   unreadBadgeText: {
     color: '#FFFFFF',
     fontSize: 10,
-    fontWeight: 'bold',
+    fontFamily: 'PlusJakartaSans-Bold',
+  },
+  headerTrashBtn: {
+    justifyContent: 'center',
+    alignItems: 'center',
+    paddingHorizontal: 16,
+    height: '100%',
+  },
+  clearSelectionHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    paddingHorizontal: 20,
+    paddingVertical: 12,
+    backgroundColor: '#F8FAFC',
+    borderBottomWidth: 1,
+    borderBottomColor: '#E2E8F0',
+  },
+  clearSelectionTitle: {
+    fontSize: 13,
+    fontFamily: 'PlusJakartaSans-Bold',
+    color: '#475569',
+  },
+  clearSelectionCancel: {
+    fontSize: 13,
+    fontFamily: 'PlusJakartaSans-Bold',
+    color: '#64748B',
+  },
+  clearSelectionFooter: {
+    flexDirection: 'row',
+    backgroundColor: '#FFFFFF',
+    padding: 16,
+    borderTopWidth: 1,
+    borderTopColor: '#E2E8F0',
+    gap: 12,
+  },
+  clearFooterBtn: {
+    flex: 1,
+    height: 44,
+    borderRadius: 12,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  clearAllBtn: {
+    backgroundColor: '#F1F5F9',
+    borderWidth: 1,
+    borderColor: '#CBD5E1',
+  },
+  clearAllBtnText: {
+    color: '#475569',
+    fontSize: 14,
+    fontFamily: 'PlusJakartaSans-Bold',
+  },
+  clearSelectedBtn: {
+    backgroundColor: '#EF4444',
+  },
+  clearSelectedBtnDisabled: {
+    backgroundColor: '#FCA5A5',
+  },
+  clearSelectedBtnText: {
+    color: '#FFFFFF',
+    fontSize: 14,
+    fontFamily: 'PlusJakartaSans-Bold',
+  },
+  chatCardWrapper: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  checkboxContainer: {
+    paddingRight: 8,
+    paddingLeft: 4,
+    justifyContent: 'center',
+    alignItems: 'center',
+    height: '100%',
+  },
+  checkbox: {
+    width: 22,
+    height: 22,
+    borderRadius: 6,
+    borderWidth: 2,
+    borderColor: '#8E9CA3',
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: '#FFFFFF',
+  },
+  checkboxChecked: {
+    borderColor: '#EF4444',
+    backgroundColor: '#EF4444',
   },
 });

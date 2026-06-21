@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useAppStore } from '../../../Backend/store/useAppStore';
 import { requestService } from '../../../Backend/services/requestService';
 import { chatService } from '../../../Backend/services/chatService';
+import { errorHelper } from '../services/errorHelper';
 import { 
   Check, 
   X, 
@@ -17,6 +18,9 @@ import {
 export default function ClaimsCenter() {
   const user = useAppStore((state) => state.user);
   const setActiveTab = useAppStore((state) => state.setActiveTab);
+  const isOffline = useAppStore((state) => state.isOffline);
+  const showToast = useAppStore((state) => state.showToast);
+  const showConfirm = useAppStore((state) => state.showConfirm);
   
   const [activeSubTab, setActiveSubTab] = useState('incoming'); // 'incoming' | 'outgoing'
   const [requests, setRequests] = useState([]);
@@ -37,12 +41,21 @@ export default function ClaimsCenter() {
   const completedClosedCount = completedClosedClaims.length;
 
   const handleClearClaims = () => {
-    if (window.confirm('Are you sure you want to clear all completed/closed claim notifications?')) {
-      const idsToClear = completedClosedClaims.map(req => req.id);
-      const updated = [...clearedClaimIds, ...idsToClear];
-      setClearedClaimIds(updated);
-      localStorage.setItem('clearedClaimIds', JSON.stringify(updated));
+    if (isOffline) {
+      showToast('Network connection unavailable. Cannot clear completed claims.', 'error');
+      return;
     }
+    showConfirm(
+      'Clear Completed Claims',
+      'Are you sure you want to clear all completed/closed claim notifications?',
+      () => {
+        const idsToClear = completedClosedClaims.map(req => req.id);
+        const updated = [...clearedClaimIds, ...idsToClear];
+        setClearedClaimIds(updated);
+        localStorage.setItem('clearedClaimIds', JSON.stringify(updated));
+        showToast('Completed claim notifications cleared.', 'success');
+      }
+    );
   };
 
   useEffect(() => {
@@ -88,44 +101,58 @@ export default function ClaimsCenter() {
   }, [user, activeSubTab]);
 
   const handleAccept = async (request) => {
-    if (!window.confirm(`Are you sure you want to approve ${request.claimerName}'s claim for "${request.itemTitle}"? This will allow them to contact you.`)) {
+    if (isOffline) {
+      showToast('Network connection unavailable. Cannot approve claim.', 'error');
       return;
     }
     
-    setActionLoading(request.id);
-    try {
-      await requestService.updateRequestStatus(request.id, 'accepted');
-      await chatService.getOrCreateChat(request.claimerId, {
-        id: request.itemId,
-        title: request.itemTitle,
-        imageUrl: request.itemImage,
-        userName: request.claimerName,
-        user: request.claimerName
-      });
-      alert('Claim approved successfully! A chat room has been created in Messages.');
-    } catch (err) {
-      console.error(err);
-      alert('Failed to approve claim: ' + err.message);
-    } finally {
-      setActionLoading(null);
-    }
+    showConfirm(
+      'Approve Claim',
+      `Are you sure you want to approve ${request.claimerName}'s claim for "${request.itemTitle}"? This will allow them to contact you.`,
+      async () => {
+        setActionLoading(request.id);
+        try {
+          await requestService.updateRequestStatus(request.id, 'accepted');
+          await chatService.getOrCreateChat(request.claimerId, {
+            id: request.itemId,
+            title: request.itemTitle,
+            imageUrl: request.itemImage,
+            userName: request.claimerName,
+            user: request.claimerName
+          });
+          showToast('Claim approved successfully! A chat room has been created in Messages.', 'success');
+        } catch (err) {
+          console.error(err);
+          showToast('Failed to approve claim: ' + errorHelper.getFriendlyMessage(err), 'error');
+        } finally {
+          setActionLoading(null);
+        }
+      }
+    );
   };
 
   const handleReject = async (requestId) => {
-    if (!window.confirm('Are you sure you want to reject this claim request?')) {
+    if (isOffline) {
+      showToast('Network connection unavailable. Cannot reject claim.', 'error');
       return;
     }
 
-    setActionLoading(requestId);
-    try {
-      await requestService.updateRequestStatus(requestId, 'rejected');
-      alert('Claim rejected.');
-    } catch (err) {
-      console.error(err);
-      alert('Failed to reject claim: ' + err.message);
-    } finally {
-      setActionLoading(null);
-    }
+    showConfirm(
+      'Reject Claim',
+      'Are you sure you want to reject this claim request?',
+      async () => {
+        setActionLoading(requestId);
+        try {
+          await requestService.updateRequestStatus(requestId, 'rejected');
+          showToast('Claim rejected.', 'success');
+        } catch (err) {
+          console.error(err);
+          showToast('Failed to reject claim: ' + errorHelper.getFriendlyMessage(err), 'error');
+        } finally {
+          setActionLoading(null);
+        }
+      }
+    );
   };
 
   const formatDate = (timestamp) => {

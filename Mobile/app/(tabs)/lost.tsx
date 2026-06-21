@@ -20,6 +20,8 @@ import * as ImagePicker from 'expo-image-picker';
 import { useRouter } from 'expo-router';
 import { useAuth } from '@/src/store/authStore';
 import { itemService, Item } from '@/src/services/itemService';
+import { connectivity } from '@/src/services/connectivity';
+import { errorHelper } from '@/src/services/errorHelper';
 
 const COLORS = [
   { name: 'Black', hex: '#000000' },
@@ -98,10 +100,10 @@ export default function LostReportScreen() {
     setTimeLost(timeStr);
   }, []);
 
-  // Fetch history when history is shown
   useEffect(() => {
     if (showHistory && user) {
       setHistoryLoading(true);
+      setError('');
       itemService.getItemsByUser(user.uid)
         .then((items) => {
           const lostItems = items.filter(item => item.type === 'lost');
@@ -109,6 +111,7 @@ export default function LostReportScreen() {
         })
         .catch((err) => {
           console.error('[LostReportScreen] Error fetching history:', err);
+          setError(errorHelper.getFriendlyMessage(err));
         })
         .finally(() => {
           setHistoryLoading(false);
@@ -189,6 +192,13 @@ export default function LostReportScreen() {
     setError('');
 
     try {
+      const isOnline = await connectivity.checkOnline();
+      if (!isOnline) {
+        setError('Network connection unavailable. Please check your internet connection and try again.');
+        setPublishing(false);
+        return;
+      }
+
       const locString = buildingName.trim() + (floorRoom.trim() ? `, ${floorRoom.trim()}` : '');
       const finalLocation = locString || autoAddress || 'Unknown location';
       const categoryToSave = customCategory.trim() || selectedCategory;
@@ -215,11 +225,11 @@ export default function LostReportScreen() {
         resetForm();
         router.replace('/(tabs)/' as any);
       } else {
-        setError(result.error || 'Failed to submit report. Please try again.');
+        setError(errorHelper.getFriendlyMessage(result.error));
       }
     } catch (err: any) {
       console.error(err);
-      setError('An error occurred during submission: ' + (err.message || err));
+      setError(errorHelper.getFriendlyMessage(err));
     } finally {
       setPublishing(false);
     }
@@ -282,11 +292,11 @@ export default function LostReportScreen() {
         <View style={styles.headerBar}>
           {showHistory ? (
             <TouchableOpacity onPress={() => setShowHistory(false)} style={styles.backBtnHeader}>
-              <Ionicons name="arrow-back" size={24} color="#9A2E17" />
+              <Ionicons name="arrow-back" size={24} color="#345C72" />
             </TouchableOpacity>
           ) : step > 0 ? (
             <TouchableOpacity onPress={() => setStep(step - 1)} style={styles.backBtnHeader}>
-              <Ionicons name="arrow-back" size={24} color="#9A2E17" />
+              <Ionicons name="arrow-back" size={24} color="#345C72" />
             </TouchableOpacity>
           ) : null}
           <Text style={styles.headerTitle}>
@@ -330,7 +340,7 @@ export default function LostReportScreen() {
                   <Text style={styles.menuTitle}>Create New Report</Text>
                   <Text style={styles.menuDesc}>Submit a new lost item to the community</Text>
                 </View>
-                <Ionicons name="chevron-forward" size={20} color="#94A3B8" />
+                <Ionicons name="chevron-forward" size={20} color="#8E9CA3" />
               </TouchableOpacity>
 
               <TouchableOpacity 
@@ -345,7 +355,7 @@ export default function LostReportScreen() {
                   <Text style={styles.menuTitle}>View History</Text>
                   <Text style={styles.menuDesc}>Check your previously uploaded lost items</Text>
                 </View>
-                <Ionicons name="chevron-forward" size={20} color="#94A3B8" />
+                <Ionicons name="chevron-forward" size={20} color="#8E9CA3" />
               </TouchableOpacity>
             </View>
 
@@ -363,7 +373,7 @@ export default function LostReportScreen() {
           <View style={{ flex: 1 }}>
             {historyLoading ? (
               <View style={styles.centered}>
-                <ActivityIndicator size="large" color="#9A2E17" />
+                <ActivityIndicator size="large" color="#345C72" />
               </View>
             ) : userReports.length === 0 ? (
               <View style={styles.emptyContainer}>
@@ -394,7 +404,7 @@ export default function LostReportScreen() {
                         <Image source={{ uri: item.imageUrl }} style={styles.historyThumb} contentFit="cover" />
                       ) : (
                         <View style={styles.historyThumbFallback}>
-                          <Ionicons name={getCategoryIcon(item.category)} size={24} color="#94A3B8" />
+                          <Ionicons name={getCategoryIcon(item.category)} size={24} color="#8E9CA3" />
                         </View>
                       )}
                       <View style={{ flex: 1 }}>
@@ -402,7 +412,7 @@ export default function LostReportScreen() {
                         <Text style={styles.historyMeta}>Category: {item.category}</Text>
                         <Text style={styles.historyDate}>Reported: {new Date(item.createdAt).toLocaleDateString()}</Text>
                       </View>
-                      <Ionicons name="chevron-forward" size={18} color="#94A3B8" />
+                      <Ionicons name="chevron-forward" size={18} color="#8E9CA3" />
                     </View>
                   </TouchableOpacity>
                 )}
@@ -460,9 +470,9 @@ export default function LostReportScreen() {
 
                 <View style={[styles.inputGroup, { marginTop: 24 }]}>
                   <TextInput
-                    style={styles.customCategoryInput}
+                     style={styles.customCategoryInput}
                     placeholder="Something else Type Here?"
-                    placeholderTextColor="#94A3B8"
+                    placeholderTextColor="#8E9CA3"
                     value={customCategory}
                     onChangeText={(text) => {
                       setCustomCategory(text);
@@ -487,7 +497,7 @@ export default function LostReportScreen() {
                   <TextInput
                     style={styles.textInput}
                     placeholder="e.g. Ear pods"
-                    placeholderTextColor="#94A3B8"
+                    placeholderTextColor="#8E9CA3"
                     value={title}
                     onChangeText={(t) => { setTitle(t); setError(''); }}
                   />
@@ -509,9 +519,9 @@ export default function LostReportScreen() {
                         <Text style={styles.colorPickerText}>{selectedColor}</Text>
                       </View>
                     ) : (
-                      <Text style={[styles.colorPickerText, { color: '#94A3B8' }]}>Pick Color</Text>
+                      <Text style={[styles.colorPickerText, { color: '#8E9CA3' }]}>Pick Color</Text>
                     )}
-                    <Ionicons name="chevron-forward" size={18} color="#94A3B8" />
+                    <Ionicons name="chevron-forward" size={18} color="#8E9CA3" />
                   </TouchableOpacity>
                 </View>
 
@@ -520,7 +530,7 @@ export default function LostReportScreen() {
                   <TextInput
                     style={[styles.textInput, styles.textArea]}
                     placeholder="Lost at library"
-                    placeholderTextColor="#94A3B8"
+                    placeholderTextColor="#8E9CA3"
                     value={description}
                     onChangeText={(d) => { setDescription(d); setError(''); }}
                     multiline
@@ -536,7 +546,7 @@ export default function LostReportScreen() {
                   <TextInput
                     style={styles.textInput}
                     placeholder="Black mark on the item"
-                    placeholderTextColor="#94A3B8"
+                    placeholderTextColor="#8E9CA3"
                     value={uniqueIdentifier}
                     onChangeText={(idText) => { setUniqueIdentifier(idText); setError(''); }}
                   />
@@ -572,7 +582,7 @@ export default function LostReportScreen() {
                       onPress={() => handlePickImage(true)} 
                       activeOpacity={0.7}
                     >
-                      <Ionicons name="camera-outline" size={36} color="#9A2E17" />
+                      <Ionicons name="camera-outline" size={36} color="#345C72" />
                       <Text style={styles.pickerBoxText}>Take Photo</Text>
                     </TouchableOpacity>
 
@@ -581,7 +591,7 @@ export default function LostReportScreen() {
                       onPress={() => handlePickImage(false)} 
                       activeOpacity={0.7}
                     >
-                      <Ionicons name="image-outline" size={36} color="#9A2E17" />
+                      <Ionicons name="image-outline" size={36} color="#345C72" />
                       <Text style={styles.pickerBoxText}>Upload Gallery</Text>
                     </TouchableOpacity>
                   </View>
@@ -618,7 +628,7 @@ export default function LostReportScreen() {
                     </TouchableOpacity>
                   </View>
                   <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-                    <Ionicons name="map-outline" size={40} color="#94A3B8" />
+                    <Ionicons name="map-outline" size={40} color="#8E9CA3" />
                     <TouchableOpacity style={styles.selectOnMapBtn}>
                       <Ionicons name="map" size={14} color="#475569" style={{ marginRight: 4 }} />
                       <Text style={styles.selectOnMapText}>Select on map</Text>
@@ -630,13 +640,13 @@ export default function LostReportScreen() {
                 <View style={styles.landmarkGroup}>
                   <Text style={styles.inputLabel}>Last Known Location</Text>
                   <View style={styles.detectedLocationBox}>
-                    <Ionicons name="location" size={20} color="#9A2E17" style={{ marginRight: 8 }} />
+                    <Ionicons name="location" size={20} color="#345C72" style={{ marginRight: 8 }} />
                     <Text style={{ flex: 1, color: '#1A1A1A', fontSize: 14, fontWeight: '500' }} numberOfLines={2}>
                       {autoAddress}
                     </Text>
                   </View>
                   <TouchableOpacity style={styles.useCurrentLocationBtn} onPress={detectLocation}>
-                    <Ionicons name="locate-outline" size={14} color="#9A2E17" style={{ marginRight: 4 }} />
+                    <Ionicons name="locate-outline" size={14} color="#345C72" style={{ marginRight: 4 }} />
                     <Text style={styles.useCurrentLocationText}>Use current location</Text>
                   </TouchableOpacity>
                 </View>
@@ -647,7 +657,7 @@ export default function LostReportScreen() {
                     <TextInput
                       style={styles.textInput}
                       placeholder="Library"
-                      placeholderTextColor="#94A3B8"
+                      placeholderTextColor="#8E9CA3"
                       value={buildingName}
                       onChangeText={setBuildingName}
                     />
@@ -657,7 +667,7 @@ export default function LostReportScreen() {
                     <TextInput
                       style={styles.textInput}
                       placeholder="3rd floor"
-                      placeholderTextColor="#94A3B8"
+                      placeholderTextColor="#8E9CA3"
                       value={floorRoom}
                       onChangeText={setFloorRoom}
                     />
@@ -672,7 +682,7 @@ export default function LostReportScreen() {
                       value={dateLost}
                       onChangeText={setDateLost}
                       placeholder="10/24/2023"
-                      placeholderTextColor="#94A3B8"
+                      placeholderTextColor="#8E9CA3"
                     />
                   </View>
                   <View style={[styles.inputGroup, { flex: 1 }]}>
@@ -682,7 +692,7 @@ export default function LostReportScreen() {
                       value={timeLost}
                       onChangeText={setTimeLost}
                       placeholder="02:30 PM"
-                      placeholderTextColor="#94A3B8"
+                      placeholderTextColor="#8E9CA3"
                     />
                   </View>
                 </View>
@@ -723,7 +733,7 @@ export default function LostReportScreen() {
                   <TextInput
                     style={[styles.textInput, styles.textArea, { height: 80 }]}
                     placeholder="e.g. Near window bench..."
-                    placeholderTextColor="#94A3B8"
+                    placeholderTextColor="#8E9CA3"
                     value={additionalDetails}
                     onChangeText={setAdditionalDetails}
                     multiline
@@ -745,8 +755,8 @@ export default function LostReportScreen() {
                     <Image source={{ uri: imageUri }} style={styles.reviewImage} contentFit="cover" />
                   ) : (
                     <View style={[styles.reviewImage, styles.reviewImageFallback]}>
-                      <Ionicons name="images-outline" size={48} color="#94A3B8" />
-                      <Text style={{ color: '#94A3B8', marginTop: 8, fontWeight: '700' }}>No Reference Photo</Text>
+                      <Ionicons name="images-outline" size={48} color="#8E9CA3" />
+                      <Text style={{ color: '#8E9CA3', marginTop: 8, fontWeight: '700' }}>No Reference Photo</Text>
                     </View>
                   )}
 
@@ -770,7 +780,7 @@ export default function LostReportScreen() {
                     </View>
                     <View style={styles.reviewRow}>
                       <Text style={styles.reviewLabel}>Unique Identifier</Text>
-                      <Text style={[styles.reviewValue, { color: '#9A2E17', fontWeight: 'bold' }]}>
+                      <Text style={[styles.reviewValue, { color: '#345C72', fontWeight: 'bold' }]}>
                         {uniqueIdentifier}
                       </Text>
                     </View>
@@ -879,7 +889,7 @@ export default function LostReportScreen() {
                       setStep(4);
                     }}
                   >
-                    <Text style={[styles.backBtnText, { color: '#9A2E17' }]}>Skip for now</Text>
+                    <Text style={[styles.backBtnText, { color: '#345C72' }]}>Skip for now</Text>
                   </TouchableOpacity>
                 )}
                 <TouchableOpacity 
@@ -976,15 +986,15 @@ export default function LostReportScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#EFF6F6',
+    backgroundColor: '#F0F5FA',
   },
   headerBar: {
     flexDirection: 'row',
     alignItems: 'center',
-    paddingHorizontal: 16,
-    height: 56,
+    paddingHorizontal: 20,
+    height: 64,
     borderBottomWidth: 1,
-    borderBottomColor: '#E2E8F0',
+    borderBottomColor: '#E3EEF5',
     backgroundColor: '#FFFFFF',
   },
   backBtnHeader: {
@@ -993,25 +1003,25 @@ const styles = StyleSheet.create({
   },
   headerTitle: {
     flex: 1,
-    fontSize: 18,
-    fontWeight: 'bold',
-    color: '#9A2E17',
+    fontSize: 20,
+    fontFamily: 'PlayfairDisplay-Bold',
+    color: '#345C72',
   },
   resetBtn: {
-    paddingVertical: 4,
-    paddingHorizontal: 8,
+    paddingVertical: 6,
+    paddingHorizontal: 12,
   },
   resetBtnText: {
-    color: '#9A2E17',
-    fontWeight: '700',
+    color: '#345C72',
+    fontFamily: 'PlusJakartaSans-Bold',
     fontSize: 14,
   },
   indicatorWrapper: {
     backgroundColor: '#FFFFFF',
     paddingHorizontal: 20,
-    paddingVertical: 10,
+    paddingVertical: 12,
     borderBottomWidth: 1,
-    borderBottomColor: '#F1F5F9',
+    borderBottomColor: '#E3EEF5',
   },
   stepHeaderRow: {
     flexDirection: 'row',
@@ -1021,18 +1031,18 @@ const styles = StyleSheet.create({
   },
   stepIndicatorText: {
     fontSize: 11,
-    color: '#94A3B8',
-    fontWeight: 'bold',
+    color: '#8E9CA3',
+    fontFamily: 'PlusJakartaSans-Bold',
   },
   stepIndicatorLabel: {
     fontSize: 12,
-    color: '#9A2E17',
-    fontWeight: 'bold',
+    color: '#345C72',
+    fontFamily: 'PlusJakartaSans-Bold',
   },
   stepIndicatorContainer: {
     flexDirection: 'row',
     height: 4,
-    backgroundColor: '#E2E8F0',
+    backgroundColor: '#E6F0F6',
     width: '100%',
     borderRadius: 2,
     overflow: 'hidden',
@@ -1043,29 +1053,29 @@ const styles = StyleSheet.create({
     height: '100%',
   },
   indicatorSegmentActive: {
-    backgroundColor: '#9A2E17',
+    backgroundColor: '#345C72',
   },
   indicatorSegmentInactive: {
-    backgroundColor: '#E2E8F0',
+    backgroundColor: '#E6F0F6',
   },
   scrollContent: {
     padding: 20,
-    paddingBottom: 40,
+    paddingBottom: 110,
   },
   errorAlert: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: '#FEF2F2',
+    backgroundColor: '#FFE2E2',
     padding: 12,
-    borderRadius: 12,
+    borderRadius: 16,
     marginBottom: 20,
     borderWidth: 1,
-    borderColor: '#FEE2E2',
+    borderColor: '#FFE2E2',
   },
   errorAlertText: {
-    color: '#D63031',
+    color: '#B42318',
     fontSize: 13,
-    fontWeight: '600',
+    fontFamily: 'PlusJakartaSans-SemiBold',
     flex: 1,
   },
   stepContainer: {
@@ -1073,13 +1083,14 @@ const styles = StyleSheet.create({
   },
   mainWelcomeTitle: {
     fontSize: 28,
-    fontWeight: 'bold',
-    color: '#1A1A1A',
+    fontFamily: 'PlayfairDisplay-Bold',
+    color: '#2B353A',
     marginBottom: 8,
   },
   mainWelcomeSubtitle: {
     fontSize: 15,
-    color: '#636E72',
+    fontFamily: 'PlusJakartaSans-Regular',
+    color: '#56646E',
     lineHeight: 22,
     marginBottom: 24,
   },
@@ -1091,7 +1102,7 @@ const styles = StyleSheet.create({
   welcomeIllustration: {
     width: '100%',
     height: 220,
-    borderRadius: 20,
+    borderRadius: 24,
   },
   homeButtonsContainer: {
     gap: 16,
@@ -1101,14 +1112,14 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     backgroundColor: '#FFFFFF',
-    borderRadius: 20,
+    borderRadius: 24,
     padding: 16,
     borderWidth: 1,
-    borderColor: '#E2E8F0',
+    borderColor: '#D3E2EC',
     shadowColor: '#000000',
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.02,
-    shadowRadius: 8,
+    shadowOffset: { width: 0, height: 8 },
+    shadowOpacity: 0.04,
+    shadowRadius: 20,
     elevation: 2,
   },
   menuIconContainer: {
@@ -1124,39 +1135,42 @@ const styles = StyleSheet.create({
   },
   menuTitle: {
     fontSize: 16,
-    fontWeight: 'bold',
-    color: '#1A1A1A',
+    fontFamily: 'PlusJakartaSans-Bold',
+    color: '#2B353A',
     marginBottom: 4,
   },
   menuDesc: {
     fontSize: 13,
-    color: '#636E72',
+    fontFamily: 'PlusJakartaSans-Regular',
+    color: '#56646E',
   },
   infoNoteBox: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: '#F8FAFC',
-    borderRadius: 14,
-    padding: 12,
+    backgroundColor: '#E6F0F6',
+    borderRadius: 16,
+    padding: 14,
     borderWidth: 1,
-    borderColor: '#F1F5F9',
+    borderColor: '#D3E2EC',
     gap: 8,
   },
   infoNoteText: {
     fontSize: 12,
-    color: '#636E72',
+    fontFamily: 'PlusJakartaSans-Medium',
+    color: '#56646E',
     flex: 1,
     lineHeight: 16,
   },
   stepTitle: {
     fontSize: 22,
-    fontWeight: 'bold',
-    color: '#1A1A1A',
+    fontFamily: 'PlayfairDisplay-Bold',
+    color: '#2B353A',
     marginBottom: 8,
   },
   stepDesc: {
     fontSize: 14,
-    color: '#636E72',
+    fontFamily: 'PlusJakartaSans-Regular',
+    color: '#56646E',
     lineHeight: 20,
     marginBottom: 24,
   },
@@ -1165,28 +1179,29 @@ const styles = StyleSheet.create({
   },
   inputLabel: {
     fontSize: 14,
-    fontWeight: 'bold',
-    color: '#2D3436',
+    fontFamily: 'PlusJakartaSans-Bold',
+    color: '#2B353A',
     marginBottom: 8,
   },
   mandatoryLabel: {
     fontSize: 12,
-    color: '#94A3B8',
-    fontWeight: 'bold',
+    color: '#8E9CA3',
+    fontFamily: 'PlusJakartaSans-Bold',
   },
   textInput: {
-    backgroundColor: '#FFFFFF',
+    backgroundColor: '#E6F0F6',
     borderWidth: 1,
-    borderColor: '#E2E8F0',
-    borderRadius: 12,
+    borderColor: '#D3E2EC',
+    borderRadius: 16,
     height: 48,
     paddingHorizontal: 16,
     fontSize: 15,
-    color: '#1A1A1A',
+    fontFamily: 'PlusJakartaSans-Regular',
+    color: '#2B353A',
   },
   disabledInput: {
-    backgroundColor: '#F1F5F9',
-    color: '#64748B',
+    backgroundColor: '#DDE8F0',
+    color: '#8E9CA3',
   },
   categoryGrid: {
     flexDirection: 'row',
@@ -1197,16 +1212,16 @@ const styles = StyleSheet.create({
   categoryCard: {
     width: '48%',
     backgroundColor: '#FFFFFF',
-    borderRadius: 16,
+    borderRadius: 24,
     padding: 16,
     alignItems: 'center',
     borderWidth: 1,
-    borderColor: '#E2E8F0',
+    borderColor: '#D3E2EC',
   },
   categoryCardSelected: {
-    borderColor: '#9A2E17',
+    borderColor: '#345C72',
     borderWidth: 2,
-    backgroundColor: '#FFF5F5',
+    backgroundColor: '#E0ECF4',
   },
   categoryCircle: {
     width: 44,
@@ -1218,40 +1233,41 @@ const styles = StyleSheet.create({
   },
   categoryName: {
     fontSize: 13,
-    fontWeight: '700',
-    color: '#475569',
+    fontFamily: 'PlusJakartaSans-Bold',
+    color: '#56646E',
     textTransform: 'capitalize',
   },
   categoryNameSelected: {
-    color: '#9A2E17',
+    color: '#345C72',
   },
   customCategoryInput: {
     backgroundColor: '#FFFFFF',
     borderWidth: 1.5,
-    borderColor: '#FFE4E6',
+    borderColor: '#D3E2EC',
     borderStyle: 'dashed',
-    borderRadius: 12,
+    borderRadius: 16,
     height: 48,
     paddingHorizontal: 16,
     fontSize: 14,
-    color: '#1A1A1A',
+    fontFamily: 'PlusJakartaSans-Regular',
+    color: '#2B353A',
     textAlign: 'center',
   },
   colorPickerTrigger: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    backgroundColor: '#FFFFFF',
+    backgroundColor: '#E6F0F6',
     borderWidth: 1,
-    borderColor: '#E2E8F0',
-    borderRadius: 12,
+    borderColor: '#D3E2EC',
+    borderRadius: 16,
     height: 48,
     paddingHorizontal: 16,
   },
   colorPickerText: {
     fontSize: 15,
-    fontWeight: '600',
-    color: '#1A1A1A',
+    fontFamily: 'PlusJakartaSans-SemiBold',
+    color: '#2B353A',
   },
   selectedColorCircle: {
     width: 20,
@@ -1266,7 +1282,8 @@ const styles = StyleSheet.create({
   },
   helperText: {
     fontSize: 12,
-    color: '#94A3B8',
+    color: '#8E9CA3',
+    fontFamily: 'PlusJakartaSans-Regular',
     marginTop: 6,
   },
   uploadOptionsBox: {
@@ -1278,9 +1295,9 @@ const styles = StyleSheet.create({
     flex: 1,
     height: 120,
     borderWidth: 1.5,
-    borderColor: '#9A2E17',
+    borderColor: '#345C72',
     borderStyle: 'dashed',
-    borderRadius: 16,
+    borderRadius: 24,
     backgroundColor: '#FFFFFF',
     justifyContent: 'center',
     alignItems: 'center',
@@ -1288,20 +1305,20 @@ const styles = StyleSheet.create({
   },
   pickerBoxText: {
     fontSize: 13,
-    fontWeight: 'bold',
-    color: '#9A2E17',
+    fontFamily: 'PlusJakartaSans-Bold',
+    color: '#345C72',
   },
   previewContainer: {
     gap: 16,
   },
   previewImageCard: {
     height: 220,
-    borderRadius: 16,
+    borderRadius: 24,
     overflow: 'hidden',
     position: 'relative',
-    backgroundColor: '#E2E8F0',
+    backgroundColor: '#E6F0F6',
     borderWidth: 1,
-    borderColor: '#CBD5E1',
+    borderColor: '#D3E2EC',
   },
   previewImage: {
     width: '100%',
@@ -1314,31 +1331,31 @@ const styles = StyleSheet.create({
     width: 32,
     height: 32,
     borderRadius: 16,
-    backgroundColor: 'rgba(0, 0, 0, 0.6)',
+    backgroundColor: 'rgba(43, 53, 58, 0.6)',
     justifyContent: 'center',
     alignItems: 'center',
   },
   verifiedSafeBadge: {
     height: 44,
-    backgroundColor: '#047857',
-    borderRadius: 12,
+    backgroundColor: '#E1EEDD',
+    borderRadius: 16,
     justifyContent: 'center',
     alignItems: 'center',
     flexDirection: 'row',
   },
   verifiedSafeText: {
-    color: '#FFFFFF',
+    color: '#566252',
     fontSize: 14,
-    fontWeight: 'bold',
+    fontFamily: 'PlusJakartaSans-Bold',
   },
   mapCardViewport: {
     height: 180,
-    backgroundColor: '#E2E8F0',
-    borderRadius: 20,
+    backgroundColor: '#E6F0F6',
+    borderRadius: 24,
     marginBottom: 16,
     position: 'relative',
     borderWidth: 1,
-    borderColor: '#CBD5E1',
+    borderColor: '#D3E2EC',
   },
   mapActionsOverlay: {
     position: 'absolute',
@@ -1353,26 +1370,26 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     shadowColor: '#000000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.05,
+    shadowRadius: 8,
     elevation: 3,
   },
   selectOnMapBtn: {
     flexDirection: 'row',
     alignItems: 'center',
     backgroundColor: '#FFFFFF',
-    borderRadius: 10,
+    borderRadius: 12,
     paddingVertical: 6,
     paddingHorizontal: 10,
     borderWidth: 1,
-    borderColor: '#CBD5E1',
+    borderColor: '#D3E2EC',
     marginTop: 8,
   },
   selectOnMapText: {
     fontSize: 12,
-    fontWeight: 'bold',
-    color: '#475569',
+    fontFamily: 'PlusJakartaSans-Bold',
+    color: '#56646E',
   },
   landmarkGroup: {
     marginBottom: 20,
@@ -1381,10 +1398,10 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     backgroundColor: '#FFFFFF',
-    borderRadius: 12,
-    padding: 12,
+    borderRadius: 24,
+    padding: 14,
     borderWidth: 1,
-    borderColor: '#E2E8F0',
+    borderColor: '#D3E2EC',
     marginBottom: 8,
   },
   useCurrentLocationBtn: {
@@ -1394,8 +1411,8 @@ const styles = StyleSheet.create({
   },
   useCurrentLocationText: {
     fontSize: 12,
-    color: '#9A2E17',
-    fontWeight: '700',
+    color: '#345C72',
+    fontFamily: 'PlusJakartaSans-Bold',
     textDecorationLine: 'underline',
   },
   dateTimeRow: {
@@ -1409,33 +1426,32 @@ const styles = StyleSheet.create({
   },
   verifiedTagText: {
     fontSize: 12,
-    color: '#10B981',
-    fontWeight: 'bold',
+    color: '#566252',
+    fontFamily: 'PlusJakartaSans-Bold',
   },
   reviewCard: {
     backgroundColor: '#FFFFFF',
-    borderRadius: 20,
+    borderRadius: 24,
     overflow: 'hidden',
     borderWidth: 1,
-    borderColor: '#E2E8F0',
+    borderColor: '#D3E2EC',
   },
   reviewImage: {
     width: '100%',
     height: 180,
-    backgroundColor: '#F1F5F9',
+    backgroundColor: '#E6F0F6',
   },
   reviewContent: {
-    padding: 16,
+    padding: 20,
   },
   reviewImageFallback: {
-    backgroundColor: '#F1F5F9',
     justifyContent: 'center',
     alignItems: 'center',
   },
   reviewSectionTitle: {
     fontSize: 11,
-    fontWeight: '900',
-    color: '#94A3B8',
+    fontFamily: 'PlusJakartaSans-Bold',
+    color: '#8E9CA3',
     letterSpacing: 1,
     marginBottom: 10,
     marginTop: 6,
@@ -1445,50 +1461,51 @@ const styles = StyleSheet.create({
   },
   reviewLabel: {
     fontSize: 12,
-    color: '#94A3B8',
-    fontWeight: '600',
+    color: '#8E9CA3',
+    fontFamily: 'PlusJakartaSans-Regular',
   },
   reviewValue: {
     fontSize: 14,
-    color: '#1E293B',
-    fontWeight: '700',
+    color: '#2B353A',
+    fontFamily: 'PlusJakartaSans-Bold',
     marginTop: 2,
   },
   reviewDivider: {
     height: 1,
-    backgroundColor: '#F1F5F9',
+    backgroundColor: '#E3EEF5',
     marginVertical: 14,
   },
   footerBar: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    paddingHorizontal: 16,
+    paddingHorizontal: 20,
     paddingVertical: 12,
     borderTopWidth: 1,
-    borderTopColor: '#E2E8F0',
+    borderTopColor: '#E3EEF5',
     backgroundColor: '#FFFFFF',
     gap: 12,
+    marginBottom: Platform.OS === 'ios' ? 100 : 84,
   },
   backBtn: {
     height: 48,
     paddingHorizontal: 20,
     justifyContent: 'center',
     alignItems: 'center',
-    borderRadius: 12,
+    borderRadius: 16,
     borderWidth: 1,
-    borderColor: '#CBD5E1',
+    borderColor: '#D3E2EC',
   },
   backBtnText: {
-    color: '#475569',
+    color: '#56646E',
     fontSize: 14,
-    fontWeight: 'bold',
+    fontFamily: 'PlusJakartaSans-Bold',
   },
   nextBtn: {
     flex: 1,
     height: 48,
-    backgroundColor: '#9A2E17',
-    borderRadius: 12,
+    backgroundColor: '#345C72',
+    borderRadius: 16,
     justifyContent: 'center',
     alignItems: 'center',
     flexDirection: 'row',
@@ -1496,10 +1513,10 @@ const styles = StyleSheet.create({
   nextBtnText: {
     color: '#FFFFFF',
     fontSize: 14,
-    fontWeight: 'bold',
+    fontFamily: 'PlusJakartaSans-Bold',
   },
   btnDisabled: {
-    backgroundColor: '#CBD5E1',
+    backgroundColor: '#DDE8F0',
   },
   centered: {
     flex: 1,
@@ -1514,27 +1531,34 @@ const styles = StyleSheet.create({
     paddingBottom: 80,
   },
   emptyTitle: {
-    fontSize: 18,
-    fontWeight: 'bold',
-    color: '#2D3436',
+    fontSize: 20,
+    fontFamily: 'PlayfairDisplay-Bold',
+    color: '#2B353A',
     marginTop: 16,
     marginBottom: 8,
   },
   emptySubtitle: {
     fontSize: 14,
-    color: '#636E72',
+    fontFamily: 'PlusJakartaSans-Regular',
+    color: '#56646E',
     textAlign: 'center',
   },
   listContent: {
     padding: 16,
+    paddingBottom: 110,
   },
   historyCard: {
     backgroundColor: '#FFFFFF',
-    borderRadius: 16,
-    padding: 12,
+    borderRadius: 24,
+    padding: 16,
     marginBottom: 12,
     borderWidth: 1,
-    borderColor: '#E2E8F0',
+    borderColor: '#D3E2EC',
+    shadowColor: '#000000',
+    shadowOffset: { width: 0, height: 8 },
+    shadowOpacity: 0.04,
+    shadowRadius: 20,
+    elevation: 2,
   },
   historyCardHeader: {
     flexDirection: 'row',
@@ -1544,43 +1568,50 @@ const styles = StyleSheet.create({
   historyThumb: {
     width: 50,
     height: 50,
-    borderRadius: 8,
+    borderRadius: 12,
   },
   historyThumbFallback: {
     width: 50,
     height: 50,
-    borderRadius: 8,
-    backgroundColor: '#F1F5F9',
+    borderRadius: 12,
+    backgroundColor: '#E6F0F6',
     justifyContent: 'center',
     alignItems: 'center',
   },
   historyTitle: {
     fontSize: 15,
-    fontWeight: 'bold',
-    color: '#1A1A1A',
+    fontFamily: 'PlayfairDisplay-Bold',
+    color: '#2B353A',
   },
   historyMeta: {
     fontSize: 12,
-    color: '#636E72',
+    color: '#56646E',
+    fontFamily: 'PlusJakartaSans-Regular',
     marginTop: 2,
   },
   historyDate: {
     fontSize: 11,
-    color: '#94A3B8',
+    color: '#8E9CA3',
+    fontFamily: 'PlusJakartaSans-Regular',
     marginTop: 2,
   },
   modalOverlay: {
     flex: 1,
-    backgroundColor: 'rgba(0, 0, 0, 0.4)',
+    backgroundColor: 'rgba(43, 53, 58, 0.4)',
     justifyContent: 'center',
     alignItems: 'center',
   },
   modalContent: {
     backgroundColor: '#FFFFFF',
-    borderRadius: 20,
+    borderRadius: 32,
     width: '85%',
     maxHeight: '70%',
-    padding: 20,
+    padding: 24,
+    shadowColor: '#000000',
+    shadowOpacity: 0.08,
+    shadowRadius: 30,
+    shadowOffset: { width: 0, height: 12 },
+    elevation: 6,
   },
   modalHeader: {
     flexDirection: 'row',
@@ -1589,9 +1620,9 @@ const styles = StyleSheet.create({
     marginBottom: 20,
   },
   modalTitle: {
-    fontSize: 18,
-    fontWeight: 'bold',
-    color: '#1E293B',
+    fontSize: 20,
+    fontFamily: 'PlayfairDisplay-Bold',
+    color: '#2B353A',
   },
   colorGrid: {
     flexDirection: 'row',
@@ -1604,10 +1635,10 @@ const styles = StyleSheet.create({
     width: '45%',
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: '#F8FAFC',
+    backgroundColor: '#E6F0F6',
     borderWidth: 1,
-    borderColor: '#E2E8F0',
-    borderRadius: 12,
+    borderColor: '#D3E2EC',
+    borderRadius: 16,
     padding: 10,
     gap: 10,
   },
@@ -1618,7 +1649,7 @@ const styles = StyleSheet.create({
   },
   colorNameLabel: {
     fontSize: 13,
-    fontWeight: '600',
-    color: '#475569',
+    fontFamily: 'PlusJakartaSans-SemiBold',
+    color: '#56646E',
   }
 });

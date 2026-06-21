@@ -8,6 +8,7 @@ import { itemService } from '../../Backend/services/itemService';
 import { requestService } from '../../Backend/services/requestService';
 import { chatService } from '../../Backend/services/chatService';
 import AuthModule from './components/AuthModule';
+import { errorHelper } from './services/errorHelper';
 import Sidebar from './components/Sidebar';
 import HomeFeed from './components/HomeFeed';
 import ReportWizard from './components/ReportWizard';
@@ -33,7 +34,8 @@ import {
   LogOut,
   ShieldAlert,
   Grid,
-  List
+  List,
+  AlertCircle
 } from 'lucide-react';
 import './App.css';
 
@@ -53,10 +55,22 @@ function App() {
   const selectedItem = useAppStore((state) => state.selectedItem);
   const logout = useAppStore((state) => state.logout);
 
+  const isOffline = useAppStore((state) => state.isOffline);
+  const toast = useAppStore((state) => state.toast);
+  const confirmModal = useAppStore((state) => state.confirmModal);
+  const showToast = useAppStore((state) => state.showToast);
+  const hideToast = useAppStore((state) => state.hideToast);
+  const showConfirm = useAppStore((state) => state.showConfirm);
+  const hideConfirm = useAppStore((state) => state.hideConfirm);
+
   const [showWizard, setShowWizard] = useState(false);
   const [profileName, setProfileName] = useState('');
   const [profilePhone, setProfilePhone] = useState('');
   const [profilePhoto, setProfilePhoto] = useState('');
+  const [profileAge, setProfileAge] = useState('');
+  const [profileGender, setProfileGender] = useState('');
+  const [profileLocation, setProfileLocation] = useState('');
+  const [isEditingWebProfile, setIsEditingWebProfile] = useState(false);
   const [updatingProfile, setUpdatingProfile] = useState(false);
 
   // Notifications State
@@ -85,24 +99,96 @@ function App() {
   const notificationsDropdownRef = useRef(null);
   const [uploadingPhoto, setUploadingPhoto] = useState(false);
 
+  // Sync profile editing local state when user updates or enters edit mode
+  useEffect(() => {
+    if (user) {
+      setProfileName(user.name || '');
+      setProfilePhone(user.phone || user.phoneNumber || '');
+      setProfilePhoto(user.photoURL || '');
+      setProfileAge(user.age ? String(user.age) : '');
+      setProfileGender(user.gender || '');
+      setProfileLocation(user.location || user.college || '');
+    }
+  }, [user, isEditingWebProfile]);
+
+  // Listen to connectivity changes
+  useEffect(() => {
+    const handleOnline = () => {
+      useAppStore.getState().setOffline(false);
+      showToast('Back online! Connection restored.', 'success');
+    };
+    const handleOffline = () => {
+      useAppStore.getState().setOffline(true);
+      showToast('You are offline. Some actions are disabled.', 'warning');
+    };
+
+    window.addEventListener('online', handleOnline);
+    window.addEventListener('offline', handleOffline);
+
+    return () => {
+      window.removeEventListener('online', handleOnline);
+      window.removeEventListener('offline', handleOffline);
+    };
+  }, []);
+
   // 1. Handle Authentication State changes
   useEffect(() => {
     const unsubscribeAuth = onAuthStateChanged(auth, async (firebaseUser) => {
       if (firebaseUser) {
         try {
-          const profile = await userService.getUserProfile(firebaseUser.uid);
-          if (profile && profile.isProfileVerified) {
-            setUser({ uid: firebaseUser.uid, email: firebaseUser.email, ...profile });
-            setProfileName(profile.name || '');
-            setProfilePhone(profile.phone || '');
-            setProfilePhoto(profile.photoURL || '');
+          // Force reload user state from Firebase to get latest emailVerified status
+          await firebaseUser.reload();
+          const refreshedUser = auth.currentUser || firebaseUser;
+          
+          if (!refreshedUser.emailVerified) {
+            setUser({ 
+              uid: refreshedUser.uid, 
+              email: refreshedUser.email, 
+              emailVerified: false, 
+              isProfileVerified: false 
+            });
           } else {
-            // Force verify view
-            setUser({ uid: firebaseUser.uid, email: firebaseUser.email, isProfileVerified: false });
+            let profile = await userService.getUserProfile(refreshedUser.uid);
+            
+            // Sync verified status to database if not already synced
+            if (profile && !profile.emailVerified) {
+              try {
+                await userService.updateUserProfile(refreshedUser.uid, {
+                  emailVerified: true,
+                  isEmailVerified: true
+                });
+                profile.emailVerified = true;
+                profile.isEmailVerified = true;
+              } catch (syncErr) {
+                console.error('Error syncing emailVerified status to DB:', syncErr);
+              }
+            }
+
+            if (profile && profile.isProfileVerified) {
+              setUser({ uid: refreshedUser.uid, email: refreshedUser.email, emailVerified: true, ...profile });
+              setProfileName(profile.name || '');
+              setProfilePhone(profile.phone || '');
+              setProfilePhoto(profile.photoURL || '');
+              setProfileAge(profile.age ? String(profile.age) : '');
+              setProfileGender(profile.gender || '');
+              setProfileLocation(profile.location || '');
+            } else {
+              setUser({ 
+                uid: refreshedUser.uid, 
+                email: refreshedUser.email, 
+                emailVerified: true, 
+                isProfileVerified: false 
+              });
+            }
           }
         } catch (err) {
           console.error('Failed to get user profile details:', err);
-          setUser({ uid: firebaseUser.uid, email: firebaseUser.email, isProfileVerified: false });
+          setUser({ 
+            uid: firebaseUser.uid, 
+            email: firebaseUser.email, 
+            emailVerified: firebaseUser.emailVerified, 
+            isProfileVerified: false 
+          });
         }
       } else {
         setUser(null);
@@ -212,34 +298,65 @@ function App() {
 
   const handleUpdateProfile = async (e) => {
     e.preventDefault();
-    if (!profileName.trim() || !profilePhone.trim()) {
-      alert('Please fill in name and phone number.');
+    if (isOffline) {
+      showToast('Network connection unavailable. Please check your connection.', 'error');
       return;
     }
+    if (!profileName.trim() || !profilePhone.trim()) {
+      showToast('Please fill in name and phone number.', 'warning');
+      return;
+    }
+    const ageNum = parseInt(profileAge, 10);
+    if (!profileAge || isNaN(ageNum) || ageNum < 13 || ageNum > 120) {
+      showToast('Please enter a valid age (13–120).', 'warning');
+      return;
+    }
+    if (!profileGender) {
+      showToast('Please select your gender.', 'warning');
+      return;
+    }
+    if (!profileLocation.trim()) {
+      showToast('Please enter your location.', 'warning');
+      return;
+    }
+
     setUpdatingProfile(true);
     try {
-      await userService.updateUserProfile(user.uid, {
+      const updateData = {
         name: profileName.trim(),
         phone: profilePhone.trim(),
-        phoneNumber: profilePhone.trim()
-      });
-      useAppStore.getState().updateUser({
-        name: profileName.trim(),
-        phone: profilePhone.trim(),
-        phoneNumber: profilePhone.trim()
-      });
-      alert('Profile updated successfully!');
+        phoneNumber: profilePhone.trim(),
+        age: parseInt(profileAge, 10),
+        gender: profileGender,
+        location: profileLocation.trim(),
+        college: profileLocation.trim()
+      };
+
+      await userService.updateUserProfile(user.uid, updateData);
+      useAppStore.getState().updateUser(updateData);
+      showToast('Profile updated successfully!', 'success');
+      setIsEditingWebProfile(false);
     } catch (err) {
       console.error(err);
-      alert('Failed to update profile: ' + err.message);
+      showToast('Failed to update profile: ' + errorHelper.getFriendlyMessage(err), 'error');
     } finally {
       setUpdatingProfile(false);
     }
   };
 
   const handlePhotoUpload = async (e) => {
+    if (isOffline) {
+      showToast('Network connection unavailable. Please check your connection.', 'error');
+      return;
+    }
     const file = e.target.files[0];
     if (!file) return;
+
+    // Check size limit: 5MB
+    if (file.size > 5 * 1024 * 1024) {
+      showToast('File size exceeds the 5MB limit.', 'warning');
+      return;
+    }
 
     setUploadingPhoto(true);
     try {
@@ -264,10 +381,10 @@ function App() {
 
       setProfilePhoto(downloadURL);
       useAppStore.getState().updateUser({ photoURL: downloadURL });
-      alert('Profile picture updated successfully!');
+      showToast('Profile picture updated successfully!', 'success');
     } catch (err) {
       console.error('Failed to upload profile picture:', err);
-      alert('Failed to upload picture: ' + err.message);
+      showToast('Failed to upload picture: ' + errorHelper.getFriendlyMessage(err), 'error');
     } finally {
       setUploadingPhoto(false);
     }
@@ -279,45 +396,55 @@ function App() {
   };
 
   const handleUnblockUser = async (targetUid) => {
-    if (window.confirm('Are you sure you want to unblock this user?')) {
+    if (isOffline) {
+      showToast('Network connection unavailable. Please check your connection.', 'error');
+      return;
+    }
+    showConfirm('Unblock User', 'Are you sure you want to unblock this user?', async () => {
       try {
         await userService.unblockUser(targetUid);
-        alert('User unblocked successfully!');
+        showToast('User unblocked successfully!', 'success');
       } catch (err) {
         console.error(err);
-        alert('Failed to unblock: ' + err.message);
+        showToast('Failed to unblock: ' + errorHelper.getFriendlyMessage(err), 'error');
       }
-    }
+    });
   };
 
   const handleUpdateReportStatus = async (reportId, status) => {
+    if (isOffline) {
+      showToast('Network connection unavailable. Please check your connection.', 'error');
+      return;
+    }
     try {
       await userService.updateReportStatus(reportId, status);
-      alert(`Report status updated to ${status}.`);
+      showToast(`Report status updated to ${status}.`, 'success');
     } catch (err) {
       console.error(err);
-      alert('Failed to update report: ' + err.message);
+      showToast('Failed to update report: ' + errorHelper.getFriendlyMessage(err), 'error');
     }
   };
 
   const handleClearRequests = () => {
     if (requestNotifications.length === 0) return;
-    if (window.confirm('Are you sure you want to clear all request notifications?')) {
+    showConfirm('Clear Requests', 'Are you sure you want to clear all request notifications?', () => {
       const idsToClear = requestNotifications.map(n => n.id);
       const updated = [...clearedRequestIds, ...idsToClear];
       setClearedRequestIds(updated);
       localStorage.setItem('clearedRequestIds', JSON.stringify(updated));
-    }
+      showToast('Request notifications cleared.', 'success');
+    });
   };
 
   const handleClearMessages = () => {
     if (messageNotifications.length === 0) return;
-    if (window.confirm('Are you sure you want to clear all message notifications?')) {
+    showConfirm('Clear Messages', 'Are you sure you want to clear all message notifications?', () => {
       messageNotifications.forEach(notif => {
         localStorage.setItem(`lastRead_${notif.id}`, Date.now().toString());
       });
       setMessageClearCounter(prev => prev + 1);
-    }
+      showToast('Message notifications cleared.', 'success');
+    });
   };
 
   const renderMyReports = () => {
@@ -364,9 +491,9 @@ function App() {
                     className="btn-delete-soft" 
                     onClick={(e) => {
                       e.stopPropagation();
-                      if (window.confirm('Are you sure you want to delete this report? This cannot be undone.')) {
-                        alert('Report deletion is disabled in the web-demo interface.');
-                      }
+                      showConfirm('Delete Report', 'Are you sure you want to delete this report? This cannot be undone.', () => {
+                        showToast('Report deletion is disabled in the web-demo interface.', 'warning');
+                      });
                     }}
                   >
                     <Trash2 size={16} />
@@ -396,10 +523,15 @@ function App() {
       : 'N/A';
 
     const handleLogoutClick = async () => {
-      if (window.confirm('Are you sure you want to log out?')) {
-        await signOut(auth);
-        logout();
-      }
+      showConfirm('Confirm Logout', 'Are you sure you want to log out of TrackBack?', async () => {
+        try {
+          await signOut(auth);
+          logout();
+          showToast('Logged out successfully.', 'success');
+        } catch (err) {
+          showToast('Failed to log out: ' + errorHelper.getFriendlyMessage(err), 'error');
+        }
+      });
     };
 
     return (
@@ -455,55 +587,141 @@ function App() {
                 <span style={{ fontSize: '0.85rem', color: 'var(--light-text)' }}>Account Created: {creationDate}</span>
               </div>
 
-              <form onSubmit={handleUpdateProfile} style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
-                <div className="form-group">
-                  <label className="form-label">Full Name</label>
-                  <input 
-                    type="text" 
-                    className="form-input" 
-                    value={profileName}
-                    onChange={(e) => setProfileName(e.target.value)}
-                    required
-                  />
-                </div>
-
-                <div className="form-group">
-                  <label className="form-label">Phone Number</label>
-                  <div style={{ display: 'flex', gap: '0.5rem' }}>
-                    <div className="form-input" style={{ width: '80px', display: 'flex', alignItems: 'center', justifyContent: 'center', background: '#eaeaea', fontWeight: 'bold' }}>
-                      +91
+              {!isEditingWebProfile ? (
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
+                  <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1.5rem' }}>
+                    <div style={{ padding: '0.75rem', background: '#F8FAFC', borderRadius: '8px' }}>
+                      <label style={{ fontWeight: 600, fontSize: '0.85rem', color: '#64748B' }}>Full Name</label>
+                      <div style={{ fontSize: '1.1rem', fontWeight: 700, color: '#003135', marginTop: '0.25rem' }}>{user?.name || 'N/A'}</div>
                     </div>
+                    <div style={{ padding: '0.75rem', background: '#F8FAFC', borderRadius: '8px' }}>
+                      <label style={{ fontWeight: 600, fontSize: '0.85rem', color: '#64748B' }}>Phone Number</label>
+                      <div style={{ fontSize: '1.1rem', fontWeight: 700, color: '#003135', marginTop: '0.25rem' }}>{user?.phone ? `+91 ${user.phone}` : 'N/A'}</div>
+                    </div>
+                    <div style={{ padding: '0.75rem', background: '#F8FAFC', borderRadius: '8px' }}>
+                      <label style={{ fontWeight: 600, fontSize: '0.85rem', color: '#64748B' }}>Registered Email</label>
+                      <div style={{ fontSize: '1.1rem', fontWeight: 700, color: '#003135', marginTop: '0.25rem' }}>{user?.email || 'N/A'}</div>
+                    </div>
+                    <div style={{ padding: '0.75rem', background: '#F8FAFC', borderRadius: '8px' }}>
+                      <label style={{ fontWeight: 600, fontSize: '0.85rem', color: '#64748B' }}>Age</label>
+                      <div style={{ fontSize: '1.1rem', fontWeight: 700, color: '#003135', marginTop: '0.25rem' }}>{user?.age ? `${user.age} years old` : 'N/A'}</div>
+                    </div>
+                    <div style={{ padding: '0.75rem', background: '#F8FAFC', borderRadius: '8px' }}>
+                      <label style={{ fontWeight: 600, fontSize: '0.85rem', color: '#64748B' }}>Gender</label>
+                      <div style={{ fontSize: '1.1rem', fontWeight: 700, color: '#003135', marginTop: '0.25rem' }}>{user?.gender || 'N/A'}</div>
+                    </div>
+                    <div style={{ padding: '0.75rem', background: '#F8FAFC', borderRadius: '8px' }}>
+                      <label style={{ fontWeight: 600, fontSize: '0.85rem', color: '#64748B' }}>Location</label>
+                      <div style={{ fontSize: '1.1rem', fontWeight: 700, color: '#003135', marginTop: '0.25rem' }}>{user?.location || 'N/A'}</div>
+                    </div>
+                  </div>
+                  <div style={{ display: 'flex', gap: '1rem', marginTop: '1.5rem' }}>
+                    <button className="btn btn-primary" style={{ flex: 1 }} onClick={() => setIsEditingWebProfile(true)}>
+                      Edit Profile
+                    </button>
+                    <button type="button" className="btn btn-danger" onClick={handleLogoutClick} style={{ gap: '0.5rem' }}>
+                      <LogOut size={16} /> Logout
+                    </button>
+                  </div>
+                </div>
+              ) : (
+                <form onSubmit={handleUpdateProfile} style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
+                  <div className="form-group">
+                    <label className="form-label">Full Name</label>
                     <input 
-                      type="tel" 
+                      type="text" 
                       className="form-input" 
-                      value={profilePhone}
-                      onChange={(e) => setProfilePhone(e.target.value)}
-                      maxLength={10}
+                      value={profileName}
+                      onChange={(e) => setProfileName(e.target.value)}
                       required
                     />
                   </div>
-                </div>
 
-                <div className="form-group">
-                  <label className="form-label">Registered Email</label>
-                  <input 
-                    type="email" 
-                    className="form-input" 
-                    value={user?.email || ''}
-                    disabled
-                  />
-                  <span style={{ fontSize: '0.75rem', color: 'var(--light-text)' }}>Account email address cannot be changed</span>
-                </div>
+                  <div className="form-group">
+                    <label className="form-label">Phone Number</label>
+                    <div style={{ display: 'flex', gap: '0.5rem' }}>
+                      <div className="form-input" style={{ width: '80px', display: 'flex', alignItems: 'center', justifyContent: 'center', background: '#eaeaea', fontWeight: 'bold' }}>
+                        +91
+                      </div>
+                      <input 
+                        type="tel" 
+                        className="form-input" 
+                        value={profilePhone}
+                        onChange={(e) => setProfilePhone(e.target.value)}
+                        maxLength={10}
+                        required
+                      />
+                    </div>
+                  </div>
 
-                <div style={{ display: 'flex', gap: '1rem', marginTop: '1.5rem' }}>
-                  <button type="submit" className="btn btn-primary" style={{ flex: 1 }} disabled={updatingProfile}>
-                    {updatingProfile ? <Loader2 className="spinner" size={16} /> : 'Save Changes'}
-                  </button>
-                  <button type="button" className="btn btn-danger" onClick={handleLogoutClick} style={{ gap: '0.5rem' }}>
-                    <LogOut size={16} /> Logout
-                  </button>
-                </div>
-              </form>
+                  <div className="form-group">
+                    <label className="form-label">Age</label>
+                    <input 
+                      type="number" 
+                      className="form-input" 
+                      value={profileAge}
+                      onChange={(e) => setProfileAge(e.target.value)}
+                      min="13"
+                      max="120"
+                      required
+                    />
+                  </div>
+
+                  <div className="form-group">
+                    <label className="form-label">Gender</label>
+                    <select
+                      className="form-input"
+                      value={profileGender}
+                      onChange={(e) => setProfileGender(e.target.value)}
+                      required
+                    >
+                      <option value="" disabled>Select Gender</option>
+                      <option value="Male">Male</option>
+                      <option value="Female">Female</option>
+                      <option value="Non-binary">Non-binary</option>
+                      <option value="Prefer not to say">Prefer not to say</option>
+                    </select>
+                  </div>
+
+                  <div className="form-group">
+                    <label className="form-label">Location (City / Area)</label>
+                    <input 
+                      type="text" 
+                      className="form-input" 
+                      value={profileLocation}
+                      onChange={(e) => setProfileLocation(e.target.value)}
+                      required
+                    />
+                  </div>
+
+                  <div className="form-group">
+                    <label className="form-label">Registered Email</label>
+                    <input 
+                      type="email" 
+                      className="form-input" 
+                      value={user?.email || ''}
+                      disabled
+                    />
+                    <span style={{ fontSize: '0.75rem', color: 'var(--light-text)' }}>Account email address cannot be changed</span>
+                  </div>
+
+                  <div style={{ display: 'flex', gap: '1rem', marginTop: '1.5rem' }}>
+                    <button type="submit" className="btn btn-primary" style={{ flex: 1 }} disabled={updatingProfile}>
+                      {updatingProfile ? <Loader2 className="spinner" size={16} /> : 'Save Changes'}
+                    </button>
+                    <button type="button" className="btn btn-secondary" onClick={() => {
+                      setProfileName(user?.name || '');
+                      setProfilePhone(user?.phone || '');
+                      setProfileAge(user?.age ? String(user.age) : '');
+                      setProfileGender(user?.gender || '');
+                      setProfileLocation(user?.location || '');
+                      setIsEditingWebProfile(false);
+                    }} style={{ flex: 1, border: '1px solid #CBD5E1', background: '#FFF' }}>
+                      Cancel
+                    </button>
+                  </div>
+                </form>
+              )}
             </div>
           )}
 
@@ -728,15 +946,91 @@ function App() {
     );
   }
 
-  // Renders Authentication pages if user is not authenticated or profile setup is incomplete
-  if (!isAuthenticated || !user?.isProfileVerified) {
+  // Renders Authentication pages if user is not authenticated, email is not verified, or profile setup is incomplete
+  if (!isAuthenticated || !user?.emailVerified || !user?.isProfileVerified) {
     return <AuthModule />;
   }
 
   return (
     <div className="app-container">
+      {isOffline && (
+        <div className="offline-banner">
+          <div className="offline-content">
+            <AlertCircle size={16} />
+            <span>You are currently offline. Some features are limited.</span>
+          </div>
+          <button className="btn-retry-conn" onClick={() => {
+            const online = navigator.onLine;
+            useAppStore.getState().setOffline(!online);
+            if (online) {
+              showToast('Back online! Connection restored.', 'success');
+            } else {
+              showToast('Still offline. Please check your connection.', 'error');
+            }
+          }}>
+            Retry Connection
+          </button>
+        </div>
+      )}
+
+      {/* Premium Toast notification popup */}
+      {toast && (
+        <div className={`premium-toast toast-${toast.type}`}>
+          <div className="toast-content">
+            {toast.type === 'success' && <ShieldCheck className="toast-icon success" size={18} />}
+            {toast.type === 'error' && <AlertCircle className="toast-icon error" size={18} />}
+            {toast.type === 'warning' && <ShieldAlert className="toast-icon warning" size={18} />}
+            <span className="toast-message">{toast.message}</span>
+          </div>
+          <button className="toast-close" onClick={hideToast}>
+            <X size={14} />
+          </button>
+        </div>
+      )}
+
+      {/* Premium custom confirmation modal */}
+      {confirmModal.show && (
+        <div className="premium-confirm-overlay">
+          <div className="premium-confirm-card glass">
+            <div className="confirm-header">
+              <ShieldAlert className="confirm-title-icon" size={22} />
+              <h3>{confirmModal.title || 'Are you sure?'}</h3>
+            </div>
+            <div className="confirm-body">
+              <p>{confirmModal.message}</p>
+            </div>
+            <div className="confirm-footer">
+              <button 
+                className="btn-confirm-cancel" 
+                onClick={() => {
+                  if (confirmModal.onCancel) confirmModal.onCancel();
+                  hideConfirm();
+                }}
+              >
+                Cancel
+              </button>
+              <button 
+                className="btn-confirm-accept" 
+                onClick={() => {
+                  if (confirmModal.onConfirm) confirmModal.onConfirm();
+                  hideConfirm();
+                }}
+              >
+                Confirm
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* Sidebar Panel */}
-      <Sidebar onCreateReport={() => setShowWizard(true)} />
+      <Sidebar onCreateReport={() => {
+        if (isOffline) {
+          showToast('Network connection unavailable. Please check your connection.', 'error');
+          return;
+        }
+        setShowWizard(true);
+      }} />
 
       {/* Main content pane */}
       <main className="main-content">

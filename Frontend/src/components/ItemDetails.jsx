@@ -6,15 +6,19 @@ import { chatService } from '../../../Backend/services/chatService';
 import { rtdb } from '../../../Backend/config/firebase';
 import { ref, get } from 'firebase/database';
 import { X, Calendar, MapPin, Phone, User, ShieldCheck, HelpCircle, Loader2, Sparkles, MessageSquare, AlertCircle } from 'lucide-react';
+import { errorHelper } from '../services/errorHelper';
 
 export default function ItemDetails({ onClose }) {
   const user = useAppStore((state) => state.user);
   const item = useAppStore((state) => state.selectedItem);
   const setActiveTab = useAppStore((state) => state.setActiveTab);
+  const isOffline = useAppStore((state) => state.isOffline);
+  const showToast = useAppStore((state) => state.showToast);
 
   const [claimStatus, setClaimStatus] = useState(null); // null | 'pending' | 'accepted' | 'rejected'
   const [showClaimForm, setShowClaimForm] = useState(false);
   const [answers, setAnswers] = useState([]);
+  const [fieldErrors, setFieldErrors] = useState([]);
   const [verifying, setVerifying] = useState(false);
   const [submitting, setSubmitting] = useState(false);
   const [feedback, setFeedback] = useState(null); // { score, reason }
@@ -41,6 +45,7 @@ export default function ItemDetails({ onClose }) {
       setVerifying(false);
       setSubmitting(false);
       setAnswers(new Array(questions.length).fill(''));
+      setFieldErrors(new Array(questions.length).fill(''));
 
       if (!isOwner) {
         checkClaimStatus();
@@ -62,8 +67,22 @@ export default function ItemDetails({ onClose }) {
     setError('');
     setFeedback(null);
 
-    const emptyAnswer = answers.some(ans => !ans.trim());
-    if (emptyAnswer) {
+    if (isOffline) {
+      showToast('Network connection unavailable. Cannot submit claim request.', 'error');
+      return;
+    }
+
+    const errors = new Array(questions.length).fill('');
+    let hasErrors = false;
+    answers.forEach((ans, idx) => {
+      if (!ans.trim()) {
+        errors[idx] = 'This answer is required.';
+        hasErrors = true;
+      }
+    });
+
+    if (hasErrors) {
+      setFieldErrors(errors);
       setError('Please answer all verification questions.');
       return;
     }
@@ -89,9 +108,9 @@ export default function ItemDetails({ onClose }) {
         if (claimResult.success) {
           setClaimStatus('pending');
           setShowClaimForm(false);
-          alert('Claim Request Sent successfully!');
+          showToast('Claim Request Sent successfully!', 'success');
         } else {
-          setError('Failed to send claim request: ' + claimResult.error);
+          setError(errorHelper.getFriendlyMessage(claimResult.error));
         }
       } else {
         setFeedback({ score: 0, reason: 'Verification failed. The provided answers do not match the item details.' });
@@ -99,7 +118,7 @@ export default function ItemDetails({ onClose }) {
       }
     } catch (err) {
       console.error(err);
-      setError('Verification failed: ' + err.message);
+      setError(errorHelper.getFriendlyMessage(err));
     } finally {
       setVerifying(false);
       setSubmitting(false);
@@ -107,6 +126,10 @@ export default function ItemDetails({ onClose }) {
   };
 
   const handleStartChat = async () => {
+    if (isOffline) {
+      showToast('Network connection unavailable. Cannot start chat.', 'error');
+      return;
+    }
     try {
       // Check block status
       const blockRef1 = ref(rtdb, `blocks/${user.uid}/${item.userId}`);
@@ -115,11 +138,11 @@ export default function ItemDetails({ onClose }) {
       const blockSnap2 = await get(blockRef2);
       
       if (blockSnap1.exists() && blockSnap1.val() === true) {
-        alert('You have blocked this user. Please unblock them in settings to start a conversation.');
+        showToast('You have blocked this user. Please unblock them in settings to start a conversation.', 'warning');
         return;
       }
       if (blockSnap2.exists() && blockSnap2.val() === true) {
-        alert('This user has blocked you. Start chat is disabled.');
+        showToast('This user has blocked you. Start chat is disabled.', 'error');
         return;
       }
 
@@ -128,7 +151,7 @@ export default function ItemDetails({ onClose }) {
       onClose();
     } catch (err) {
       console.error(err);
-      alert('Failed to start chat: ' + err.message);
+      showToast('Failed to start chat: ' + errorHelper.getFriendlyMessage(err), 'error');
     }
   };
 
@@ -292,11 +315,16 @@ export default function ItemDetails({ onClose }) {
                       const updated = [...answers];
                       updated[idx] = e.target.value;
                       setAnswers(updated);
+                      
+                      const errs = [...fieldErrors];
+                      errs[idx] = '';
+                      setFieldErrors(errs);
+                      
                       setError('');
                     }}
                     disabled={verifying}
-                    required
                   />
+                  {fieldErrors[idx] && <span className="inline-field-error">{fieldErrors[idx]}</span>}
                 </div>
               ))}
 

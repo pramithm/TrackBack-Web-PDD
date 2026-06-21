@@ -1,38 +1,60 @@
 import React, { useState } from 'react';
-import { StyleSheet, View, Text, TextInput, TouchableOpacity, ActivityIndicator, KeyboardAvoidingView, ScrollView, Platform } from 'react-native';
+import { StyleSheet, View, Text, TextInput, TouchableOpacity, ActivityIndicator, KeyboardAvoidingView, ScrollView, Platform, Alert } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import { auth } from '@/src/config/firebase';
 import { sendPasswordResetEmail } from 'firebase/auth';
+import { Colors, CornerRadius, Shadows, Fonts } from '@/constants/theme';
+import { connectivity } from '@/src/services/connectivity';
+import { errorHelper } from '@/src/services/errorHelper';
 
 export default function ResetPasswordScreen() {
   const router = useRouter();
+  const theme = Colors.light;
   const [email, setEmail] = useState('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
 
   const handleResetPassword = async () => {
-    if (!email.trim()) {
+    const trimmedEmail = email.trim();
+    if (!trimmedEmail) {
       setError('Please enter your email address.');
       return;
     }
 
+    const emailRegex = /\S+@\S+\.\S+/;
+    if (!emailRegex.test(trimmedEmail)) {
+      setError('Please enter a valid email address.');
+      return;
+    }
+
+    setLoading(true);
+    setError('');
+
     try {
-      setLoading(true);
-      setError('');
-      await sendPasswordResetEmail(auth, email.trim());
-      alert('Password reset link sent to your email.');
-      router.replace('/(auth)/login' as any);
+      const isOnline = await connectivity.checkOnline();
+      if (!isOnline) {
+        setError('Network connection unavailable. Please check your internet connection and try again.');
+        setLoading(false);
+        return;
+      }
+
+      await sendPasswordResetEmail(auth, trimmedEmail);
+      Alert.alert(
+        'Success',
+        'Password reset link sent to your email.',
+        [
+          {
+            text: 'OK',
+            onPress: () => router.replace('/(auth)/login' as any)
+          }
+        ]
+      );
     } catch (err: any) {
       console.error(err);
-      let errMsg = err.message || 'An error occurred while sending the reset link.';
-      if (errMsg.includes('auth/user-not-found')) {
-        errMsg = 'No user found with this email address.';
-      } else if (errMsg.includes('auth/invalid-email')) {
-        errMsg = 'Please enter a valid email address.';
-      }
-      setError(errMsg.replace('Firebase:', '').trim());
+      const friendlyMsg = errorHelper.getFriendlyMessage(err);
+      setError(friendlyMsg);
     } finally {
       setLoading(false);
     }
@@ -44,12 +66,12 @@ export default function ResetPasswordScreen() {
         behavior={Platform.OS === 'ios' ? 'padding' : 'height'} 
         style={styles.keyboardView}
       >
-        <ScrollView contentContainerStyle={styles.scrollContent} keyboardShouldPersistTaps="handled">
+        <ScrollView contentContainerStyle={styles.scrollContent} keyboardShouldPersistTaps="handled" showsVerticalScrollIndicator={false}>
           <TouchableOpacity 
             style={styles.backBtn} 
             onPress={() => router.back()}
           >
-            <Ionicons name="arrow-back" size={24} color="#1A1A1A" />
+            <Ionicons name="arrow-back" size={24} color={theme.text} />
           </TouchableOpacity>
 
           <View style={styles.header}>
@@ -71,11 +93,11 @@ export default function ResetPasswordScreen() {
             <View style={styles.inputGroup}>
               <Text style={styles.label}>Email Address</Text>
               <View style={styles.inputWrapper}>
-                <Ionicons name="mail-outline" size={20} color="#636E72" style={styles.inputIcon} />
+                <Ionicons name="mail-outline" size={20} color={theme.textMuted} style={styles.inputIcon} />
                 <TextInput
                   style={styles.input}
                   placeholder="name@example.com"
-                  placeholderTextColor="#999"
+                  placeholderTextColor={theme.textMuted}
                   value={email}
                   onChangeText={setEmail}
                   autoCapitalize="none"
@@ -115,7 +137,7 @@ export default function ResetPasswordScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#EFF6F6',
+    backgroundColor: Colors.light.background,
   },
   keyboardView: {
     flex: 1,
@@ -128,9 +150,9 @@ const styles = StyleSheet.create({
   },
   backBtn: {
     alignSelf: 'flex-start',
-    padding: 8,
+    padding: 10,
     borderRadius: 50,
-    backgroundColor: 'rgba(0,0,0,0.03)',
+    backgroundColor: 'rgba(52, 92, 114, 0.08)',
     marginBottom: 24,
   },
   header: {
@@ -138,13 +160,14 @@ const styles = StyleSheet.create({
   },
   title: {
     fontSize: 32,
-    fontWeight: 'bold',
-    color: '#1A1A1A',
+    fontFamily: Fonts.headings.bold,
+    color: Colors.light.text,
     marginBottom: 12,
   },
   subtitle: {
     fontSize: 16,
-    color: '#636E72',
+    fontFamily: Fonts.body.regular,
+    color: Colors.light.textSecondary,
     lineHeight: 24,
   },
   errorContainer: {
@@ -159,6 +182,7 @@ const styles = StyleSheet.create({
   errorText: {
     color: '#D63031',
     fontSize: 14,
+    fontFamily: Fonts.body.regular,
     flex: 1,
   },
   form: {
@@ -169,23 +193,19 @@ const styles = StyleSheet.create({
   },
   label: {
     fontSize: 14,
-    fontWeight: '600',
-    color: '#636E72',
+    fontFamily: Fonts.body.semiBold,
+    color: Colors.light.textSecondary,
     marginBottom: 8,
   },
   inputWrapper: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: '#FFFFFF',
+    backgroundColor: Colors.light.surface,
     borderWidth: 1,
-    borderColor: 'rgba(0, 0, 0, 0.1)',
-    borderRadius: 12,
+    borderColor: Colors.light.border,
+    borderRadius: CornerRadius.inputs,
     height: 56,
-    shadowColor: '#000000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.02,
-    shadowRadius: 4,
-    elevation: 1,
+    ...Shadows.cards,
   },
   inputIcon: {
     marginLeft: 16,
@@ -194,34 +214,31 @@ const styles = StyleSheet.create({
   input: {
     flex: 1,
     height: '100%',
-    color: '#1A1A1A',
+    color: Colors.light.text,
     fontSize: 16,
+    fontFamily: Fonts.body.regular,
     paddingRight: 16,
   },
   resetBtn: {
     height: 56,
-    backgroundColor: '#9A2E17',
-    borderRadius: 16,
+    backgroundColor: Colors.light.primary,
+    borderRadius: CornerRadius.buttons,
     justifyContent: 'center',
     alignItems: 'center',
-    shadowColor: '#9A2E17',
-    shadowOffset: { width: 0, height: 6 },
-    shadowOpacity: 0.3,
-    shadowRadius: 10,
-    elevation: 5,
+    ...Shadows.buttons,
   },
   resetBtnText: {
     color: '#FFFFFF',
     fontSize: 18,
-    fontWeight: 'bold',
+    fontFamily: Fonts.body.bold,
   },
   footer: {
     alignItems: 'center',
     marginTop: 40,
   },
   backLinkText: {
-    color: '#636E72',
+    color: Colors.light.primary,
     fontSize: 16,
-    fontWeight: 'bold',
+    fontFamily: Fonts.body.bold,
   },
 });

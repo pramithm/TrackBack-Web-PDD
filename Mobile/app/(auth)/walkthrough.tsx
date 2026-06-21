@@ -1,10 +1,9 @@
 import React, { useState } from 'react';
-import { StyleSheet, View, Text, TouchableOpacity, Dimensions } from 'react-native';
+import { StyleSheet, View, Text, TouchableOpacity } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
-
-const { width } = Dimensions.get('window');
+import { Colors, CornerRadius, Shadows, Fonts } from '@/constants/theme';
 
 interface Slide {
   icon: keyof typeof Ionicons.glyphMap;
@@ -154,7 +153,7 @@ export default function WalkthroughScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#EFF6F6',
+    backgroundColor: Colors.light.background,
   },
   slideContainer: {
     flex: 1,
@@ -169,9 +168,9 @@ const styles = StyleSheet.create({
     padding: 8,
   },
   skipText: {
-    fontSize: 18,
-    fontWeight: 'bold',
-    color: '#636E72',
+    fontSize: 16,
+    fontFamily: Fonts.body.bold,
+    color: Colors.light.textMuted,
   },
   badgeContainer: {
     flex: 1,
@@ -182,14 +181,10 @@ const styles = StyleSheet.create({
     width: 160,
     height: 160,
     borderRadius: 80,
-    backgroundColor: '#9A2E17',
+    backgroundColor: Colors.light.primary,
     justifyContent: 'center',
     alignItems: 'center',
-    shadowColor: '#9A2E17',
-    shadowOffset: { width: 0, height: 8 },
-    shadowOpacity: 0.2,
-    shadowRadius: 12,
-    elevation: 6,
+    ...Shadows.buttons,
   },
   textContainer: {
     alignItems: 'center',
@@ -198,14 +193,15 @@ const styles = StyleSheet.create({
   },
   slideTitle: {
     fontSize: 28,
-    fontWeight: 'bold',
-    color: '#1A1A1A',
+    fontFamily: Fonts.headings.bold,
+    color: Colors.light.text,
     textAlign: 'center',
     marginBottom: 16,
   },
   slideSubtitle: {
     fontSize: 16,
-    color: '#636E72',
+    fontFamily: Fonts.body.regular,
+    color: Colors.light.textSecondary,
     textAlign: 'center',
     lineHeight: 24,
   },
@@ -221,29 +217,25 @@ const styles = StyleSheet.create({
   },
   activeDot: {
     width: 24,
-    backgroundColor: '#9A2E17',
+    backgroundColor: Colors.light.primary,
   },
   inactiveDot: {
     width: 10,
-    backgroundColor: '#D1E6E6',
+    backgroundColor: Colors.light.border,
   },
   actionButton: {
     width: '100%',
     height: 56,
-    backgroundColor: '#9A2E17',
-    borderRadius: 16,
+    backgroundColor: Colors.light.primary,
+    borderRadius: CornerRadius.buttons,
     justifyContent: 'center',
     alignItems: 'center',
-    shadowColor: '#9A2E17',
-    shadowOffset: { width: 0, height: 6 },
-    shadowOpacity: 0.3,
-    shadowRadius: 10,
-    elevation: 5,
+    ...Shadows.buttons,
   },
   actionButtonText: {
     color: '#FFFFFF',
     fontSize: 18,
-    fontWeight: 'bold',
+    fontFamily: Fonts.body.bold,
   },
   buttonGroup: {
     width: '100%',
@@ -253,15 +245,15 @@ const styles = StyleSheet.create({
     width: '100%',
     height: 56,
     backgroundColor: '#FFFFFF',
-    borderWidth: 2,
-    borderColor: '#9A2E17',
-    borderRadius: 16,
+    borderWidth: 1.5,
+    borderColor: Colors.light.primary,
+    borderRadius: CornerRadius.buttons,
     justifyContent: 'center',
     alignItems: 'center',
   },
   loginButtonText: {
-    color: '#9A2E17',
+    color: Colors.light.primary,
     fontSize: 18,
-    fontWeight: 'bold',
+    fontFamily: Fonts.body.bold,
   },
 });

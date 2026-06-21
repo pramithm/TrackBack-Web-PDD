@@ -5,9 +5,13 @@ import { useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import { auth } from '@/src/config/firebase';
 import { signInWithEmailAndPassword } from 'firebase/auth';
+import { Colors, CornerRadius, Shadows, Fonts } from '@/constants/theme';
+import { connectivity } from '@/src/services/connectivity';
+import { errorHelper } from '@/src/services/errorHelper';
 
 export default function LoginScreen() {
   const router = useRouter();
+  const theme = Colors.light;
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [secureTextEntry, setSecureTextEntry] = useState(true);
@@ -15,26 +19,35 @@ export default function LoginScreen() {
   const [error, setError] = useState('');
 
   const handleLogin = async () => {
-    if (!email.trim() || !password.trim()) {
-      setError('Please enter both email and password.');
+    const trimmedEmail = email.trim();
+    if (!trimmedEmail || !password.trim()) {
+      setError('Please fill in all required fields.');
       return;
     }
 
+    const emailRegex = /\S+@\S+\.\S+/;
+    if (!emailRegex.test(trimmedEmail)) {
+      setError('Please enter a valid email address.');
+      return;
+    }
+
+    setLoading(true);
+    setError('');
+
     try {
-      setLoading(false);
-      setLoading(true);
-      setError('');
-      await signInWithEmailAndPassword(auth, email.trim(), password);
+      const isOnline = await connectivity.checkOnline();
+      if (!isOnline) {
+        setError('Network connection unavailable. Please check your internet connection and try again.');
+        setLoading(false);
+        return;
+      }
+
+      await signInWithEmailAndPassword(auth, trimmedEmail, password);
       // Auth state listener in authStore will trigger and redirect user automatically
     } catch (err: any) {
       console.error(err);
-      let errMsg = err.message || 'An error occurred during log in.';
-      if (errMsg.includes('auth/invalid-credential') || errMsg.includes('auth/user-not-found') || errMsg.includes('auth/wrong-password')) {
-        errMsg = 'Invalid email or password.';
-      } else if (errMsg.includes('auth/invalid-email')) {
-        errMsg = 'Please enter a valid email address.';
-      }
-      setError(errMsg.replace('Firebase:', '').trim());
+      const friendlyMsg = errorHelper.getFriendlyMessage(err);
+      setError(friendlyMsg);
     } finally {
       setLoading(false);
     }
@@ -46,7 +59,7 @@ export default function LoginScreen() {
         behavior={Platform.OS === 'ios' ? 'padding' : 'height'} 
         style={styles.keyboardView}
       >
-        <ScrollView contentContainerStyle={styles.scrollContent} keyboardShouldPersistTaps="handled">
+        <ScrollView contentContainerStyle={styles.scrollContent} keyboardShouldPersistTaps="handled" showsVerticalScrollIndicator={false}>
           <View style={styles.header}>
             <Text style={styles.title} accessibilityLabel="welcome-title" testID="welcome-title">Welcome Back</Text>
             <Text style={styles.subtitle}>Log in to find your lost items</Text>
@@ -65,11 +78,11 @@ export default function LoginScreen() {
             <View style={styles.inputGroup}>
               <Text style={styles.label}>Email Address</Text>
               <View style={styles.inputWrapper}>
-                <Ionicons name="mail-outline" size={20} color="#636E72" style={styles.inputIcon} />
+                <Ionicons name="mail-outline" size={20} color={theme.textMuted} style={styles.inputIcon} />
                 <TextInput
                   style={styles.input}
                   placeholder="name@example.com"
-                  placeholderTextColor="#999"
+                  placeholderTextColor={theme.textMuted}
                   value={email}
                   onChangeText={setEmail}
                   autoCapitalize="none"
@@ -85,11 +98,11 @@ export default function LoginScreen() {
             <View style={styles.inputGroup}>
               <Text style={styles.label}>Password</Text>
               <View style={styles.inputWrapper}>
-                <Ionicons name="key-outline" size={20} color="#636E72" style={styles.inputIcon} />
+                <Ionicons name="key-outline" size={20} color={theme.textMuted} style={styles.inputIcon} />
                 <TextInput
                   style={[styles.input, { paddingRight: 48 }]}
                   placeholder="••••••••"
-                  placeholderTextColor="#999"
+                  placeholderTextColor={theme.textMuted}
                   value={password}
                   onChangeText={setPassword}
                   secureTextEntry={secureTextEntry}
@@ -145,7 +158,7 @@ export default function LoginScreen() {
             onPress={() => alert('Google authentication is not configured for mobile locally.')}
             activeOpacity={0.8}
           >
-            <Ionicons name="logo-google" size={20} color="#9A2E17" />
+            <Ionicons name="logo-google" size={20} color={theme.primary} />
             <Text style={styles.googleBtnText}>Continue with Google</Text>
           </TouchableOpacity>
 
@@ -168,7 +181,7 @@ export default function LoginScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#EFF6F6',
+    backgroundColor: Colors.light.background,
   },
   keyboardView: {
     flex: 1,
@@ -184,13 +197,14 @@ const styles = StyleSheet.create({
   },
   title: {
     fontSize: 32,
-    fontWeight: 'bold',
-    color: '#1A1A1A',
+    fontFamily: Fonts.headings.bold,
+    color: Colors.light.text,
     marginBottom: 8,
   },
   subtitle: {
     fontSize: 16,
-    color: '#636E72',
+    fontFamily: Fonts.body.regular,
+    color: Colors.light.textSecondary,
   },
   errorContainer: {
     flexDirection: 'row',
@@ -204,6 +218,7 @@ const styles = StyleSheet.create({
   errorText: {
     color: '#D63031',
     fontSize: 14,
+    fontFamily: Fonts.body.regular,
     flex: 1,
   },
   form: {
@@ -214,24 +229,20 @@ const styles = StyleSheet.create({
   },
   label: {
     fontSize: 14,
-    fontWeight: '600',
-    color: '#636E72',
+    fontFamily: Fonts.body.semiBold,
+    color: Colors.light.textSecondary,
     marginBottom: 8,
   },
   inputWrapper: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: '#FFFFFF',
+    backgroundColor: Colors.light.surface,
     borderWidth: 1,
-    borderColor: 'rgba(0, 0, 0, 0.1)',
-    borderRadius: 12,
+    borderColor: Colors.light.border,
+    borderRadius: CornerRadius.inputs,
     height: 56,
     position: 'relative',
-    shadowColor: '#000000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.02,
-    shadowRadius: 4,
-    elevation: 1,
+    ...Shadows.cards,
   },
   inputIcon: {
     marginLeft: 16,
@@ -240,8 +251,9 @@ const styles = StyleSheet.create({
   input: {
     flex: 1,
     height: '100%',
-    color: '#1A1A1A',
+    color: Colors.light.text,
     fontSize: 16,
+    fontFamily: Fonts.body.regular,
     paddingRight: 16,
   },
   toggleButton: {
@@ -258,26 +270,22 @@ const styles = StyleSheet.create({
     marginBottom: 28,
   },
   forgotText: {
-    color: '#636E72',
-    fontWeight: 'bold',
+    color: Colors.light.primary,
+    fontFamily: Fonts.body.bold,
     fontSize: 14,
   },
   loginBtn: {
     height: 56,
-    backgroundColor: '#9A2E17',
-    borderRadius: 16,
+    backgroundColor: Colors.light.primary,
+    borderRadius: CornerRadius.buttons,
     justifyContent: 'center',
     alignItems: 'center',
-    shadowColor: '#9A2E17',
-    shadowOffset: { width: 0, height: 6 },
-    shadowOpacity: 0.3,
-    shadowRadius: 10,
-    elevation: 5,
+    ...Shadows.buttons,
   },
   loginBtnText: {
     color: '#FFFFFF',
     fontSize: 18,
-    fontWeight: 'bold',
+    fontFamily: Fonts.body.bold,
   },
   dividerContainer: {
     flexDirection: 'row',
@@ -287,34 +295,30 @@ const styles = StyleSheet.create({
   dividerLine: {
     flex: 1,
     height: 1,
-    backgroundColor: 'rgba(0, 0, 0, 0.1)',
+    backgroundColor: Colors.light.divider,
   },
   dividerText: {
     marginHorizontal: 16,
-    color: '#636E72',
-    fontWeight: '600',
+    color: Colors.light.textMuted,
+    fontFamily: Fonts.body.semiBold,
     fontSize: 14,
   },
   googleBtn: {
     flexDirection: 'row',
     height: 56,
-    backgroundColor: '#FFFFFF',
+    backgroundColor: Colors.light.surface,
     borderWidth: 1,
-    borderColor: 'rgba(0, 0, 0, 0.1)',
-    borderRadius: 16,
+    borderColor: Colors.light.border,
+    borderRadius: CornerRadius.buttons,
     justifyContent: 'center',
     alignItems: 'center',
     gap: 12,
-    shadowColor: '#000000',
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.03,
-    shadowRadius: 6,
-    elevation: 2,
+    ...Shadows.cards,
   },
   googleBtnText: {
-    color: '#9A2E17',
+    color: Colors.light.primary,
     fontSize: 16,
-    fontWeight: 'bold',
+    fontFamily: Fonts.body.bold,
   },
   footer: {
     flexDirection: 'row',
@@ -322,12 +326,13 @@ const styles = StyleSheet.create({
     marginTop: 32,
   },
   footerText: {
-    color: '#636E72',
+    color: Colors.light.textSecondary,
     fontSize: 15,
+    fontFamily: Fonts.body.regular,
   },
   signupText: {
-    color: '#9A2E17',
+    color: Colors.light.primary,
     fontSize: 15,
-    fontWeight: 'bold',
+    fontFamily: Fonts.body.bold,
   },
 });
