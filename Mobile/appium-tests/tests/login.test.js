@@ -66,18 +66,18 @@ async function ensureLoggedOut(driver) {
     console.log('  👉 ensureLoggedOut: On Dashboard. Performing UI logout...');
     try {
       // Navigate to Home tab first to ensure avatar-button is rendered
-      const homeTab = await driver.$('//*[@resource-id="tab-home"] | ~tab-home | //android.widget.TextView[contains(@text,"Home")]');
+      const homeTab = await driver.$('//*[@resource-id="tab-home"] | //*[@content-desc="tab-home"] | //android.widget.TextView[contains(@text,"Home")]');
       if (await homeTab.isExisting()) {
         await homeTab.click();
         await helpers.sleep(1500);
       }
 
-      const avatarBtn = await driver.$('//*[@resource-id="avatar-button"] | ~avatar-button');
+      const avatarBtn = await driver.$('//*[@resource-id="avatar-button"] | //*[@content-desc="avatar-button"]');
       await avatarBtn.waitForExist({ timeout: 5000 });
       await avatarBtn.click();
       await helpers.sleep(2000);
 
-      const logoutBtn = await driver.$('//*[@resource-id="logout-button"] | ~logout-button');
+      const logoutBtn = await driver.$('//*[@resource-id="logout-button"] | //*[@content-desc="logout-button"]');
       await logoutBtn.waitForExist({ timeout: 5000 });
       await logoutBtn.click();
       await helpers.sleep(1500);
@@ -402,9 +402,9 @@ describe('TrackBack Android – Login & Authentication', function () {
       await loginPage().tapSignUp();
       await helpers.sleep(2000);
 
-      // Verify sign-up form appeared
-      const signupEmail = await driver.$('//android.widget.EditText[@hint="Email"]');
-      await signupEmail.waitForExist({ timeout: 10000 });
+      // Verify sign-up form (Step 1 Basic Info) appeared by checking for name input field
+      const signupName = await driver.$('//*[@resource-id="signup-name"] | //*[@content-desc="signup-name"] | //android.widget.EditText[@hint="e.g. Jordan Smith"]');
+      await signupName.waitForExist({ timeout: 10000 });
 
       await helpers.takeScreenshot(driver, 'TC006_signup_screen');
       helpers.recordResult({ name: 'TC-006 Navigate to Sign Up', status: 'passed', duration: Date.now() - start });
@@ -447,20 +447,20 @@ describe('TrackBack Android – Login & Authentication', function () {
     const start = Date.now();
     try {
       // Navigate to Home tab first to ensure the avatar button is rendered
-      const homeTab = await driver.$('//*[@resource-id="tab-home"] | ~tab-home | //android.widget.TextView[contains(@text,"Home")]');
+      const homeTab = await driver.$('//*[@resource-id="tab-home"] | //*[@content-desc="tab-home"] | //android.widget.TextView[contains(@text,"Home")]');
       if (await homeTab.isExisting()) {
         await homeTab.click();
         await helpers.sleep(1500);
       }
 
       // Tapping on avatar button to go to Profile screen
-      const avatarBtn = await driver.$('//*[@resource-id="avatar-button"] | ~avatar-button');
+      const avatarBtn = await driver.$('//*[@resource-id="avatar-button"] | //*[@content-desc="avatar-button"]');
       await avatarBtn.waitForExist({ timeout: TIMEOUT });
       await avatarBtn.click();
       await helpers.sleep(2000);
 
       // Now on Profile screen, find and tap the logout button
-      const logoutBtn = await driver.$('//*[@resource-id="logout-button"] | ~logout-button');
+      const logoutBtn = await driver.$('//*[@resource-id="logout-button"] | //*[@content-desc="logout-button"]');
       await logoutBtn.waitForExist({ timeout: TIMEOUT });
       await logoutBtn.click();
       await helpers.sleep(1500);

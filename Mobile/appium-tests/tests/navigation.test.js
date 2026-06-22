@@ -58,18 +58,18 @@ async function ensureLoggedOut(driver) {
     console.log('  👉 ensureLoggedOut: On Dashboard. Performing UI logout...');
     try {
       // Navigate to Home tab first to ensure avatar-button is rendered
-      const homeTab = await driver.$('//*[@resource-id="tab-home"] | ~tab-home | //android.widget.TextView[contains(@text,"Home")]');
+      const homeTab = await driver.$('//*[@resource-id="tab-home"] | //*[@content-desc="tab-home"] | //android.widget.TextView[contains(@text,"Home")]');
       if (await homeTab.isExisting()) {
         await homeTab.click();
         await helpers.sleep(1500);
       }
 
-      const avatarBtn = await driver.$('//*[@resource-id="avatar-button"] | ~avatar-button');
+      const avatarBtn = await driver.$('//*[@resource-id="avatar-button"] | //*[@content-desc="avatar-button"]');
       await avatarBtn.waitForExist({ timeout: 5000 });
       await avatarBtn.click();
       await helpers.sleep(2000);
 
-      const logoutBtn = await driver.$('//*[@resource-id="logout-button"] | ~logout-button');
+      const logoutBtn = await driver.$('//*[@resource-id="logout-button"] | //*[@content-desc="logout-button"]');
       await logoutBtn.waitForExist({ timeout: 5000 });
       await logoutBtn.click();
       await helpers.sleep(1500);
