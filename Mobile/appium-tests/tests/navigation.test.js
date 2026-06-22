@@ -69,7 +69,16 @@ async function ensureLoggedOut(driver) {
       await avatarBtn.click();
       await helpers.sleep(2000);
 
-      const logoutBtn = await driver.$('//*[@resource-id="logout-button"] | //*[@content-desc="logout-button"]');
+      let logoutBtn;
+      try {
+        logoutBtn = await driver.$('android=new UiScrollable(new UiSelector().scrollable(true)).scrollIntoView(new UiSelector().resourceId("logout-button"))');
+      } catch (scrollErr) {
+        try {
+          logoutBtn = await driver.$('android=new UiScrollable(new UiSelector().scrollable(true)).scrollIntoView(new UiSelector().description("logout-button"))');
+        } catch (scrollErr2) {
+          logoutBtn = await driver.$('//*[@resource-id="logout-button"] | //*[@content-desc="logout-button"]');
+        }
+      }
       await logoutBtn.waitForExist({ timeout: 5000 });
       await logoutBtn.click();
       await helpers.sleep(1500);
