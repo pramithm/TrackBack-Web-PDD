@@ -32,6 +32,10 @@ function ensureDirs() {
  * @returns {string} absolute path to saved PNG
  */
 async function takeScreenshot(driver, name) {
+  if (!driver || !driver.sessionId) {
+    console.warn(`  ⚠️ Skipping screenshot capture because driver session is inactive.`);
+    return null;
+  }
   ensureDirs();
   const timestamp = new Date().toISOString().replace(/[:.]/g, '-');
   const filename  = `${name}_${timestamp}.png`;
@@ -105,6 +109,10 @@ function getResults() {
  * @returns {string} relative path to saved PNG
  */
 async function captureFailureDiagnostics(driver, name) {
+  if (!driver || !driver.sessionId) {
+    console.warn(`  ⚠️ Skipping failure diagnostics capture because driver session is inactive.`);
+    return null;
+  }
   ensureDirs();
   const timestamp = new Date().toISOString().replace(/[:.]/g, '-');
   const screenshotFilename = `${name}_${timestamp}.png`;

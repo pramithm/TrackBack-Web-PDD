@@ -32,6 +32,10 @@ import {
 } from 'lucide-react';
 import './AuthModule.css';
 
+if (typeof window !== 'undefined') {
+  window.__firebase_auth = auth;
+}
+
 const Facebook = ({ size = 18, ...props }) => (
   <svg 
     xmlns="http://www.w3.org/2000/svg" 

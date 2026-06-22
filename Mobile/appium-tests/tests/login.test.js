@@ -21,8 +21,8 @@ const helpers          = require('../helpers/appiumHelpers');
 
 const fs = require('fs');
 const path = require('path');
-let TEST_EMAIL    = process.env.TEST_EMAIL    || 'testuser@trackback.com';
-let TEST_PASSWORD = process.env.TEST_PASSWORD || 'TestPass@123';
+let TEST_EMAIL    = process.env.TEST_EMAIL    || 'pramithm2174.sse@saveetha.com';
+let TEST_PASSWORD = process.env.TEST_PASSWORD || 'asdf1234';
 
 const credsPath = path.resolve(__dirname, '../../../test-credentials.json');
 if (fs.existsSync(credsPath)) {
@@ -165,6 +165,8 @@ describe('TrackBack Android – Login & Authentication', function () {
         console.log('\n🔌 Driver session closed.');
       } catch (err) {
         console.warn('\n⚠️ Could not cleanly close driver session:', err.message);
+      } finally {
+        driver = null;
       }
     }
   });
@@ -215,9 +217,75 @@ describe('TrackBack Android – Login & Authentication', function () {
       await helpers.takeScreenshot(driver, 'TC003_before_login');
       await loginPage().tapLogin();
 
-      await homePage().waitForDashboard(TIMEOUT);
-      const visible = await homePage().isVisible();
-      if (!visible) throw new Error('Dashboard tabs not visible after login');
+      console.log('  ⏳ Waiting for authentication redirection...');
+      let success = false;
+      const checkStart = Date.now();
+
+      while (Date.now() - checkStart < TIMEOUT) {
+        // 1. Check for Dashboard
+        const isDashboard = await homePage().isVisible();
+        if (isDashboard) {
+          console.log('  ✅ Dashboard tabs visible after login');
+          success = true;
+          break;
+        }
+
+        // 2. Check for Email Verification Screen
+        const emailVerifyTitle = await driver.$('//android.widget.TextView[@text="Verify Your Email"]');
+        if (await emailVerifyTitle.isExisting().catch(() => false)) {
+          const screenshotPath = await helpers.captureFailureDiagnostics(driver, 'FAIL_TC003_email_verify');
+          helpers.recordResult({ name: 'TC-003 Valid Login', status: 'failed', duration: Date.now() - start, error: new Error('Test account is not email verified.'), screenshotPath });
+          throw new Error('Test account is not email verified.');
+        }
+
+        // 3. Check for Complete Profile Setup Screen
+        const profileSetupTitle = await driver.$('//android.widget.TextView[@text="Complete Profile Setup"]');
+        if (await profileSetupTitle.isExisting().catch(() => false)) {
+          console.log('  ⚠️ Reached Profile Setup step. Attempting profile completion...');
+          try {
+            const nameField = await driver.$('//android.widget.EditText[@hint="John Doe" or @text="John Doe"]');
+            await nameField.setValue('Test User');
+            const phoneField = await driver.$('//android.widget.EditText[@hint="00000 00000"]');
+            await phoneField.setValue('9876543210');
+            const ageField = await driver.$('//android.widget.EditText[@hint="21"]');
+            await ageField.setValue('25');
+            const locationField = await driver.$('//android.widget.EditText[@hint="Warangal, Telangana, India"]');
+            await locationField.setValue('Hyderabad, India');
+            
+            // Tap the submit button
+            const submitBtn = await driver.$('//android.widget.TextView[@text="Complete Profile"]');
+            await submitBtn.click();
+            await helpers.sleep(3000);
+          } catch (profileErr) {
+            console.warn('  ⚠️ Profile auto-completion failed:', profileErr.message);
+          }
+        }
+
+        // 4. Check for Auth Error message
+        const errText = await loginPage().getErrorText().catch(() => '');
+        if (errText) {
+          const screenshotPath = await helpers.captureFailureDiagnostics(driver, 'FAIL_TC003_auth_error');
+          const finalErr = new Error(`Authentication error appears: ${errText}`);
+          helpers.recordResult({ name: 'TC-003 Valid Login', status: 'failed', duration: Date.now() - start, error: finalErr, screenshotPath });
+          throw finalErr;
+        }
+
+        await helpers.sleep(500);
+      }
+
+      // Print debug logs as required
+      try {
+        const source = await driver.getPageSource();
+        console.log(`  🔍 E2E Debug Info:`);
+        console.log(`    - Has Verify Your Email: ${source.includes('Verify Your Email')}`);
+        console.log(`    - Has Complete Profile Setup: ${source.includes('Complete Profile Setup')}`);
+      } catch (dbgErr) {
+        console.warn('  ⚠️ Failed to retrieve page source for debug logs:', dbgErr.message);
+      }
+
+      if (!success) {
+        throw new Error('Neither dashboard tabs nor email verification steps completed within timeout');
+      }
 
       await helpers.takeScreenshot(driver, 'TC003_dashboard');
       helpers.recordResult({ name: 'TC-003 Valid Login', status: 'passed', duration: Date.now() - start });

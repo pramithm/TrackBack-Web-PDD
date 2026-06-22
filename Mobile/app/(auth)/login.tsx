@@ -66,9 +66,9 @@ export default function LoginScreen() {
           </View>
 
           {error ? (
-            <View style={styles.errorContainer} accessibilityLabel="auth-error" testID="auth-error">
+            <View style={styles.errorContainer}>
               <Ionicons name="alert-circle-outline" size={20} color="#D63031" />
-              <Text style={styles.errorText}>{error}</Text>
+              <Text style={styles.errorText} accessibilityLabel="auth-error" testID="auth-error">{error}</Text>
             </View>
           ) : null}
 

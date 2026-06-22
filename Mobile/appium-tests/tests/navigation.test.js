@@ -16,8 +16,8 @@ const helpers      = require('../helpers/appiumHelpers');
 
 const fs = require('fs');
 const path = require('path');
-let TEST_EMAIL    = process.env.TEST_EMAIL    || 'testuser@trackback.com';
-let TEST_PASSWORD = process.env.TEST_PASSWORD || 'TestPass@123';
+let TEST_EMAIL    = process.env.TEST_EMAIL    || 'pramithm2174.sse@saveetha.com';
+let TEST_PASSWORD = process.env.TEST_PASSWORD || 'asdf1234';
 
 const credsPath = path.resolve(__dirname, '../../../test-credentials.json');
 if (fs.existsSync(credsPath)) {
@@ -154,7 +154,47 @@ describe('TrackBack Android – Navigation Tests', function () {
     await loginPage().enterEmail(TEST_EMAIL);
     await loginPage().enterPassword(TEST_PASSWORD);
     await loginPage().tapLogin();
-    await homePage().waitForDashboard(30000);
+
+    console.log('  ⏳ Waiting for authentication redirection in navigation test before hook...');
+    const verifyCheckStart = Date.now();
+    let loggedIn = false;
+    
+    while (Date.now() - verifyCheckStart < 30000) {
+      if (await homePage().isVisible()) {
+        loggedIn = true;
+        break;
+      }
+      
+      const emailVerifyTitle = await driver.$('//android.widget.TextView[@text="Verify Your Email"]');
+      if (await emailVerifyTitle.isExisting().catch(() => false)) {
+        await helpers.captureFailureDiagnostics(driver, 'FAIL_nav_before_email_verify');
+        throw new Error('Test account is not email verified.');
+      }
+      
+      // Complete profile if profile setup screen is displayed
+      const profileSetupTitle = await driver.$('//android.widget.TextView[@text="Complete Profile Setup"]');
+      if (await profileSetupTitle.isExisting().catch(() => false)) {
+        try {
+          const nameField = await driver.$('//android.widget.EditText[@hint="John Doe" or @text="John Doe"]');
+          await nameField.setValue('Test User');
+          const phoneField = await driver.$('//android.widget.EditText[@hint="00000 00000"]');
+          await phoneField.setValue('9876543210');
+          const ageField = await driver.$('//android.widget.EditText[@hint="21"]');
+          await ageField.setValue('25');
+          const locationField = await driver.$('//android.widget.EditText[@hint="Warangal, Telangana, India"]');
+          await locationField.setValue('Hyderabad, India');
+          
+          const submitBtn = await driver.$('//android.widget.TextView[@text="Complete Profile"]');
+          await submitBtn.click();
+        } catch (e) {}
+      }
+
+      await helpers.sleep(500);
+    }
+    
+    if (!loggedIn) {
+      throw new Error('Could not log in and reach dashboard in navigation test before hook');
+    }
   });
 
   after(async function () {
@@ -164,6 +204,8 @@ describe('TrackBack Android – Navigation Tests', function () {
         console.log('🔌 Navigation driver session closed.');
       } catch (err) {
         console.warn('⚠️ Could not cleanly close navigation driver session:', err.message);
+      } finally {
+        driver = null;
       }
     }
   });

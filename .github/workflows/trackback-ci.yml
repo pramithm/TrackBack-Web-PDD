@@ -294,6 +294,30 @@ jobs:
           path: Frontend/Test Results/
           retention-days: 7
 
+      - name: "⚡ Install k6 Load Testing Tool"
+        if: always()
+        run: |
+          curl -L -o k6.tar.gz https://github.com/grafana/k6/releases/download/v0.51.0/k6-v0.51.0-linux-amd64.tar.gz
+          tar -xzf k6.tar.gz
+          sudo mv k6-v0.51.0-linux-amd64/k6 /usr/local/bin/
+          k6 version
+
+      - name: "📈 Run k6 Load Testing"
+        if: always()
+        working-directory: Frontend
+        env:
+          BASE_URL: "https://${{ github.repository_owner }}.github.io/${{ github.event.repository.name }}/"
+        run: |
+          node selenium-tests/scripts/run-load-test.cjs
+
+      - name: "📤 Upload load test reports"
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: load-test-reports
+          path: Frontend/Test Results/LoadTest/
+          retention-days: 7
+
   # ════════════════════════════════════════════════════════════════════════════
   # JOB 5 – Build Android APK
   # ════════════════════════════════════════════════════════════════════════════
@@ -481,6 +505,12 @@ jobs:
           name: android-e2e-reports
           path: android-reports
 
+      - name: "📥 Download load test reports"
+        uses: actions/download-artifact@v4
+        with:
+          name: load-test-reports
+          path: load-test-reports
+
       - name: "📖 Fetch existing gh-pages history"
         uses: actions/checkout@v4
         continue-on-error: true
@@ -527,6 +557,10 @@ jobs:
           cp security-reports/findings.xlsx gh-pages-combined/security-reports/ 2>/dev/null || true
           cp security-reports/endpoint-inventory.xlsx gh-pages-combined/security-reports/ 2>/dev/null || true
 
+          # 5. Merge Load Test Reports
+          mkdir -p gh-pages-combined/load-test-reports
+          cp -r load-test-reports/. gh-pages-combined/load-test-reports/ 2>/dev/null || true
+
       - name: "🚀 Deploy all reports to GitHub Pages"
         uses: peaceiris/actions-gh-pages@v4
         with:
@@ -542,3 +576,11 @@ jobs:
           BUILD_NUMBER: ${{ github.run_number }}
           BRANCH: ${{ github.ref_name }}
         run: node .github/scripts/generate-unified-summary.cjs
+
+      - name: "📤 Upload unified summary reports"
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: unified-summary-reports
+          path: unified-reports/
+          retention-days: 7

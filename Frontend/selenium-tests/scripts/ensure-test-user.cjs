@@ -27,8 +27,8 @@ const run = async () => {
   // Enforce fallbacks for empty or invalid values
   const email = (rawEmail && rawEmail.includes('@') && !rawEmail.includes('testuser@trackback.com'))
     ? rawEmail
-    : `test_run_${buildNum}_${rand}@trackback.com`;
-  const password = rawPassword.length >= 6 ? rawPassword : 'TestPass@123';
+    : 'pramithm2174.sse@saveetha.com';
+  const password = (rawPassword && rawPassword.length >= 6) ? rawPassword : 'asdf1234';
 
   console.log(`🔑 Debugging credentials (secure format check):`);
   console.log(`- Email length: ${email ? email.length : 0}`);
@@ -42,23 +42,13 @@ const run = async () => {
   try {
     let user;
     try {
-      // Try to sign in first (in case user already exists)
+      // Try to sign in first
       const cred = await signInWithEmailAndPassword(auth, email, password);
       user = cred.user;
       console.log(`👤 Signed in existing test user. UID: ${user.uid}`);
     } catch (signInErr) {
-      console.log(`⚠️ Sign-in failed (possibly user does not exist). Attempting sign-up...`);
-      try {
-        // If sign-in fails, try to create the user
-        const cred = await createUserWithEmailAndPassword(auth, email, password);
-        user = cred.user;
-        console.log(`👤 Successfully registered new test user. UID: ${user.uid}`);
-      } catch (signUpErr) {
-        console.error(`❌ Both sign-in and sign-up failed.`);
-        console.error(`Sign-in error:`, signInErr.message);
-        console.error(`Sign-up error:`, signUpErr.message);
-        throw signUpErr;
-      }
+      console.error(`❌ Sign-in failed. Email verification / account issue.`);
+      throw signInErr;
     }
 
     // Now seed/verify the profile in Realtime Database
