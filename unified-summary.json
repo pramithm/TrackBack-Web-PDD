@@ -12,10 +12,10 @@
   },
   "androidE2e": {
     "total": 300,
-    "passed": 299,
-    "failed": 1,
+    "passed": 300,
+    "failed": 0,
     "skipped": 0,
-    "rate": "99.7%"
+    "rate": "100.0%"
   },
   "security": {
     "critical": 0,
@@ -38,6 +38,6 @@
     "totalRequests": 5824,
     "simulated": true
   },
-  "executionDate": "2026-06-22 13:21:52 UTC",
-  "buildNumber": "26"
+  "executionDate": "2026-06-22 14:04:41 UTC",
+  "buildNumber": "27"
 }
