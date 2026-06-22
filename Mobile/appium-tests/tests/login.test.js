@@ -45,10 +45,59 @@ const homePage  = () => new HomePage(driver);
 
 async function ensureLoggedOut(driver) {
   const APP_ID = 'com.mounikamouni12.FrontEnd';
-  // Try up to 3 times to fully reset the app and reach the login screen
+  console.log('  🔍 ensureLoggedOut: Checking current authentication state...');
+  
+  const LoginPageClass = require('../pages/LoginPage');
+  const HomePageClass = require('../pages/HomePage');
+  const lp = new LoginPageClass(driver);
+  const hp = new HomePageClass(driver);
+
+  // A. Check if we are already on the Login screen
+  const isEmailInputVisible = await lp.emailInput.isExisting().catch(() => false);
+  const isEmailInputXPVisible = await lp.emailInputXP.isExisting().catch(() => false);
+  if (isEmailInputVisible || isEmailInputXPVisible) {
+    console.log('  ✅ ensureLoggedOut: Already on Login screen.');
+    return;
+  }
+
+  // B. Check if we are on the Dashboard
+  const isDashboardVisible = await hp.isVisible();
+  if (isDashboardVisible) {
+    console.log('  👉 ensureLoggedOut: On Dashboard. Performing UI logout...');
+    try {
+      // Navigate to Home tab first to ensure avatar-button is rendered
+      const homeTab = await driver.$('~tab-home');
+      if (await homeTab.isExisting()) {
+        await homeTab.click();
+        await helpers.sleep(1500);
+      }
+      
+      const avatarBtn = await driver.$('~avatar-button');
+      await avatarBtn.waitForExist({ timeout: 5000 });
+      await avatarBtn.click();
+      await helpers.sleep(2000);
+
+      const logoutBtn = await driver.$('~logout-button');
+      await logoutBtn.waitForExist({ timeout: 5000 });
+      await logoutBtn.click();
+      await helpers.sleep(1500);
+
+      const confirmBtn = await driver.$('//android.widget.Button[@text="LOG OUT" or @text="Log Out" or @resource-id="android:id/button1"]');
+      await confirmBtn.waitForExist({ timeout: 5000 });
+      await confirmBtn.click();
+      await helpers.sleep(3000);
+      
+      console.log('  ✅ ensureLoggedOut: Logged out successfully via UI.');
+      return;
+    } catch (logoutErr) {
+      console.warn('  ⚠️ ensureLoggedOut: UI logout failed, falling back to app restart/clear:', logoutErr.message);
+    }
+  }
+
+  // C. Fallback: Cold restart & onboarding bypass
   for (let attempt = 1; attempt <= 3; attempt++) {
     try {
-      console.log(`  → ensureLoggedOut attempt ${attempt}/3`);
+      console.log(`  → ensureLoggedOut fallback attempt ${attempt}/3`);
       await driver.terminateApp(APP_ID);
       await helpers.sleep(1500);
       try {
@@ -62,8 +111,6 @@ async function ensureLoggedOut(driver) {
       // Give the RN bundle time to hydrate, then run bypassOnboarding() which handles
       // the welcome + walkthrough flow and lands us on the login screen.
       await helpers.sleep(5000);
-      const LoginPage = require('../pages/LoginPage');
-      const lp = new LoginPage(driver);
       console.log('  🔍 Running onboarding bypass after clearApp...');
       await lp.bypassOnboarding();
 
@@ -331,6 +378,13 @@ describe('TrackBack Android – Login & Authentication', function () {
   it('TC-008 | Logout returns to Login screen', async function () {
     const start = Date.now();
     try {
+      // Navigate to Home tab first to ensure the avatar button is rendered
+      const homeTab = await driver.$('~tab-home');
+      if (await homeTab.isExisting()) {
+        await homeTab.click();
+        await helpers.sleep(1500);
+      }
+
       // Tapping on avatar button to go to Profile screen
       const avatarBtn = await driver.$('~avatar-button');
       await avatarBtn.waitForExist({ timeout: TIMEOUT });

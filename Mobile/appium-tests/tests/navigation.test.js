@@ -37,9 +37,59 @@ const homePage  = () => new HomePage(driver);
 
 async function ensureLoggedOut(driver) {
   const APP_ID = 'com.mounikamouni12.FrontEnd';
+  console.log('  🔍 ensureLoggedOut: Checking current authentication state...');
+  
+  const LoginPageClass = require('../pages/LoginPage');
+  const HomePageClass = require('../pages/HomePage');
+  const lp = new LoginPageClass(driver);
+  const hp = new HomePageClass(driver);
+
+  // A. Check if we are already on the Login screen
+  const isEmailInputVisible = await lp.emailInput.isExisting().catch(() => false);
+  const isEmailInputXPVisible = await lp.emailInputXP.isExisting().catch(() => false);
+  if (isEmailInputVisible || isEmailInputXPVisible) {
+    console.log('  ✅ ensureLoggedOut: Already on Login screen.');
+    return;
+  }
+
+  // B. Check if we are on the Dashboard
+  const isDashboardVisible = await hp.isVisible();
+  if (isDashboardVisible) {
+    console.log('  👉 ensureLoggedOut: On Dashboard. Performing UI logout...');
+    try {
+      // Navigate to Home tab first to ensure avatar-button is rendered
+      const homeTab = await driver.$('~tab-home');
+      if (await homeTab.isExisting()) {
+        await homeTab.click();
+        await helpers.sleep(1500);
+      }
+      
+      const avatarBtn = await driver.$('~avatar-button');
+      await avatarBtn.waitForExist({ timeout: 5000 });
+      await avatarBtn.click();
+      await helpers.sleep(2000);
+
+      const logoutBtn = await driver.$('~logout-button');
+      await logoutBtn.waitForExist({ timeout: 5000 });
+      await logoutBtn.click();
+      await helpers.sleep(1500);
+
+      const confirmBtn = await driver.$('//android.widget.Button[@text="LOG OUT" or @text="Log Out" or @resource-id="android:id/button1"]');
+      await confirmBtn.waitForExist({ timeout: 5000 });
+      await confirmBtn.click();
+      await helpers.sleep(3000);
+      
+      console.log('  ✅ ensureLoggedOut: Logged out successfully via UI.');
+      return;
+    } catch (logoutErr) {
+      console.warn('  ⚠️ ensureLoggedOut: UI logout failed, falling back to app restart/clear:', logoutErr.message);
+    }
+  }
+
+  // C. Fallback: Cold restart & onboarding bypass
   for (let attempt = 1; attempt <= 3; attempt++) {
     try {
-      console.log(`  → ensureLoggedOut attempt ${attempt}/3`);
+      console.log(`  → ensureLoggedOut fallback attempt ${attempt}/3`);
       await driver.terminateApp(APP_ID);
       await helpers.sleep(1500);
       try {
@@ -50,19 +100,19 @@ async function ensureLoggedOut(driver) {
       await driver.activateApp(APP_ID);
 
       // After clearApp the app launches as a fresh install → onboarding screen appears.
-      // bypassOnboarding() handles the welcome + walkthrough flow and lands on login screen.
+      // Give the RN bundle time to hydrate, then run bypassOnboarding() which handles
+      // the welcome + walkthrough flow and lands us on the login screen.
       await helpers.sleep(5000);
-      const LoginPage = require('../pages/LoginPage');
-      const lp = new LoginPage(driver);
       console.log('  🔍 Running onboarding bypass after clearApp...');
       await lp.bypassOnboarding();
 
-      // Verify login screen appeared
+      // Now verify we are on the login screen
       try {
         await lp.emailInput.waitForExist({ timeout: 10000 });
         console.log('  ✅ ensureLoggedOut: login screen confirmed via accessibilityId');
-        return;
+        return; // success
       } catch {
+        // XPath fallback
         try {
           await driver.$('//android.widget.EditText[@hint="Email"]').waitForExist({ timeout: 8000 });
           console.log('  ✅ ensureLoggedOut: login screen confirmed via XPath');
@@ -76,7 +126,7 @@ async function ensureLoggedOut(driver) {
     }
     await helpers.sleep(2000);
   }
-  console.warn('  ⚠️ ensureLoggedOut: could not confirm login screen after 3 attempts');
+  console.warn('  ⚠️ ensureLoggedOut: could not confirm login screen after 3 attempts, proceeding anyway');
 }
 
 // ─── Test Suites ─────────────────────────────────────────────────────────────
