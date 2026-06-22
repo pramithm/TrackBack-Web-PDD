@@ -9,19 +9,19 @@
 
 🌐 Testing against: https://pramithm.github.io/TrackBack-Web-PDD/
   📄 Page title: "TrackBack - Secure AI-Powered Lost & Found Platform"
-    ✔ should load the TrackBack landing page (434ms)
+    ✔ should load the TrackBack landing page (89ms)
   ✅ Login form loaded
-    ✔ should navigate to the login form (1506ms)
+    ✔ should navigate to the login form (1080ms)
     1) should login with valid credentials and reach the dashboard
-  📸 Failure screenshot saved: FAIL_should_login_with_valid_credentials_and_reach_the_dashboard_1782100796605.png
+  📸 Failure screenshot saved: FAIL_should_login_with_valid_credentials_and_reach_the_dashboard_1782103327674.png
   ✅ Invalid credentials correctly rejected
-    ✔ should reject invalid credentials with an error message (1468ms)
+    ✔ should reject invalid credentials with an error message (1127ms)
   ✅ Sign-up form loaded
-    ✔ should open the sign-up form from landing (711ms)
+    ✔ should open the sign-up form from landing (1120ms)
 Recorded results saved to recorded-results.json (5 cases)
 
 
-  4 passing (37s)
+  4 passing (30s)
   1 failing
 
   1) TrackBack — Login E2E Tests
