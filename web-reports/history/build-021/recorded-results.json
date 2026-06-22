@@ -2,36 +2,72 @@
   {
     "name": "should load the TrackBack landing page",
     "status": "passed",
-    "duration": 1486,
+    "duration": 994,
     "error": null,
     "screenshotPath": null
   },
   {
     "name": "should navigate to the login form",
     "status": "passed",
-    "duration": 377,
+    "duration": 816,
     "error": null,
     "screenshotPath": null
   },
   {
     "name": "should login with valid credentials and reach the dashboard",
-    "status": "failed",
-    "duration": 21078,
-    "error": "Neither dashboard nor verify step appeared after login",
-    "screenshotPath": "Screenshots/FAIL_should_login_with_valid_credentials_and_reach_the_dashboard_1781768140871.png"
+    "status": "passed",
+    "duration": 2793,
+    "error": null,
+    "screenshotPath": null
   },
   {
     "name": "should reject invalid credentials with an error message",
     "status": "passed",
-    "duration": 564,
+    "duration": 1508,
     "error": null,
     "screenshotPath": null
   },
   {
     "name": "should open the sign-up form from landing",
     "status": "passed",
-    "duration": 118,
+    "duration": 1135,
     "error": null,
     "screenshotPath": null
+  },
+  {
+    "name": "Security — should reject login for invalid credentials",
+    "status": "passed",
+    "duration": 2107,
+    "error": null
+  },
+  {
+    "name": "Security — should enforce session termination and clean storage upon logout",
+    "status": "passed",
+    "duration": 7097,
+    "error": null
+  },
+  {
+    "name": "Security — should prevent access to protected routes/dashboard for unauthenticated users",
+    "status": "passed",
+    "duration": 2834,
+    "error": null
+  },
+  {
+    "name": "Security — should block unauthorized database write attempts to restricted user paths",
+    "status": "passed",
+    "duration": 750,
+    "error": null
+  },
+  {
+    "name": "Security — should block unauthorized database read attempts to restricted user profiles",
+    "status": "passed",
+    "duration": 237,
+    "error": null
+  },
+  {
+    "name": "Security — should securely sanitize and encode XSS script payloads in text fields",
+    "status": "passed",
+    "duration": 9071,
+    "error": null
   }
 ]

@@ -2,61 +2,39 @@
 > web-app@0.0.0 test:e2e
 > mocha selenium-tests/tests/*.test.cjs --timeout 90000 --reporter spec
 
-🔑 Loaded dynamic test credentials from test-credentials.json: pramith414@gmail.com
 
 
   TrackBack — Login E2E Tests
 
 🌐 Testing against: https://pramithm.github.io/TrackBack-Web-PDD/
   📄 Page title: "TrackBack - Secure AI-Powered Lost & Found Platform"
-    ✔ should load the TrackBack landing page (1022ms)
+    ✔ should load the TrackBack landing page (994ms)
   ✅ Login form loaded
-    ✔ should navigate to the login form (1156ms)
+    ✔ should navigate to the login form (816ms)
   ⏳ Waiting for authentication redirection...
-  📸 Failure screenshot saved: FAIL_email_not_verified_1782113328663.png
-  📄 Failure page source HTML saved: FAIL_email_not_verified_1782113328663_source.html
-    1) should login with valid credentials and reach the dashboard
-  📸 Failure screenshot saved: FAIL_should_login_with_valid_credentials_and_reach_the_dashboard_1782113329097.png
+  ✅ Dashboard loaded — login successful
+  🔍 E2E Debug Info:
+    - URL: https://pramithm.github.io/TrackBack-Web-PDD/
+    - Firebase UID: rqimz36vSpfl2uNKchUud0yH9KC3
+    - emailVerified: true
+    ✔ should login with valid credentials and reach the dashboard (2793ms)
   ✅ Invalid credentials correctly rejected
-    ✔ should reject invalid credentials with an error message (860ms)
+    ✔ should reject invalid credentials with an error message (1508ms)
   ✅ Sign-up form loaded
-    ✔ should open the sign-up form from landing (1230ms)
+    ✔ should open the sign-up form from landing (1135ms)
 Recorded results merged and saved to recorded-results.json (5 total cases)
 
   TrackBack — Security E2E & Rules Verification Tests
-    ✔ should reject login for invalid credentials (1488ms)
-    2) should enforce session termination and clean storage upon logout
-    ✔ should prevent access to protected routes/dashboard for unauthenticated users (2410ms)
-[2026-06-22T07:29:19.656Z]  @firebase/database: FIREBASE WARNING: set at /users/unauthorized_victim_uid failed: permission_denied 
-    ✔ should block unauthorized database write attempts to restricted user paths (565ms)
-    ✔ should block unauthorized database read attempts to restricted user profiles (174ms)
-    3) should securely sanitize and encode XSS script payloads in text fields
+    ✔ should reject login for invalid credentials (2107ms)
+    ✔ should enforce session termination and clean storage upon logout (7097ms)
+    ✔ should prevent access to protected routes/dashboard for unauthenticated users (2834ms)
+[2026-06-22T08:33:14.612Z]  @firebase/database: FIREBASE WARNING: set at /users/unauthorized_victim_uid failed: permission_denied 
+    ✔ should block unauthorized database write attempts to restricted user paths (750ms)
+    ✔ should block unauthorized database read attempts to restricted user profiles (237ms)
+    ✔ should securely sanitize and encode XSS script payloads in text fields (9071ms)
 Security recorded results merged and saved to recorded-results.json (11 total cases)
 Security E2E report saved to: /home/runner/work/TrackBack-Web-PDD/TrackBack-Web-PDD/Frontend/Test Results/security-e2e-results.json
 
 
-  8 passing (1m)
-  3 failing
-
-  1) TrackBack — Login E2E Tests
-       should login with valid credentials and reach the dashboard:
-     Error: Test account is not email verified.
-      at Context.<anonymous> (selenium-tests/tests/login.test.cjs:263:15)
-      at process.processTicksAndRejections (node:internal/process/task_queues:103:5)
-
-  2) TrackBack — Security E2E & Rules Verification Tests
-       should enforce session termination and clean storage upon logout:
-     TimeoutError: Waiting for element to be located By(css selector, .sidebar)
-Wait timed out after 20007ms
-      at /home/runner/work/TrackBack-Web-PDD/TrackBack-Web-PDD/node_modules/selenium-webdriver/lib/webdriver.js:929:22
-      at process.processTicksAndRejections (node:internal/process/task_queues:103:5)
-
-  3) TrackBack — Security E2E & Rules Verification Tests
-       should securely sanitize and encode XSS script payloads in text fields:
-     TimeoutError: Waiting for element to be located By(css selector, .sidebar)
-Wait timed out after 20097ms
-      at /home/runner/work/TrackBack-Web-PDD/TrackBack-Web-PDD/node_modules/selenium-webdriver/lib/webdriver.js:929:22
-      at process.processTicksAndRejections (node:internal/process/task_queues:103:5)
-
-
+  11 passing (46s)
 
