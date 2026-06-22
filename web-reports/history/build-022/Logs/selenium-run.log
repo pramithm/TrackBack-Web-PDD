@@ -1,6 +1,6 @@
 
 > web-app@0.0.0 test:e2e
-> mocha selenium-tests/tests/*.test.cjs --timeout 90000 --reporter spec
+> mocha selenium-tests/tests/*.test.cjs --timeout 90000 --reporter spec --exit
 
 
 
@@ -8,33 +8,33 @@
 
 🌐 Testing against: https://pramithm.github.io/TrackBack-Web-PDD/
   📄 Page title: "TrackBack - Secure AI-Powered Lost & Found Platform"
-    ✔ should load the TrackBack landing page (1184ms)
+    ✔ should load the TrackBack landing page (797ms)
   ✅ Login form loaded
-    ✔ should navigate to the login form (261ms)
-    1) should login with valid credentials and reach the dashboard
-  📸 Failure screenshot saved: FAIL_should_login_with_valid_credentials_and_reach_the_dashboard_1781770549035.png
+    ✔ should navigate to the login form (1103ms)
+  ⏳ Waiting for authentication redirection...
+  ✅ Dashboard loaded — login successful
+  🔍 E2E Debug Info:
+    - URL: https://pramithm.github.io/TrackBack-Web-PDD/
+    - Firebase UID: rqimz36vSpfl2uNKchUud0yH9KC3
+    - emailVerified: true
+    ✔ should login with valid credentials and reach the dashboard (3414ms)
   ✅ Invalid credentials correctly rejected
-    ✔ should reject invalid credentials with an error message (537ms)
+    ✔ should reject invalid credentials with an error message (918ms)
   ✅ Sign-up form loaded
-    ✔ should open the sign-up form from landing (122ms)
-Recorded results saved to recorded-results.json (5 cases)
+    ✔ should open the sign-up form from landing (736ms)
+Recorded results merged and saved to recorded-results.json (11 total cases)
+
+  TrackBack — Security E2E & Rules Verification Tests
+    ✔ should reject login for invalid credentials (1986ms)
+    ✔ should enforce session termination and clean storage upon logout (7354ms)
+    ✔ should prevent access to protected routes/dashboard for unauthenticated users (3051ms)
+[2026-06-22T09:19:56.172Z]  @firebase/database: FIREBASE WARNING: set at /users/unauthorized_victim_uid failed: permission_denied 
+    ✔ should block unauthorized database write attempts to restricted user paths (793ms)
+    ✔ should block unauthorized database read attempts to restricted user profiles (255ms)
+    ✔ should securely sanitize and encode XSS script payloads in text fields (9291ms)
+Security recorded results merged and saved to recorded-results.json (11 total cases)
+Security E2E report saved to: /home/runner/work/TrackBack-Web-PDD/TrackBack-Web-PDD/Frontend/Test Results/security-e2e-results.json
 
 
-  4 passing (28s)
-  1 failing
+  11 passing (45s)
 
-  1) TrackBack — Login E2E Tests
-       should login with valid credentials and reach the dashboard:
-     Error: Neither dashboard nor verify step appeared after login
-      at Context.<anonymous> (selenium-tests/tests/login.test.cjs:147:15)
-      at process.processTicksAndRejections (node:internal/process/task_queues:103:5)
-
-
-
-npm error Lifecycle script `test:e2e` failed with error:
-npm error code 1
-npm error path /home/runner/work/TrackBack-Web-PDD/TrackBack-Web-PDD/Frontend
-npm error workspace web-app@0.0.0
-npm error location /home/runner/work/TrackBack-Web-PDD/TrackBack-Web-PDD/Frontend
-npm error command failed
-npm error command sh -c mocha selenium-tests/tests/*.test.cjs --timeout 90000 --reporter spec
