@@ -102,6 +102,18 @@ class LoginPage {
 
   async tapSignUp() {
     try {
+      // Native Android Scroll to accessibility ID / description
+      const el = await this.driver.$('android=new UiScrollable(new UiSelector().scrollable(true)).scrollIntoView(new UiSelector().description("signup-button"))');
+      await el.click();
+      return;
+    } catch { /* fall through */ }
+    try {
+      // Native Android Scroll to text contains "Sign Up"
+      const el = await this.driver.$('android=new UiScrollable(new UiSelector().scrollable(true)).scrollIntoView(new UiSelector().textContains("Sign Up"))');
+      await el.click();
+      return;
+    } catch { /* fall through */ }
+    try {
       const el = await this.signupButton;
       if (await el.isExisting()) { await el.click(); return; }
     } catch { /* fall through */ }
