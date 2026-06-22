@@ -2,31 +2,32 @@
 > web-app@0.0.0 test:e2e
 > mocha selenium-tests/tests/*.test.cjs --timeout 90000 --reporter spec
 
+🔑 Loaded dynamic test credentials from test-credentials.json: pramith414@gmail.com
 
 
   TrackBack — Login E2E Tests
 
 🌐 Testing against: https://pramithm.github.io/TrackBack-Web-PDD/
   📄 Page title: "TrackBack - Secure AI-Powered Lost & Found Platform"
-    ✔ should load the TrackBack landing page (1531ms)
+    ✔ should load the TrackBack landing page (434ms)
   ✅ Login form loaded
-    ✔ should navigate to the login form (320ms)
+    ✔ should navigate to the login form (1506ms)
     1) should login with valid credentials and reach the dashboard
-  📸 Failure screenshot saved: FAIL_should_login_with_valid_credentials_and_reach_the_dashboard_1781700207986.png
+  📸 Failure screenshot saved: FAIL_should_login_with_valid_credentials_and_reach_the_dashboard_1782100796605.png
   ✅ Invalid credentials correctly rejected
-    ✔ should reject invalid credentials with an error message (540ms)
+    ✔ should reject invalid credentials with an error message (1468ms)
   ✅ Sign-up form loaded
-    ✔ should open the sign-up form from landing (125ms)
+    ✔ should open the sign-up form from landing (711ms)
 Recorded results saved to recorded-results.json (5 cases)
 
 
-  4 passing (33s)
+  4 passing (37s)
   1 failing
 
   1) TrackBack — Login E2E Tests
        should login with valid credentials and reach the dashboard:
      Error: Neither dashboard nor verify step appeared after login
-      at Context.<anonymous> (selenium-tests/tests/login.test.cjs:147:15)
+      at Context.<anonymous> (selenium-tests/tests/login.test.cjs:179:15)
       at process.processTicksAndRejections (node:internal/process/task_queues:103:5)
 
 
