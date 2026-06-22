@@ -1,40 +1,5 @@
 [
   {
-    "name": "should load the TrackBack landing page",
-    "status": "passed",
-    "duration": 787,
-    "error": null,
-    "screenshotPath": null
-  },
-  {
-    "name": "should navigate to the login form",
-    "status": "passed",
-    "duration": 1404,
-    "error": null,
-    "screenshotPath": null
-  },
-  {
-    "name": "should login with valid credentials and reach the dashboard",
-    "status": "failed",
-    "duration": 1950,
-    "error": "Test account is not email verified.",
-    "screenshotPath": "Screenshots/FAIL_should_login_with_valid_credentials_and_reach_the_dashboard_1782108013828.png"
-  },
-  {
-    "name": "should reject invalid credentials with an error message",
-    "status": "passed",
-    "duration": 1211,
-    "error": null,
-    "screenshotPath": null
-  },
-  {
-    "name": "should open the sign-up form from landing",
-    "status": "passed",
-    "duration": 759,
-    "error": null,
-    "screenshotPath": null
-  },
-  {
     "name": "Security — should reject login for invalid credentials",
     "status": "passed",
     "duration": 2166,
