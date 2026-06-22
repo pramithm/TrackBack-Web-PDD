@@ -1,6 +1,6 @@
 # 🚀 TrackBack Consolidated CI/CD Test Dashboard
 
-**Build Number:** #28 · **Execution Date:** 2026-06-22 14:40:16 UTC · **Branch:** `main`
+**Build Number:** #29 · **Execution Date:** 2026-06-22 15:04:31 UTC · **Branch:** `main`
 
 ---
 
@@ -14,9 +14,10 @@
 
 | Testing Tier | Total Test Cases | Passed | Failed | Skipped | Pass Rate / Score | Status | Report URL |
 |--------------|------------------|--------|--------|---------|-------------------|--------|------------|
-| **🌐 Web Application E2E** | 300 | 300 | 0 | 0 | **100.0%** | ✅ PASS | [HTML Report](https://pramithm.github.io/TrackBack-Web-PDD/web-reports/latest/execution-report.html) |
-| **📱 Android Mobile E2E** | 300 | 300 | 0 | 0 | **100.0%** | ✅ PASS | [HTML Report](https://pramithm.github.io/TrackBack-Web-PDD/android-reports/reports/latest/execution-report.html) |
-| **🛡️ Backend Security Scan** | 300 (Rules Checked) | — | — | — | **11/100** | ✅ SECURE | [Vulnerability MD](https://pramithm.github.io/TrackBack-Web-PDD/security-reports/security-review.md) |
+| **🌐 Web Application E2E** | 400 | 400 | 0 | 0 | **100.0%** | ✅ PASS | [HTML Report](https://pramithm.github.io/TrackBack-Web-PDD/web-reports/latest/execution-report.html) |
+| **📱 Android Mobile E2E** | 400 | 400 | 0 | 0 | **100.0%** | ✅ PASS | [HTML Report](https://pramithm.github.io/TrackBack-Web-PDD/android-reports/reports/latest/execution-report.html) |
+| **⚙️ Backend Service Tests** | 1200 | 1198 | 2 | 0 | **99.8%** | ❌ FAIL | [HTML Report](https://pramithm.github.io/TrackBack-Web-PDD/backend-reports/latest/execution-report.html) |
+| **🛡️ Backend Security Scan** | 400 (Rules Checked) | — | — | — | **11/100** | ✅ SECURE | [Vulnerability MD](https://pramithm.github.io/TrackBack-Web-PDD/security-reports/security-review.md) |
 | **🔒 Security E2E Tests** | 6 | 6 | 0 | 0 | **100.0%** | ✅ PASS | [HTML Report](https://pramithm.github.io/TrackBack-Web-PDD/web-reports/latest/execution-report.html) |
 | **📈 Performance Load Test** | 5824 (Reqs) | — | — | — | **99.85% Success** | ✅ OPTIMAL | [HTML Report](https://pramithm.github.io/TrackBack-Web-PDD/load-test-reports/load-test-report.html) |
 

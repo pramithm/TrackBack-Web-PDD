@@ -1,0 +1,14 @@
+
+> trackback-backend-tests@1.0.0 test:ci
+> mocha tests/**/*.test.cjs --timeout 30000 --exit --reporter json --reporter-option output=test-results.json
+
+
+📊 Auth tests: 80/80 passed
+
+📊 Chat tests: 80/80 passed
+
+📊 Items tests: 80/80 passed
+
+📊 Users tests: 80/80 passed
+
+📊 Validation tests: 80/80 passed

@@ -1,0 +1,73 @@
+[
+  {
+    "name": "should load the TrackBack landing page",
+    "status": "passed",
+    "duration": 534,
+    "error": null,
+    "screenshotPath": null
+  },
+  {
+    "name": "should navigate to the login form",
+    "status": "passed",
+    "duration": 1630,
+    "error": null,
+    "screenshotPath": null
+  },
+  {
+    "name": "should login with valid credentials and reach the dashboard",
+    "status": "passed",
+    "duration": 5255,
+    "error": null,
+    "screenshotPath": null
+  },
+  {
+    "name": "should reject invalid credentials with an error message",
+    "status": "passed",
+    "duration": 903,
+    "error": null,
+    "screenshotPath": null
+  },
+  {
+    "name": "should open the sign-up form from landing",
+    "status": "passed",
+    "duration": 830,
+    "error": null,
+    "screenshotPath": null
+  },
+  {
+    "name": "Security — should reject login for invalid credentials",
+    "status": "passed",
+    "duration": 1511,
+    "error": null
+  },
+  {
+    "name": "Security — should enforce session termination and clean storage upon logout",
+    "status": "passed",
+    "duration": 6948,
+    "error": null
+  },
+  {
+    "name": "Security — should prevent access to protected routes/dashboard for unauthenticated users",
+    "status": "passed",
+    "duration": 2466,
+    "error": null
+  },
+  {
+    "name": "Security — should block unauthorized database write attempts to restricted user paths",
+    "status": "passed",
+    "duration": 723,
+    "error": null
+  },
+  {
+    "name": "Security — should block unauthorized database read attempts to restricted user profiles",
+    "status": "passed",
+    "duration": 230,
+    "error": null
+  },
+  {
+    "name": "Security — should securely sanitize and encode XSS script payloads in text fields",
+    "status": "passed",
+    "duration": 9270,
+    "error": null
+  }
+]
