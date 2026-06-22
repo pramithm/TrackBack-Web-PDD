@@ -6,10 +6,10 @@ const path = require('path');
 const testResults = [];
 
 const REPO_OWNER = process.env.REPO_OWNER || 'YOUR_USERNAME';
-const REPO_NAME  = process.env.REPO_NAME  || 'TrackBack-Web-PDD';
-const BASE_URL   = process.env.BASE_URL || `https://${REPO_OWNER}.github.io/${REPO_NAME}/`;
+const REPO_NAME = process.env.REPO_NAME || 'TrackBack-Web-PDD';
+const BASE_URL = process.env.BASE_URL || `https://${REPO_OWNER}.github.io/${REPO_NAME}/`;
 
-let TEST_EMAIL    = process.env.TEST_EMAIL    || 'testuser@trackback.com';
+let TEST_EMAIL = process.env.TEST_EMAIL || 'testuser@trackback.com';
 let TEST_PASSWORD = process.env.TEST_PASSWORD || 'TestPass@123';
 
 const credsPath = path.resolve(__dirname, '../../../test-credentials.json');
@@ -105,7 +105,7 @@ describe('TrackBack — Login E2E Tests', function () {
     const state = this.currentTest.state || 'skipped';
     const duration = this.currentTest.duration || 0;
     const error = this.currentTest.err ? this.currentTest.err.message : null;
-    
+
     let screenshotPath = null;
     if (state === 'failed' && driver) {
       try {
@@ -120,7 +120,7 @@ describe('TrackBack — Login E2E Tests', function () {
         console.warn(`  ⚠️ Screenshot capture failed: ${err.message}`);
       }
     }
-    
+
     testResults.push({
       name: title,
       status: state === 'passed' ? 'passed' : (state === 'failed' ? 'failed' : 'skipped'),
@@ -132,10 +132,10 @@ describe('TrackBack — Login E2E Tests', function () {
 
   after(async () => {
     if (driver) await driver.quit();
-    
+
     const resultsDir = path.resolve(__dirname, '../../Test Results');
     fs.mkdirSync(resultsDir, { recursive: true });
-    
+
     const resultsFile = path.join(resultsDir, 'recorded-results.json');
     let currentResults = [];
     if (fs.existsSync(resultsFile)) {
@@ -145,7 +145,7 @@ describe('TrackBack — Login E2E Tests', function () {
         currentResults = [];
       }
     }
-    
+
     testResults.forEach(newRes => {
       const idx = currentResults.findIndex(r => r.name === newRes.name);
       if (idx > -1) {
@@ -201,9 +201,9 @@ describe('TrackBack — Login E2E Tests', function () {
     const signinBtn = await driver.wait(until.elementLocated(By.id('landing-signin-btn')), TIMEOUT);
     await signinBtn.click();
 
-    const emailField    = await driver.wait(until.elementLocated(By.id('login-email')), TIMEOUT);
+    const emailField = await driver.wait(until.elementLocated(By.id('login-email')), TIMEOUT);
     const passwordField = await driver.findElement(By.id('login-password'));
-    const loginBtn      = await driver.findElement(By.id('login-submit-btn'));
+    const loginBtn = await driver.findElement(By.id('login-submit-btn'));
 
     await emailField.clear();
     await emailField.sendKeys(TEST_EMAIL);
@@ -236,16 +236,16 @@ describe('TrackBack — Login E2E Tests', function () {
           await phoneInput.sendKeys('9876543210');
           const ageInput = await driver.findElement(By.id('verify-age-input'));
           await ageInput.sendKeys('25');
-          
+
           const genderInput = await driver.findElement(By.id('verify-gender-input'));
           await genderInput.sendKeys('Male');
-          
+
           const locationInput = await driver.findElement(By.id('verify-location-input'));
           await locationInput.sendKeys('Hyderabad, Telangana, India');
-          
+
           const submitBtn = await driver.findElement(By.id('verify-submit-btn'));
           await submitBtn.click();
-          
+
           console.log('  Profile submitted, waiting for Dashboard...');
           await driver.wait(until.elementLocated(By.className('sidebar')), TIMEOUT);
           console.log('  ✅ Dashboard loaded after profile completion');
@@ -313,9 +313,9 @@ describe('TrackBack — Login E2E Tests', function () {
     const signinBtn = await driver.wait(until.elementLocated(By.id('landing-signin-btn')), TIMEOUT);
     await signinBtn.click();
 
-    const emailField    = await driver.wait(until.elementLocated(By.id('login-email')), TIMEOUT);
+    const emailField = await driver.wait(until.elementLocated(By.id('login-email')), TIMEOUT);
     const passwordField = await driver.findElement(By.id('login-password'));
-    const loginBtn      = await driver.findElement(By.id('login-submit-btn'));
+    const loginBtn = await driver.findElement(By.id('login-submit-btn'));
 
     await emailField.clear();
     await emailField.sendKeys('invalid.user@nowhere.com');

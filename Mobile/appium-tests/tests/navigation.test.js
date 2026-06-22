@@ -8,15 +8,15 @@
  *  TC-012  Chat tab is accessible
  */
 
-const { remote }   = require('webdriverio');
-const { config }   = require('../config/appium.config');
-const LoginPage    = require('../pages/LoginPage');
-const HomePage     = require('../pages/HomePage');
-const helpers      = require('../helpers/appiumHelpers');
+const { remote } = require('webdriverio');
+const { config } = require('../config/appium.config');
+const LoginPage = require('../pages/LoginPage');
+const HomePage = require('../pages/HomePage');
+const helpers = require('../helpers/appiumHelpers');
 
 const fs = require('fs');
 const path = require('path');
-let TEST_EMAIL    = process.env.TEST_EMAIL    || 'pramithm2174.sse@saveetha.com';
+let TEST_EMAIL = process.env.TEST_EMAIL || 'pramithm2174.sse@saveetha.com';
 let TEST_PASSWORD = process.env.TEST_PASSWORD || 'asdf1234';
 
 const credsPath = path.resolve(__dirname, '../../../test-credentials.json');
@@ -33,12 +33,12 @@ if (fs.existsSync(credsPath)) {
 
 let driver;
 const loginPage = () => new LoginPage(driver);
-const homePage  = () => new HomePage(driver);
+const homePage = () => new HomePage(driver);
 
 async function ensureLoggedOut(driver) {
   const APP_ID = 'com.mounikamouni12.FrontEnd';
   console.log('  🔍 ensureLoggedOut: Checking current authentication state...');
-  
+
   const LoginPageClass = require('../pages/LoginPage');
   const HomePageClass = require('../pages/HomePage');
   const lp = new LoginPageClass(driver);
@@ -63,7 +63,7 @@ async function ensureLoggedOut(driver) {
         await homeTab.click();
         await helpers.sleep(1500);
       }
-      
+
       const avatarBtn = await driver.$('~avatar-button');
       await avatarBtn.waitForExist({ timeout: 5000 });
       await avatarBtn.click();
@@ -78,7 +78,7 @@ async function ensureLoggedOut(driver) {
       await confirmBtn.waitForExist({ timeout: 5000 });
       await confirmBtn.click();
       await helpers.sleep(3000);
-      
+
       console.log('  ✅ ensureLoggedOut: Logged out successfully via UI.');
       return;
     } catch (logoutErr) {
@@ -138,8 +138,8 @@ describe('TrackBack Android – Navigation Tests', function () {
     helpers.ensureDirs();
     driver = await remote({
       hostname: config.hostname,
-      port:     config.port,
-      path:     config.path,
+      port: config.port,
+      path: config.path,
       capabilities: config.capabilities,
       logLevel: 'warn',
       connectionRetryTimeout: 120000,
@@ -158,19 +158,19 @@ describe('TrackBack Android – Navigation Tests', function () {
     console.log('  ⏳ Waiting for authentication redirection in navigation test before hook...');
     const verifyCheckStart = Date.now();
     let loggedIn = false;
-    
+
     while (Date.now() - verifyCheckStart < 30000) {
       if (await homePage().isVisible()) {
         loggedIn = true;
         break;
       }
-      
+
       const emailVerifyTitle = await driver.$('//android.widget.TextView[@text="Verify Your Email"]');
       if (await emailVerifyTitle.isExisting().catch(() => false)) {
         await helpers.captureFailureDiagnostics(driver, 'FAIL_nav_before_email_verify');
         throw new Error('Test account is not email verified.');
       }
-      
+
       // Complete profile if profile setup screen is displayed
       const profileSetupTitle = await driver.$('//android.widget.TextView[@text="Complete Profile Setup"]');
       if (await profileSetupTitle.isExisting().catch(() => false)) {
@@ -183,15 +183,15 @@ describe('TrackBack Android – Navigation Tests', function () {
           await ageField.setValue('25');
           const locationField = await driver.$('//android.widget.EditText[@hint="Warangal, Telangana, India"]');
           await locationField.setValue('Hyderabad, India');
-          
+
           const submitBtn = await driver.$('//android.widget.TextView[@text="Complete Profile"]');
           await submitBtn.click();
-        } catch (e) {}
+        } catch (e) { }
       }
 
       await helpers.sleep(500);
     }
-    
+
     if (!loggedIn) {
       throw new Error('Could not log in and reach dashboard in navigation test before hook');
     }

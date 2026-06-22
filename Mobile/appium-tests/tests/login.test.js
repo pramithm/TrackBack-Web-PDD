@@ -13,15 +13,15 @@
  *  TC-008  Logout returns to Login screen
  */
 
-const { remote }       = require('webdriverio');
-const { config }       = require('../config/appium.config');
-const LoginPage        = require('../pages/LoginPage');
-const HomePage         = require('../pages/HomePage');
-const helpers          = require('../helpers/appiumHelpers');
+const { remote } = require('webdriverio');
+const { config } = require('../config/appium.config');
+const LoginPage = require('../pages/LoginPage');
+const HomePage = require('../pages/HomePage');
+const helpers = require('../helpers/appiumHelpers');
 
 const fs = require('fs');
 const path = require('path');
-let TEST_EMAIL    = process.env.TEST_EMAIL    || 'pramithm2174.sse@saveetha.com';
+let TEST_EMAIL = process.env.TEST_EMAIL || 'pramithm2174.sse@saveetha.com';
 let TEST_PASSWORD = process.env.TEST_PASSWORD || 'asdf1234';
 
 const credsPath = path.resolve(__dirname, '../../../test-credentials.json');
@@ -41,12 +41,12 @@ const TIMEOUT = 20000;
 // ─── Shared driver instance ──────────────────────────────────────────────────
 let driver;
 const loginPage = () => new LoginPage(driver);
-const homePage  = () => new HomePage(driver);
+const homePage = () => new HomePage(driver);
 
 async function ensureLoggedOut(driver) {
   const APP_ID = 'com.mounikamouni12.FrontEnd';
   console.log('  🔍 ensureLoggedOut: Checking current authentication state...');
-  
+
   const LoginPageClass = require('../pages/LoginPage');
   const HomePageClass = require('../pages/HomePage');
   const lp = new LoginPageClass(driver);
@@ -71,7 +71,7 @@ async function ensureLoggedOut(driver) {
         await homeTab.click();
         await helpers.sleep(1500);
       }
-      
+
       const avatarBtn = await driver.$('~avatar-button');
       await avatarBtn.waitForExist({ timeout: 5000 });
       await avatarBtn.click();
@@ -86,7 +86,7 @@ async function ensureLoggedOut(driver) {
       await confirmBtn.waitForExist({ timeout: 5000 });
       await confirmBtn.click();
       await helpers.sleep(3000);
-      
+
       console.log('  ✅ ensureLoggedOut: Logged out successfully via UI.');
       return;
     } catch (logoutErr) {
@@ -251,7 +251,7 @@ describe('TrackBack Android – Login & Authentication', function () {
             await ageField.setValue('25');
             const locationField = await driver.$('//android.widget.EditText[@hint="Warangal, Telangana, India"]');
             await locationField.setValue('Hyderabad, India');
-            
+
             // Tap the submit button
             const submitBtn = await driver.$('//android.widget.TextView[@text="Complete Profile"]');
             await submitBtn.click();
@@ -322,7 +322,7 @@ describe('TrackBack Android – Login & Authentication', function () {
       let rejectReason = '';
 
       // B. Validate actual application behavior for rejected login attempts
-      
+
       // Option 1: Inline error message displayed
       const errorText = await loginPage().getErrorText();
       if (errorText) {

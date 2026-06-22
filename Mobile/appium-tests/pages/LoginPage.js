@@ -117,7 +117,7 @@ class LoginPage {
       }
     } catch { /* fall through */ }
     try {
-      const errEl = await this.driver.$('//android.widget.TextView[contains(@text,"Invalid") or contains(@text,"Error") or contains(@text,"failed") or contains(@text,"password") or contains(@text,"email")]');
+      const errEl = await this.driver.$('//android.widget.TextView[contains(@text,"Invalid") or contains(@text,"Error") or contains(@text,"failed") or contains(@text,"incorrect") or contains(@text,"Firebase")]');
       if (await errEl.isExisting()) return await errEl.getText();
     } catch { /* fall through */ }
     return '';

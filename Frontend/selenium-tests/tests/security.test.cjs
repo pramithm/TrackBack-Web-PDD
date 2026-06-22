@@ -9,10 +9,10 @@ const { getDatabase, ref, set, get } = require('firebase/database');
 const testResults = [];
 
 const REPO_OWNER = process.env.REPO_OWNER || 'YOUR_USERNAME';
-const REPO_NAME  = process.env.REPO_NAME  || 'TrackBack-Web-PDD';
-const BASE_URL   = process.env.BASE_URL || `https://${REPO_OWNER}.github.io/${REPO_NAME}/`;
+const REPO_NAME = process.env.REPO_NAME || 'TrackBack-Web-PDD';
+const BASE_URL = process.env.BASE_URL || `https://${REPO_OWNER}.github.io/${REPO_NAME}/`;
 
-let TEST_EMAIL    = 'pramithm2174.sse@saveetha.com';
+let TEST_EMAIL = 'pramithm2174.sse@saveetha.com';
 let TEST_PASSWORD = 'asdf1234';
 
 const credsPath = path.resolve(__dirname, '../../../test-credentials.json');
@@ -21,7 +21,7 @@ if (fs.existsSync(credsPath)) {
     const creds = JSON.parse(fs.readFileSync(credsPath, 'utf8'));
     TEST_EMAIL = creds.email;
     TEST_PASSWORD = creds.password;
-  } catch (e) {}
+  } catch (e) { }
 }
 
 const TIMEOUT = 20000;
@@ -59,12 +59,32 @@ describe('TrackBack — Security E2E & Rules Verification Tests', function () {
     firebaseApp = initializeApp(firebaseConfig);
   });
 
+  beforeEach(async () => {
+    if (driver) {
+      try {
+        await driver.get(BASE_URL);
+        await driver.manage().deleteAllCookies();
+        await driver.executeScript(`
+          try {
+            window.localStorage.clear();
+            window.sessionStorage.clear();
+            if (window.indexedDB) {
+              window.indexedDB.deleteDatabase('firebaseLocalStorageDb');
+            }
+          } catch(e){}
+        `);
+      } catch (e) {
+        console.warn('⚠️ Failed to clear session in beforeEach:', e.message);
+      }
+    }
+  });
+
   afterEach(async function () {
     const title = this.currentTest.title;
     const state = this.currentTest.state || 'skipped';
     const duration = this.currentTest.duration || 0;
     const error = this.currentTest.err ? this.currentTest.err.message : null;
-    
+
     testResults.push({
       name: `Security — ${title}`,
       status: state === 'passed' ? 'passed' : (state === 'failed' ? 'failed' : 'skipped'),
@@ -75,18 +95,18 @@ describe('TrackBack — Security E2E & Rules Verification Tests', function () {
 
   after(async () => {
     if (driver) await driver.quit();
-    
+
     const resultsDir = path.resolve(__dirname, '../../Test Results');
     fs.mkdirSync(resultsDir, { recursive: true });
-    
+
     const resultsFile = path.join(resultsDir, 'recorded-results.json');
     let currentResults = [];
     if (fs.existsSync(resultsFile)) {
       try {
         currentResults = JSON.parse(fs.readFileSync(resultsFile, 'utf8'));
-      } catch (e) {}
+      } catch (e) { }
     }
-    
+
     testResults.forEach(newRes => {
       const idx = currentResults.findIndex(r => r.name === newRes.name);
       if (idx > -1) {
@@ -152,7 +172,7 @@ describe('TrackBack — Security E2E & Rules Verification Tests', function () {
         btns[1].click(); // settings icon
       }
     });
-    
+
     await driver.sleep(1000);
 
     // Click logout
@@ -205,7 +225,7 @@ describe('TrackBack — Security E2E & Rules Verification Tests', function () {
   it('should block unauthorized database write attempts to restricted user paths', async () => {
     const db = getDatabase(firebaseApp);
     const targetPath = ref(db, 'users/unauthorized_victim_uid');
-    
+
     let writeError = null;
     try {
       await set(targetPath, {
@@ -216,7 +236,8 @@ describe('TrackBack — Security E2E & Rules Verification Tests', function () {
       writeError = err;
     }
 
-    if (!writeError || !writeError.message.includes('PERMISSION_DENIED')) {
+    const errMsg = writeError ? writeError.message.toUpperCase() : '';
+    if (!writeError || (!errMsg.includes('PERMISSION_DENIED') && !errMsg.includes('PERMISSION DENIED'))) {
       throw new Error(`Security Rules Violation: Path users/ restricted access write succeeded or returned unexpected error: ${writeError ? writeError.message : 'Success'}`);
     }
   });
@@ -224,7 +245,7 @@ describe('TrackBack — Security E2E & Rules Verification Tests', function () {
   it('should block unauthorized database read attempts to restricted user profiles', async () => {
     const db = getDatabase(firebaseApp);
     const targetPath = ref(db, 'users/unauthorized_victim_uid');
-    
+
     let readError = null;
     try {
       await get(targetPath);
@@ -232,7 +253,8 @@ describe('TrackBack — Security E2E & Rules Verification Tests', function () {
       readError = err;
     }
 
-    if (!readError || !readError.message.includes('PERMISSION_DENIED')) {
+    const errMsg = readError ? readError.message.toUpperCase() : '';
+    if (!readError || (!errMsg.includes('PERMISSION_DENIED') && !errMsg.includes('PERMISSION DENIED'))) {
       throw new Error(`Security Rules Violation: Path users/ restricted access read succeeded or returned unexpected error: ${readError ? readError.message : 'Success'}`);
     }
   });
@@ -262,7 +284,7 @@ describe('TrackBack — Security E2E & Rules Verification Tests', function () {
         btns[1].click(); // settings icon
       }
     });
-    
+
     await driver.sleep(1000);
 
     // Click edit profile
@@ -294,7 +316,7 @@ describe('TrackBack — Security E2E & Rules Verification Tests', function () {
     if (compromiseFound) {
       throw new Error('Stored XSS Vulnerability: payload script executed successfully in browser context');
     }
-    
+
     // Restore profile name
     await driver.executeScript(() => {
       const editBtn = document.querySelector('.btn-primary');

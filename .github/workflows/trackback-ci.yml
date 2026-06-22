@@ -511,6 +511,15 @@ jobs:
           name: load-test-reports
           path: load-test-reports
 
+      - name: "📦 Install report dependencies"
+        run: npm install exceljs --no-save --no-audit --ignore-scripts
+
+      - name: "📋 Publish Combined Step Summary Dashboard"
+        env:
+          BUILD_NUMBER: ${{ github.run_number }}
+          BRANCH: ${{ github.ref_name }}
+        run: node .github/scripts/generate-unified-summary.cjs
+
       - name: "📖 Fetch existing gh-pages history"
         uses: actions/checkout@v4
         continue-on-error: true
@@ -561,6 +570,9 @@ jobs:
           mkdir -p gh-pages-combined/load-test-reports
           cp -r load-test-reports/. gh-pages-combined/load-test-reports/ 2>/dev/null || true
 
+          # 6. Copy Consolidated Reports to root of gh-pages-combined
+          cp -r unified-reports/. gh-pages-combined/ 2>/dev/null || true
+
       - name: "🚀 Deploy all reports to GitHub Pages"
         uses: peaceiris/actions-gh-pages@v4
         with:
@@ -571,12 +583,6 @@ jobs:
           keep_files: true
           commit_message: "📊 Consolidated Test Report – Build #${{ github.run_number }}"
 
-      - name: "📋 Publish Combined Step Summary Dashboard"
-        env:
-          BUILD_NUMBER: ${{ github.run_number }}
-          BRANCH: ${{ github.ref_name }}
-        run: node .github/scripts/generate-unified-summary.cjs
-
       - name: "📤 Upload unified summary reports"
         if: always()
         uses: actions/upload-artifact@v4
@@ -584,3 +590,5 @@ jobs:
           name: unified-summary-reports
           path: unified-reports/
           retention-days: 7
+
+

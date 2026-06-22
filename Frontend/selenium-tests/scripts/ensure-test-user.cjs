@@ -19,11 +19,11 @@ const rtdb = getDatabase(app);
 const run = async () => {
   const buildNum = process.env.BUILD_NUMBER || process.env.GITHUB_RUN_NUMBER || 'local';
   const rand = Math.floor(1000 + Math.random() * 9000);
-  
+
   // Retrieve raw credentials and trim whitespaces
   const rawEmail = (process.env.TEST_EMAIL || '').trim();
   const rawPassword = (process.env.TEST_PASSWORD || '').trim();
-  
+
   // Enforce fallbacks for empty or invalid values
   const email = (rawEmail && rawEmail.includes('@') && !rawEmail.includes('testuser@trackback.com'))
     ? rawEmail
@@ -62,7 +62,7 @@ const run = async () => {
       createdAt: new Date().toISOString(),
       updatedAt: new Date().toISOString()
     };
-    
+
     await set(profileRef, profileData);
     console.log("✅ Profile successfully seeded and verified!");
 

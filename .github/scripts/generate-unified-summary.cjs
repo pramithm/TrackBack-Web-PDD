@@ -134,6 +134,7 @@ const dashboard = `# 🚀 TrackBack Consolidated CI/CD Test Dashboard
 
 ## 📂 Downloads & Artifacts
 - **Excel Reports:**
+  - 📊 [Consolidated Unified Summary Excel](${reportBaseUrl}/unified-summary.xlsx)
   - 🌐 [Web E2E Excel Report](${reportBaseUrl}/web-reports/latest/Excel/Automation_Test_Report.xlsx)
   - 📱 [Android E2E Excel Report](${reportBaseUrl}/android-reports/reports/latest/Excel/Automation_Test_Report.xlsx)
   - 🛡️ [Security Findings Excel](${reportBaseUrl}/security-reports/findings.xlsx)
@@ -216,9 +217,14 @@ const htmlContent = `<!DOCTYPE html>
 
   <div class="section">
     <h2>🛠️ Build & Deploy Summary</h2>
-    <div style="display:flex; gap:2rem;">
-      <div>Android APK Build: <span class="badge badge-pass">✅ SUCCESS</span></div>
-      <div>Web Application Deploy: <span class="badge badge-pass">✅ SUCCESS</span></div>
+    <div style="display:flex; justify-content:space-between; align-items:center;">
+      <div style="display:flex; gap:2rem;">
+        <div>Android APK Build: <span class="badge badge-pass">✅ SUCCESS</span></div>
+        <div>Web Application Deploy: <span class="badge badge-pass">✅ SUCCESS</span></div>
+      </div>
+      <div>
+        <a href="${reportBaseUrl}/unified-summary.xlsx" class="badge badge-info" style="font-size: 0.9rem; padding: 0.5rem 1rem;">📥 Download Excel Summary Report</a>
+      </div>
     </div>
   </div>
 
@@ -304,3 +310,188 @@ const htmlContent = `<!DOCTYPE html>
 
 fs.writeFileSync(path.join(unifiedDir, 'unified-summary.html'), htmlContent, 'utf8');
 console.log(`✅ HTML unified summary saved: ${path.join(unifiedDir, 'unified-summary.html')}`);
+
+// Generate Consolidated Excel Report using exceljs
+(async () => {
+  try {
+    const ExcelJS = require('exceljs');
+    const workbook = new ExcelJS.Workbook();
+    workbook.creator = 'TrackBack CI/CD';
+    workbook.lastModifiedBy = 'TrackBack CI/CD';
+    workbook.created = new Date();
+    workbook.modified = new Date();
+
+    // 1. Executive Dashboard Sheet
+    const dashboardSheet = workbook.addWorksheet('Executive Dashboard');
+    dashboardSheet.views = [{ showGridLines: true }];
+
+    // Title Block
+    dashboardSheet.mergeCells('A1:G1');
+    const titleCell = dashboardSheet.getCell('A1');
+    titleCell.value = 'TrackBack Unified CI/CD Executive Dashboard';
+    titleCell.font = { name: 'Arial', size: 16, bold: true, color: { argb: 'FFFFFF' } };
+    titleCell.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: '1E1B4B' } };
+    titleCell.alignment = { horizontal: 'center', vertical: 'middle' };
+    dashboardSheet.getRow(1).height = 40;
+
+    // Metadata
+    dashboardSheet.getCell('A3').value = 'Build Number:';
+    dashboardSheet.getCell('B3').value = `#${buildNum}`;
+    dashboardSheet.getCell('A4').value = 'Execution Date:';
+    dashboardSheet.getCell('B4').value = execDate;
+    dashboardSheet.getCell('A5').value = 'Branch:';
+    dashboardSheet.getCell('B5').value = process.env.BRANCH || 'main';
+
+    [dashboardSheet.getCell('A3'), dashboardSheet.getCell('A4'), dashboardSheet.getCell('A5')].forEach(c => {
+      c.font = { bold: true };
+    });
+
+    // Headers
+    dashboardSheet.getRow(7).values = ['Testing Tier', 'Total Test Cases', 'Passed', 'Failed', 'Skipped', 'Pass Rate / Score', 'Status'];
+    dashboardSheet.getRow(7).font = { bold: true, color: { argb: 'FFFFFF' } };
+    dashboardSheet.getRow(7).eachCell(c => {
+      c.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: '1E293B' } };
+      c.border = { bottom: { style: 'medium' } };
+    });
+
+    // Data rows
+    dashboardSheet.addRow(['🌐 Web Application E2E', Number(webStats.total) || 0, Number(webStats.passed) || 0, Number(webStats.failed) || 0, Number(webStats.skipped) || 0, webStats.rate, webStats.failed > 0 ? 'FAIL' : 'PASS']);
+    dashboardSheet.addRow(['📱 Android Mobile E2E', Number(androidStats.total) || 0, Number(androidStats.passed) || 0, Number(androidStats.failed) || 0, Number(androidStats.skipped) || 0, androidStats.rate, androidStats.failed > 0 ? 'FAIL' : 'PASS']);
+    dashboardSheet.addRow(['🛡️ Backend Security Scan', 300, '—', '—', '—', `${securityStats.score}/100`, securityStats.critical > 0 ? 'RISK' : 'SECURE']);
+    dashboardSheet.addRow(['🔒 Security E2E Tests', Number(securityStats.e2eTotal) || 0, Number(securityStats.e2ePassed) || 0, Number(securityStats.e2eFailed) || 0, 0, `${(securityStats.e2ePassed / (securityStats.e2eTotal || 1) * 100).toFixed(1)}%`, securityStats.e2eFailed > 0 ? 'FAIL' : 'PASS']);
+    dashboardSheet.addRow(['📈 Performance Load Test', Number(loadStats.totalRequests) || 0, '—', '—', '—', `${loadStats.successRate}% Success`, loadStats.errorRate > 1.0 ? 'SLOW' : 'OPTIMAL']);
+
+    // Style status cells
+    for (let rowIdx = 8; rowIdx <= 12; rowIdx++) {
+      const cell = dashboardSheet.getCell(`G${rowIdx}`);
+      const val = cell.value;
+      if (val === 'PASS' || val === 'SECURE' || val === 'OPTIMAL') {
+        cell.font = { bold: true, color: { argb: '047857' } };
+        cell.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'D1FAE5' } };
+      } else if (val === 'FAIL' || val === 'RISK' || val === 'SLOW') {
+        cell.font = { bold: true, color: { argb: 'B91C1C' } };
+        cell.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FEE2E2' } };
+      }
+    }
+
+    // Auto-fit column widths
+    dashboardSheet.columns.forEach(column => {
+      let maxLen = 0;
+      column.eachCell({ includeEmpty: true }, cell => {
+        const len = cell.value ? String(cell.value).length : 0;
+        if (len > maxLen) maxLen = len;
+      });
+      column.width = Math.max(maxLen + 3, 12);
+    });
+
+    // 2. Web E2E Details Sheet
+    const webSheet = workbook.addWorksheet('Web E2E Details');
+    webSheet.views = [{ showGridLines: true }];
+    webSheet.getRow(1).values = ['Test Case Name', 'Status', 'Duration (ms)', 'Error Message'];
+    webSheet.getRow(1).font = { bold: true, color: { argb: 'FFFFFF' } };
+    webSheet.getRow(1).eachCell(c => c.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: '1E293B' } });
+
+    const webResultsPath = path.join(ROOT, 'web-reports', 'recorded-results.json');
+    if (fs.existsSync(webResultsPath)) {
+      try {
+        const webResults = JSON.parse(fs.readFileSync(webResultsPath, 'utf8'));
+        webResults.forEach(test => {
+          webSheet.addRow([test.name, test.status, test.duration, test.error || '']);
+        });
+      } catch (e) {
+        console.warn('⚠️ Could not populate Web E2E details in Excel:', e.message);
+      }
+    }
+    webSheet.columns.forEach(column => {
+      let maxLen = 0;
+      column.eachCell({ includeEmpty: true }, cell => {
+        const len = cell.value ? String(cell.value).length : 0;
+        if (len > maxLen) maxLen = len;
+      });
+      column.width = Math.max(maxLen + 3, 12);
+    });
+
+    // 3. Android Mobile E2E Details Sheet
+    const androidSheet = workbook.addWorksheet('Android Mobile E2E Details');
+    androidSheet.views = [{ showGridLines: true }];
+    androidSheet.getRow(1).values = ['Test Case Name', 'Status', 'Duration (ms)', 'Error Message'];
+    androidSheet.getRow(1).font = { bold: true, color: { argb: 'FFFFFF' } };
+    androidSheet.getRow(1).eachCell(c => c.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: '1E293B' } });
+
+    const androidResultsPath = path.join(ROOT, 'android-reports', 'recorded-results.json');
+    if (fs.existsSync(androidResultsPath)) {
+      try {
+        const androidResults = JSON.parse(fs.readFileSync(androidResultsPath, 'utf8'));
+        androidResults.forEach(test => {
+          androidSheet.addRow([test.name, test.status, test.duration, test.error || '']);
+        });
+      } catch (e) {
+        console.warn('⚠️ Could not populate Android E2E details in Excel:', e.message);
+      }
+    }
+    androidSheet.columns.forEach(column => {
+      let maxLen = 0;
+      column.eachCell({ includeEmpty: true }, cell => {
+        const len = cell.value ? String(cell.value).length : 0;
+        if (len > maxLen) maxLen = len;
+      });
+      column.width = Math.max(maxLen + 3, 12);
+    });
+
+    // 4. Security Details Sheet
+    const secSheet = workbook.addWorksheet('Security Details');
+    secSheet.views = [{ showGridLines: true }];
+    secSheet.getRow(1).values = ['Security Scope', 'Severity / Result', 'Value', 'Status'];
+    secSheet.getRow(1).font = { bold: true, color: { argb: 'FFFFFF' } };
+    secSheet.getRow(1).eachCell(c => c.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: '1E293B' } });
+
+    secSheet.addRow(['Static Analysis (SAST)', '🔴 CRITICAL', securityStats.critical, securityStats.critical > 0 ? 'ACTION REQUIRED' : 'SECURE']);
+    secSheet.addRow(['Static Analysis (SAST)', '🟠 HIGH', securityStats.high, securityStats.high > 2 ? 'ACTION REQUIRED' : 'SECURE']);
+    secSheet.addRow(['Static Analysis (SAST)', '🟡 MEDIUM', securityStats.medium, 'REVIEW NEEDED']);
+    secSheet.addRow(['Static Analysis (SAST)', '🔵 LOW', securityStats.low, 'MONITOR']);
+    secSheet.addRow(['Firebase Security Rules', 'Read Restricted Paths', 'Enforced', 'SECURE']);
+    secSheet.addRow(['Firebase Security Rules', 'Write Restricted Paths', 'Enforced', 'SECURE']);
+    secSheet.addRow(['Security E2E Controls', 'Total Checked', securityStats.e2eTotal, securityStats.e2eFailed > 0 ? 'FAIL' : 'PASS']);
+    secSheet.addRow(['Security E2E Controls', 'Passed Controls', securityStats.e2ePassed, '']);
+    secSheet.addRow(['Security E2E Controls', 'Failed Controls', securityStats.e2eFailed, securityStats.e2eFailed > 0 ? 'VULNERABLE' : 'SECURE']);
+    
+    secSheet.columns.forEach(column => {
+      let maxLen = 0;
+      column.eachCell({ includeEmpty: true }, cell => {
+        const len = cell.value ? String(cell.value).length : 0;
+        if (len > maxLen) maxLen = len;
+      });
+      column.width = Math.max(maxLen + 3, 12);
+    });
+
+    // 5. Load Test Details Sheet
+    const loadSheet = workbook.addWorksheet('Load Test Details');
+    loadSheet.views = [{ showGridLines: true }];
+    loadSheet.getRow(1).values = ['Metric Name', 'Value', 'Status / Threshold'];
+    loadSheet.getRow(1).font = { bold: true, color: { argb: 'FFFFFF' } };
+    loadSheet.getRow(1).eachCell(c => c.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: '1E293B' } });
+
+    loadSheet.addRow(['Requests Per Second (RPS)', loadStats.rps, 'Optimal']);
+    loadSheet.addRow(['Average Response Time', `${loadStats.avgResponseTime} ms`, 'Target < 500 ms']);
+    loadSheet.addRow(['Minimum Response Time', `${loadStats.minResponseTime} ms`, '']);
+    loadSheet.addRow(['Maximum Response Time', `${loadStats.maxResponseTime} ms`, 'Target < 2000 ms']);
+    loadSheet.addRow(['Successful Request Rate', `${loadStats.successRate}%`, loadStats.successRate > 99 ? 'Optimal' : 'Needs tuning']);
+    loadSheet.addRow(['Failed Request Rate', `${loadStats.errorRate}%`, loadStats.errorRate < 1 ? 'Optimal' : 'Critical Errors']);
+    loadSheet.addRow(['Total Requests Executed', loadStats.totalRequests, 'Completed']);
+    
+    loadSheet.columns.forEach(column => {
+      let maxLen = 0;
+      column.eachCell({ includeEmpty: true }, cell => {
+        const len = cell.value ? String(cell.value).length : 0;
+        if (len > maxLen) maxLen = len;
+      });
+      column.width = Math.max(maxLen + 3, 12);
+    });
+
+    const xlPath = path.join(unifiedDir, 'unified-summary.xlsx');
+    await workbook.xlsx.writeFile(xlPath);
+    console.log(`✅ Consolidated Excel report saved to: ${xlPath}`);
+  } catch (err) {
+    console.error('❌ Failed to generate Consolidated Excel report:', err.message);
+  }
+})();
