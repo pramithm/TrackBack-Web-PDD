@@ -198,8 +198,8 @@ jobs:
     timeout-minutes: 10
 
     steps:
-      - name: "⏳ Wait 30 s for Pages deploy start"
-        run: sleep 30
+      - name: "⏳ Wait 90 s for Pages deploy start"
+        run: sleep 90
 
       - name: "✅ Verify HTTP 200 from live URL"
         run: |

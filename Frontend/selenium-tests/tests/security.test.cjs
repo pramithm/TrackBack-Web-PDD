@@ -12,17 +12,8 @@ const REPO_OWNER = process.env.REPO_OWNER || 'YOUR_USERNAME';
 const REPO_NAME = process.env.REPO_NAME || 'TrackBack-Web-PDD';
 const BASE_URL = process.env.BASE_URL || `https://${REPO_OWNER}.github.io/${REPO_NAME}/`;
 
-let TEST_EMAIL = 'pramithm2174.sse@saveetha.com';
-let TEST_PASSWORD = 'asdf1234';
-
-const credsPath = path.resolve(__dirname, '../../../test-credentials.json');
-if (fs.existsSync(credsPath)) {
-  try {
-    const creds = JSON.parse(fs.readFileSync(credsPath, 'utf8'));
-    TEST_EMAIL = creds.email;
-    TEST_PASSWORD = creds.password;
-  } catch (e) { }
-}
+const TEST_EMAIL = 'pramithm2174.sse@saveetha.com';
+const TEST_PASSWORD = 'asdf1234';
 
 const TIMEOUT = 20000;
 
@@ -44,7 +35,11 @@ async function buildDriver() {
     '--no-sandbox',
     '--disable-dev-shm-usage',
     '--disable-gpu',
-    '--window-size=1280,900'
+    '--window-size=1280,900',
+    '--disable-http-cache',
+    '--disable-application-cache',
+    '--disk-cache-size=0',
+    '--media-cache-size=0'
   );
   return new Builder().forBrowser('chrome').setChromeOptions(options).build();
 }
