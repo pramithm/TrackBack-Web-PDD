@@ -1,0 +1,18 @@
+{
+  "name": "trackback-backend-tests",
+  "version": "1.0.0",
+  "description": "Backend service unit & integration test suite for TrackBack",
+  "private": true,
+  "scripts": {
+    "test": "mocha tests/**/*.test.cjs --timeout 30000 --exit --reporter spec",
+    "test:ci": "mocha tests/**/*.test.cjs --timeout 30000 --exit --reporter json --reporter-option output=test-results.json",
+    "generate-report": "node scripts/generate-reports.cjs"
+  },
+  "dependencies": {
+    "firebase": "^10.14.1"
+  },
+  "devDependencies": {
+    "mocha": "^10.7.3",
+    "exceljs": "^4.4.0"
+  }
+}

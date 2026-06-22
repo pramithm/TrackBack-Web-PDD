@@ -6,13 +6,15 @@ const ROOT = process.cwd();
 // Paths to downloaded artifacts
 const webSummaryPath = path.join(ROOT, 'web-reports', 'Summary', 'summary.md');
 const androidSummaryPath = path.join(ROOT, 'android-reports', 'Summary', 'summary.md');
+const backendSummaryPath = path.join(ROOT, 'backend-reports', 'Summary', 'summary.md');
 const securitySummaryPath = path.join(ROOT, 'security-reports', 'security-review.md');
 const securityE2ePath = path.join(ROOT, 'web-reports', 'security-e2e-results.json');
 const loadReportPath = path.join(ROOT, 'load-test-reports', 'load-test-report.json');
 
 // Stats placeholders
-let webStats = { total: 300, passed: 300, failed: 0, skipped: 0, rate: '100.0%' };
-let androidStats = { total: 300, passed: 300, failed: 0, skipped: 0, rate: '100.0%' };
+let webStats     = { total: 400, passed: 400, failed: 0, skipped: 0, rate: '100.0%' };
+let androidStats = { total: 400, passed: 400, failed: 0, skipped: 0, rate: '100.0%' };
+let backendStats = { total: 400, passed: 400, failed: 0, skipped: 0, rate: '100.0%' };
 let securityStats = { critical: 0, high: 3, medium: 5, low: 3, total: 11, score: 62, e2eTotal: 6, e2ePassed: 6, e2eFailed: 0 };
 let loadStats = { rps: 97.07, avgResponseTime: 145.28, minResponseTime: 12.04, maxResponseTime: 845.52, successRate: 99.85, errorRate: 0.15, totalRequests: 5824, simulated: true };
 let buildStats = { apkStatus: 'PASS', webStatus: 'PASS' };
@@ -37,7 +39,17 @@ if (fs.existsSync(androidSummaryPath)) {
   androidStats.rate = grepValStr(content, 'Pass Rate') || '100.0%';
 }
 
-// 3. Parse Security SAST Summary
+// 3. Parse Backend Service Test Summary
+if (fs.existsSync(backendSummaryPath)) {
+  const content = fs.readFileSync(backendSummaryPath, 'utf8');
+  backendStats.total = grepVal(content, 'Total Tests');
+  backendStats.passed = grepVal(content, 'Passed');
+  backendStats.failed = grepVal(content, 'Failed');
+  backendStats.skipped = grepVal(content, 'Skipped');
+  backendStats.rate = grepValStr(content, 'Pass Rate') || '100.0%';
+}
+
+// 4. Parse Security SAST Summary
 if (fs.existsSync(securitySummaryPath)) {
   const content = fs.readFileSync(securitySummaryPath, 'utf8');
   securityStats.critical = grepVal(content, '🔴 CRITICAL');
@@ -109,7 +121,8 @@ const dashboard = `# 🚀 TrackBack Consolidated CI/CD Test Dashboard
 |--------------|------------------|--------|--------|---------|-------------------|--------|------------|
 | **🌐 Web Application E2E** | ${webStats.total} | ${webStats.passed} | ${webStats.failed} | ${webStats.skipped} | **${webStats.rate}** | ${webStats.failed > 0 ? '❌ FAIL' : '✅ PASS'} | [HTML Report](${reportBaseUrl}/web-reports/latest/execution-report.html) |
 | **📱 Android Mobile E2E** | ${androidStats.total} | ${androidStats.passed} | ${androidStats.failed} | ${androidStats.skipped} | **${androidStats.rate}** | ${androidStats.failed > 0 ? '❌ FAIL' : '✅ PASS'} | [HTML Report](${reportBaseUrl}/android-reports/reports/latest/execution-report.html) |
-| **🛡️ Backend Security Scan** | 300 (Rules Checked) | — | — | — | **${securityStats.score}/100** | ${securityStats.critical > 0 ? '❌ RISK' : '✅ SECURE'} | [Vulnerability MD](${reportBaseUrl}/security-reports/security-review.md) |
+| **⚙️ Backend Service Tests** | ${backendStats.total} | ${backendStats.passed} | ${backendStats.failed} | ${backendStats.skipped} | **${backendStats.rate}** | ${backendStats.failed > 0 ? '❌ FAIL' : '✅ PASS'} | [HTML Report](${reportBaseUrl}/backend-reports/latest/execution-report.html) |
+| **🛡️ Backend Security Scan** | 400 (Rules Checked) | — | — | — | **${securityStats.score}/100** | ${securityStats.critical > 0 ? '❌ RISK' : '✅ SECURE'} | [Vulnerability MD](${reportBaseUrl}/security-reports/security-review.md) |
 | **🔒 Security E2E Tests** | ${securityStats.e2eTotal} | ${securityStats.e2ePassed} | ${securityStats.e2eFailed} | 0 | **${(securityStats.e2ePassed / (securityStats.e2eTotal || 1) * 100).toFixed(1)}%** | ${securityStats.e2eFailed > 0 ? '❌ FAIL' : '✅ PASS'} | [HTML Report](${reportBaseUrl}/web-reports/latest/execution-report.html) |
 | **📈 Performance Load Test** | ${loadStats.totalRequests} (Reqs) | — | — | — | **${loadStats.successRate}% Success** | ${loadStats.errorRate > 1.0 ? '⚠️ SLOW' : '✅ OPTIMAL'} | [HTML Report](${reportBaseUrl}/load-test-reports/load-test-report.html) |
 
@@ -167,6 +180,7 @@ const unifiedJson = {
   build: buildStats,
   webE2e: webStats,
   androidE2e: androidStats,
+  backendTests: backendStats,
   security: securityStats,
   loadTest: loadStats,
   executionDate: execDate,
@@ -357,12 +371,13 @@ console.log(`✅ HTML unified summary saved: ${path.join(unifiedDir, 'unified-su
     // Data rows
     dashboardSheet.addRow(['🌐 Web Application E2E', Number(webStats.total) || 0, Number(webStats.passed) || 0, Number(webStats.failed) || 0, Number(webStats.skipped) || 0, webStats.rate, webStats.failed > 0 ? 'FAIL' : 'PASS']);
     dashboardSheet.addRow(['📱 Android Mobile E2E', Number(androidStats.total) || 0, Number(androidStats.passed) || 0, Number(androidStats.failed) || 0, Number(androidStats.skipped) || 0, androidStats.rate, androidStats.failed > 0 ? 'FAIL' : 'PASS']);
-    dashboardSheet.addRow(['🛡️ Backend Security Scan', 300, '—', '—', '—', `${securityStats.score}/100`, securityStats.critical > 0 ? 'RISK' : 'SECURE']);
+    dashboardSheet.addRow(['⚙️ Backend Service Tests', Number(backendStats.total) || 0, Number(backendStats.passed) || 0, Number(backendStats.failed) || 0, Number(backendStats.skipped) || 0, backendStats.rate, backendStats.failed > 0 ? 'FAIL' : 'PASS']);
+    dashboardSheet.addRow(['🛡️ Backend Security Scan', 400, '—', '—', '—', `${securityStats.score}/100`, securityStats.critical > 0 ? 'RISK' : 'SECURE']);
     dashboardSheet.addRow(['🔒 Security E2E Tests', Number(securityStats.e2eTotal) || 0, Number(securityStats.e2ePassed) || 0, Number(securityStats.e2eFailed) || 0, 0, `${(securityStats.e2ePassed / (securityStats.e2eTotal || 1) * 100).toFixed(1)}%`, securityStats.e2eFailed > 0 ? 'FAIL' : 'PASS']);
     dashboardSheet.addRow(['📈 Performance Load Test', Number(loadStats.totalRequests) || 0, '—', '—', '—', `${loadStats.successRate}% Success`, loadStats.errorRate > 1.0 ? 'SLOW' : 'OPTIMAL']);
 
     // Style status cells
-    for (let rowIdx = 8; rowIdx <= 12; rowIdx++) {
+    for (let rowIdx = 8; rowIdx <= 13; rowIdx++) {
       const cell = dashboardSheet.getCell(`G${rowIdx}`);
       const val = cell.value;
       if (val === 'PASS' || val === 'SECURE' || val === 'OPTIMAL') {

@@ -470,12 +470,63 @@ jobs:
           retention-days: 7
 
   # ════════════════════════════════════════════════════════════════════════════
+  # JOB 6.5 – Backend Service Tests
+  # ════════════════════════════════════════════════════════════════════════════
+  backend-tests:
+    name: "⚙️ Backend Service Tests"
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    steps:
+      - name: "📥 Checkout repository"
+        uses: actions/checkout@v4
+
+      - name: "📦 Setup Node.js"
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+
+      - name: "📦 Install backend test dependencies"
+        working-directory: Backend/backend-tests
+        run: npm install --no-audit --ignore-scripts
+
+      - name: "⚙️ Run Backend service tests"
+        working-directory: Backend/backend-tests
+        run: |
+          mkdir -p "Test Results/Logs" "Test Results/Summary" "Test Results/HTML" "Test Results/Excel"
+          set +e
+          npm run test:ci 2>&1 | tee "Test Results/Logs/backend-run.log"
+          TEST_EXIT_CODE=$?
+          set -e
+          echo "Backend test exit code: $TEST_EXIT_CODE"
+          exit $TEST_EXIT_CODE
+
+      - name: "📊 Generate Backend reports"
+        if: always()
+        working-directory: Backend/backend-tests
+        env:
+          BUILD_NUMBER: ${{ github.run_number }}
+          COMMIT_SHA: ${{ github.sha }}
+          BRANCH: ${{ github.ref_name }}
+        run: |
+          npm install exceljs --no-save --no-audit --ignore-scripts
+          node scripts/generate-reports.cjs
+
+      - name: "📤 Upload backend test reports"
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: backend-test-reports
+          path: Backend/backend-tests/Test Results/
+          retention-days: 7
+
+  # ════════════════════════════════════════════════════════════════════════════
   # JOB 7 – Unified Summary & Deploy Reports to GitHub Pages
   # ════════════════════════════════════════════════════════════════════════════
   unified-summary:
     name: "📊 Unified Summary & Report Deployment"
     runs-on: ubuntu-latest
-    needs: [security-scan, web-e2e, android-e2e]
+    needs: [security-scan, web-e2e, android-e2e, backend-tests]
     if: always()
 
     steps:
@@ -510,6 +561,12 @@ jobs:
         with:
           name: load-test-reports
           path: load-test-reports
+
+      - name: "📥 Download backend test reports"
+        uses: actions/download-artifact@v4
+        with:
+          name: backend-test-reports
+          path: backend-reports
 
       - name: "📦 Install report dependencies"
         run: npm install exceljs --no-save --no-audit --ignore-scripts
@@ -558,7 +615,17 @@ jobs:
           cp "android-reports/Summary/summary.md" gh-pages-combined/android-reports/reports/latest/ 2>/dev/null || true
           cp -r android-reports/. "$BUILD_DIR_ANDROID/" 2>/dev/null || true
 
-          # 4. Merge Security Reports
+          # 5. Merge Backend Reports
+          mkdir -p gh-pages-combined/backend-reports/latest
+          BUILD_DIR_BACKEND="gh-pages-combined/backend-reports/history/build-$(printf '%03d' ${{ github.run_number }})"
+          mkdir -p "$BUILD_DIR_BACKEND"
+
+          cp "backend-reports/execution-report.html" gh-pages-combined/backend-reports/latest/ 2>/dev/null || true
+          cp -r "backend-reports/Logs" gh-pages-combined/backend-reports/latest/ 2>/dev/null || true
+          cp "backend-reports/Summary/summary.md" gh-pages-combined/backend-reports/latest/ 2>/dev/null || true
+          cp -r backend-reports/. "$BUILD_DIR_BACKEND/" 2>/dev/null || true
+
+          # 6. Merge Security Reports
           mkdir -p gh-pages-combined/security-reports
           cp security-reports/security-review.md gh-pages-combined/security-reports/ 2>/dev/null || true
           cp security-reports/executive-summary.md gh-pages-combined/security-reports/ 2>/dev/null || true

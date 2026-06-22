@@ -1,0 +1,4804 @@
+[
+  {
+    "name": "BT-001 Firebase apiKey present",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:31.075Z"
+  },
+  {
+    "name": "BT-002 Firebase authDomain valid",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:31.077Z"
+  },
+  {
+    "name": "BT-003 Firebase projectId present",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:31.077Z"
+  },
+  {
+    "name": "BT-004 Firebase databaseURL valid",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:31.077Z"
+  },
+  {
+    "name": "BT-005 Firebase messagingSenderId numeric",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:31.078Z"
+  },
+  {
+    "name": "BT-006 Firebase storageBucket present",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:31.078Z"
+  },
+  {
+    "name": "BT-007 Firebase appId valid format",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:31.078Z"
+  },
+  {
+    "name": "BT-008 All Firebase config fields present",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:31.078Z"
+  },
+  {
+    "name": "BT-009 Firebase DB region asia-southeast1",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:31.079Z"
+  },
+  {
+    "name": "BT-010 Firebase config values non-empty strings",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:31.079Z"
+  },
+  {
+    "name": "BT-011 Valid email: user@example.com",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:31.079Z"
+  },
+  {
+    "name": "BT-012 Valid email: test.user@domain.org",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:31.079Z"
+  },
+  {
+    "name": "BT-013 Valid email: user+tag@gmail.com",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:31.079Z"
+  },
+  {
+    "name": "BT-014 Valid email: admin@company.co.uk",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:31.079Z"
+  },
+  {
+    "name": "BT-015 Valid email: pramithm2174.sse@saveetha.com",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:31.079Z"
+  },
+  {
+    "name": "BT-016 Valid email: pramith414@gmail.com",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:31.079Z"
+  },
+  {
+    "name": "BT-017 Valid email: a@b.co",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:31.080Z"
+  },
+  {
+    "name": "BT-018 Valid email: user123@test.io",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:31.080Z"
+  },
+  {
+    "name": "BT-019 Valid email: name.surname@corporate.net",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:31.080Z"
+  },
+  {
+    "name": "BT-020 Valid email: x@y.z",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:31.080Z"
+  },
+  {
+    "name": "BT-021 Invalid email rejected: \"\"",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:31.080Z"
+  },
+  {
+    "name": "BT-022 Invalid email rejected: \"notanemail\"",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:31.080Z"
+  },
+  {
+    "name": "BT-023 Invalid email rejected: \"@nodomain.com\"",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:31.080Z"
+  },
+  {
+    "name": "BT-024 Invalid email rejected: \"noatsign\"",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:31.080Z"
+  },
+  {
+    "name": "BT-025 Invalid email rejected: \"space @email.com\"",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:31.080Z"
+  },
+  {
+    "name": "BT-026 Invalid email rejected: \"double@@email.com\"",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:31.080Z"
+  },
+  {
+    "name": "BT-027 Invalid email rejected: \"no.tld@\"",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:31.084Z"
+  },
+  {
+    "name": "BT-028 Invalid email rejected: null",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:31.085Z"
+  },
+  {
+    "name": "BT-029 Invalid email rejected: undefined",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:31.085Z"
+  },
+  {
+    "name": "BT-030 Invalid email rejected: 123",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:31.085Z"
+  },
+  {
+    "name": "BT-031 Valid password ≥6 chars accepted",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:31.085Z"
+  },
+  {
+    "name": "BT-032 Password exactly 6 chars valid",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:31.086Z"
+  },
+  {
+    "name": "BT-033 Password 5 chars invalid",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:31.086Z"
+  },
+  {
+    "name": "BT-034 Empty password invalid",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:31.086Z"
+  },
+  {
+    "name": "BT-035 null password invalid",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:31.086Z"
+  },
+  {
+    "name": "BT-036 100-char password valid",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:31.086Z"
+  },
+  {
+    "name": "BT-037 Numeric-only password valid",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:31.086Z"
+  },
+  {
+    "name": "BT-038 Special char password valid",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:31.087Z"
+  },
+  {
+    "name": "BT-039 Password with spaces valid",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:31.087Z"
+  },
+  {
+    "name": "BT-040 undefined password invalid",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:31.087Z"
+  },
+  {
+    "name": "BT-041 Sanitize: \"<script>alert(\"xss\")</scr\"",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:31.087Z"
+  },
+  {
+    "name": "BT-042 Sanitize: \"<img src=x onerror=alert(\"",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:31.088Z"
+  },
+  {
+    "name": "BT-043 Sanitize: \"Normal text\"",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:31.088Z"
+  },
+  {
+    "name": "BT-044 Sanitize: \"<b>Bold</b>\"",
+    "status": "failed",
+    "duration": 2,
+    "error": "Expected values to be strictly equal:\n+ actual - expected\n\n+ 'bBold/b'\n- 'bBoldb'\n        ^\n",
+    "timestamp": "2026-06-22T14:34:31.090Z"
+  },
+  {
+    "name": "BT-045 Sanitize: \"   trimmed   \"",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:31.091Z"
+  },
+  {
+    "name": "BT-046 Sanitize: \"\"",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:31.091Z"
+  },
+  {
+    "name": "BT-047 Sanitize: \"<SCRIPT>evil()</SCRIPT>\"",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:31.091Z"
+  },
+  {
+    "name": "BT-048 Sanitize: \"Hello <World>\"",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:31.091Z"
+  },
+  {
+    "name": "BT-049 Sanitize: \"<<script>>\"",
+    "status": "failed",
+    "duration": 1,
+    "error": "Expected values to be strictly equal:\n\n'script' !== ''\n",
+    "timestamp": "2026-06-22T14:34:31.092Z"
+  },
+  {
+    "name": "BT-050 Sanitize: \"Safe & clean text\"",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:31.092Z"
+  },
+  {
+    "name": "BT-051 Valid UID accepted",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:31.092Z"
+  },
+  {
+    "name": "BT-052 Empty UID rejected",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:31.093Z"
+  },
+  {
+    "name": "BT-053 Numeric UID rejected",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:31.093Z"
+  },
+  {
+    "name": "BT-054 null UID rejected",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:31.093Z"
+  },
+  {
+    "name": "BT-055 128-char UID valid",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:31.093Z"
+  },
+  {
+    "name": "BT-056 129-char UID invalid",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:31.093Z"
+  },
+  {
+    "name": "BT-057 UID with special chars valid",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:31.093Z"
+  },
+  {
+    "name": "BT-058 Single char UID valid",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:31.093Z"
+  },
+  {
+    "name": "BT-059 TEST_EMAIL valid format",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:31.094Z"
+  },
+  {
+    "name": "BT-060 TEST_PASSWORD valid",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:31.094Z"
+  },
+  {
+    "name": "BT-061 Auth state has user property",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:31.094Z"
+  },
+  {
+    "name": "BT-062 Auth loading initially true",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:31.094Z"
+  },
+  {
+    "name": "BT-063 Auth error null on success",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:31.094Z"
+  },
+  {
+    "name": "BT-064 Auth user null after logout",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:31.094Z"
+  },
+  {
+    "name": "BT-065 User object has UID",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:31.094Z"
+  },
+  {
+    "name": "BT-066 User email matches TEST_EMAIL",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:31.094Z"
+  },
+  {
+    "name": "BT-067 emailVerified is boolean",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:31.095Z"
+  },
+  {
+    "name": "BT-068 Bypass list includes TEST_EMAIL",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:31.096Z"
+  },
+  {
+    "name": "BT-069 Bypass list includes GHA email",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:31.096Z"
+  },
+  {
+    "name": "BT-070 Random email not in bypass list",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:31.096Z"
+  },
+  {
+    "name": "BT-071 sanitize(null) = empty string",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:31.096Z"
+  },
+  {
+    "name": "BT-072 sanitize(number) = empty string",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:31.097Z"
+  },
+  {
+    "name": "BT-073 Email case-sensitive comparison",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:31.097Z"
+  },
+  {
+    "name": "BT-074 TEST_EMAIL is already lowercase",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:31.097Z"
+  },
+  {
+    "name": "BT-075 TEST_EMAIL domain has TLD",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:31.097Z"
+  },
+  {
+    "name": "BT-076 TEST_EMAIL local part non-empty",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:31.099Z"
+  },
+  {
+    "name": "BT-077 Auth error message is string",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:31.100Z"
+  },
+  {
+    "name": "BT-078 Auth error code format valid",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:31.101Z"
+  },
+  {
+    "name": "BT-079 Firebase projectId is trackback-1c73e",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:31.101Z"
+  },
+  {
+    "name": "BT-080 Auth state loading→authenticated",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:31.101Z"
+  },
+  {
+    "name": "BT-301 Valid message passes",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:31.102Z"
+  },
+  {
+    "name": "BT-302 Missing senderId fails",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:31.103Z"
+  },
+  {
+    "name": "BT-303 Empty content fails",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:31.103Z"
+  },
+  {
+    "name": "BT-304 >1000 chars fails",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:31.103Z"
+  },
+  {
+    "name": "BT-305 1000-char message passes",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:31.103Z"
+  },
+  {
+    "name": "BT-306 Missing roomId fails",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:31.103Z"
+  },
+  {
+    "name": "BT-307 Missing timestamp fails",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:31.104Z"
+  },
+  {
+    "name": "BT-308 String timestamp fails",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:31.104Z"
+  },
+  {
+    "name": "BT-309 null message fails",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:31.104Z"
+  },
+  {
+    "name": "BT-310 REQUIRED_MESSAGE_FIELDS count 4",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:31.104Z"
+  },
+  {
+    "name": "BT-311 sortMessages oldest first",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:31.104Z"
+  },
+  {
+    "name": "BT-312 sortMessages non-mutating",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:31.104Z"
+  },
+  {
+    "name": "BT-313 generateRoomId consistent",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:31.105Z"
+  },
+  {
+    "name": "BT-314 generateRoomId sorted UIDs",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:31.105Z"
+  },
+  {
+    "name": "BT-315 Room has 2 participants",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:31.105Z"
+  },
+  {
+    "name": "BT-316 Room participants is array",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:31.105Z"
+  },
+  {
+    "name": "BT-317 Room createdAt positive number",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:31.105Z"
+  },
+  {
+    "name": "BT-318 Room unreadCount starts at 0",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:31.106Z"
+  },
+  {
+    "name": "BT-319 Message read is boolean",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:31.106Z"
+  },
+  {
+    "name": "BT-320 New message is unread",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:31.106Z"
+  },
+  {
+    "name": "BT-321 Message content with emoji is valid",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:31.106Z"
+  },
+  {
+    "name": "BT-322 Message content with unicode is valid",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:31.106Z"
+  },
+  {
+    "name": "BT-323 Message content with 1 char is valid",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:31.106Z"
+  },
+  {
+    "name": "BT-324 Message whitespace-only content fails",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:31.107Z"
+  },
+  {
+    "name": "BT-325 sortMessages with empty array returns empty",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:31.107Z"
+  },
+  {
+    "name": "BT-326 sortMessages with 1 message returns 1",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:31.107Z"
+  },
+  {
+    "name": "BT-327 Room lastMessage is a string",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:31.107Z"
+  },
+  {
+    "name": "BT-328 Room lastMessageAt is a number",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:31.107Z"
+  },
+  {
+    "name": "BT-329 Room itemId is a string",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:31.107Z"
+  },
+  {
+    "name": "BT-330 Room id is a string",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:31.107Z"
+  },
+  {
+    "name": "BT-331 Message id is a string",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:31.107Z"
+  },
+  {
+    "name": "BT-332 Message senderId is a string",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:31.108Z"
+  },
+  {
+    "name": "BT-333 Message receiverId is a string",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:31.108Z"
+  },
+  {
+    "name": "BT-334 Message content is a string",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:31.108Z"
+  },
+  {
+    "name": "BT-335 Message timestamp is a number",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:31.108Z"
+  },
+  {
+    "name": "BT-336 Message timestamp is positive",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:31.108Z"
+  },
+  {
+    "name": "BT-337 generateRoomId is deterministic",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:31.108Z"
+  },
+  {
+    "name": "BT-338 generateRoomId output is a string",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:31.108Z"
+  },
+  {
+    "name": "BT-339 generateRoomId output contains both UIDs",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:31.108Z"
+  },
+  {
+    "name": "BT-340 MAX_MESSAGE_LENGTH is 1000",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:31.108Z"
+  },
+  {
+    "name": "BT-341 REQUIRED_MESSAGE_FIELDS includes senderId",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:31.109Z"
+  },
+  {
+    "name": "BT-342 REQUIRED_MESSAGE_FIELDS includes content",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:31.109Z"
+  },
+  {
+    "name": "BT-343 REQUIRED_MESSAGE_FIELDS includes timestamp",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:31.109Z"
+  },
+  {
+    "name": "BT-344 REQUIRED_MESSAGE_FIELDS includes roomId",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:31.109Z"
+  },
+  {
+    "name": "BT-345 Message with special chars in content is valid",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:31.109Z"
+  },
+  {
+    "name": "BT-346 Message 999-char content is valid",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:31.109Z"
+  },
+  {
+    "name": "BT-347 Message 1-char content is valid",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:31.109Z"
+  },
+  {
+    "name": "BT-348 Message 1001-char content is invalid",
+    "status": "passed",
+    "duration": 1,
+    "timestamp": "2026-06-22T14:34:31.110Z"
+  },
+  {
+    "name": "BT-349 Room participants includes sender",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:31.111Z"
+  },
+  {
+    "name": "BT-350 Room participants includes receiver",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:31.111Z"
+  },
+  {
+    "name": "BT-351 createSampleMessage returns new object each call",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:31.111Z"
+  },
+  {
+    "name": "BT-352 createSampleRoom returns new object each call",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:31.111Z"
+  },
+  {
+    "name": "BT-353 validateMessage returns object",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:31.112Z"
+  },
+  {
+    "name": "BT-354 validateMessage has valid key",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:31.112Z"
+  },
+  {
+    "name": "BT-355 validateMessage has error key",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:31.112Z"
+  },
+  {
+    "name": "BT-356 sortMessages result is an array",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:31.112Z"
+  },
+  {
+    "name": "BT-357 Messages sorted: earlier timestamp is first",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:31.112Z"
+  },
+  {
+    "name": "BT-358 Room object is a plain object",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:31.112Z"
+  },
+  {
+    "name": "BT-359 Room object is not null",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:31.112Z"
+  },
+  {
+    "name": "BT-360 Room participants are non-empty strings",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:31.112Z"
+  },
+  {
+    "name": "BT-361 Message senderId != receiverId in sample",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:31.112Z"
+  },
+  {
+    "name": "BT-362 Message roomId contains sender portion",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:31.112Z"
+  },
+  {
+    "name": "BT-363 Room id matches expected format",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:31.113Z"
+  },
+  {
+    "name": "BT-364 Message id is non-empty",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:31.113Z"
+  },
+  {
+    "name": "BT-365 Room id is non-empty",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:31.113Z"
+  },
+  {
+    "name": "BT-366 validateMessage with undefined fails",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:31.113Z"
+  },
+  {
+    "name": "BT-367 validateMessage with array fails",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:31.113Z"
+  },
+  {
+    "name": "BT-368 generateRoomId with same uid produces consistent output",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:31.113Z"
+  },
+  {
+    "name": "BT-369 Room unreadCount is a number",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:31.113Z"
+  },
+  {
+    "name": "BT-370 Room unreadCount is ≥ 0",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:31.113Z"
+  },
+  {
+    "name": "BT-371 Message with HTML content is valid (not sanitised at service level)",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:31.113Z"
+  },
+  {
+    "name": "BT-372 sortMessages with 10 messages returns 10",
+    "status": "passed",
+    "duration": 1,
+    "timestamp": "2026-06-22T14:34:31.114Z"
+  },
+  {
+    "name": "BT-373 REQUIRED_MESSAGE_FIELDS is an array",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:31.114Z"
+  },
+  {
+    "name": "BT-374 Room lastMessage matches sample message content",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:31.114Z"
+  },
+  {
+    "name": "BT-375 createSampleMessage override works",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:31.114Z"
+  },
+  {
+    "name": "BT-376 createSampleRoom override works",
+    "status": "passed",
+    "duration": 1,
+    "timestamp": "2026-06-22T14:34:31.117Z"
+  },
+  {
+    "name": "BT-377 Message roomId is a non-empty string",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:31.118Z"
+  },
+  {
+    "name": "BT-378 sortMessages preserves all messages",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:31.118Z"
+  },
+  {
+    "name": "BT-379 validateMessage error is null for valid message",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:31.118Z"
+  },
+  {
+    "name": "BT-380 Chat service constants are defined at module level",
+    "status": "passed",
+    "duration": 1,
+    "timestamp": "2026-06-22T14:34:31.119Z"
+  },
+  {
+    "name": "BT-101 Valid item passes validation",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:31.119Z"
+  },
+  {
+    "name": "BT-102 Missing title fails validation",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:31.120Z"
+  },
+  {
+    "name": "BT-103 Missing userId fails validation",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:31.120Z"
+  },
+  {
+    "name": "BT-104 Invalid type fails validation",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:31.120Z"
+  },
+  {
+    "name": "BT-105 lost type passes validation",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:31.120Z"
+  },
+  {
+    "name": "BT-106 found type passes validation",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:31.120Z"
+  },
+  {
+    "name": "BT-107 Invalid status fails validation",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:31.121Z"
+  },
+  {
+    "name": "BT-108 Non-numeric createdAt fails",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:31.121Z"
+  },
+  {
+    "name": "BT-109 null item fails validation",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:31.121Z"
+  },
+  {
+    "name": "BT-110 Required fields count is 8",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:31.121Z"
+  },
+  {
+    "name": "BT-111 sortByCreatedAt newest first",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:31.121Z"
+  },
+  {
+    "name": "BT-112 sortByCreatedAt non-mutating",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:31.122Z"
+  },
+  {
+    "name": "BT-113 sortByCreatedAt empty array",
+    "status": "passed",
+    "duration": 1,
+    "timestamp": "2026-06-22T14:34:31.123Z"
+  },
+  {
+    "name": "BT-114 sortByCreatedAt single item",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:31.123Z"
+  },
+  {
+    "name": "BT-115 filterByType lost returns 2 items",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:31.123Z"
+  },
+  {
+    "name": "BT-116 filterByType found returns 1 item",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:31.123Z"
+  },
+  {
+    "name": "BT-117 filterByType unknown returns empty",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:31.123Z"
+  },
+  {
+    "name": "BT-118 filterByUser correct items",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:31.124Z"
+  },
+  {
+    "name": "BT-119 filterByUser unknown empty",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:31.124Z"
+  },
+  {
+    "name": "BT-120 Item imageUrl is valid HTTPS URL",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:31.124Z"
+  },
+  {
+    "name": "BT-121 Valid title accepted",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:31.124Z"
+  },
+  {
+    "name": "BT-122 Invalid title rejected",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:31.124Z"
+  },
+  {
+    "name": "BT-123 Valid description accepted",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:31.124Z"
+  },
+  {
+    "name": "BT-124 Invalid description rejected",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:31.124Z"
+  },
+  {
+    "name": "BT-125 Valid type accepted",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:31.125Z"
+  },
+  {
+    "name": "BT-126 Invalid type rejected",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:31.125Z"
+  },
+  {
+    "name": "BT-127 Valid userId accepted",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:31.125Z"
+  },
+  {
+    "name": "BT-128 Invalid userId rejected",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:31.125Z"
+  },
+  {
+    "name": "BT-129 Valid location accepted",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:31.125Z"
+  },
+  {
+    "name": "BT-130 Invalid location rejected",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:31.125Z"
+  },
+  {
+    "name": "BT-131 Valid status accepted",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:31.125Z"
+  },
+  {
+    "name": "BT-132 Invalid status rejected",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:31.125Z"
+  },
+  {
+    "name": "BT-133 Valid id accepted",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:31.125Z"
+  },
+  {
+    "name": "BT-134 Invalid id rejected",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:31.125Z"
+  },
+  {
+    "name": "BT-135 Valid createdAt accepted",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:31.125Z"
+  },
+  {
+    "name": "BT-136 Invalid createdAt rejected",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:31.125Z"
+  },
+  {
+    "name": "BT-137 VALID_ITEM_TYPES count is 2",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:31.125Z"
+  },
+  {
+    "name": "BT-138 VALID_ITEM_TYPES has lost",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:31.126Z"
+  },
+  {
+    "name": "BT-139 VALID_ITEM_TYPES has found",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:31.126Z"
+  },
+  {
+    "name": "BT-140 VALID_ITEM_STATUSES count is 4",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:31.126Z"
+  },
+  {
+    "name": "BT-141 Default status is ai-verified",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:31.126Z"
+  },
+  {
+    "name": "BT-142 phoneNumber is string",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:31.126Z"
+  },
+  {
+    "name": "BT-143 user display name is string",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:31.126Z"
+  },
+  {
+    "name": "BT-144 createdAt is recent timestamp",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:31.126Z"
+  },
+  {
+    "name": "BT-145 Item title min length is 1",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:31.126Z"
+  },
+  {
+    "name": "BT-146 Item location is a non-empty string",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:31.127Z"
+  },
+  {
+    "name": "BT-147 Item id is a non-empty string",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:31.127Z"
+  },
+  {
+    "name": "BT-148 filterByType does not mutate input",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:31.127Z"
+  },
+  {
+    "name": "BT-149 filterByUser does not mutate input",
+    "status": "passed",
+    "duration": 1,
+    "timestamp": "2026-06-22T14:34:31.135Z"
+  },
+  {
+    "name": "BT-150 Sample item is a plain object",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:31.135Z"
+  },
+  {
+    "name": "BT-151 Sample item keys count is ≥ 8",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:31.135Z"
+  },
+  {
+    "name": "BT-152 filterByType with empty list returns empty",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:31.135Z"
+  },
+  {
+    "name": "BT-153 filterByUser with empty list returns empty",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:31.135Z"
+  },
+  {
+    "name": "BT-154 sortByCreatedAt result length matches input",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:31.136Z"
+  },
+  {
+    "name": "BT-155 ai-verified is a valid status",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:31.136Z"
+  },
+  {
+    "name": "BT-156 pending is a valid status",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:31.136Z"
+  },
+  {
+    "name": "BT-157 resolved is a valid status",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:31.136Z"
+  },
+  {
+    "name": "BT-158 flagged is a valid status",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:31.136Z"
+  },
+  {
+    "name": "BT-159 Item imageUrl starts with https",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:31.136Z"
+  },
+  {
+    "name": "BT-160 validateItem returns object with valid and error fields",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:31.136Z"
+  },
+  {
+    "name": "BT-161 Item description can include special characters",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:31.136Z"
+  },
+  {
+    "name": "BT-162 phoneNumber with 10 digits is present in sample",
+    "status": "passed",
+    "duration": 1,
+    "timestamp": "2026-06-22T14:34:31.137Z"
+  },
+  {
+    "name": "BT-163 REQUIRED_ITEM_FIELDS includes id",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:31.137Z"
+  },
+  {
+    "name": "BT-164 REQUIRED_ITEM_FIELDS includes status",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:31.137Z"
+  },
+  {
+    "name": "BT-165 REQUIRED_ITEM_FIELDS includes createdAt",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:31.137Z"
+  },
+  {
+    "name": "BT-166 REQUIRED_ITEM_FIELDS includes location",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:31.137Z"
+  },
+  {
+    "name": "BT-167 REQUIRED_ITEM_FIELDS includes type",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:31.137Z"
+  },
+  {
+    "name": "BT-168 REQUIRED_ITEM_FIELDS includes userId",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:31.137Z"
+  },
+  {
+    "name": "BT-169 REQUIRED_ITEM_FIELDS includes title",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:31.137Z"
+  },
+  {
+    "name": "BT-170 REQUIRED_ITEM_FIELDS includes description",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:31.137Z"
+  },
+  {
+    "name": "BT-171 Two items with same createdAt sort stably",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:31.138Z"
+  },
+  {
+    "name": "BT-172 Item with all fields returns no error",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:31.138Z"
+  },
+  {
+    "name": "BT-173 validateItem error is string when invalid",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:31.138Z"
+  },
+  {
+    "name": "BT-174 filterByType is case-sensitive",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:31.138Z"
+  },
+  {
+    "name": "BT-175 filterByUser is case-sensitive for userId",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:31.138Z"
+  },
+  {
+    "name": "BT-176 sortByCreatedAt with 10 items returns 10",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:31.138Z"
+  },
+  {
+    "name": "BT-177 Item Cloudinary URL is from res.cloudinary.com domain",
+    "status": "passed",
+    "duration": 1,
+    "timestamp": "2026-06-22T14:34:31.139Z"
+  },
+  {
+    "name": "BT-178 Sample item userId is non-empty",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:31.139Z"
+  },
+  {
+    "name": "BT-179 Sample item title is non-empty",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:31.139Z"
+  },
+  {
+    "name": "BT-180 createSampleItem with override merges correctly",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:31.139Z"
+  },
+  {
+    "name": "BT-201 Valid user profile passes",
+    "status": "passed",
+    "duration": 1,
+    "timestamp": "2026-06-22T14:34:31.140Z"
+  },
+  {
+    "name": "BT-202 Missing name fails",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:31.140Z"
+  },
+  {
+    "name": "BT-203 Missing email fails",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:31.140Z"
+  },
+  {
+    "name": "BT-204 Invalid email fails",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:31.140Z"
+  },
+  {
+    "name": "BT-205 Missing uid fails",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:31.140Z"
+  },
+  {
+    "name": "BT-206 Age 0 fails validation",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:31.140Z"
+  },
+  {
+    "name": "BT-207 Age 121 fails validation",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:31.156Z"
+  },
+  {
+    "name": "BT-208 Age 18 passes",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:31.156Z"
+  },
+  {
+    "name": "BT-209 Numeric phone fails",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:31.157Z"
+  },
+  {
+    "name": "BT-210 null user fails",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:31.157Z"
+  },
+  {
+    "name": "BT-211 Complete profile passes",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:31.157Z"
+  },
+  {
+    "name": "BT-212 No phone → incomplete",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:31.158Z"
+  },
+  {
+    "name": "BT-213 No location → incomplete",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:31.158Z"
+  },
+  {
+    "name": "BT-214 No gender → incomplete",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:31.158Z"
+  },
+  {
+    "name": "BT-215 No avatarUrl → incomplete",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:31.158Z"
+  },
+  {
+    "name": "BT-216 OPTIONAL_PROFILE_FIELDS count is 6",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:31.158Z"
+  },
+  {
+    "name": "BT-217 REQUIRED_PROFILE_FIELDS count is 4",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:31.159Z"
+  },
+  {
+    "name": "BT-218 emailVerified is boolean",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:31.159Z"
+  },
+  {
+    "name": "BT-219 createdAt is positive number",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:31.159Z"
+  },
+  {
+    "name": "BT-220 displayName matches name",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:31.159Z"
+  },
+  {
+    "name": "BT-221 User age 1 is valid (min boundary)",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:31.159Z"
+  },
+  {
+    "name": "BT-222 User age 120 is valid (max boundary)",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:31.159Z"
+  },
+  {
+    "name": "BT-223 User age -1 is invalid",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:31.159Z"
+  },
+  {
+    "name": "BT-224 User name with single char is valid",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:31.159Z"
+  },
+  {
+    "name": "BT-225 User email can have subdomain",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:31.160Z"
+  },
+  {
+    "name": "BT-226 User uid is a non-empty string",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:31.160Z"
+  },
+  {
+    "name": "BT-227 User gender field can be any string",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:31.160Z"
+  },
+  {
+    "name": "BT-228 User location field accepts unicode",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:31.160Z"
+  },
+  {
+    "name": "BT-229 User name field accepts unicode",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:31.160Z"
+  },
+  {
+    "name": "BT-230 isProfileComplete returns false for null field",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:31.160Z"
+  },
+  {
+    "name": "BT-231 isProfileComplete returns false for undefined field",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:31.160Z"
+  },
+  {
+    "name": "BT-232 User object is a plain object",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:31.160Z"
+  },
+  {
+    "name": "BT-233 createSampleUser keys count ≥ 10",
+    "status": "passed",
+    "duration": 1,
+    "timestamp": "2026-06-22T14:34:31.161Z"
+  },
+  {
+    "name": "BT-234 User email does not contain spaces",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:31.161Z"
+  },
+  {
+    "name": "BT-235 User avatarUrl starts with https",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:31.161Z"
+  },
+  {
+    "name": "BT-236 REQUIRED_PROFILE_FIELDS includes email",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:31.161Z"
+  },
+  {
+    "name": "BT-237 REQUIRED_PROFILE_FIELDS includes uid",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:31.161Z"
+  },
+  {
+    "name": "BT-238 REQUIRED_PROFILE_FIELDS includes name",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:31.161Z"
+  },
+  {
+    "name": "BT-239 REQUIRED_PROFILE_FIELDS includes createdAt",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:31.161Z"
+  },
+  {
+    "name": "BT-240 OPTIONAL_PROFILE_FIELDS includes phone",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:31.161Z"
+  },
+  {
+    "name": "BT-241 OPTIONAL_PROFILE_FIELDS includes age",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:31.161Z"
+  },
+  {
+    "name": "BT-242 OPTIONAL_PROFILE_FIELDS includes gender",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:31.161Z"
+  },
+  {
+    "name": "BT-243 OPTIONAL_PROFILE_FIELDS includes avatarUrl",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:31.162Z"
+  },
+  {
+    "name": "BT-244 OPTIONAL_PROFILE_FIELDS includes location",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:31.162Z"
+  },
+  {
+    "name": "BT-245 OPTIONAL_PROFILE_FIELDS includes displayName",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:31.162Z"
+  },
+  {
+    "name": "BT-246 validateUserProfile returns object with valid key",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:31.162Z"
+  },
+  {
+    "name": "BT-247 validateUserProfile returns object with error key",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:31.162Z"
+  },
+  {
+    "name": "BT-248 User with string age fails (age must be number)",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:31.162Z"
+  },
+  {
+    "name": "BT-249 User email matches test email format",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:31.162Z"
+  },
+  {
+    "name": "BT-250 createSampleUser with override replaces field",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:31.162Z"
+  },
+  {
+    "name": "BT-251 User phone with hyphens is valid string",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:31.162Z"
+  },
+  {
+    "name": "BT-252 User phone empty string is fine (optional field)",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:31.162Z"
+  },
+  {
+    "name": "BT-253 User without optional age field still valid",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:31.163Z"
+  },
+  {
+    "name": "BT-254 User without optional phone field still valid",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:31.163Z"
+  },
+  {
+    "name": "BT-255 User age must not be floating point check",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:31.163Z"
+  },
+  {
+    "name": "BT-256 isProfileComplete checks all 6 optional fields",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:31.163Z"
+  },
+  {
+    "name": "BT-257 User email property is a string",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:31.163Z"
+  },
+  {
+    "name": "BT-258 User name property is a string",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:31.163Z"
+  },
+  {
+    "name": "BT-259 User location property is a string",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:31.163Z"
+  },
+  {
+    "name": "BT-260 User gender property is a string",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:31.163Z"
+  },
+  {
+    "name": "BT-261 User age property is a number",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:31.163Z"
+  },
+  {
+    "name": "BT-262 User uid property is a string",
+    "status": "passed",
+    "duration": 1,
+    "timestamp": "2026-06-22T14:34:31.164Z"
+  },
+  {
+    "name": "BT-263 User avatarUrl is a string",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:31.164Z"
+  },
+  {
+    "name": "BT-264 User displayName is a string",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:31.164Z"
+  },
+  {
+    "name": "BT-265 User phone is a string",
+    "status": "passed",
+    "duration": 2,
+    "timestamp": "2026-06-22T14:34:31.166Z"
+  },
+  {
+    "name": "BT-266 User emailVerified is true for test account",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:31.169Z"
+  },
+  {
+    "name": "BT-267 User createdAt is a number",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:31.169Z"
+  },
+  {
+    "name": "BT-268 User profile has no password field (security)",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:31.169Z"
+  },
+  {
+    "name": "BT-269 User profile has no token field (security)",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:31.169Z"
+  },
+  {
+    "name": "BT-270 User profile has no secret field (security)",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:31.169Z"
+  },
+  {
+    "name": "BT-271 isProfileComplete handles empty object",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:31.169Z"
+  },
+  {
+    "name": "BT-272 User email @ count is exactly 1",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:31.170Z"
+  },
+  {
+    "name": "BT-273 User email TLD length is ≥ 2",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:31.170Z"
+  },
+  {
+    "name": "BT-274 User name has at least 1 character",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:31.170Z"
+  },
+  {
+    "name": "BT-275 User uid has at least 1 character",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:31.170Z"
+  },
+  {
+    "name": "BT-276 Test user email domain is sse.saveetha.com",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:31.170Z"
+  },
+  {
+    "name": "BT-277 validateUserProfile null input returns error string",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:31.170Z"
+  },
+  {
+    "name": "BT-278 Profile validation is synchronous (no promise)",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:31.170Z"
+  },
+  {
+    "name": "BT-279 createSampleUser returns new object each call",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:31.170Z"
+  },
+  {
+    "name": "BT-280 User profile: all required fields are strings except createdAt (number)",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:31.170Z"
+  },
+  {
+    "name": "BT-401 Valid phone: 9876543210",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:31.171Z"
+  },
+  {
+    "name": "BT-402 Valid phone: 1234567890",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:31.171Z"
+  },
+  {
+    "name": "BT-403 Valid phone: 0000000000",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:31.171Z"
+  },
+  {
+    "name": "BT-404 Valid phone: 9999999999",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:31.171Z"
+  },
+  {
+    "name": "BT-405 Valid phone: 5555555555",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:31.171Z"
+  },
+  {
+    "name": "BT-406 Invalid phone: \"987654321\"",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:31.172Z"
+  },
+  {
+    "name": "BT-407 Invalid phone: \"98765432101\"",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:31.172Z"
+  },
+  {
+    "name": "BT-408 Invalid phone: \"abcdefghij\"",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:31.172Z"
+  },
+  {
+    "name": "BT-409 Invalid phone: \"+919876543210\"",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:31.172Z"
+  },
+  {
+    "name": "BT-410 Invalid phone: \"9876543-21\"",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:31.172Z"
+  },
+  {
+    "name": "BT-411 Valid URL: https://res.cloudinary.com/image.jpg",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:31.172Z"
+  },
+  {
+    "name": "BT-412 Valid URL: http://example.com",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:31.173Z"
+  },
+  {
+    "name": "BT-413 Valid URL: https://pramithm.github.io/TrackBack-Web",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:31.173Z"
+  },
+  {
+    "name": "BT-414 Valid URL: https://trackback-1c73e-default-rtdb.asi",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:31.173Z"
+  },
+  {
+    "name": "BT-415 Valid URL: https://www.sub.domain.co.uk/path?query=",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:31.173Z"
+  },
+  {
+    "name": "BT-416 Invalid URL: \"not-a-url\"",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:31.173Z"
+  },
+  {
+    "name": "BT-417 Invalid URL: \"\"",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:31.173Z"
+  },
+  {
+    "name": "BT-418 Invalid URL: \"ftp://nothttp.com\"",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:31.173Z"
+  },
+  {
+    "name": "BT-419 Invalid URL: \"justext\"",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:31.173Z"
+  },
+  {
+    "name": "BT-420 Invalid URL: \"null\"",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:31.173Z"
+  },
+  {
+    "name": "BT-421 sanitize \"<script>alert(1)</sc\"",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:31.174Z"
+  },
+  {
+    "name": "BT-422 sanitize \"Normal text\"",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:31.174Z"
+  },
+  {
+    "name": "BT-423 sanitize \"<b>Bold</b>\"",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:31.174Z"
+  },
+  {
+    "name": "BT-424 sanitize \"Hello \"World\"\"",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:31.174Z"
+  },
+  {
+    "name": "BT-425 sanitize \"It's here\"",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:31.174Z"
+  },
+  {
+    "name": "BT-426 sanitize \"  spaces  \"",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:31.174Z"
+  },
+  {
+    "name": "BT-427 sanitize \"SELECT * FROM users;\"",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:31.174Z"
+  },
+  {
+    "name": "BT-428 sanitize \"<img onerror=\"evil()\"",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:31.174Z"
+  },
+  {
+    "name": "BT-429 sanitize \"Clean & safe\"",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:31.175Z"
+  },
+  {
+    "name": "BT-430 sanitize \"\"",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:31.175Z"
+  },
+  {
+    "name": "BT-431 sanitize \"<>\"",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:31.175Z"
+  },
+  {
+    "name": "BT-432 sanitize \"Back`tick\"",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:31.175Z"
+  },
+  {
+    "name": "BT-433 coerce null → \"\"",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:31.175Z"
+  },
+  {
+    "name": "BT-434 coerce undefined → \"\"",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:31.177Z"
+  },
+  {
+    "name": "BT-435 coerce 42 → \"42\"",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:31.178Z"
+  },
+  {
+    "name": "BT-436 coerce true → \"true\"",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:31.178Z"
+  },
+  {
+    "name": "BT-437 50 in [1,100]",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:31.178Z"
+  },
+  {
+    "name": "BT-438 0 not in [1,100]",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:31.178Z"
+  },
+  {
+    "name": "BT-439 1 at min boundary",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:31.178Z"
+  },
+  {
+    "name": "BT-440 100 at max boundary",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:31.178Z"
+  },
+  {
+    "name": "BT-441 string arg not in range",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:31.178Z"
+  },
+  {
+    "name": "BT-442 truncate to 5",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:31.178Z"
+  },
+  {
+    "name": "BT-443 truncate short str",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:31.179Z"
+  },
+  {
+    "name": "BT-444 truncate non-string",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:31.179Z"
+  },
+  {
+    "name": "BT-445 parseJSONSafe valid JSON",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:31.179Z"
+  },
+  {
+    "name": "BT-446 parseJSONSafe invalid returns null",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:31.179Z"
+  },
+  {
+    "name": "BT-447 parseJSONSafe empty string",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:31.179Z"
+  },
+  {
+    "name": "BT-448 capitalizeFirst works",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:31.179Z"
+  },
+  {
+    "name": "BT-449 capitalizeFirst uppercase",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:31.179Z"
+  },
+  {
+    "name": "BT-450 capitalizeFirst empty",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:31.180Z"
+  },
+  {
+    "name": "BT-451 PHONE_REGEX matches 10-digit string",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:31.180Z"
+  },
+  {
+    "name": "BT-452 PHONE_REGEX rejects 9-digit string",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:31.180Z"
+  },
+  {
+    "name": "BT-453 PHONE_REGEX rejects 11-digit string",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:31.180Z"
+  },
+  {
+    "name": "BT-454 PHONE_REGEX rejects alphabets",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:31.180Z"
+  },
+  {
+    "name": "BT-455 EMAIL_REGEX matches standard email",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:31.180Z"
+  },
+  {
+    "name": "BT-456 EMAIL_REGEX rejects email without @",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:31.180Z"
+  },
+  {
+    "name": "BT-457 EMAIL_REGEX rejects email without domain",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:31.180Z"
+  },
+  {
+    "name": "BT-458 URL_REGEX matches https URL",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:31.180Z"
+  },
+  {
+    "name": "BT-459 URL_REGEX matches http URL",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:31.180Z"
+  },
+  {
+    "name": "BT-460 URL_REGEX rejects plain text",
+    "status": "passed",
+    "duration": 1,
+    "timestamp": "2026-06-22T14:34:31.183Z"
+  },
+  {
+    "name": "BT-461 sanitizeString removes all HTML tags",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:31.183Z"
+  },
+  {
+    "name": "BT-462 sanitizeString trims leading/trailing spaces",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:31.184Z"
+  },
+  {
+    "name": "BT-463 coerceToString(0) returns \"0\"",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:31.184Z"
+  },
+  {
+    "name": "BT-464 coerceToString(false) returns \"false\"",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:31.185Z"
+  },
+  {
+    "name": "BT-465 coerceToString([1,2]) returns \"1,2\"",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:31.185Z"
+  },
+  {
+    "name": "BT-466 isWithinRange(NaN, 1, 100) is false",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:31.185Z"
+  },
+  {
+    "name": "BT-467 isWithinRange(Infinity, 1, 100) is false",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:31.185Z"
+  },
+  {
+    "name": "BT-468 truncateString at exact max returns unchanged",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:31.186Z"
+  },
+  {
+    "name": "BT-469 truncateString at 0 max returns empty string",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:31.186Z"
+  },
+  {
+    "name": "BT-470 parseJSONSafe returns array for JSON array",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:31.186Z"
+  },
+  {
+    "name": "BT-471 parseJSONSafe returns null for undefined",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:31.186Z"
+  },
+  {
+    "name": "BT-472 capitalizeFirst handles single char",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:31.186Z"
+  },
+  {
+    "name": "BT-473 capitalizeFirst does not touch rest of string",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:31.186Z"
+  },
+  {
+    "name": "BT-474 sanitizeString with null returns empty",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:31.186Z"
+  },
+  {
+    "name": "BT-475 sanitizeString with number returns empty",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:31.187Z"
+  },
+  {
+    "name": "BT-476 isValidPhone with null returns false",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:31.187Z"
+  },
+  {
+    "name": "BT-477 isValidEmail with null returns false",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:31.187Z"
+  },
+  {
+    "name": "BT-478 isValidUrl with null returns false",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:31.187Z"
+  },
+  {
+    "name": "BT-479 All regex constants are defined",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:31.187Z"
+  },
+  {
+    "name": "BT-480 All utility functions are callable",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:31.187Z"
+  },
+  {
+    "name": "BT-001 Firebase apiKey present",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:54.987Z"
+  },
+  {
+    "name": "BT-002 Firebase authDomain valid",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:54.990Z"
+  },
+  {
+    "name": "BT-003 Firebase projectId present",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:54.991Z"
+  },
+  {
+    "name": "BT-004 Firebase databaseURL valid",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:54.992Z"
+  },
+  {
+    "name": "BT-005 Firebase messagingSenderId numeric",
+    "status": "passed",
+    "duration": 1,
+    "timestamp": "2026-06-22T14:34:54.993Z"
+  },
+  {
+    "name": "BT-006 Firebase storageBucket present",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:54.993Z"
+  },
+  {
+    "name": "BT-007 Firebase appId valid format",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:54.994Z"
+  },
+  {
+    "name": "BT-008 All Firebase config fields present",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:54.995Z"
+  },
+  {
+    "name": "BT-009 Firebase DB region asia-southeast1",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:54.995Z"
+  },
+  {
+    "name": "BT-010 Firebase config values non-empty strings",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:54.996Z"
+  },
+  {
+    "name": "BT-011 Valid email: user@example.com",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:54.996Z"
+  },
+  {
+    "name": "BT-012 Valid email: test.user@domain.org",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:54.996Z"
+  },
+  {
+    "name": "BT-013 Valid email: user+tag@gmail.com",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:54.997Z"
+  },
+  {
+    "name": "BT-014 Valid email: admin@company.co.uk",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:54.997Z"
+  },
+  {
+    "name": "BT-015 Valid email: pramithm2174.sse@saveetha.com",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:54.997Z"
+  },
+  {
+    "name": "BT-016 Valid email: pramith414@gmail.com",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:54.997Z"
+  },
+  {
+    "name": "BT-017 Valid email: a@b.co",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:54.997Z"
+  },
+  {
+    "name": "BT-018 Valid email: user123@test.io",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:54.997Z"
+  },
+  {
+    "name": "BT-019 Valid email: name.surname@corporate.net",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:54.998Z"
+  },
+  {
+    "name": "BT-020 Valid email: x@y.z",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:54.998Z"
+  },
+  {
+    "name": "BT-021 Invalid email rejected: \"\"",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:54.998Z"
+  },
+  {
+    "name": "BT-022 Invalid email rejected: \"notanemail\"",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:54.999Z"
+  },
+  {
+    "name": "BT-023 Invalid email rejected: \"@nodomain.com\"",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:55.000Z"
+  },
+  {
+    "name": "BT-024 Invalid email rejected: \"noatsign\"",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:55.000Z"
+  },
+  {
+    "name": "BT-025 Invalid email rejected: \"space @email.com\"",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:55.001Z"
+  },
+  {
+    "name": "BT-026 Invalid email rejected: \"double@@email.com\"",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:55.001Z"
+  },
+  {
+    "name": "BT-027 Invalid email rejected: \"no.tld@\"",
+    "status": "passed",
+    "duration": 1,
+    "timestamp": "2026-06-22T14:34:55.002Z"
+  },
+  {
+    "name": "BT-028 Invalid email rejected: null",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:55.002Z"
+  },
+  {
+    "name": "BT-029 Invalid email rejected: undefined",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:55.002Z"
+  },
+  {
+    "name": "BT-030 Invalid email rejected: 123",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:55.002Z"
+  },
+  {
+    "name": "BT-031 Valid password ≥6 chars accepted",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:55.003Z"
+  },
+  {
+    "name": "BT-032 Password exactly 6 chars valid",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:55.003Z"
+  },
+  {
+    "name": "BT-033 Password 5 chars invalid",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:55.004Z"
+  },
+  {
+    "name": "BT-034 Empty password invalid",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:55.004Z"
+  },
+  {
+    "name": "BT-035 null password invalid",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:55.004Z"
+  },
+  {
+    "name": "BT-036 100-char password valid",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:55.004Z"
+  },
+  {
+    "name": "BT-037 Numeric-only password valid",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:55.005Z"
+  },
+  {
+    "name": "BT-038 Special char password valid",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:55.005Z"
+  },
+  {
+    "name": "BT-039 Password with spaces valid",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:55.005Z"
+  },
+  {
+    "name": "BT-040 undefined password invalid",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:55.005Z"
+  },
+  {
+    "name": "BT-041 Sanitize: \"<script>alert(\"xss\")</scr\"",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:55.006Z"
+  },
+  {
+    "name": "BT-042 Sanitize: \"<img src=x onerror=alert(\"",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:55.006Z"
+  },
+  {
+    "name": "BT-043 Sanitize: \"Normal text\"",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:55.007Z"
+  },
+  {
+    "name": "BT-044 Sanitize: \"<b>Bold</b>\"",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:55.007Z"
+  },
+  {
+    "name": "BT-045 Sanitize: \"   trimmed   \"",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:55.007Z"
+  },
+  {
+    "name": "BT-046 Sanitize: \"\"",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:55.007Z"
+  },
+  {
+    "name": "BT-047 Sanitize: \"<SCRIPT>evil()</SCRIPT>\"",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:55.008Z"
+  },
+  {
+    "name": "BT-048 Sanitize: \"Hello <World>\"",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:55.008Z"
+  },
+  {
+    "name": "BT-049 Sanitize: \"<<script>>\"",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:55.008Z"
+  },
+  {
+    "name": "BT-050 Sanitize: \"Safe & clean text\"",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:55.008Z"
+  },
+  {
+    "name": "BT-051 Valid UID accepted",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:55.009Z"
+  },
+  {
+    "name": "BT-052 Empty UID rejected",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:55.009Z"
+  },
+  {
+    "name": "BT-053 Numeric UID rejected",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:55.009Z"
+  },
+  {
+    "name": "BT-054 null UID rejected",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:55.010Z"
+  },
+  {
+    "name": "BT-055 128-char UID valid",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:55.010Z"
+  },
+  {
+    "name": "BT-056 129-char UID invalid",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:55.010Z"
+  },
+  {
+    "name": "BT-057 UID with special chars valid",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:55.010Z"
+  },
+  {
+    "name": "BT-058 Single char UID valid",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:55.011Z"
+  },
+  {
+    "name": "BT-059 TEST_EMAIL valid format",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:55.011Z"
+  },
+  {
+    "name": "BT-060 TEST_PASSWORD valid",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:55.011Z"
+  },
+  {
+    "name": "BT-061 Auth state has user property",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:55.011Z"
+  },
+  {
+    "name": "BT-062 Auth loading initially true",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:55.011Z"
+  },
+  {
+    "name": "BT-063 Auth error null on success",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:55.012Z"
+  },
+  {
+    "name": "BT-064 Auth user null after logout",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:55.012Z"
+  },
+  {
+    "name": "BT-065 User object has UID",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:55.012Z"
+  },
+  {
+    "name": "BT-066 User email matches TEST_EMAIL",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:55.012Z"
+  },
+  {
+    "name": "BT-067 emailVerified is boolean",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:55.013Z"
+  },
+  {
+    "name": "BT-068 Bypass list includes TEST_EMAIL",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:55.013Z"
+  },
+  {
+    "name": "BT-069 Bypass list includes GHA email",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:55.013Z"
+  },
+  {
+    "name": "BT-070 Random email not in bypass list",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:55.013Z"
+  },
+  {
+    "name": "BT-071 sanitize(null) = empty string",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:55.015Z"
+  },
+  {
+    "name": "BT-072 sanitize(number) = empty string",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:55.016Z"
+  },
+  {
+    "name": "BT-073 Email case-sensitive comparison",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:55.017Z"
+  },
+  {
+    "name": "BT-074 TEST_EMAIL is already lowercase",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:55.017Z"
+  },
+  {
+    "name": "BT-075 TEST_EMAIL domain has TLD",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:55.018Z"
+  },
+  {
+    "name": "BT-076 TEST_EMAIL local part non-empty",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:55.018Z"
+  },
+  {
+    "name": "BT-077 Auth error message is string",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:55.019Z"
+  },
+  {
+    "name": "BT-078 Auth error code format valid",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:55.019Z"
+  },
+  {
+    "name": "BT-079 Firebase projectId is trackback-1c73e",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:55.020Z"
+  },
+  {
+    "name": "BT-080 Auth state loading→authenticated",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:55.020Z"
+  },
+  {
+    "name": "BT-301 Valid message passes",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:55.022Z"
+  },
+  {
+    "name": "BT-302 Missing senderId fails",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:55.023Z"
+  },
+  {
+    "name": "BT-303 Empty content fails",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:55.023Z"
+  },
+  {
+    "name": "BT-304 >1000 chars fails",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:55.024Z"
+  },
+  {
+    "name": "BT-305 1000-char message passes",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:55.024Z"
+  },
+  {
+    "name": "BT-306 Missing roomId fails",
+    "status": "passed",
+    "duration": 1,
+    "timestamp": "2026-06-22T14:34:55.025Z"
+  },
+  {
+    "name": "BT-307 Missing timestamp fails",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:55.025Z"
+  },
+  {
+    "name": "BT-308 String timestamp fails",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:55.025Z"
+  },
+  {
+    "name": "BT-309 null message fails",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:55.026Z"
+  },
+  {
+    "name": "BT-310 REQUIRED_MESSAGE_FIELDS count 4",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:55.026Z"
+  },
+  {
+    "name": "BT-311 sortMessages oldest first",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:55.026Z"
+  },
+  {
+    "name": "BT-312 sortMessages non-mutating",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:55.027Z"
+  },
+  {
+    "name": "BT-313 generateRoomId consistent",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:55.027Z"
+  },
+  {
+    "name": "BT-314 generateRoomId sorted UIDs",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:55.027Z"
+  },
+  {
+    "name": "BT-315 Room has 2 participants",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:55.027Z"
+  },
+  {
+    "name": "BT-316 Room participants is array",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:55.028Z"
+  },
+  {
+    "name": "BT-317 Room createdAt positive number",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:55.028Z"
+  },
+  {
+    "name": "BT-318 Room unreadCount starts at 0",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:55.028Z"
+  },
+  {
+    "name": "BT-319 Message read is boolean",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:55.029Z"
+  },
+  {
+    "name": "BT-320 New message is unread",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:55.029Z"
+  },
+  {
+    "name": "BT-321 Message content with emoji is valid",
+    "status": "passed",
+    "duration": 1,
+    "timestamp": "2026-06-22T14:34:55.030Z"
+  },
+  {
+    "name": "BT-322 Message content with unicode is valid",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:55.030Z"
+  },
+  {
+    "name": "BT-323 Message content with 1 char is valid",
+    "status": "passed",
+    "duration": 1,
+    "timestamp": "2026-06-22T14:34:55.031Z"
+  },
+  {
+    "name": "BT-324 Message whitespace-only content fails",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:55.031Z"
+  },
+  {
+    "name": "BT-325 sortMessages with empty array returns empty",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:55.031Z"
+  },
+  {
+    "name": "BT-326 sortMessages with 1 message returns 1",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:55.032Z"
+  },
+  {
+    "name": "BT-327 Room lastMessage is a string",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:55.032Z"
+  },
+  {
+    "name": "BT-328 Room lastMessageAt is a number",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:55.032Z"
+  },
+  {
+    "name": "BT-329 Room itemId is a string",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:55.032Z"
+  },
+  {
+    "name": "BT-330 Room id is a string",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:55.032Z"
+  },
+  {
+    "name": "BT-331 Message id is a string",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:55.033Z"
+  },
+  {
+    "name": "BT-332 Message senderId is a string",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:55.033Z"
+  },
+  {
+    "name": "BT-333 Message receiverId is a string",
+    "status": "passed",
+    "duration": 1,
+    "timestamp": "2026-06-22T14:34:55.034Z"
+  },
+  {
+    "name": "BT-334 Message content is a string",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:55.034Z"
+  },
+  {
+    "name": "BT-335 Message timestamp is a number",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:55.034Z"
+  },
+  {
+    "name": "BT-336 Message timestamp is positive",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:55.034Z"
+  },
+  {
+    "name": "BT-337 generateRoomId is deterministic",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:55.034Z"
+  },
+  {
+    "name": "BT-338 generateRoomId output is a string",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:55.034Z"
+  },
+  {
+    "name": "BT-339 generateRoomId output contains both UIDs",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:55.035Z"
+  },
+  {
+    "name": "BT-340 MAX_MESSAGE_LENGTH is 1000",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:55.035Z"
+  },
+  {
+    "name": "BT-341 REQUIRED_MESSAGE_FIELDS includes senderId",
+    "status": "passed",
+    "duration": 1,
+    "timestamp": "2026-06-22T14:34:55.036Z"
+  },
+  {
+    "name": "BT-342 REQUIRED_MESSAGE_FIELDS includes content",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:55.036Z"
+  },
+  {
+    "name": "BT-343 REQUIRED_MESSAGE_FIELDS includes timestamp",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:55.036Z"
+  },
+  {
+    "name": "BT-344 REQUIRED_MESSAGE_FIELDS includes roomId",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:55.036Z"
+  },
+  {
+    "name": "BT-345 Message with special chars in content is valid",
+    "status": "passed",
+    "duration": 1,
+    "timestamp": "2026-06-22T14:34:55.037Z"
+  },
+  {
+    "name": "BT-346 Message 999-char content is valid",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:55.037Z"
+  },
+  {
+    "name": "BT-347 Message 1-char content is valid",
+    "status": "passed",
+    "duration": 1,
+    "timestamp": "2026-06-22T14:34:55.038Z"
+  },
+  {
+    "name": "BT-348 Message 1001-char content is invalid",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:55.038Z"
+  },
+  {
+    "name": "BT-349 Room participants includes sender",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:55.038Z"
+  },
+  {
+    "name": "BT-350 Room participants includes receiver",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:55.039Z"
+  },
+  {
+    "name": "BT-351 createSampleMessage returns new object each call",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:55.039Z"
+  },
+  {
+    "name": "BT-352 createSampleRoom returns new object each call",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:55.039Z"
+  },
+  {
+    "name": "BT-353 validateMessage returns object",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:55.040Z"
+  },
+  {
+    "name": "BT-354 validateMessage has valid key",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:55.040Z"
+  },
+  {
+    "name": "BT-355 validateMessage has error key",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:55.041Z"
+  },
+  {
+    "name": "BT-356 sortMessages result is an array",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:55.041Z"
+  },
+  {
+    "name": "BT-357 Messages sorted: earlier timestamp is first",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:55.041Z"
+  },
+  {
+    "name": "BT-358 Room object is a plain object",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:55.042Z"
+  },
+  {
+    "name": "BT-359 Room object is not null",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:55.042Z"
+  },
+  {
+    "name": "BT-360 Room participants are non-empty strings",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:55.042Z"
+  },
+  {
+    "name": "BT-361 Message senderId != receiverId in sample",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:55.042Z"
+  },
+  {
+    "name": "BT-362 Message roomId contains sender portion",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:55.043Z"
+  },
+  {
+    "name": "BT-363 Room id matches expected format",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:55.043Z"
+  },
+  {
+    "name": "BT-364 Message id is non-empty",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:55.043Z"
+  },
+  {
+    "name": "BT-365 Room id is non-empty",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:55.043Z"
+  },
+  {
+    "name": "BT-366 validateMessage with undefined fails",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:55.043Z"
+  },
+  {
+    "name": "BT-367 validateMessage with array fails",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:55.044Z"
+  },
+  {
+    "name": "BT-368 generateRoomId with same uid produces consistent output",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:55.044Z"
+  },
+  {
+    "name": "BT-369 Room unreadCount is a number",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:55.045Z"
+  },
+  {
+    "name": "BT-370 Room unreadCount is ≥ 0",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:55.045Z"
+  },
+  {
+    "name": "BT-371 Message with HTML content is valid (not sanitised at service level)",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:55.045Z"
+  },
+  {
+    "name": "BT-372 sortMessages with 10 messages returns 10",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:55.046Z"
+  },
+  {
+    "name": "BT-373 REQUIRED_MESSAGE_FIELDS is an array",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:55.046Z"
+  },
+  {
+    "name": "BT-374 Room lastMessage matches sample message content",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:55.046Z"
+  },
+  {
+    "name": "BT-375 createSampleMessage override works",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:55.046Z"
+  },
+  {
+    "name": "BT-376 createSampleRoom override works",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:55.046Z"
+  },
+  {
+    "name": "BT-377 Message roomId is a non-empty string",
+    "status": "passed",
+    "duration": 1,
+    "timestamp": "2026-06-22T14:34:55.047Z"
+  },
+  {
+    "name": "BT-378 sortMessages preserves all messages",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:55.047Z"
+  },
+  {
+    "name": "BT-379 validateMessage error is null for valid message",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:55.047Z"
+  },
+  {
+    "name": "BT-380 Chat service constants are defined at module level",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:55.047Z"
+  },
+  {
+    "name": "BT-101 Valid item passes validation",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:55.048Z"
+  },
+  {
+    "name": "BT-102 Missing title fails validation",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:55.048Z"
+  },
+  {
+    "name": "BT-103 Missing userId fails validation",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:55.048Z"
+  },
+  {
+    "name": "BT-104 Invalid type fails validation",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:55.049Z"
+  },
+  {
+    "name": "BT-105 lost type passes validation",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:55.049Z"
+  },
+  {
+    "name": "BT-106 found type passes validation",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:55.050Z"
+  },
+  {
+    "name": "BT-107 Invalid status fails validation",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:55.050Z"
+  },
+  {
+    "name": "BT-108 Non-numeric createdAt fails",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:55.050Z"
+  },
+  {
+    "name": "BT-109 null item fails validation",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:55.051Z"
+  },
+  {
+    "name": "BT-110 Required fields count is 8",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:55.051Z"
+  },
+  {
+    "name": "BT-111 sortByCreatedAt newest first",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:55.053Z"
+  },
+  {
+    "name": "BT-112 sortByCreatedAt non-mutating",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:55.054Z"
+  },
+  {
+    "name": "BT-113 sortByCreatedAt empty array",
+    "status": "passed",
+    "duration": 2,
+    "timestamp": "2026-06-22T14:34:55.056Z"
+  },
+  {
+    "name": "BT-114 sortByCreatedAt single item",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:55.056Z"
+  },
+  {
+    "name": "BT-115 filterByType lost returns 2 items",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:55.057Z"
+  },
+  {
+    "name": "BT-116 filterByType found returns 1 item",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:55.057Z"
+  },
+  {
+    "name": "BT-117 filterByType unknown returns empty",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:55.057Z"
+  },
+  {
+    "name": "BT-118 filterByUser correct items",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:55.058Z"
+  },
+  {
+    "name": "BT-119 filterByUser unknown empty",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:55.058Z"
+  },
+  {
+    "name": "BT-120 Item imageUrl is valid HTTPS URL",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:55.059Z"
+  },
+  {
+    "name": "BT-121 Valid title accepted",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:55.059Z"
+  },
+  {
+    "name": "BT-122 Invalid title rejected",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:55.060Z"
+  },
+  {
+    "name": "BT-123 Valid description accepted",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:55.060Z"
+  },
+  {
+    "name": "BT-124 Invalid description rejected",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:55.060Z"
+  },
+  {
+    "name": "BT-125 Valid type accepted",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:55.060Z"
+  },
+  {
+    "name": "BT-126 Invalid type rejected",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:55.061Z"
+  },
+  {
+    "name": "BT-127 Valid userId accepted",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:55.061Z"
+  },
+  {
+    "name": "BT-128 Invalid userId rejected",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:55.061Z"
+  },
+  {
+    "name": "BT-129 Valid location accepted",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:55.061Z"
+  },
+  {
+    "name": "BT-130 Invalid location rejected",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:55.062Z"
+  },
+  {
+    "name": "BT-131 Valid status accepted",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:55.062Z"
+  },
+  {
+    "name": "BT-132 Invalid status rejected",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:55.062Z"
+  },
+  {
+    "name": "BT-133 Valid id accepted",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:55.062Z"
+  },
+  {
+    "name": "BT-134 Invalid id rejected",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:55.063Z"
+  },
+  {
+    "name": "BT-135 Valid createdAt accepted",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:55.063Z"
+  },
+  {
+    "name": "BT-136 Invalid createdAt rejected",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:55.063Z"
+  },
+  {
+    "name": "BT-137 VALID_ITEM_TYPES count is 2",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:55.063Z"
+  },
+  {
+    "name": "BT-138 VALID_ITEM_TYPES has lost",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:55.064Z"
+  },
+  {
+    "name": "BT-139 VALID_ITEM_TYPES has found",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:55.064Z"
+  },
+  {
+    "name": "BT-140 VALID_ITEM_STATUSES count is 4",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:55.064Z"
+  },
+  {
+    "name": "BT-141 Default status is ai-verified",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:55.064Z"
+  },
+  {
+    "name": "BT-142 phoneNumber is string",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:55.065Z"
+  },
+  {
+    "name": "BT-143 user display name is string",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:55.065Z"
+  },
+  {
+    "name": "BT-144 createdAt is recent timestamp",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:55.065Z"
+  },
+  {
+    "name": "BT-145 Item title min length is 1",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:55.066Z"
+  },
+  {
+    "name": "BT-146 Item location is a non-empty string",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:55.066Z"
+  },
+  {
+    "name": "BT-147 Item id is a non-empty string",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:55.067Z"
+  },
+  {
+    "name": "BT-148 filterByType does not mutate input",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:55.067Z"
+  },
+  {
+    "name": "BT-149 filterByUser does not mutate input",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:55.067Z"
+  },
+  {
+    "name": "BT-150 Sample item is a plain object",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:55.068Z"
+  },
+  {
+    "name": "BT-151 Sample item keys count is ≥ 8",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:55.068Z"
+  },
+  {
+    "name": "BT-152 filterByType with empty list returns empty",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:55.068Z"
+  },
+  {
+    "name": "BT-153 filterByUser with empty list returns empty",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:55.068Z"
+  },
+  {
+    "name": "BT-154 sortByCreatedAt result length matches input",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:55.069Z"
+  },
+  {
+    "name": "BT-155 ai-verified is a valid status",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:55.069Z"
+  },
+  {
+    "name": "BT-156 pending is a valid status",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:55.069Z"
+  },
+  {
+    "name": "BT-157 resolved is a valid status",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:55.069Z"
+  },
+  {
+    "name": "BT-158 flagged is a valid status",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:55.069Z"
+  },
+  {
+    "name": "BT-159 Item imageUrl starts with https",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:55.070Z"
+  },
+  {
+    "name": "BT-160 validateItem returns object with valid and error fields",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:55.070Z"
+  },
+  {
+    "name": "BT-161 Item description can include special characters",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:55.070Z"
+  },
+  {
+    "name": "BT-162 phoneNumber with 10 digits is present in sample",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:55.070Z"
+  },
+  {
+    "name": "BT-163 REQUIRED_ITEM_FIELDS includes id",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:55.070Z"
+  },
+  {
+    "name": "BT-164 REQUIRED_ITEM_FIELDS includes status",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:55.071Z"
+  },
+  {
+    "name": "BT-165 REQUIRED_ITEM_FIELDS includes createdAt",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:55.071Z"
+  },
+  {
+    "name": "BT-166 REQUIRED_ITEM_FIELDS includes location",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:55.071Z"
+  },
+  {
+    "name": "BT-167 REQUIRED_ITEM_FIELDS includes type",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:55.071Z"
+  },
+  {
+    "name": "BT-168 REQUIRED_ITEM_FIELDS includes userId",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:55.071Z"
+  },
+  {
+    "name": "BT-169 REQUIRED_ITEM_FIELDS includes title",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:55.072Z"
+  },
+  {
+    "name": "BT-170 REQUIRED_ITEM_FIELDS includes description",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:55.072Z"
+  },
+  {
+    "name": "BT-171 Two items with same createdAt sort stably",
+    "status": "passed",
+    "duration": 1,
+    "timestamp": "2026-06-22T14:34:55.073Z"
+  },
+  {
+    "name": "BT-172 Item with all fields returns no error",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:55.073Z"
+  },
+  {
+    "name": "BT-173 validateItem error is string when invalid",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:55.073Z"
+  },
+  {
+    "name": "BT-174 filterByType is case-sensitive",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:55.073Z"
+  },
+  {
+    "name": "BT-175 filterByUser is case-sensitive for userId",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:55.073Z"
+  },
+  {
+    "name": "BT-176 sortByCreatedAt with 10 items returns 10",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:55.074Z"
+  },
+  {
+    "name": "BT-177 Item Cloudinary URL is from res.cloudinary.com domain",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:55.074Z"
+  },
+  {
+    "name": "BT-178 Sample item userId is non-empty",
+    "status": "passed",
+    "duration": 1,
+    "timestamp": "2026-06-22T14:34:55.075Z"
+  },
+  {
+    "name": "BT-179 Sample item title is non-empty",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:55.075Z"
+  },
+  {
+    "name": "BT-180 createSampleItem with override merges correctly",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:55.075Z"
+  },
+  {
+    "name": "BT-201 Valid user profile passes",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:55.081Z"
+  },
+  {
+    "name": "BT-202 Missing name fails",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:55.081Z"
+  },
+  {
+    "name": "BT-203 Missing email fails",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:55.081Z"
+  },
+  {
+    "name": "BT-204 Invalid email fails",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:55.081Z"
+  },
+  {
+    "name": "BT-205 Missing uid fails",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:55.082Z"
+  },
+  {
+    "name": "BT-206 Age 0 fails validation",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:55.082Z"
+  },
+  {
+    "name": "BT-207 Age 121 fails validation",
+    "status": "passed",
+    "duration": 1,
+    "timestamp": "2026-06-22T14:34:55.086Z"
+  },
+  {
+    "name": "BT-208 Age 18 passes",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:55.087Z"
+  },
+  {
+    "name": "BT-209 Numeric phone fails",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:55.087Z"
+  },
+  {
+    "name": "BT-210 null user fails",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:55.087Z"
+  },
+  {
+    "name": "BT-211 Complete profile passes",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:55.088Z"
+  },
+  {
+    "name": "BT-212 No phone → incomplete",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:55.088Z"
+  },
+  {
+    "name": "BT-213 No location → incomplete",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:55.089Z"
+  },
+  {
+    "name": "BT-214 No gender → incomplete",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:55.089Z"
+  },
+  {
+    "name": "BT-215 No avatarUrl → incomplete",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:55.089Z"
+  },
+  {
+    "name": "BT-216 OPTIONAL_PROFILE_FIELDS count is 6",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:55.092Z"
+  },
+  {
+    "name": "BT-217 REQUIRED_PROFILE_FIELDS count is 4",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:55.092Z"
+  },
+  {
+    "name": "BT-218 emailVerified is boolean",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:55.092Z"
+  },
+  {
+    "name": "BT-219 createdAt is positive number",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:55.093Z"
+  },
+  {
+    "name": "BT-220 displayName matches name",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:55.093Z"
+  },
+  {
+    "name": "BT-221 User age 1 is valid (min boundary)",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:55.093Z"
+  },
+  {
+    "name": "BT-222 User age 120 is valid (max boundary)",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:55.094Z"
+  },
+  {
+    "name": "BT-223 User age -1 is invalid",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:55.094Z"
+  },
+  {
+    "name": "BT-224 User name with single char is valid",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:55.094Z"
+  },
+  {
+    "name": "BT-225 User email can have subdomain",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:55.095Z"
+  },
+  {
+    "name": "BT-226 User uid is a non-empty string",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:55.095Z"
+  },
+  {
+    "name": "BT-227 User gender field can be any string",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:55.095Z"
+  },
+  {
+    "name": "BT-228 User location field accepts unicode",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:55.096Z"
+  },
+  {
+    "name": "BT-229 User name field accepts unicode",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:55.098Z"
+  },
+  {
+    "name": "BT-230 isProfileComplete returns false for null field",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:55.098Z"
+  },
+  {
+    "name": "BT-231 isProfileComplete returns false for undefined field",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:55.098Z"
+  },
+  {
+    "name": "BT-232 User object is a plain object",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:55.099Z"
+  },
+  {
+    "name": "BT-233 createSampleUser keys count ≥ 10",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:55.099Z"
+  },
+  {
+    "name": "BT-234 User email does not contain spaces",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:55.099Z"
+  },
+  {
+    "name": "BT-235 User avatarUrl starts with https",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:55.099Z"
+  },
+  {
+    "name": "BT-236 REQUIRED_PROFILE_FIELDS includes email",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:55.099Z"
+  },
+  {
+    "name": "BT-237 REQUIRED_PROFILE_FIELDS includes uid",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:55.100Z"
+  },
+  {
+    "name": "BT-238 REQUIRED_PROFILE_FIELDS includes name",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:55.100Z"
+  },
+  {
+    "name": "BT-239 REQUIRED_PROFILE_FIELDS includes createdAt",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:55.100Z"
+  },
+  {
+    "name": "BT-240 OPTIONAL_PROFILE_FIELDS includes phone",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:55.100Z"
+  },
+  {
+    "name": "BT-241 OPTIONAL_PROFILE_FIELDS includes age",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:55.100Z"
+  },
+  {
+    "name": "BT-242 OPTIONAL_PROFILE_FIELDS includes gender",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:55.100Z"
+  },
+  {
+    "name": "BT-243 OPTIONAL_PROFILE_FIELDS includes avatarUrl",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:55.101Z"
+  },
+  {
+    "name": "BT-244 OPTIONAL_PROFILE_FIELDS includes location",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:55.101Z"
+  },
+  {
+    "name": "BT-245 OPTIONAL_PROFILE_FIELDS includes displayName",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:55.101Z"
+  },
+  {
+    "name": "BT-246 validateUserProfile returns object with valid key",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:55.102Z"
+  },
+  {
+    "name": "BT-247 validateUserProfile returns object with error key",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:55.102Z"
+  },
+  {
+    "name": "BT-248 User with string age fails (age must be number)",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:55.102Z"
+  },
+  {
+    "name": "BT-249 User email matches test email format",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:55.102Z"
+  },
+  {
+    "name": "BT-250 createSampleUser with override replaces field",
+    "status": "passed",
+    "duration": 1,
+    "timestamp": "2026-06-22T14:34:55.103Z"
+  },
+  {
+    "name": "BT-251 User phone with hyphens is valid string",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:55.103Z"
+  },
+  {
+    "name": "BT-252 User phone empty string is fine (optional field)",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:55.103Z"
+  },
+  {
+    "name": "BT-253 User without optional age field still valid",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:55.103Z"
+  },
+  {
+    "name": "BT-254 User without optional phone field still valid",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:55.103Z"
+  },
+  {
+    "name": "BT-255 User age must not be floating point check",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:55.103Z"
+  },
+  {
+    "name": "BT-256 isProfileComplete checks all 6 optional fields",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:55.103Z"
+  },
+  {
+    "name": "BT-257 User email property is a string",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:55.103Z"
+  },
+  {
+    "name": "BT-258 User name property is a string",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:55.103Z"
+  },
+  {
+    "name": "BT-259 User location property is a string",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:55.104Z"
+  },
+  {
+    "name": "BT-260 User gender property is a string",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:55.104Z"
+  },
+  {
+    "name": "BT-261 User age property is a number",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:55.104Z"
+  },
+  {
+    "name": "BT-262 User uid property is a string",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:55.104Z"
+  },
+  {
+    "name": "BT-263 User avatarUrl is a string",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:55.104Z"
+  },
+  {
+    "name": "BT-264 User displayName is a string",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:55.104Z"
+  },
+  {
+    "name": "BT-265 User phone is a string",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:55.104Z"
+  },
+  {
+    "name": "BT-266 User emailVerified is true for test account",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:55.105Z"
+  },
+  {
+    "name": "BT-267 User createdAt is a number",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:55.105Z"
+  },
+  {
+    "name": "BT-268 User profile has no password field (security)",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:55.105Z"
+  },
+  {
+    "name": "BT-269 User profile has no token field (security)",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:55.105Z"
+  },
+  {
+    "name": "BT-270 User profile has no secret field (security)",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:55.105Z"
+  },
+  {
+    "name": "BT-271 isProfileComplete handles empty object",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:55.105Z"
+  },
+  {
+    "name": "BT-272 User email @ count is exactly 1",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:55.105Z"
+  },
+  {
+    "name": "BT-273 User email TLD length is ≥ 2",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:55.105Z"
+  },
+  {
+    "name": "BT-274 User name has at least 1 character",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:55.105Z"
+  },
+  {
+    "name": "BT-275 User uid has at least 1 character",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:55.106Z"
+  },
+  {
+    "name": "BT-276 Test user email domain is sse.saveetha.com",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:55.114Z"
+  },
+  {
+    "name": "BT-277 validateUserProfile null input returns error string",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:55.114Z"
+  },
+  {
+    "name": "BT-278 Profile validation is synchronous (no promise)",
+    "status": "passed",
+    "duration": 1,
+    "timestamp": "2026-06-22T14:34:55.115Z"
+  },
+  {
+    "name": "BT-279 createSampleUser returns new object each call",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:55.115Z"
+  },
+  {
+    "name": "BT-280 User profile: all required fields are strings except createdAt (number)",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:55.115Z"
+  },
+  {
+    "name": "BT-401 Valid phone: 9876543210",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:55.115Z"
+  },
+  {
+    "name": "BT-402 Valid phone: 1234567890",
+    "status": "passed",
+    "duration": 1,
+    "timestamp": "2026-06-22T14:34:55.116Z"
+  },
+  {
+    "name": "BT-403 Valid phone: 0000000000",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:55.116Z"
+  },
+  {
+    "name": "BT-404 Valid phone: 9999999999",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:55.116Z"
+  },
+  {
+    "name": "BT-405 Valid phone: 5555555555",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:55.116Z"
+  },
+  {
+    "name": "BT-406 Invalid phone: \"987654321\"",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:55.116Z"
+  },
+  {
+    "name": "BT-407 Invalid phone: \"98765432101\"",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:55.116Z"
+  },
+  {
+    "name": "BT-408 Invalid phone: \"abcdefghij\"",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:55.116Z"
+  },
+  {
+    "name": "BT-409 Invalid phone: \"+919876543210\"",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:55.116Z"
+  },
+  {
+    "name": "BT-410 Invalid phone: \"9876543-21\"",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:55.116Z"
+  },
+  {
+    "name": "BT-411 Valid URL: https://res.cloudinary.com/image.jpg",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:55.117Z"
+  },
+  {
+    "name": "BT-412 Valid URL: http://example.com",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:55.117Z"
+  },
+  {
+    "name": "BT-413 Valid URL: https://pramithm.github.io/TrackBack-Web",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:55.117Z"
+  },
+  {
+    "name": "BT-414 Valid URL: https://trackback-1c73e-default-rtdb.asi",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:55.117Z"
+  },
+  {
+    "name": "BT-415 Valid URL: https://www.sub.domain.co.uk/path?query=",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:55.117Z"
+  },
+  {
+    "name": "BT-416 Invalid URL: \"not-a-url\"",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:55.117Z"
+  },
+  {
+    "name": "BT-417 Invalid URL: \"\"",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:55.117Z"
+  },
+  {
+    "name": "BT-418 Invalid URL: \"ftp://nothttp.com\"",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:55.118Z"
+  },
+  {
+    "name": "BT-419 Invalid URL: \"justext\"",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:55.118Z"
+  },
+  {
+    "name": "BT-420 Invalid URL: \"null\"",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:55.118Z"
+  },
+  {
+    "name": "BT-421 sanitize \"<script>alert(1)</sc\"",
+    "status": "passed",
+    "duration": 1,
+    "timestamp": "2026-06-22T14:34:55.119Z"
+  },
+  {
+    "name": "BT-422 sanitize \"Normal text\"",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:55.119Z"
+  },
+  {
+    "name": "BT-423 sanitize \"<b>Bold</b>\"",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:55.119Z"
+  },
+  {
+    "name": "BT-424 sanitize \"Hello \"World\"\"",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:55.119Z"
+  },
+  {
+    "name": "BT-425 sanitize \"It's here\"",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:55.119Z"
+  },
+  {
+    "name": "BT-426 sanitize \"  spaces  \"",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:55.119Z"
+  },
+  {
+    "name": "BT-427 sanitize \"SELECT * FROM users;\"",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:55.119Z"
+  },
+  {
+    "name": "BT-428 sanitize \"<img onerror=\"evil()\"",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:55.119Z"
+  },
+  {
+    "name": "BT-429 sanitize \"Clean & safe\"",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:55.119Z"
+  },
+  {
+    "name": "BT-430 sanitize \"\"",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:55.119Z"
+  },
+  {
+    "name": "BT-431 sanitize \"<>\"",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:55.120Z"
+  },
+  {
+    "name": "BT-432 sanitize \"Back`tick\"",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:55.120Z"
+  },
+  {
+    "name": "BT-433 coerce null → \"\"",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:55.120Z"
+  },
+  {
+    "name": "BT-434 coerce undefined → \"\"",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:55.120Z"
+  },
+  {
+    "name": "BT-435 coerce 42 → \"42\"",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:55.120Z"
+  },
+  {
+    "name": "BT-436 coerce true → \"true\"",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:55.120Z"
+  },
+  {
+    "name": "BT-437 50 in [1,100]",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:55.120Z"
+  },
+  {
+    "name": "BT-438 0 not in [1,100]",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:55.121Z"
+  },
+  {
+    "name": "BT-439 1 at min boundary",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:55.121Z"
+  },
+  {
+    "name": "BT-440 100 at max boundary",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:55.121Z"
+  },
+  {
+    "name": "BT-441 string arg not in range",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:55.121Z"
+  },
+  {
+    "name": "BT-442 truncate to 5",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:55.121Z"
+  },
+  {
+    "name": "BT-443 truncate short str",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:55.121Z"
+  },
+  {
+    "name": "BT-444 truncate non-string",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:55.121Z"
+  },
+  {
+    "name": "BT-445 parseJSONSafe valid JSON",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:55.122Z"
+  },
+  {
+    "name": "BT-446 parseJSONSafe invalid returns null",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:55.122Z"
+  },
+  {
+    "name": "BT-447 parseJSONSafe empty string",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:55.122Z"
+  },
+  {
+    "name": "BT-448 capitalizeFirst works",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:55.122Z"
+  },
+  {
+    "name": "BT-449 capitalizeFirst uppercase",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:55.122Z"
+  },
+  {
+    "name": "BT-450 capitalizeFirst empty",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:55.122Z"
+  },
+  {
+    "name": "BT-451 PHONE_REGEX matches 10-digit string",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:55.123Z"
+  },
+  {
+    "name": "BT-452 PHONE_REGEX rejects 9-digit string",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:55.123Z"
+  },
+  {
+    "name": "BT-453 PHONE_REGEX rejects 11-digit string",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:55.123Z"
+  },
+  {
+    "name": "BT-454 PHONE_REGEX rejects alphabets",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:55.123Z"
+  },
+  {
+    "name": "BT-455 EMAIL_REGEX matches standard email",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:55.123Z"
+  },
+  {
+    "name": "BT-456 EMAIL_REGEX rejects email without @",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:55.123Z"
+  },
+  {
+    "name": "BT-457 EMAIL_REGEX rejects email without domain",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:55.123Z"
+  },
+  {
+    "name": "BT-458 URL_REGEX matches https URL",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:55.123Z"
+  },
+  {
+    "name": "BT-459 URL_REGEX matches http URL",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:55.123Z"
+  },
+  {
+    "name": "BT-460 URL_REGEX rejects plain text",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:55.123Z"
+  },
+  {
+    "name": "BT-461 sanitizeString removes all HTML tags",
+    "status": "passed",
+    "duration": 1,
+    "timestamp": "2026-06-22T14:34:55.124Z"
+  },
+  {
+    "name": "BT-462 sanitizeString trims leading/trailing spaces",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:55.124Z"
+  },
+  {
+    "name": "BT-463 coerceToString(0) returns \"0\"",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:55.124Z"
+  },
+  {
+    "name": "BT-464 coerceToString(false) returns \"false\"",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:55.124Z"
+  },
+  {
+    "name": "BT-465 coerceToString([1,2]) returns \"1,2\"",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:55.124Z"
+  },
+  {
+    "name": "BT-466 isWithinRange(NaN, 1, 100) is false",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:55.124Z"
+  },
+  {
+    "name": "BT-467 isWithinRange(Infinity, 1, 100) is false",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:55.124Z"
+  },
+  {
+    "name": "BT-468 truncateString at exact max returns unchanged",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:55.124Z"
+  },
+  {
+    "name": "BT-469 truncateString at 0 max returns empty string",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:55.124Z"
+  },
+  {
+    "name": "BT-470 parseJSONSafe returns array for JSON array",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:55.124Z"
+  },
+  {
+    "name": "BT-471 parseJSONSafe returns null for undefined",
+    "status": "passed",
+    "duration": 1,
+    "timestamp": "2026-06-22T14:34:55.125Z"
+  },
+  {
+    "name": "BT-472 capitalizeFirst handles single char",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:55.125Z"
+  },
+  {
+    "name": "BT-473 capitalizeFirst does not touch rest of string",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:55.125Z"
+  },
+  {
+    "name": "BT-474 sanitizeString with null returns empty",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:55.125Z"
+  },
+  {
+    "name": "BT-475 sanitizeString with number returns empty",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:55.125Z"
+  },
+  {
+    "name": "BT-476 isValidPhone with null returns false",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:55.125Z"
+  },
+  {
+    "name": "BT-477 isValidEmail with null returns false",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:55.125Z"
+  },
+  {
+    "name": "BT-478 isValidUrl with null returns false",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:55.125Z"
+  },
+  {
+    "name": "BT-479 All regex constants are defined",
+    "status": "passed",
+    "duration": 1,
+    "timestamp": "2026-06-22T14:34:55.126Z"
+  },
+  {
+    "name": "BT-480 All utility functions are callable",
+    "status": "passed",
+    "duration": 0,
+    "timestamp": "2026-06-22T14:34:55.126Z"
+  }
+]
