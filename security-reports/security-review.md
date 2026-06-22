@@ -1,6 +1,6 @@
 # TrackBack Security Review
 
-**Build:** #27 · **Branch:** `main` · **Commit:** `f1675b5` · **Date:** 2026-06-22 13:42:36 UTC
+**Build:** #28 · **Branch:** `main` · **Commit:** `db98f36` · **Date:** 2026-06-22 14:18:00 UTC
 
 ## Scan Status
 
