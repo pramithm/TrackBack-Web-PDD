@@ -9,6 +9,12 @@ export interface AuthUser extends UserProfile {
   emailVerified: boolean;
 }
 
+const isBypassEmail = (email: string | null | undefined): boolean => {
+  if (!email) return false;
+  const cleanEmail = email.trim().toLowerCase();
+  return cleanEmail === 'pramithm2174.sse@saveetha.com' || cleanEmail === 'pramith414@gmail.com';
+};
+
 export interface AuthState {
   user: AuthUser | null;
   isAuthenticated: boolean;
@@ -53,7 +59,7 @@ onAuthStateChanged(auth, async (firebaseUser) => {
       }
 
       if (profile) {
-        const isTest = firebaseUser.email && firebaseUser.email.trim().toLowerCase() === 'pramithm2174.sse@saveetha.com';
+        const isTest = isBypassEmail(firebaseUser.email);
         updateState({
           user: {
             uid: firebaseUser.uid,
@@ -66,7 +72,7 @@ onAuthStateChanged(auth, async (firebaseUser) => {
         });
       } else {
         console.log('[AuthStore] No profile found in DB for UID:', firebaseUser.uid);
-        const isTest = firebaseUser.email && firebaseUser.email.trim().toLowerCase() === 'pramithm2174.sse@saveetha.com';
+        const isTest = isBypassEmail(firebaseUser.email);
         updateState({
           user: {
             uid: firebaseUser.uid,
@@ -80,7 +86,7 @@ onAuthStateChanged(auth, async (firebaseUser) => {
       }
     } catch (e) {
       console.error('[AuthStore] Error loading user profile:', e);
-      const isTest = firebaseUser.email && firebaseUser.email.trim().toLowerCase() === 'pramithm2174.sse@saveetha.com';
+      const isTest = isBypassEmail(firebaseUser.email);
       updateState({
         user: {
           uid: firebaseUser.uid,
@@ -121,7 +127,7 @@ export const useAuth = () => {
       if (currentUser) {
         const profile = await userService.getUserProfile(currentUser.uid);
         if (profile) {
-          const isTest = currentUser.email && currentUser.email.trim().toLowerCase() === 'pramithm2174.sse@saveetha.com';
+          const isTest = isBypassEmail(currentUser.email);
           updateState({
             user: {
               uid: currentUser.uid,
@@ -154,7 +160,7 @@ export const useAuth = () => {
             }
           }
 
-          const isTest = refreshedUser.email && refreshedUser.email.trim().toLowerCase() === 'pramithm2174.sse@saveetha.com';
+          const isTest = isBypassEmail(refreshedUser.email);
           updateState({
             user: {
               uid: refreshedUser.uid,

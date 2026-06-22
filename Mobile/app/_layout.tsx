@@ -51,7 +51,10 @@ function AuthProtectedLayout({ children }: { children: React.ReactNode }) {
       }
     } else {
       // Redirect to email verification if not verified
-      const isTestEmail = user?.email && user.email.trim().toLowerCase() === 'pramithm2174.sse@saveetha.com';
+      const isTestEmail = user?.email && (
+        user.email.trim().toLowerCase() === 'pramithm2174.sse@saveetha.com' ||
+        user.email.trim().toLowerCase() === 'pramith414@gmail.com'
+      );
       if (!user?.emailVerified && !isTestEmail) {
         if (segments[1] !== 'email-verification') {
           console.log('[LayoutGuard] Redirecting to email verification screen...');

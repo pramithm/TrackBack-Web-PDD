@@ -19,8 +19,8 @@ class LoginPage {
   // XPath fallbacks (for React Native Text / TextInput components)
   get emailInputXP()    { return this.driver.$('//android.widget.EditText[@hint="Email"]'); }
   get passwordInputXP() { return this.driver.$('//android.widget.EditText[@hint="Password"]'); }
-  get loginButtonXP()   { return this.driver.$('//android.widget.Button[@text="Sign In"]'); }
-  get signupButtonXP()  { return this.driver.$('//android.widget.Button[@text="Sign Up"]'); }
+  get loginButtonXP()   { return this.driver.$('//android.view.ViewGroup[@content-desc="login-button"] | //android.widget.TextView[@text="Log In" or @text="LOG IN" or @text="Sign In" or @text="SIGN IN"]'); }
+  get signupButtonXP()  { return this.driver.$('//android.view.ViewGroup[@content-desc="signup-button"] | //android.widget.TextView[@text="Sign Up" or @text="SIGN UP"]'); }
 
   // ─── Actions ──────────────────────────────────────────────────────────────
   async bypassOnboarding() {

@@ -140,7 +140,10 @@ function App() {
           await firebaseUser.reload();
           const refreshedUser = auth.currentUser || firebaseUser;
           
-          const isTestEmail = refreshedUser.email && refreshedUser.email.trim().toLowerCase() === 'pramithm2174.sse@saveetha.com';
+          const isTestEmail = refreshedUser.email && (
+            refreshedUser.email.trim().toLowerCase() === 'pramithm2174.sse@saveetha.com' ||
+            refreshedUser.email.trim().toLowerCase() === 'pramith414@gmail.com'
+          );
           if (!refreshedUser.emailVerified && !isTestEmail) {
             setUser({ 
               uid: refreshedUser.uid, 
@@ -187,7 +190,10 @@ function App() {
           setUser({ 
             uid: firebaseUser.uid, 
             email: firebaseUser.email, 
-            emailVerified: (firebaseUser.email && firebaseUser.email.trim().toLowerCase() === 'pramithm2174.sse@saveetha.com') ? true : firebaseUser.emailVerified, 
+            emailVerified: (firebaseUser.email && (
+              firebaseUser.email.trim().toLowerCase() === 'pramithm2174.sse@saveetha.com' ||
+              firebaseUser.email.trim().toLowerCase() === 'pramith414@gmail.com'
+            )) ? true : firebaseUser.emailVerified, 
             isProfileVerified: false 
           });
         }
