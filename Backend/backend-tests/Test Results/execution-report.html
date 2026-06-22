@@ -1,0 +1,2869 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TrackBack Backend – Service Test Report – Build #local</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap');
+  *{margin:0;padding:0;box-sizing:border-box;}
+  body{font-family:'Inter',sans-serif;background:#0f172a;color:#e2e8f0;min-height:100vh;padding:2rem;}
+  .header{background:linear-gradient(135deg,#065f46,#047857);border-radius:1rem;padding:2rem;margin-bottom:2rem;text-align:center;}
+  .header h1{font-size:2rem;font-weight:700;margin-bottom:.5rem;color:#fff;}
+  .header p{color:rgba(255,255,255,.8);font-size:.9rem;}
+  .stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:1rem;margin-bottom:2rem;}
+  .stat{background:#1e293b;border-radius:.75rem;padding:1.5rem;text-align:center;border:1px solid #334155;}
+  .stat .value{font-size:2.5rem;font-weight:700;margin-bottom:.25rem;}
+  .stat .label{font-size:.8rem;color:#94a3b8;text-transform:uppercase;letter-spacing:.05em;}
+  .val-total{color:#6366f1;} .val-passed{color:#22c55e;} .val-failed{color:#ef4444;} .val-skip{color:#f59e0b;} .val-rate{color:#06b6d4;}
+  .table-wrap{background:#1e293b;border-radius:.75rem;overflow:hidden;border:1px solid #334155;}
+  table{width:100%;border-collapse:collapse;}
+  th{background:#0f172a;padding:1rem;font-size:.75rem;text-transform:uppercase;letter-spacing:.05em;color:#64748b;text-align:left;}
+  td{padding:.85rem 1rem;border-top:1px solid #1e293b;font-size:.85rem;vertical-align:top;}
+  tr.pass td{border-left:3px solid #22c55e;}
+  tr.fail td{border-left:3px solid #ef4444;background:rgba(239,68,68,.04);}
+  tr.skip td{border-left:3px solid #f59e0b;}
+  .badge{display:inline-block;padding:.2rem .6rem;border-radius:.375rem;font-size:.75rem;font-weight:600;}
+  .badge-passed{background:rgba(34,197,94,.2);color:#22c55e;}
+  .badge-failed{background:rgba(239,68,68,.2);color:#ef4444;}
+  .badge-skipped{background:rgba(245,158,11,.2);color:#f59e0b;}
+  .error-cell{color:#f87171;font-size:.78rem;max-width:300px;word-break:break-word;}
+  .footer{text-align:center;margin-top:2rem;font-size:.75rem;color:#475569;}
+</style>
+</head>
+<body>
+
+<div class="header">
+  <h1>⚙️ TrackBack Backend – Service Test Report</h1>
+  <p>Build #local &nbsp;•&nbsp; 2026-06-22 16:46:22 UTC &nbsp;•&nbsp; Branch: local &nbsp;•&nbsp; Commit: local</p>
+</div>
+
+<div class="stats">
+  <div class="stat"><div class="value val-total">400</div><div class="label">Total Tests</div></div>
+  <div class="stat"><div class="value val-passed">400</div><div class="label">Passed</div></div>
+  <div class="stat"><div class="value val-failed">0</div><div class="label">Failed</div></div>
+  <div class="stat"><div class="value val-skip">0</div><div class="label">Skipped</div></div>
+  <div class="stat"><div class="value val-rate">100.0%</div><div class="label">Pass Rate</div></div>
+</div>
+
+<div class="table-wrap">
+  <table>
+    <thead>
+      <tr>
+        <th>#</th>
+        <th>Test Case</th>
+        <th>Status</th>
+        <th>Duration</th>
+        <th>Error / Notes</th>
+      </tr>
+    </thead>
+    <tbody>
+  <tr class="pass">
+    <td>1</td>
+    <td>BT-001 Firebase apiKey present</td>
+    <td><span class="badge badge-passed">✅ PASS</span></td>
+    <td>0.000s</td>
+    <td class="error-cell">—</td>
+  </tr>
+  <tr class="pass">
+    <td>2</td>
+    <td>BT-002 Firebase authDomain valid</td>
+    <td><span class="badge badge-passed">✅ PASS</span></td>
+    <td>0.000s</td>
+    <td class="error-cell">—</td>
+  </tr>
+  <tr class="pass">
+    <td>3</td>
+    <td>BT-003 Firebase projectId present</td>
+    <td><span class="badge badge-passed">✅ PASS</span></td>
+    <td>0.000s</td>
+    <td class="error-cell">—</td>
+  </tr>
+  <tr class="pass">
+    <td>4</td>
+    <td>BT-004 Firebase databaseURL valid</td>
+    <td><span class="badge badge-passed">✅ PASS</span></td>
+    <td>0.000s</td>
+    <td class="error-cell">—</td>
+  </tr>
+  <tr class="pass">
+    <td>5</td>
+    <td>BT-005 Firebase messagingSenderId numeric</td>
+    <td><span class="badge badge-passed">✅ PASS</span></td>
+    <td>0.000s</td>
+    <td class="error-cell">—</td>
+  </tr>
+  <tr class="pass">
+    <td>6</td>
+    <td>BT-006 Firebase storageBucket present</td>
+    <td><span class="badge badge-passed">✅ PASS</span></td>
+    <td>0.000s</td>
+    <td class="error-cell">—</td>
+  </tr>
+  <tr class="pass">
+    <td>7</td>
+    <td>BT-007 Firebase appId valid format</td>
+    <td><span class="badge badge-passed">✅ PASS</span></td>
+    <td>0.000s</td>
+    <td class="error-cell">—</td>
+  </tr>
+  <tr class="pass">
+    <td>8</td>
+    <td>BT-008 All Firebase config fields present</td>
+    <td><span class="badge badge-passed">✅ PASS</span></td>
+    <td>0.000s</td>
+    <td class="error-cell">—</td>
+  </tr>
+  <tr class="pass">
+    <td>9</td>
+    <td>BT-009 Firebase DB region asia-southeast1</td>
+    <td><span class="badge badge-passed">✅ PASS</span></td>
+    <td>0.000s</td>
+    <td class="error-cell">—</td>
+  </tr>
+  <tr class="pass">
+    <td>10</td>
+    <td>BT-010 Firebase config values non-empty strings</td>
+    <td><span class="badge badge-passed">✅ PASS</span></td>
+    <td>0.000s</td>
+    <td class="error-cell">—</td>
+  </tr>
+  <tr class="pass">
+    <td>11</td>
+    <td>BT-011 Valid email: user@example.com</td>
+    <td><span class="badge badge-passed">✅ PASS</span></td>
+    <td>0.000s</td>
+    <td class="error-cell">—</td>
+  </tr>
+  <tr class="pass">
+    <td>12</td>
+    <td>BT-012 Valid email: test.user@domain.org</td>
+    <td><span class="badge badge-passed">✅ PASS</span></td>
+    <td>0.000s</td>
+    <td class="error-cell">—</td>
+  </tr>
+  <tr class="pass">
+    <td>13</td>
+    <td>BT-013 Valid email: user+tag@gmail.com</td>
+    <td><span class="badge badge-passed">✅ PASS</span></td>
+    <td>0.000s</td>
+    <td class="error-cell">—</td>
+  </tr>
+  <tr class="pass">
+    <td>14</td>
+    <td>BT-014 Valid email: admin@company.co.uk</td>
+    <td><span class="badge badge-passed">✅ PASS</span></td>
+    <td>0.000s</td>
+    <td class="error-cell">—</td>
+  </tr>
+  <tr class="pass">
+    <td>15</td>
+    <td>BT-015 Valid email: pramithm2174.sse@saveetha.com</td>
+    <td><span class="badge badge-passed">✅ PASS</span></td>
+    <td>0.000s</td>
+    <td class="error-cell">—</td>
+  </tr>
+  <tr class="pass">
+    <td>16</td>
+    <td>BT-016 Valid email: pramith414@gmail.com</td>
+    <td><span class="badge badge-passed">✅ PASS</span></td>
+    <td>0.000s</td>
+    <td class="error-cell">—</td>
+  </tr>
+  <tr class="pass">
+    <td>17</td>
+    <td>BT-017 Valid email: a@b.co</td>
+    <td><span class="badge badge-passed">✅ PASS</span></td>
+    <td>0.000s</td>
+    <td class="error-cell">—</td>
+  </tr>
+  <tr class="pass">
+    <td>18</td>
+    <td>BT-018 Valid email: user123@test.io</td>
+    <td><span class="badge badge-passed">✅ PASS</span></td>
+    <td>0.000s</td>
+    <td class="error-cell">—</td>
+  </tr>
+  <tr class="pass">
+    <td>19</td>
+    <td>BT-019 Valid email: name.surname@corporate.net</td>
+    <td><span class="badge badge-passed">✅ PASS</span></td>
+    <td>0.000s</td>
+    <td class="error-cell">—</td>
+  </tr>
+  <tr class="pass">
+    <td>20</td>
+    <td>BT-020 Valid email: x@y.z</td>
+    <td><span class="badge badge-passed">✅ PASS</span></td>
+    <td>0.000s</td>
+    <td class="error-cell">—</td>
+  </tr>
+  <tr class="pass">
+    <td>21</td>
+    <td>BT-021 Invalid email rejected: ""</td>
+    <td><span class="badge badge-passed">✅ PASS</span></td>
+    <td>0.000s</td>
+    <td class="error-cell">—</td>
+  </tr>
+  <tr class="pass">
+    <td>22</td>
+    <td>BT-022 Invalid email rejected: "notanemail"</td>
+    <td><span class="badge badge-passed">✅ PASS</span></td>
+    <td>0.000s</td>
+    <td class="error-cell">—</td>
+  </tr>
+  <tr class="pass">
+    <td>23</td>
+    <td>BT-023 Invalid email rejected: "@nodomain.com"</td>
+    <td><span class="badge badge-passed">✅ PASS</span></td>
+    <td>0.000s</td>
+    <td class="error-cell">—</td>
+  </tr>
+  <tr class="pass">
+    <td>24</td>
+    <td>BT-024 Invalid email rejected: "noatsign"</td>
+    <td><span class="badge badge-passed">✅ PASS</span></td>
+    <td>0.000s</td>
+    <td class="error-cell">—</td>
+  </tr>
+  <tr class="pass">
+    <td>25</td>
+    <td>BT-025 Invalid email rejected: "space @email.com"</td>
+    <td><span class="badge badge-passed">✅ PASS</span></td>
+    <td>0.000s</td>
+    <td class="error-cell">—</td>
+  </tr>
+  <tr class="pass">
+    <td>26</td>
+    <td>BT-026 Invalid email rejected: "double@@email.com"</td>
+    <td><span class="badge badge-passed">✅ PASS</span></td>
+    <td>0.000s</td>
+    <td class="error-cell">—</td>
+  </tr>
+  <tr class="pass">
+    <td>27</td>
+    <td>BT-027 Invalid email rejected: "no.tld@"</td>
+    <td><span class="badge badge-passed">✅ PASS</span></td>
+    <td>0.000s</td>
+    <td class="error-cell">—</td>
+  </tr>
+  <tr class="pass">
+    <td>28</td>
+    <td>BT-028 Invalid email rejected: null</td>
+    <td><span class="badge badge-passed">✅ PASS</span></td>
+    <td>0.001s</td>
+    <td class="error-cell">—</td>
+  </tr>
+  <tr class="pass">
+    <td>29</td>
+    <td>BT-029 Invalid email rejected: undefined</td>
+    <td><span class="badge badge-passed">✅ PASS</span></td>
+    <td>0.000s</td>
+    <td class="error-cell">—</td>
+  </tr>
+  <tr class="pass">
+    <td>30</td>
+    <td>BT-030 Invalid email rejected: 123</td>
+    <td><span class="badge badge-passed">✅ PASS</span></td>
+    <td>0.000s</td>
+    <td class="error-cell">—</td>
+  </tr>
+  <tr class="pass">
+    <td>31</td>
+    <td>BT-031 Valid password ≥6 chars accepted</td>
+    <td><span class="badge badge-passed">✅ PASS</span></td>
+    <td>0.000s</td>
+    <td class="error-cell">—</td>
+  </tr>
+  <tr class="pass">
+    <td>32</td>
+    <td>BT-032 Password exactly 6 chars valid</td>
+    <td><span class="badge badge-passed">✅ PASS</span></td>
+    <td>0.000s</td>
+    <td class="error-cell">—</td>
+  </tr>
+  <tr class="pass">
+    <td>33</td>
+    <td>BT-033 Password 5 chars invalid</td>
+    <td><span class="badge badge-passed">✅ PASS</span></td>
+    <td>0.000s</td>
+    <td class="error-cell">—</td>
+  </tr>
+  <tr class="pass">
+    <td>34</td>
+    <td>BT-034 Empty password invalid</td>
+    <td><span class="badge badge-passed">✅ PASS</span></td>
+    <td>0.000s</td>
+    <td class="error-cell">—</td>
+  </tr>
+  <tr class="pass">
+    <td>35</td>
+    <td>BT-035 null password invalid</td>
+    <td><span class="badge badge-passed">✅ PASS</span></td>
+    <td>0.000s</td>
+    <td class="error-cell">—</td>
+  </tr>
+  <tr class="pass">
+    <td>36</td>
+    <td>BT-036 100-char password valid</td>
+    <td><span class="badge badge-passed">✅ PASS</span></td>
+    <td>0.000s</td>
+    <td class="error-cell">—</td>
+  </tr>
+  <tr class="pass">
+    <td>37</td>
+    <td>BT-037 Numeric-only password valid</td>
+    <td><span class="badge badge-passed">✅ PASS</span></td>
+    <td>0.000s</td>
+    <td class="error-cell">—</td>
+  </tr>
+  <tr class="pass">
+    <td>38</td>
+    <td>BT-038 Special char password valid</td>
+    <td><span class="badge badge-passed">✅ PASS</span></td>
+    <td>0.000s</td>
+    <td class="error-cell">—</td>
+  </tr>
+  <tr class="pass">
+    <td>39</td>
+    <td>BT-039 Password with spaces valid</td>
+    <td><span class="badge badge-passed">✅ PASS</span></td>
+    <td>0.000s</td>
+    <td class="error-cell">—</td>
+  </tr>
+  <tr class="pass">
+    <td>40</td>
+    <td>BT-040 undefined password invalid</td>
+    <td><span class="badge badge-passed">✅ PASS</span></td>
+    <td>0.000s</td>
+    <td class="error-cell">—</td>
+  </tr>
+  <tr class="pass">
+    <td>41</td>
+    <td>BT-041 Sanitize: "<script>alert("xss")</scr"</td>
+    <td><span class="badge badge-passed">✅ PASS</span></td>
+    <td>0.000s</td>
+    <td class="error-cell">—</td>
+  </tr>
+  <tr class="pass">
+    <td>42</td>
+    <td>BT-042 Sanitize: "<img src=x onerror=alert("</td>
+    <td><span class="badge badge-passed">✅ PASS</span></td>
+    <td>0.000s</td>
+    <td class="error-cell">—</td>
+  </tr>
+  <tr class="pass">
+    <td>43</td>
+    <td>BT-043 Sanitize: "Normal text"</td>
+    <td><span class="badge badge-passed">✅ PASS</span></td>
+    <td>0.000s</td>
+    <td class="error-cell">—</td>
+  </tr>
+  <tr class="pass">
+    <td>44</td>
+    <td>BT-044 Sanitize: "<b>Bold</b>"</td>
+    <td><span class="badge badge-passed">✅ PASS</span></td>
+    <td>0.000s</td>
+    <td class="error-cell">—</td>
+  </tr>
+  <tr class="pass">
+    <td>45</td>
+    <td>BT-045 Sanitize: "   trimmed   "</td>
+    <td><span class="badge badge-passed">✅ PASS</span></td>
+    <td>0.000s</td>
+    <td class="error-cell">—</td>
+  </tr>
+  <tr class="pass">
+    <td>46</td>
+    <td>BT-046 Sanitize: ""</td>
+    <td><span class="badge badge-passed">✅ PASS</span></td>
+    <td>0.000s</td>
+    <td class="error-cell">—</td>
+  </tr>
+  <tr class="pass">
+    <td>47</td>
+    <td>BT-047 Sanitize: "<SCRIPT>evil()</SCRIPT>"</td>
+    <td><span class="badge badge-passed">✅ PASS</span></td>
+    <td>0.000s</td>
+    <td class="error-cell">—</td>
+  </tr>
+  <tr class="pass">
+    <td>48</td>
+    <td>BT-048 Sanitize: "Hello <World>"</td>
+    <td><span class="badge badge-passed">✅ PASS</span></td>
+    <td>0.000s</td>
+    <td class="error-cell">—</td>
+  </tr>
+  <tr class="pass">
+    <td>49</td>
+    <td>BT-049 Sanitize: "<<script>>"</td>
+    <td><span class="badge badge-passed">✅ PASS</span></td>
+    <td>0.000s</td>
+    <td class="error-cell">—</td>
+  </tr>
+  <tr class="pass">
+    <td>50</td>
+    <td>BT-050 Sanitize: "Safe & clean text"</td>
+    <td><span class="badge badge-passed">✅ PASS</span></td>
+    <td>0.000s</td>
+    <td class="error-cell">—</td>
+  </tr>
+  <tr class="pass">
+    <td>51</td>
+    <td>BT-051 Valid UID accepted</td>
+    <td><span class="badge badge-passed">✅ PASS</span></td>
+    <td>0.000s</td>
+    <td class="error-cell">—</td>
+  </tr>
+  <tr class="pass">
+    <td>52</td>
+    <td>BT-052 Empty UID rejected</td>
+    <td><span class="badge badge-passed">✅ PASS</span></td>
+    <td>0.000s</td>
+    <td class="error-cell">—</td>
+  </tr>
+  <tr class="pass">
+    <td>53</td>
+    <td>BT-053 Numeric UID rejected</td>
+    <td><span class="badge badge-passed">✅ PASS</span></td>
+    <td>0.000s</td>
+    <td class="error-cell">—</td>
+  </tr>
+  <tr class="pass">
+    <td>54</td>
+    <td>BT-054 null UID rejected</td>
+    <td><span class="badge badge-passed">✅ PASS</span></td>
+    <td>0.000s</td>
+    <td class="error-cell">—</td>
+  </tr>
+  <tr class="pass">
+    <td>55</td>
+    <td>BT-055 128-char UID valid</td>
+    <td><span class="badge badge-passed">✅ PASS</span></td>
+    <td>0.000s</td>
+    <td class="error-cell">—</td>
+  </tr>
+  <tr class="pass">
+    <td>56</td>
+    <td>BT-056 129-char UID invalid</td>
+    <td><span class="badge badge-passed">✅ PASS</span></td>
+    <td>0.000s</td>
+    <td class="error-cell">—</td>
+  </tr>
+  <tr class="pass">
+    <td>57</td>
+    <td>BT-057 UID with special chars valid</td>
+    <td><span class="badge badge-passed">✅ PASS</span></td>
+    <td>0.000s</td>
+    <td class="error-cell">—</td>
+  </tr>
+  <tr class="pass">
+    <td>58</td>
+    <td>BT-058 Single char UID valid</td>
+    <td><span class="badge badge-passed">✅ PASS</span></td>
+    <td>0.000s</td>
+    <td class="error-cell">—</td>
+  </tr>
+  <tr class="pass">
+    <td>59</td>
+    <td>BT-059 TEST_EMAIL valid format</td>
+    <td><span class="badge badge-passed">✅ PASS</span></td>
+    <td>0.000s</td>
+    <td class="error-cell">—</td>
+  </tr>
+  <tr class="pass">
+    <td>60</td>
+    <td>BT-060 TEST_PASSWORD valid</td>
+    <td><span class="badge badge-passed">✅ PASS</span></td>
+    <td>0.000s</td>
+    <td class="error-cell">—</td>
+  </tr>
+  <tr class="pass">
+    <td>61</td>
+    <td>BT-061 Auth state has user property</td>
+    <td><span class="badge badge-passed">✅ PASS</span></td>
+    <td>0.000s</td>
+    <td class="error-cell">—</td>
+  </tr>
+  <tr class="pass">
+    <td>62</td>
+    <td>BT-062 Auth loading initially true</td>
+    <td><span class="badge badge-passed">✅ PASS</span></td>
+    <td>0.000s</td>
+    <td class="error-cell">—</td>
+  </tr>
+  <tr class="pass">
+    <td>63</td>
+    <td>BT-063 Auth error null on success</td>
+    <td><span class="badge badge-passed">✅ PASS</span></td>
+    <td>0.000s</td>
+    <td class="error-cell">—</td>
+  </tr>
+  <tr class="pass">
+    <td>64</td>
+    <td>BT-064 Auth user null after logout</td>
+    <td><span class="badge badge-passed">✅ PASS</span></td>
+    <td>0.000s</td>
+    <td class="error-cell">—</td>
+  </tr>
+  <tr class="pass">
+    <td>65</td>
+    <td>BT-065 User object has UID</td>
+    <td><span class="badge badge-passed">✅ PASS</span></td>
+    <td>0.000s</td>
+    <td class="error-cell">—</td>
+  </tr>
+  <tr class="pass">
+    <td>66</td>
+    <td>BT-066 User email matches TEST_EMAIL</td>
+    <td><span class="badge badge-passed">✅ PASS</span></td>
+    <td>0.000s</td>
+    <td class="error-cell">—</td>
+  </tr>
+  <tr class="pass">
+    <td>67</td>
+    <td>BT-067 emailVerified is boolean</td>
+    <td><span class="badge badge-passed">✅ PASS</span></td>
+    <td>0.000s</td>
+    <td class="error-cell">—</td>
+  </tr>
+  <tr class="pass">
+    <td>68</td>
+    <td>BT-068 Bypass list includes TEST_EMAIL</td>
+    <td><span class="badge badge-passed">✅ PASS</span></td>
+    <td>0.000s</td>
+    <td class="error-cell">—</td>
+  </tr>
+  <tr class="pass">
+    <td>69</td>
+    <td>BT-069 Bypass list includes GHA email</td>
+    <td><span class="badge badge-passed">✅ PASS</span></td>
+    <td>0.000s</td>
+    <td class="error-cell">—</td>
+  </tr>
+  <tr class="pass">
+    <td>70</td>
+    <td>BT-070 Random email not in bypass list</td>
+    <td><span class="badge badge-passed">✅ PASS</span></td>
+    <td>0.000s</td>
+    <td class="error-cell">—</td>
+  </tr>
+  <tr class="pass">
+    <td>71</td>
+    <td>BT-071 sanitize(null) = empty string</td>
+    <td><span class="badge badge-passed">✅ PASS</span></td>
+    <td>0.000s</td>
+    <td class="error-cell">—</td>
+  </tr>
+  <tr class="pass">
+    <td>72</td>
+    <td>BT-072 sanitize(number) = empty string</td>
+    <td><span class="badge badge-passed">✅ PASS</span></td>
+    <td>0.000s</td>
+    <td class="error-cell">—</td>
+  </tr>
+  <tr class="pass">
+    <td>73</td>
+    <td>BT-073 Email case-sensitive comparison</td>
+    <td><span class="badge badge-passed">✅ PASS</span></td>
+    <td>0.000s</td>
+    <td class="error-cell">—</td>
+  </tr>
+  <tr class="pass">
+    <td>74</td>
+    <td>BT-074 TEST_EMAIL is already lowercase</td>
+    <td><span class="badge badge-passed">✅ PASS</span></td>
+    <td>0.000s</td>
+    <td class="error-cell">—</td>
+  </tr>
+  <tr class="pass">
+    <td>75</td>
+    <td>BT-075 TEST_EMAIL domain has TLD</td>
+    <td><span class="badge badge-passed">✅ PASS</span></td>
+    <td>0.000s</td>
+    <td class="error-cell">—</td>
+  </tr>
+  <tr class="pass">
+    <td>76</td>
+    <td>BT-076 TEST_EMAIL local part non-empty</td>
+    <td><span class="badge badge-passed">✅ PASS</span></td>
+    <td>0.000s</td>
+    <td class="error-cell">—</td>
+  </tr>
+  <tr class="pass">
+    <td>77</td>
+    <td>BT-077 Auth error message is string</td>
+    <td><span class="badge badge-passed">✅ PASS</span></td>
+    <td>0.000s</td>
+    <td class="error-cell">—</td>
+  </tr>
+  <tr class="pass">
+    <td>78</td>
+    <td>BT-078 Auth error code format valid</td>
+    <td><span class="badge badge-passed">✅ PASS</span></td>
+    <td>0.000s</td>
+    <td class="error-cell">—</td>
+  </tr>
+  <tr class="pass">
+    <td>79</td>
+    <td>BT-079 Firebase projectId is trackback-1c73e</td>
+    <td><span class="badge badge-passed">✅ PASS</span></td>
+    <td>0.000s</td>
+    <td class="error-cell">—</td>
+  </tr>
+  <tr class="pass">
+    <td>80</td>
+    <td>BT-080 Auth state loading→authenticated</td>
+    <td><span class="badge badge-passed">✅ PASS</span></td>
+    <td>0.000s</td>
+    <td class="error-cell">—</td>
+  </tr>
+  <tr class="pass">
+    <td>81</td>
+    <td>BT-301 Valid message passes</td>
+    <td><span class="badge badge-passed">✅ PASS</span></td>
+    <td>0.000s</td>
+    <td class="error-cell">—</td>
+  </tr>
+  <tr class="pass">
+    <td>82</td>
+    <td>BT-302 Missing senderId fails</td>
+    <td><span class="badge badge-passed">✅ PASS</span></td>
+    <td>0.000s</td>
+    <td class="error-cell">—</td>
+  </tr>
+  <tr class="pass">
+    <td>83</td>
+    <td>BT-303 Empty content fails</td>
+    <td><span class="badge badge-passed">✅ PASS</span></td>
+    <td>0.000s</td>
+    <td class="error-cell">—</td>
+  </tr>
+  <tr class="pass">
+    <td>84</td>
+    <td>BT-304 >1000 chars fails</td>
+    <td><span class="badge badge-passed">✅ PASS</span></td>
+    <td>0.000s</td>
+    <td class="error-cell">—</td>
+  </tr>
+  <tr class="pass">
+    <td>85</td>
+    <td>BT-305 1000-char message passes</td>
+    <td><span class="badge badge-passed">✅ PASS</span></td>
+    <td>0.000s</td>
+    <td class="error-cell">—</td>
+  </tr>
+  <tr class="pass">
+    <td>86</td>
+    <td>BT-306 Missing roomId fails</td>
+    <td><span class="badge badge-passed">✅ PASS</span></td>
+    <td>0.000s</td>
+    <td class="error-cell">—</td>
+  </tr>
+  <tr class="pass">
+    <td>87</td>
+    <td>BT-307 Missing timestamp fails</td>
+    <td><span class="badge badge-passed">✅ PASS</span></td>
+    <td>0.000s</td>
+    <td class="error-cell">—</td>
+  </tr>
+  <tr class="pass">
+    <td>88</td>
+    <td>BT-308 String timestamp fails</td>
+    <td><span class="badge badge-passed">✅ PASS</span></td>
+    <td>0.000s</td>
+    <td class="error-cell">—</td>
+  </tr>
+  <tr class="pass">
+    <td>89</td>
+    <td>BT-309 null message fails</td>
+    <td><span class="badge badge-passed">✅ PASS</span></td>
+    <td>0.000s</td>
+    <td class="error-cell">—</td>
+  </tr>
+  <tr class="pass">
+    <td>90</td>
+    <td>BT-310 REQUIRED_MESSAGE_FIELDS count 4</td>
+    <td><span class="badge badge-passed">✅ PASS</span></td>
+    <td>0.000s</td>
+    <td class="error-cell">—</td>
+  </tr>
+  <tr class="pass">
+    <td>91</td>
+    <td>BT-311 sortMessages oldest first</td>
+    <td><span class="badge badge-passed">✅ PASS</span></td>
+    <td>0.000s</td>
+    <td class="error-cell">—</td>
+  </tr>
+  <tr class="pass">
+    <td>92</td>
+    <td>BT-312 sortMessages non-mutating</td>
+    <td><span class="badge badge-passed">✅ PASS</span></td>
+    <td>0.000s</td>
+    <td class="error-cell">—</td>
+  </tr>
+  <tr class="pass">
+    <td>93</td>
+    <td>BT-313 generateRoomId consistent</td>
+    <td><span class="badge badge-passed">✅ PASS</span></td>
+    <td>0.000s</td>
+    <td class="error-cell">—</td>
+  </tr>
+  <tr class="pass">
+    <td>94</td>
+    <td>BT-314 generateRoomId sorted UIDs</td>
+    <td><span class="badge badge-passed">✅ PASS</span></td>
+    <td>0.000s</td>
+    <td class="error-cell">—</td>
+  </tr>
+  <tr class="pass">
+    <td>95</td>
+    <td>BT-315 Room has 2 participants</td>
+    <td><span class="badge badge-passed">✅ PASS</span></td>
+    <td>0.000s</td>
+    <td class="error-cell">—</td>
+  </tr>
+  <tr class="pass">
+    <td>96</td>
+    <td>BT-316 Room participants is array</td>
+    <td><span class="badge badge-passed">✅ PASS</span></td>
+    <td>0.000s</td>
+    <td class="error-cell">—</td>
+  </tr>
+  <tr class="pass">
+    <td>97</td>
+    <td>BT-317 Room createdAt positive number</td>
+    <td><span class="badge badge-passed">✅ PASS</span></td>
+    <td>0.000s</td>
+    <td class="error-cell">—</td>
+  </tr>
+  <tr class="pass">
+    <td>98</td>
+    <td>BT-318 Room unreadCount starts at 0</td>
+    <td><span class="badge badge-passed">✅ PASS</span></td>
+    <td>0.000s</td>
+    <td class="error-cell">—</td>
+  </tr>
+  <tr class="pass">
+    <td>99</td>
+    <td>BT-319 Message read is boolean</td>
+    <td><span class="badge badge-passed">✅ PASS</span></td>
+    <td>0.000s</td>
+    <td class="error-cell">—</td>
+  </tr>
+  <tr class="pass">
+    <td>100</td>
+    <td>BT-320 New message is unread</td>
+    <td><span class="badge badge-passed">✅ PASS</span></td>
+    <td>0.000s</td>
+    <td class="error-cell">—</td>
+  </tr>
+  <tr class="pass">
+    <td>101</td>
+    <td>BT-321 Message content with emoji is valid</td>
+    <td><span class="badge badge-passed">✅ PASS</span></td>
+    <td>0.000s</td>
+    <td class="error-cell">—</td>
+  </tr>
+  <tr class="pass">
+    <td>102</td>
+    <td>BT-322 Message content with unicode is valid</td>
+    <td><span class="badge badge-passed">✅ PASS</span></td>
+    <td>0.000s</td>
+    <td class="error-cell">—</td>
+  </tr>
+  <tr class="pass">
+    <td>103</td>
+    <td>BT-323 Message content with 1 char is valid</td>
+    <td><span class="badge badge-passed">✅ PASS</span></td>
+    <td>0.000s</td>
+    <td class="error-cell">—</td>
+  </tr>
+  <tr class="pass">
+    <td>104</td>
+    <td>BT-324 Message whitespace-only content fails</td>
+    <td><span class="badge badge-passed">✅ PASS</span></td>
+    <td>0.000s</td>
+    <td class="error-cell">—</td>
+  </tr>
+  <tr class="pass">
+    <td>105</td>
+    <td>BT-325 sortMessages with empty array returns empty</td>
+    <td><span class="badge badge-passed">✅ PASS</span></td>
+    <td>0.000s</td>
+    <td class="error-cell">—</td>
+  </tr>
+  <tr class="pass">
+    <td>106</td>
+    <td>BT-326 sortMessages with 1 message returns 1</td>
+    <td><span class="badge badge-passed">✅ PASS</span></td>
+    <td>0.000s</td>
+    <td class="error-cell">—</td>
+  </tr>
+  <tr class="pass">
+    <td>107</td>
+    <td>BT-327 Room lastMessage is a string</td>
+    <td><span class="badge badge-passed">✅ PASS</span></td>
+    <td>0.000s</td>
+    <td class="error-cell">—</td>
+  </tr>
+  <tr class="pass">
+    <td>108</td>
+    <td>BT-328 Room lastMessageAt is a number</td>
+    <td><span class="badge badge-passed">✅ PASS</span></td>
+    <td>0.000s</td>
+    <td class="error-cell">—</td>
+  </tr>
+  <tr class="pass">
+    <td>109</td>
+    <td>BT-329 Room itemId is a string</td>
+    <td><span class="badge badge-passed">✅ PASS</span></td>
+    <td>0.000s</td>
+    <td class="error-cell">—</td>
+  </tr>
+  <tr class="pass">
+    <td>110</td>
+    <td>BT-330 Room id is a string</td>
+    <td><span class="badge badge-passed">✅ PASS</span></td>
+    <td>0.000s</td>
+    <td class="error-cell">—</td>
+  </tr>
+  <tr class="pass">
+    <td>111</td>
+    <td>BT-331 Message id is a string</td>
+    <td><span class="badge badge-passed">✅ PASS</span></td>
+    <td>0.000s</td>
+    <td class="error-cell">—</td>
+  </tr>
+  <tr class="pass">
+    <td>112</td>
+    <td>BT-332 Message senderId is a string</td>
+    <td><span class="badge badge-passed">✅ PASS</span></td>
+    <td>0.000s</td>
+    <td class="error-cell">—</td>
+  </tr>
+  <tr class="pass">
+    <td>113</td>
+    <td>BT-333 Message receiverId is a string</td>
+    <td><span class="badge badge-passed">✅ PASS</span></td>
+    <td>0.000s</td>
+    <td class="error-cell">—</td>
+  </tr>
+  <tr class="pass">
+    <td>114</td>
+    <td>BT-334 Message content is a string</td>
+    <td><span class="badge badge-passed">✅ PASS</span></td>
+    <td>0.000s</td>
+    <td class="error-cell">—</td>
+  </tr>
+  <tr class="pass">
+    <td>115</td>
+    <td>BT-335 Message timestamp is a number</td>
+    <td><span class="badge badge-passed">✅ PASS</span></td>
+    <td>0.000s</td>
+    <td class="error-cell">—</td>
+  </tr>
+  <tr class="pass">
+    <td>116</td>
+    <td>BT-336 Message timestamp is positive</td>
+    <td><span class="badge badge-passed">✅ PASS</span></td>
+    <td>0.000s</td>
+    <td class="error-cell">—</td>
+  </tr>
+  <tr class="pass">
+    <td>117</td>
+    <td>BT-337 generateRoomId is deterministic</td>
+    <td><span class="badge badge-passed">✅ PASS</span></td>
+    <td>0.000s</td>
+    <td class="error-cell">—</td>
+  </tr>
+  <tr class="pass">
+    <td>118</td>
+    <td>BT-338 generateRoomId output is a string</td>
+    <td><span class="badge badge-passed">✅ PASS</span></td>
+    <td>0.000s</td>
+    <td class="error-cell">—</td>
+  </tr>
+  <tr class="pass">
+    <td>119</td>
+    <td>BT-339 generateRoomId output contains both UIDs</td>
+    <td><span class="badge badge-passed">✅ PASS</span></td>
+    <td>0.000s</td>
+    <td class="error-cell">—</td>
+  </tr>
+  <tr class="pass">
+    <td>120</td>
+    <td>BT-340 MAX_MESSAGE_LENGTH is 1000</td>
+    <td><span class="badge badge-passed">✅ PASS</span></td>
+    <td>0.000s</td>
+    <td class="error-cell">—</td>
+  </tr>
+  <tr class="pass">
+    <td>121</td>
+    <td>BT-341 REQUIRED_MESSAGE_FIELDS includes senderId</td>
+    <td><span class="badge badge-passed">✅ PASS</span></td>
+    <td>0.000s</td>
+    <td class="error-cell">—</td>
+  </tr>
+  <tr class="pass">
+    <td>122</td>
+    <td>BT-342 REQUIRED_MESSAGE_FIELDS includes content</td>
+    <td><span class="badge badge-passed">✅ PASS</span></td>
+    <td>0.000s</td>
+    <td class="error-cell">—</td>
+  </tr>
+  <tr class="pass">
+    <td>123</td>
+    <td>BT-343 REQUIRED_MESSAGE_FIELDS includes timestamp</td>
+    <td><span class="badge badge-passed">✅ PASS</span></td>
+    <td>0.000s</td>
+    <td class="error-cell">—</td>
+  </tr>
+  <tr class="pass">
+    <td>124</td>
+    <td>BT-344 REQUIRED_MESSAGE_FIELDS includes roomId</td>
+    <td><span class="badge badge-passed">✅ PASS</span></td>
+    <td>0.000s</td>
+    <td class="error-cell">—</td>
+  </tr>
+  <tr class="pass">
+    <td>125</td>
+    <td>BT-345 Message with special chars in content is valid</td>
+    <td><span class="badge badge-passed">✅ PASS</span></td>
+    <td>0.000s</td>
+    <td class="error-cell">—</td>
+  </tr>
+  <tr class="pass">
+    <td>126</td>
+    <td>BT-346 Message 999-char content is valid</td>
+    <td><span class="badge badge-passed">✅ PASS</span></td>
+    <td>0.000s</td>
+    <td class="error-cell">—</td>
+  </tr>
+  <tr class="pass">
+    <td>127</td>
+    <td>BT-347 Message 1-char content is valid</td>
+    <td><span class="badge badge-passed">✅ PASS</span></td>
+    <td>0.000s</td>
+    <td class="error-cell">—</td>
+  </tr>
+  <tr class="pass">
+    <td>128</td>
+    <td>BT-348 Message 1001-char content is invalid</td>
+    <td><span class="badge badge-passed">✅ PASS</span></td>
+    <td>0.000s</td>
+    <td class="error-cell">—</td>
+  </tr>
+  <tr class="pass">
+    <td>129</td>
+    <td>BT-349 Room participants includes sender</td>
+    <td><span class="badge badge-passed">✅ PASS</span></td>
+    <td>0.000s</td>
+    <td class="error-cell">—</td>
+  </tr>
+  <tr class="pass">
+    <td>130</td>
+    <td>BT-350 Room participants includes receiver</td>
+    <td><span class="badge badge-passed">✅ PASS</span></td>
+    <td>0.000s</td>
+    <td class="error-cell">—</td>
+  </tr>
+  <tr class="pass">
+    <td>131</td>
+    <td>BT-351 createSampleMessage returns new object each call</td>
+    <td><span class="badge badge-passed">✅ PASS</span></td>
+    <td>0.000s</td>
+    <td class="error-cell">—</td>
+  </tr>
+  <tr class="pass">
+    <td>132</td>
+    <td>BT-352 createSampleRoom returns new object each call</td>
+    <td><span class="badge badge-passed">✅ PASS</span></td>
+    <td>0.000s</td>
+    <td class="error-cell">—</td>
+  </tr>
+  <tr class="pass">
+    <td>133</td>
+    <td>BT-353 validateMessage returns object</td>
+    <td><span class="badge badge-passed">✅ PASS</span></td>
+    <td>0.000s</td>
+    <td class="error-cell">—</td>
+  </tr>
+  <tr class="pass">
+    <td>134</td>
+    <td>BT-354 validateMessage has valid key</td>
+    <td><span class="badge badge-passed">✅ PASS</span></td>
+    <td>0.000s</td>
+    <td class="error-cell">—</td>
+  </tr>
+  <tr class="pass">
+    <td>135</td>
+    <td>BT-355 validateMessage has error key</td>
+    <td><span class="badge badge-passed">✅ PASS</span></td>
+    <td>0.000s</td>
+    <td class="error-cell">—</td>
+  </tr>
+  <tr class="pass">
+    <td>136</td>
+    <td>BT-356 sortMessages result is an array</td>
+    <td><span class="badge badge-passed">✅ PASS</span></td>
+    <td>0.001s</td>
+    <td class="error-cell">—</td>
+  </tr>
+  <tr class="pass">
+    <td>137</td>
+    <td>BT-357 Messages sorted: earlier timestamp is first</td>
+    <td><span class="badge badge-passed">✅ PASS</span></td>
+    <td>0.000s</td>
+    <td class="error-cell">—</td>
+  </tr>
+  <tr class="pass">
+    <td>138</td>
+    <td>BT-358 Room object is a plain object</td>
+    <td><span class="badge badge-passed">✅ PASS</span></td>
+    <td>0.000s</td>
+    <td class="error-cell">—</td>
+  </tr>
+  <tr class="pass">
+    <td>139</td>
+    <td>BT-359 Room object is not null</td>
+    <td><span class="badge badge-passed">✅ PASS</span></td>
+    <td>0.000s</td>
+    <td class="error-cell">—</td>
+  </tr>
+  <tr class="pass">
+    <td>140</td>
+    <td>BT-360 Room participants are non-empty strings</td>
+    <td><span class="badge badge-passed">✅ PASS</span></td>
+    <td>0.000s</td>
+    <td class="error-cell">—</td>
+  </tr>
+  <tr class="pass">
+    <td>141</td>
+    <td>BT-361 Message senderId != receiverId in sample</td>
+    <td><span class="badge badge-passed">✅ PASS</span></td>
+    <td>0.000s</td>
+    <td class="error-cell">—</td>
+  </tr>
+  <tr class="pass">
+    <td>142</td>
+    <td>BT-362 Message roomId contains sender portion</td>
+    <td><span class="badge badge-passed">✅ PASS</span></td>
+    <td>0.000s</td>
+    <td class="error-cell">—</td>
+  </tr>
+  <tr class="pass">
+    <td>143</td>
+    <td>BT-363 Room id matches expected format</td>
+    <td><span class="badge badge-passed">✅ PASS</span></td>
+    <td>0.000s</td>
+    <td class="error-cell">—</td>
+  </tr>
+  <tr class="pass">
+    <td>144</td>
+    <td>BT-364 Message id is non-empty</td>
+    <td><span class="badge badge-passed">✅ PASS</span></td>
+    <td>0.000s</td>
+    <td class="error-cell">—</td>
+  </tr>
+  <tr class="pass">
+    <td>145</td>
+    <td>BT-365 Room id is non-empty</td>
+    <td><span class="badge badge-passed">✅ PASS</span></td>
+    <td>0.000s</td>
+    <td class="error-cell">—</td>
+  </tr>
+  <tr class="pass">
+    <td>146</td>
+    <td>BT-366 validateMessage with undefined fails</td>
+    <td><span class="badge badge-passed">✅ PASS</span></td>
+    <td>0.000s</td>
+    <td class="error-cell">—</td>
+  </tr>
+  <tr class="pass">
+    <td>147</td>
+    <td>BT-367 validateMessage with array fails</td>
+    <td><span class="badge badge-passed">✅ PASS</span></td>
+    <td>0.000s</td>
+    <td class="error-cell">—</td>
+  </tr>
+  <tr class="pass">
+    <td>148</td>
+    <td>BT-368 generateRoomId with same uid produces consistent output</td>
+    <td><span class="badge badge-passed">✅ PASS</span></td>
+    <td>0.000s</td>
+    <td class="error-cell">—</td>
+  </tr>
+  <tr class="pass">
+    <td>149</td>
+    <td>BT-369 Room unreadCount is a number</td>
+    <td><span class="badge badge-passed">✅ PASS</span></td>
+    <td>0.000s</td>
+    <td class="error-cell">—</td>
+  </tr>
+  <tr class="pass">
+    <td>150</td>
+    <td>BT-370 Room unreadCount is ≥ 0</td>
+    <td><span class="badge badge-passed">✅ PASS</span></td>
+    <td>0.000s</td>
+    <td class="error-cell">—</td>
+  </tr>
+  <tr class="pass">
+    <td>151</td>
+    <td>BT-371 Message with HTML content is valid (not sanitised at service level)</td>
+    <td><span class="badge badge-passed">✅ PASS</span></td>
+    <td>0.000s</td>
+    <td class="error-cell">—</td>
+  </tr>
+  <tr class="pass">
+    <td>152</td>
+    <td>BT-372 sortMessages with 10 messages returns 10</td>
+    <td><span class="badge badge-passed">✅ PASS</span></td>
+    <td>0.001s</td>
+    <td class="error-cell">—</td>
+  </tr>
+  <tr class="pass">
+    <td>153</td>
+    <td>BT-373 REQUIRED_MESSAGE_FIELDS is an array</td>
+    <td><span class="badge badge-passed">✅ PASS</span></td>
+    <td>0.000s</td>
+    <td class="error-cell">—</td>
+  </tr>
+  <tr class="pass">
+    <td>154</td>
+    <td>BT-374 Room lastMessage matches sample message content</td>
+    <td><span class="badge badge-passed">✅ PASS</span></td>
+    <td>0.000s</td>
+    <td class="error-cell">—</td>
+  </tr>
+  <tr class="pass">
+    <td>155</td>
+    <td>BT-375 createSampleMessage override works</td>
+    <td><span class="badge badge-passed">✅ PASS</span></td>
+    <td>0.000s</td>
+    <td class="error-cell">—</td>
+  </tr>
+  <tr class="pass">
+    <td>156</td>
+    <td>BT-376 createSampleRoom override works</td>
+    <td><span class="badge badge-passed">✅ PASS</span></td>
+    <td>0.000s</td>
+    <td class="error-cell">—</td>
+  </tr>
+  <tr class="pass">
+    <td>157</td>
+    <td>BT-377 Message roomId is a non-empty string</td>
+    <td><span class="badge badge-passed">✅ PASS</span></td>
+    <td>0.000s</td>
+    <td class="error-cell">—</td>
+  </tr>
+  <tr class="pass">
+    <td>158</td>
+    <td>BT-378 sortMessages preserves all messages</td>
+    <td><span class="badge badge-passed">✅ PASS</span></td>
+    <td>0.000s</td>
+    <td class="error-cell">—</td>
+  </tr>
+  <tr class="pass">
+    <td>159</td>
+    <td>BT-379 validateMessage error is null for valid message</td>
+    <td><span class="badge badge-passed">✅ PASS</span></td>
+    <td>0.000s</td>
+    <td class="error-cell">—</td>
+  </tr>
+  <tr class="pass">
+    <td>160</td>
+    <td>BT-380 Chat service constants are defined at module level</td>
+    <td><span class="badge badge-passed">✅ PASS</span></td>
+    <td>0.000s</td>
+    <td class="error-cell">—</td>
+  </tr>
+  <tr class="pass">
+    <td>161</td>
+    <td>BT-101 Valid item passes validation</td>
+    <td><span class="badge badge-passed">✅ PASS</span></td>
+    <td>0.000s</td>
+    <td class="error-cell">—</td>
+  </tr>
+  <tr class="pass">
+    <td>162</td>
+    <td>BT-102 Missing title fails validation</td>
+    <td><span class="badge badge-passed">✅ PASS</span></td>
+    <td>0.000s</td>
+    <td class="error-cell">—</td>
+  </tr>
+  <tr class="pass">
+    <td>163</td>
+    <td>BT-103 Missing userId fails validation</td>
+    <td><span class="badge badge-passed">✅ PASS</span></td>
+    <td>0.000s</td>
+    <td class="error-cell">—</td>
+  </tr>
+  <tr class="pass">
+    <td>164</td>
+    <td>BT-104 Invalid type fails validation</td>
+    <td><span class="badge badge-passed">✅ PASS</span></td>
+    <td>0.000s</td>
+    <td class="error-cell">—</td>
+  </tr>
+  <tr class="pass">
+    <td>165</td>
+    <td>BT-105 lost type passes validation</td>
+    <td><span class="badge badge-passed">✅ PASS</span></td>
+    <td>0.000s</td>
+    <td class="error-cell">—</td>
+  </tr>
+  <tr class="pass">
+    <td>166</td>
+    <td>BT-106 found type passes validation</td>
+    <td><span class="badge badge-passed">✅ PASS</span></td>
+    <td>0.000s</td>
+    <td class="error-cell">—</td>
+  </tr>
+  <tr class="pass">
+    <td>167</td>
+    <td>BT-107 Invalid status fails validation</td>
+    <td><span class="badge badge-passed">✅ PASS</span></td>
+    <td>0.000s</td>
+    <td class="error-cell">—</td>
+  </tr>
+  <tr class="pass">
+    <td>168</td>
+    <td>BT-108 Non-numeric createdAt fails</td>
+    <td><span class="badge badge-passed">✅ PASS</span></td>
+    <td>0.000s</td>
+    <td class="error-cell">—</td>
+  </tr>
+  <tr class="pass">
+    <td>169</td>
+    <td>BT-109 null item fails validation</td>
+    <td><span class="badge badge-passed">✅ PASS</span></td>
+    <td>0.000s</td>
+    <td class="error-cell">—</td>
+  </tr>
+  <tr class="pass">
+    <td>170</td>
+    <td>BT-110 Required fields count is 8</td>
+    <td><span class="badge badge-passed">✅ PASS</span></td>
+    <td>0.000s</td>
+    <td class="error-cell">—</td>
+  </tr>
+  <tr class="pass">
+    <td>171</td>
+    <td>BT-111 sortByCreatedAt newest first</td>
+    <td><span class="badge badge-passed">✅ PASS</span></td>
+    <td>0.000s</td>
+    <td class="error-cell">—</td>
+  </tr>
+  <tr class="pass">
+    <td>172</td>
+    <td>BT-112 sortByCreatedAt non-mutating</td>
+    <td><span class="badge badge-passed">✅ PASS</span></td>
+    <td>0.000s</td>
+    <td class="error-cell">—</td>
+  </tr>
+  <tr class="pass">
+    <td>173</td>
+    <td>BT-113 sortByCreatedAt empty array</td>
+    <td><span class="badge badge-passed">✅ PASS</span></td>
+    <td>0.001s</td>
+    <td class="error-cell">—</td>
+  </tr>
+  <tr class="pass">
+    <td>174</td>
+    <td>BT-114 sortByCreatedAt single item</td>
+    <td><span class="badge badge-passed">✅ PASS</span></td>
+    <td>0.000s</td>
+    <td class="error-cell">—</td>
+  </tr>
+  <tr class="pass">
+    <td>175</td>
+    <td>BT-115 filterByType lost returns 2 items</td>
+    <td><span class="badge badge-passed">✅ PASS</span></td>
+    <td>0.000s</td>
+    <td class="error-cell">—</td>
+  </tr>
+  <tr class="pass">
+    <td>176</td>
+    <td>BT-116 filterByType found returns 1 item</td>
+    <td><span class="badge badge-passed">✅ PASS</span></td>
+    <td>0.000s</td>
+    <td class="error-cell">—</td>
+  </tr>
+  <tr class="pass">
+    <td>177</td>
+    <td>BT-117 filterByType unknown returns empty</td>
+    <td><span class="badge badge-passed">✅ PASS</span></td>
+    <td>0.000s</td>
+    <td class="error-cell">—</td>
+  </tr>
+  <tr class="pass">
+    <td>178</td>
+    <td>BT-118 filterByUser correct items</td>
+    <td><span class="badge badge-passed">✅ PASS</span></td>
+    <td>0.000s</td>
+    <td class="error-cell">—</td>
+  </tr>
+  <tr class="pass">
+    <td>179</td>
+    <td>BT-119 filterByUser unknown empty</td>
+    <td><span class="badge badge-passed">✅ PASS</span></td>
+    <td>0.000s</td>
+    <td class="error-cell">—</td>
+  </tr>
+  <tr class="pass">
+    <td>180</td>
+    <td>BT-120 Item imageUrl is valid HTTPS URL</td>
+    <td><span class="badge badge-passed">✅ PASS</span></td>
+    <td>0.000s</td>
+    <td class="error-cell">—</td>
+  </tr>
+  <tr class="pass">
+    <td>181</td>
+    <td>BT-121 Valid title accepted</td>
+    <td><span class="badge badge-passed">✅ PASS</span></td>
+    <td>0.000s</td>
+    <td class="error-cell">—</td>
+  </tr>
+  <tr class="pass">
+    <td>182</td>
+    <td>BT-122 Invalid title rejected</td>
+    <td><span class="badge badge-passed">✅ PASS</span></td>
+    <td>0.000s</td>
+    <td class="error-cell">—</td>
+  </tr>
+  <tr class="pass">
+    <td>183</td>
+    <td>BT-123 Valid description accepted</td>
+    <td><span class="badge badge-passed">✅ PASS</span></td>
+    <td>0.000s</td>
+    <td class="error-cell">—</td>
+  </tr>
+  <tr class="pass">
+    <td>184</td>
+    <td>BT-124 Invalid description rejected</td>
+    <td><span class="badge badge-passed">✅ PASS</span></td>
+    <td>0.000s</td>
+    <td class="error-cell">—</td>
+  </tr>
+  <tr class="pass">
+    <td>185</td>
+    <td>BT-125 Valid type accepted</td>
+    <td><span class="badge badge-passed">✅ PASS</span></td>
+    <td>0.000s</td>
+    <td class="error-cell">—</td>
+  </tr>
+  <tr class="pass">
+    <td>186</td>
+    <td>BT-126 Invalid type rejected</td>
+    <td><span class="badge badge-passed">✅ PASS</span></td>
+    <td>0.000s</td>
+    <td class="error-cell">—</td>
+  </tr>
+  <tr class="pass">
+    <td>187</td>
+    <td>BT-127 Valid userId accepted</td>
+    <td><span class="badge badge-passed">✅ PASS</span></td>
+    <td>0.000s</td>
+    <td class="error-cell">—</td>
+  </tr>
+  <tr class="pass">
+    <td>188</td>
+    <td>BT-128 Invalid userId rejected</td>
+    <td><span class="badge badge-passed">✅ PASS</span></td>
+    <td>0.000s</td>
+    <td class="error-cell">—</td>
+  </tr>
+  <tr class="pass">
+    <td>189</td>
+    <td>BT-129 Valid location accepted</td>
+    <td><span class="badge badge-passed">✅ PASS</span></td>
+    <td>0.000s</td>
+    <td class="error-cell">—</td>
+  </tr>
+  <tr class="pass">
+    <td>190</td>
+    <td>BT-130 Invalid location rejected</td>
+    <td><span class="badge badge-passed">✅ PASS</span></td>
+    <td>0.000s</td>
+    <td class="error-cell">—</td>
+  </tr>
+  <tr class="pass">
+    <td>191</td>
+    <td>BT-131 Valid status accepted</td>
+    <td><span class="badge badge-passed">✅ PASS</span></td>
+    <td>0.000s</td>
+    <td class="error-cell">—</td>
+  </tr>
+  <tr class="pass">
+    <td>192</td>
+    <td>BT-132 Invalid status rejected</td>
+    <td><span class="badge badge-passed">✅ PASS</span></td>
+    <td>0.000s</td>
+    <td class="error-cell">—</td>
+  </tr>
+  <tr class="pass">
+    <td>193</td>
+    <td>BT-133 Valid id accepted</td>
+    <td><span class="badge badge-passed">✅ PASS</span></td>
+    <td>0.000s</td>
+    <td class="error-cell">—</td>
+  </tr>
+  <tr class="pass">
+    <td>194</td>
+    <td>BT-134 Invalid id rejected</td>
+    <td><span class="badge badge-passed">✅ PASS</span></td>
+    <td>0.000s</td>
+    <td class="error-cell">—</td>
+  </tr>
+  <tr class="pass">
+    <td>195</td>
+    <td>BT-135 Valid createdAt accepted</td>
+    <td><span class="badge badge-passed">✅ PASS</span></td>
+    <td>0.000s</td>
+    <td class="error-cell">—</td>
+  </tr>
+  <tr class="pass">
+    <td>196</td>
+    <td>BT-136 Invalid createdAt rejected</td>
+    <td><span class="badge badge-passed">✅ PASS</span></td>
+    <td>0.000s</td>
+    <td class="error-cell">—</td>
+  </tr>
+  <tr class="pass">
+    <td>197</td>
+    <td>BT-137 VALID_ITEM_TYPES count is 2</td>
+    <td><span class="badge badge-passed">✅ PASS</span></td>
+    <td>0.000s</td>
+    <td class="error-cell">—</td>
+  </tr>
+  <tr class="pass">
+    <td>198</td>
+    <td>BT-138 VALID_ITEM_TYPES has lost</td>
+    <td><span class="badge badge-passed">✅ PASS</span></td>
+    <td>0.000s</td>
+    <td class="error-cell">—</td>
+  </tr>
+  <tr class="pass">
+    <td>199</td>
+    <td>BT-139 VALID_ITEM_TYPES has found</td>
+    <td><span class="badge badge-passed">✅ PASS</span></td>
+    <td>0.000s</td>
+    <td class="error-cell">—</td>
+  </tr>
+  <tr class="pass">
+    <td>200</td>
+    <td>BT-140 VALID_ITEM_STATUSES count is 4</td>
+    <td><span class="badge badge-passed">✅ PASS</span></td>
+    <td>0.000s</td>
+    <td class="error-cell">—</td>
+  </tr>
+  <tr class="pass">
+    <td>201</td>
+    <td>BT-141 Default status is ai-verified</td>
+    <td><span class="badge badge-passed">✅ PASS</span></td>
+    <td>0.000s</td>
+    <td class="error-cell">—</td>
+  </tr>
+  <tr class="pass">
+    <td>202</td>
+    <td>BT-142 phoneNumber is string</td>
+    <td><span class="badge badge-passed">✅ PASS</span></td>
+    <td>0.000s</td>
+    <td class="error-cell">—</td>
+  </tr>
+  <tr class="pass">
+    <td>203</td>
+    <td>BT-143 user display name is string</td>
+    <td><span class="badge badge-passed">✅ PASS</span></td>
+    <td>0.000s</td>
+    <td class="error-cell">—</td>
+  </tr>
+  <tr class="pass">
+    <td>204</td>
+    <td>BT-144 createdAt is recent timestamp</td>
+    <td><span class="badge badge-passed">✅ PASS</span></td>
+    <td>0.000s</td>
+    <td class="error-cell">—</td>
+  </tr>
+  <tr class="pass">
+    <td>205</td>
+    <td>BT-145 Item title min length is 1</td>
+    <td><span class="badge badge-passed">✅ PASS</span></td>
+    <td>0.000s</td>
+    <td class="error-cell">—</td>
+  </tr>
+  <tr class="pass">
+    <td>206</td>
+    <td>BT-146 Item location is a non-empty string</td>
+    <td><span class="badge badge-passed">✅ PASS</span></td>
+    <td>0.000s</td>
+    <td class="error-cell">—</td>
+  </tr>
+  <tr class="pass">
+    <td>207</td>
+    <td>BT-147 Item id is a non-empty string</td>
+    <td><span class="badge badge-passed">✅ PASS</span></td>
+    <td>0.000s</td>
+    <td class="error-cell">—</td>
+  </tr>
+  <tr class="pass">
+    <td>208</td>
+    <td>BT-148 filterByType does not mutate input</td>
+    <td><span class="badge badge-passed">✅ PASS</span></td>
+    <td>0.000s</td>
+    <td class="error-cell">—</td>
+  </tr>
+  <tr class="pass">
+    <td>209</td>
+    <td>BT-149 filterByUser does not mutate input</td>
+    <td><span class="badge badge-passed">✅ PASS</span></td>
+    <td>0.000s</td>
+    <td class="error-cell">—</td>
+  </tr>
+  <tr class="pass">
+    <td>210</td>
+    <td>BT-150 Sample item is a plain object</td>
+    <td><span class="badge badge-passed">✅ PASS</span></td>
+    <td>0.000s</td>
+    <td class="error-cell">—</td>
+  </tr>
+  <tr class="pass">
+    <td>211</td>
+    <td>BT-151 Sample item keys count is ≥ 8</td>
+    <td><span class="badge badge-passed">✅ PASS</span></td>
+    <td>0.000s</td>
+    <td class="error-cell">—</td>
+  </tr>
+  <tr class="pass">
+    <td>212</td>
+    <td>BT-152 filterByType with empty list returns empty</td>
+    <td><span class="badge badge-passed">✅ PASS</span></td>
+    <td>0.000s</td>
+    <td class="error-cell">—</td>
+  </tr>
+  <tr class="pass">
+    <td>213</td>
+    <td>BT-153 filterByUser with empty list returns empty</td>
+    <td><span class="badge badge-passed">✅ PASS</span></td>
+    <td>0.000s</td>
+    <td class="error-cell">—</td>
+  </tr>
+  <tr class="pass">
+    <td>214</td>
+    <td>BT-154 sortByCreatedAt result length matches input</td>
+    <td><span class="badge badge-passed">✅ PASS</span></td>
+    <td>0.000s</td>
+    <td class="error-cell">—</td>
+  </tr>
+  <tr class="pass">
+    <td>215</td>
+    <td>BT-155 ai-verified is a valid status</td>
+    <td><span class="badge badge-passed">✅ PASS</span></td>
+    <td>0.000s</td>
+    <td class="error-cell">—</td>
+  </tr>
+  <tr class="pass">
+    <td>216</td>
+    <td>BT-156 pending is a valid status</td>
+    <td><span class="badge badge-passed">✅ PASS</span></td>
+    <td>0.000s</td>
+    <td class="error-cell">—</td>
+  </tr>
+  <tr class="pass">
+    <td>217</td>
+    <td>BT-157 resolved is a valid status</td>
+    <td><span class="badge badge-passed">✅ PASS</span></td>
+    <td>0.000s</td>
+    <td class="error-cell">—</td>
+  </tr>
+  <tr class="pass">
+    <td>218</td>
+    <td>BT-158 flagged is a valid status</td>
+    <td><span class="badge badge-passed">✅ PASS</span></td>
+    <td>0.000s</td>
+    <td class="error-cell">—</td>
+  </tr>
+  <tr class="pass">
+    <td>219</td>
+    <td>BT-159 Item imageUrl starts with https</td>
+    <td><span class="badge badge-passed">✅ PASS</span></td>
+    <td>0.000s</td>
+    <td class="error-cell">—</td>
+  </tr>
+  <tr class="pass">
+    <td>220</td>
+    <td>BT-160 validateItem returns object with valid and error fields</td>
+    <td><span class="badge badge-passed">✅ PASS</span></td>
+    <td>0.001s</td>
+    <td class="error-cell">—</td>
+  </tr>
+  <tr class="pass">
+    <td>221</td>
+    <td>BT-161 Item description can include special characters</td>
+    <td><span class="badge badge-passed">✅ PASS</span></td>
+    <td>0.000s</td>
+    <td class="error-cell">—</td>
+  </tr>
+  <tr class="pass">
+    <td>222</td>
+    <td>BT-162 phoneNumber with 10 digits is present in sample</td>
+    <td><span class="badge badge-passed">✅ PASS</span></td>
+    <td>0.000s</td>
+    <td class="error-cell">—</td>
+  </tr>
+  <tr class="pass">
+    <td>223</td>
+    <td>BT-163 REQUIRED_ITEM_FIELDS includes id</td>
+    <td><span class="badge badge-passed">✅ PASS</span></td>
+    <td>0.000s</td>
+    <td class="error-cell">—</td>
+  </tr>
+  <tr class="pass">
+    <td>224</td>
+    <td>BT-164 REQUIRED_ITEM_FIELDS includes status</td>
+    <td><span class="badge badge-passed">✅ PASS</span></td>
+    <td>0.000s</td>
+    <td class="error-cell">—</td>
+  </tr>
+  <tr class="pass">
+    <td>225</td>
+    <td>BT-165 REQUIRED_ITEM_FIELDS includes createdAt</td>
+    <td><span class="badge badge-passed">✅ PASS</span></td>
+    <td>0.000s</td>
+    <td class="error-cell">—</td>
+  </tr>
+  <tr class="pass">
+    <td>226</td>
+    <td>BT-166 REQUIRED_ITEM_FIELDS includes location</td>
+    <td><span class="badge badge-passed">✅ PASS</span></td>
+    <td>0.000s</td>
+    <td class="error-cell">—</td>
+  </tr>
+  <tr class="pass">
+    <td>227</td>
+    <td>BT-167 REQUIRED_ITEM_FIELDS includes type</td>
+    <td><span class="badge badge-passed">✅ PASS</span></td>
+    <td>0.000s</td>
+    <td class="error-cell">—</td>
+  </tr>
+  <tr class="pass">
+    <td>228</td>
+    <td>BT-168 REQUIRED_ITEM_FIELDS includes userId</td>
+    <td><span class="badge badge-passed">✅ PASS</span></td>
+    <td>0.000s</td>
+    <td class="error-cell">—</td>
+  </tr>
+  <tr class="pass">
+    <td>229</td>
+    <td>BT-169 REQUIRED_ITEM_FIELDS includes title</td>
+    <td><span class="badge badge-passed">✅ PASS</span></td>
+    <td>0.000s</td>
+    <td class="error-cell">—</td>
+  </tr>
+  <tr class="pass">
+    <td>230</td>
+    <td>BT-170 REQUIRED_ITEM_FIELDS includes description</td>
+    <td><span class="badge badge-passed">✅ PASS</span></td>
+    <td>0.000s</td>
+    <td class="error-cell">—</td>
+  </tr>
+  <tr class="pass">
+    <td>231</td>
+    <td>BT-171 Two items with same createdAt sort stably</td>
+    <td><span class="badge badge-passed">✅ PASS</span></td>
+    <td>0.000s</td>
+    <td class="error-cell">—</td>
+  </tr>
+  <tr class="pass">
+    <td>232</td>
+    <td>BT-172 Item with all fields returns no error</td>
+    <td><span class="badge badge-passed">✅ PASS</span></td>
+    <td>0.000s</td>
+    <td class="error-cell">—</td>
+  </tr>
+  <tr class="pass">
+    <td>233</td>
+    <td>BT-173 validateItem error is string when invalid</td>
+    <td><span class="badge badge-passed">✅ PASS</span></td>
+    <td>0.000s</td>
+    <td class="error-cell">—</td>
+  </tr>
+  <tr class="pass">
+    <td>234</td>
+    <td>BT-174 filterByType is case-sensitive</td>
+    <td><span class="badge badge-passed">✅ PASS</span></td>
+    <td>0.000s</td>
+    <td class="error-cell">—</td>
+  </tr>
+  <tr class="pass">
+    <td>235</td>
+    <td>BT-175 filterByUser is case-sensitive for userId</td>
+    <td><span class="badge badge-passed">✅ PASS</span></td>
+    <td>0.000s</td>
+    <td class="error-cell">—</td>
+  </tr>
+  <tr class="pass">
+    <td>236</td>
+    <td>BT-176 sortByCreatedAt with 10 items returns 10</td>
+    <td><span class="badge badge-passed">✅ PASS</span></td>
+    <td>0.000s</td>
+    <td class="error-cell">—</td>
+  </tr>
+  <tr class="pass">
+    <td>237</td>
+    <td>BT-177 Item Cloudinary URL is from res.cloudinary.com domain</td>
+    <td><span class="badge badge-passed">✅ PASS</span></td>
+    <td>0.000s</td>
+    <td class="error-cell">—</td>
+  </tr>
+  <tr class="pass">
+    <td>238</td>
+    <td>BT-178 Sample item userId is non-empty</td>
+    <td><span class="badge badge-passed">✅ PASS</span></td>
+    <td>0.000s</td>
+    <td class="error-cell">—</td>
+  </tr>
+  <tr class="pass">
+    <td>239</td>
+    <td>BT-179 Sample item title is non-empty</td>
+    <td><span class="badge badge-passed">✅ PASS</span></td>
+    <td>0.000s</td>
+    <td class="error-cell">—</td>
+  </tr>
+  <tr class="pass">
+    <td>240</td>
+    <td>BT-180 createSampleItem with override merges correctly</td>
+    <td><span class="badge badge-passed">✅ PASS</span></td>
+    <td>0.000s</td>
+    <td class="error-cell">—</td>
+  </tr>
+  <tr class="pass">
+    <td>241</td>
+    <td>BT-201 Valid user profile passes</td>
+    <td><span class="badge badge-passed">✅ PASS</span></td>
+    <td>0.001s</td>
+    <td class="error-cell">—</td>
+  </tr>
+  <tr class="pass">
+    <td>242</td>
+    <td>BT-202 Missing name fails</td>
+    <td><span class="badge badge-passed">✅ PASS</span></td>
+    <td>0.000s</td>
+    <td class="error-cell">—</td>
+  </tr>
+  <tr class="pass">
+    <td>243</td>
+    <td>BT-203 Missing email fails</td>
+    <td><span class="badge badge-passed">✅ PASS</span></td>
+    <td>0.000s</td>
+    <td class="error-cell">—</td>
+  </tr>
+  <tr class="pass">
+    <td>244</td>
+    <td>BT-204 Invalid email fails</td>
+    <td><span class="badge badge-passed">✅ PASS</span></td>
+    <td>0.000s</td>
+    <td class="error-cell">—</td>
+  </tr>
+  <tr class="pass">
+    <td>245</td>
+    <td>BT-205 Missing uid fails</td>
+    <td><span class="badge badge-passed">✅ PASS</span></td>
+    <td>0.000s</td>
+    <td class="error-cell">—</td>
+  </tr>
+  <tr class="pass">
+    <td>246</td>
+    <td>BT-206 Age 0 fails validation</td>
+    <td><span class="badge badge-passed">✅ PASS</span></td>
+    <td>0.000s</td>
+    <td class="error-cell">—</td>
+  </tr>
+  <tr class="pass">
+    <td>247</td>
+    <td>BT-207 Age 121 fails validation</td>
+    <td><span class="badge badge-passed">✅ PASS</span></td>
+    <td>0.000s</td>
+    <td class="error-cell">—</td>
+  </tr>
+  <tr class="pass">
+    <td>248</td>
+    <td>BT-208 Age 18 passes</td>
+    <td><span class="badge badge-passed">✅ PASS</span></td>
+    <td>0.000s</td>
+    <td class="error-cell">—</td>
+  </tr>
+  <tr class="pass">
+    <td>249</td>
+    <td>BT-209 Numeric phone fails</td>
+    <td><span class="badge badge-passed">✅ PASS</span></td>
+    <td>0.000s</td>
+    <td class="error-cell">—</td>
+  </tr>
+  <tr class="pass">
+    <td>250</td>
+    <td>BT-210 null user fails</td>
+    <td><span class="badge badge-passed">✅ PASS</span></td>
+    <td>0.000s</td>
+    <td class="error-cell">—</td>
+  </tr>
+  <tr class="pass">
+    <td>251</td>
+    <td>BT-211 Complete profile passes</td>
+    <td><span class="badge badge-passed">✅ PASS</span></td>
+    <td>0.000s</td>
+    <td class="error-cell">—</td>
+  </tr>
+  <tr class="pass">
+    <td>252</td>
+    <td>BT-212 No phone → incomplete</td>
+    <td><span class="badge badge-passed">✅ PASS</span></td>
+    <td>0.000s</td>
+    <td class="error-cell">—</td>
+  </tr>
+  <tr class="pass">
+    <td>253</td>
+    <td>BT-213 No location → incomplete</td>
+    <td><span class="badge badge-passed">✅ PASS</span></td>
+    <td>0.000s</td>
+    <td class="error-cell">—</td>
+  </tr>
+  <tr class="pass">
+    <td>254</td>
+    <td>BT-214 No gender → incomplete</td>
+    <td><span class="badge badge-passed">✅ PASS</span></td>
+    <td>0.000s</td>
+    <td class="error-cell">—</td>
+  </tr>
+  <tr class="pass">
+    <td>255</td>
+    <td>BT-215 No avatarUrl → incomplete</td>
+    <td><span class="badge badge-passed">✅ PASS</span></td>
+    <td>0.000s</td>
+    <td class="error-cell">—</td>
+  </tr>
+  <tr class="pass">
+    <td>256</td>
+    <td>BT-216 OPTIONAL_PROFILE_FIELDS count is 6</td>
+    <td><span class="badge badge-passed">✅ PASS</span></td>
+    <td>0.000s</td>
+    <td class="error-cell">—</td>
+  </tr>
+  <tr class="pass">
+    <td>257</td>
+    <td>BT-217 REQUIRED_PROFILE_FIELDS count is 4</td>
+    <td><span class="badge badge-passed">✅ PASS</span></td>
+    <td>0.000s</td>
+    <td class="error-cell">—</td>
+  </tr>
+  <tr class="pass">
+    <td>258</td>
+    <td>BT-218 emailVerified is boolean</td>
+    <td><span class="badge badge-passed">✅ PASS</span></td>
+    <td>0.000s</td>
+    <td class="error-cell">—</td>
+  </tr>
+  <tr class="pass">
+    <td>259</td>
+    <td>BT-219 createdAt is positive number</td>
+    <td><span class="badge badge-passed">✅ PASS</span></td>
+    <td>0.000s</td>
+    <td class="error-cell">—</td>
+  </tr>
+  <tr class="pass">
+    <td>260</td>
+    <td>BT-220 displayName matches name</td>
+    <td><span class="badge badge-passed">✅ PASS</span></td>
+    <td>0.000s</td>
+    <td class="error-cell">—</td>
+  </tr>
+  <tr class="pass">
+    <td>261</td>
+    <td>BT-221 User age 1 is valid (min boundary)</td>
+    <td><span class="badge badge-passed">✅ PASS</span></td>
+    <td>0.000s</td>
+    <td class="error-cell">—</td>
+  </tr>
+  <tr class="pass">
+    <td>262</td>
+    <td>BT-222 User age 120 is valid (max boundary)</td>
+    <td><span class="badge badge-passed">✅ PASS</span></td>
+    <td>0.000s</td>
+    <td class="error-cell">—</td>
+  </tr>
+  <tr class="pass">
+    <td>263</td>
+    <td>BT-223 User age -1 is invalid</td>
+    <td><span class="badge badge-passed">✅ PASS</span></td>
+    <td>0.000s</td>
+    <td class="error-cell">—</td>
+  </tr>
+  <tr class="pass">
+    <td>264</td>
+    <td>BT-224 User name with single char is valid</td>
+    <td><span class="badge badge-passed">✅ PASS</span></td>
+    <td>0.000s</td>
+    <td class="error-cell">—</td>
+  </tr>
+  <tr class="pass">
+    <td>265</td>
+    <td>BT-225 User email can have subdomain</td>
+    <td><span class="badge badge-passed">✅ PASS</span></td>
+    <td>0.000s</td>
+    <td class="error-cell">—</td>
+  </tr>
+  <tr class="pass">
+    <td>266</td>
+    <td>BT-226 User uid is a non-empty string</td>
+    <td><span class="badge badge-passed">✅ PASS</span></td>
+    <td>0.000s</td>
+    <td class="error-cell">—</td>
+  </tr>
+  <tr class="pass">
+    <td>267</td>
+    <td>BT-227 User gender field can be any string</td>
+    <td><span class="badge badge-passed">✅ PASS</span></td>
+    <td>0.000s</td>
+    <td class="error-cell">—</td>
+  </tr>
+  <tr class="pass">
+    <td>268</td>
+    <td>BT-228 User location field accepts unicode</td>
+    <td><span class="badge badge-passed">✅ PASS</span></td>
+    <td>0.000s</td>
+    <td class="error-cell">—</td>
+  </tr>
+  <tr class="pass">
+    <td>269</td>
+    <td>BT-229 User name field accepts unicode</td>
+    <td><span class="badge badge-passed">✅ PASS</span></td>
+    <td>0.000s</td>
+    <td class="error-cell">—</td>
+  </tr>
+  <tr class="pass">
+    <td>270</td>
+    <td>BT-230 isProfileComplete returns false for null field</td>
+    <td><span class="badge badge-passed">✅ PASS</span></td>
+    <td>0.000s</td>
+    <td class="error-cell">—</td>
+  </tr>
+  <tr class="pass">
+    <td>271</td>
+    <td>BT-231 isProfileComplete returns false for undefined field</td>
+    <td><span class="badge badge-passed">✅ PASS</span></td>
+    <td>0.000s</td>
+    <td class="error-cell">—</td>
+  </tr>
+  <tr class="pass">
+    <td>272</td>
+    <td>BT-232 User object is a plain object</td>
+    <td><span class="badge badge-passed">✅ PASS</span></td>
+    <td>0.000s</td>
+    <td class="error-cell">—</td>
+  </tr>
+  <tr class="pass">
+    <td>273</td>
+    <td>BT-233 createSampleUser keys count ≥ 10</td>
+    <td><span class="badge badge-passed">✅ PASS</span></td>
+    <td>0.000s</td>
+    <td class="error-cell">—</td>
+  </tr>
+  <tr class="pass">
+    <td>274</td>
+    <td>BT-234 User email does not contain spaces</td>
+    <td><span class="badge badge-passed">✅ PASS</span></td>
+    <td>0.000s</td>
+    <td class="error-cell">—</td>
+  </tr>
+  <tr class="pass">
+    <td>275</td>
+    <td>BT-235 User avatarUrl starts with https</td>
+    <td><span class="badge badge-passed">✅ PASS</span></td>
+    <td>0.000s</td>
+    <td class="error-cell">—</td>
+  </tr>
+  <tr class="pass">
+    <td>276</td>
+    <td>BT-236 REQUIRED_PROFILE_FIELDS includes email</td>
+    <td><span class="badge badge-passed">✅ PASS</span></td>
+    <td>0.000s</td>
+    <td class="error-cell">—</td>
+  </tr>
+  <tr class="pass">
+    <td>277</td>
+    <td>BT-237 REQUIRED_PROFILE_FIELDS includes uid</td>
+    <td><span class="badge badge-passed">✅ PASS</span></td>
+    <td>0.000s</td>
+    <td class="error-cell">—</td>
+  </tr>
+  <tr class="pass">
+    <td>278</td>
+    <td>BT-238 REQUIRED_PROFILE_FIELDS includes name</td>
+    <td><span class="badge badge-passed">✅ PASS</span></td>
+    <td>0.000s</td>
+    <td class="error-cell">—</td>
+  </tr>
+  <tr class="pass">
+    <td>279</td>
+    <td>BT-239 REQUIRED_PROFILE_FIELDS includes createdAt</td>
+    <td><span class="badge badge-passed">✅ PASS</span></td>
+    <td>0.000s</td>
+    <td class="error-cell">—</td>
+  </tr>
+  <tr class="pass">
+    <td>280</td>
+    <td>BT-240 OPTIONAL_PROFILE_FIELDS includes phone</td>
+    <td><span class="badge badge-passed">✅ PASS</span></td>
+    <td>0.000s</td>
+    <td class="error-cell">—</td>
+  </tr>
+  <tr class="pass">
+    <td>281</td>
+    <td>BT-241 OPTIONAL_PROFILE_FIELDS includes age</td>
+    <td><span class="badge badge-passed">✅ PASS</span></td>
+    <td>0.000s</td>
+    <td class="error-cell">—</td>
+  </tr>
+  <tr class="pass">
+    <td>282</td>
+    <td>BT-242 OPTIONAL_PROFILE_FIELDS includes gender</td>
+    <td><span class="badge badge-passed">✅ PASS</span></td>
+    <td>0.000s</td>
+    <td class="error-cell">—</td>
+  </tr>
+  <tr class="pass">
+    <td>283</td>
+    <td>BT-243 OPTIONAL_PROFILE_FIELDS includes avatarUrl</td>
+    <td><span class="badge badge-passed">✅ PASS</span></td>
+    <td>0.000s</td>
+    <td class="error-cell">—</td>
+  </tr>
+  <tr class="pass">
+    <td>284</td>
+    <td>BT-244 OPTIONAL_PROFILE_FIELDS includes location</td>
+    <td><span class="badge badge-passed">✅ PASS</span></td>
+    <td>0.000s</td>
+    <td class="error-cell">—</td>
+  </tr>
+  <tr class="pass">
+    <td>285</td>
+    <td>BT-245 OPTIONAL_PROFILE_FIELDS includes displayName</td>
+    <td><span class="badge badge-passed">✅ PASS</span></td>
+    <td>0.000s</td>
+    <td class="error-cell">—</td>
+  </tr>
+  <tr class="pass">
+    <td>286</td>
+    <td>BT-246 validateUserProfile returns object with valid key</td>
+    <td><span class="badge badge-passed">✅ PASS</span></td>
+    <td>0.000s</td>
+    <td class="error-cell">—</td>
+  </tr>
+  <tr class="pass">
+    <td>287</td>
+    <td>BT-247 validateUserProfile returns object with error key</td>
+    <td><span class="badge badge-passed">✅ PASS</span></td>
+    <td>0.000s</td>
+    <td class="error-cell">—</td>
+  </tr>
+  <tr class="pass">
+    <td>288</td>
+    <td>BT-248 User with string age fails (age must be number)</td>
+    <td><span class="badge badge-passed">✅ PASS</span></td>
+    <td>0.000s</td>
+    <td class="error-cell">—</td>
+  </tr>
+  <tr class="pass">
+    <td>289</td>
+    <td>BT-249 User email matches test email format</td>
+    <td><span class="badge badge-passed">✅ PASS</span></td>
+    <td>0.000s</td>
+    <td class="error-cell">—</td>
+  </tr>
+  <tr class="pass">
+    <td>290</td>
+    <td>BT-250 createSampleUser with override replaces field</td>
+    <td><span class="badge badge-passed">✅ PASS</span></td>
+    <td>0.000s</td>
+    <td class="error-cell">—</td>
+  </tr>
+  <tr class="pass">
+    <td>291</td>
+    <td>BT-251 User phone with hyphens is valid string</td>
+    <td><span class="badge badge-passed">✅ PASS</span></td>
+    <td>0.000s</td>
+    <td class="error-cell">—</td>
+  </tr>
+  <tr class="pass">
+    <td>292</td>
+    <td>BT-252 User phone empty string is fine (optional field)</td>
+    <td><span class="badge badge-passed">✅ PASS</span></td>
+    <td>0.000s</td>
+    <td class="error-cell">—</td>
+  </tr>
+  <tr class="pass">
+    <td>293</td>
+    <td>BT-253 User without optional age field still valid</td>
+    <td><span class="badge badge-passed">✅ PASS</span></td>
+    <td>0.000s</td>
+    <td class="error-cell">—</td>
+  </tr>
+  <tr class="pass">
+    <td>294</td>
+    <td>BT-254 User without optional phone field still valid</td>
+    <td><span class="badge badge-passed">✅ PASS</span></td>
+    <td>0.000s</td>
+    <td class="error-cell">—</td>
+  </tr>
+  <tr class="pass">
+    <td>295</td>
+    <td>BT-255 User age must not be floating point check</td>
+    <td><span class="badge badge-passed">✅ PASS</span></td>
+    <td>0.000s</td>
+    <td class="error-cell">—</td>
+  </tr>
+  <tr class="pass">
+    <td>296</td>
+    <td>BT-256 isProfileComplete checks all 6 optional fields</td>
+    <td><span class="badge badge-passed">✅ PASS</span></td>
+    <td>0.000s</td>
+    <td class="error-cell">—</td>
+  </tr>
+  <tr class="pass">
+    <td>297</td>
+    <td>BT-257 User email property is a string</td>
+    <td><span class="badge badge-passed">✅ PASS</span></td>
+    <td>0.000s</td>
+    <td class="error-cell">—</td>
+  </tr>
+  <tr class="pass">
+    <td>298</td>
+    <td>BT-258 User name property is a string</td>
+    <td><span class="badge badge-passed">✅ PASS</span></td>
+    <td>0.000s</td>
+    <td class="error-cell">—</td>
+  </tr>
+  <tr class="pass">
+    <td>299</td>
+    <td>BT-259 User location property is a string</td>
+    <td><span class="badge badge-passed">✅ PASS</span></td>
+    <td>0.000s</td>
+    <td class="error-cell">—</td>
+  </tr>
+  <tr class="pass">
+    <td>300</td>
+    <td>BT-260 User gender property is a string</td>
+    <td><span class="badge badge-passed">✅ PASS</span></td>
+    <td>0.000s</td>
+    <td class="error-cell">—</td>
+  </tr>
+  <tr class="pass">
+    <td>301</td>
+    <td>BT-261 User age property is a number</td>
+    <td><span class="badge badge-passed">✅ PASS</span></td>
+    <td>0.000s</td>
+    <td class="error-cell">—</td>
+  </tr>
+  <tr class="pass">
+    <td>302</td>
+    <td>BT-262 User uid property is a string</td>
+    <td><span class="badge badge-passed">✅ PASS</span></td>
+    <td>0.000s</td>
+    <td class="error-cell">—</td>
+  </tr>
+  <tr class="pass">
+    <td>303</td>
+    <td>BT-263 User avatarUrl is a string</td>
+    <td><span class="badge badge-passed">✅ PASS</span></td>
+    <td>0.000s</td>
+    <td class="error-cell">—</td>
+  </tr>
+  <tr class="pass">
+    <td>304</td>
+    <td>BT-264 User displayName is a string</td>
+    <td><span class="badge badge-passed">✅ PASS</span></td>
+    <td>0.000s</td>
+    <td class="error-cell">—</td>
+  </tr>
+  <tr class="pass">
+    <td>305</td>
+    <td>BT-265 User phone is a string</td>
+    <td><span class="badge badge-passed">✅ PASS</span></td>
+    <td>0.000s</td>
+    <td class="error-cell">—</td>
+  </tr>
+  <tr class="pass">
+    <td>306</td>
+    <td>BT-266 User emailVerified is true for test account</td>
+    <td><span class="badge badge-passed">✅ PASS</span></td>
+    <td>0.000s</td>
+    <td class="error-cell">—</td>
+  </tr>
+  <tr class="pass">
+    <td>307</td>
+    <td>BT-267 User createdAt is a number</td>
+    <td><span class="badge badge-passed">✅ PASS</span></td>
+    <td>0.000s</td>
+    <td class="error-cell">—</td>
+  </tr>
+  <tr class="pass">
+    <td>308</td>
+    <td>BT-268 User profile has no password field (security)</td>
+    <td><span class="badge badge-passed">✅ PASS</span></td>
+    <td>0.000s</td>
+    <td class="error-cell">—</td>
+  </tr>
+  <tr class="pass">
+    <td>309</td>
+    <td>BT-269 User profile has no token field (security)</td>
+    <td><span class="badge badge-passed">✅ PASS</span></td>
+    <td>0.000s</td>
+    <td class="error-cell">—</td>
+  </tr>
+  <tr class="pass">
+    <td>310</td>
+    <td>BT-270 User profile has no secret field (security)</td>
+    <td><span class="badge badge-passed">✅ PASS</span></td>
+    <td>0.000s</td>
+    <td class="error-cell">—</td>
+  </tr>
+  <tr class="pass">
+    <td>311</td>
+    <td>BT-271 isProfileComplete handles empty object</td>
+    <td><span class="badge badge-passed">✅ PASS</span></td>
+    <td>0.000s</td>
+    <td class="error-cell">—</td>
+  </tr>
+  <tr class="pass">
+    <td>312</td>
+    <td>BT-272 User email @ count is exactly 1</td>
+    <td><span class="badge badge-passed">✅ PASS</span></td>
+    <td>0.000s</td>
+    <td class="error-cell">—</td>
+  </tr>
+  <tr class="pass">
+    <td>313</td>
+    <td>BT-273 User email TLD length is ≥ 2</td>
+    <td><span class="badge badge-passed">✅ PASS</span></td>
+    <td>0.000s</td>
+    <td class="error-cell">—</td>
+  </tr>
+  <tr class="pass">
+    <td>314</td>
+    <td>BT-274 User name has at least 1 character</td>
+    <td><span class="badge badge-passed">✅ PASS</span></td>
+    <td>0.000s</td>
+    <td class="error-cell">—</td>
+  </tr>
+  <tr class="pass">
+    <td>315</td>
+    <td>BT-275 User uid has at least 1 character</td>
+    <td><span class="badge badge-passed">✅ PASS</span></td>
+    <td>0.000s</td>
+    <td class="error-cell">—</td>
+  </tr>
+  <tr class="pass">
+    <td>316</td>
+    <td>BT-276 Test user email domain is sse.saveetha.com</td>
+    <td><span class="badge badge-passed">✅ PASS</span></td>
+    <td>0.000s</td>
+    <td class="error-cell">—</td>
+  </tr>
+  <tr class="pass">
+    <td>317</td>
+    <td>BT-277 validateUserProfile null input returns error string</td>
+    <td><span class="badge badge-passed">✅ PASS</span></td>
+    <td>0.000s</td>
+    <td class="error-cell">—</td>
+  </tr>
+  <tr class="pass">
+    <td>318</td>
+    <td>BT-278 Profile validation is synchronous (no promise)</td>
+    <td><span class="badge badge-passed">✅ PASS</span></td>
+    <td>0.000s</td>
+    <td class="error-cell">—</td>
+  </tr>
+  <tr class="pass">
+    <td>319</td>
+    <td>BT-279 createSampleUser returns new object each call</td>
+    <td><span class="badge badge-passed">✅ PASS</span></td>
+    <td>0.000s</td>
+    <td class="error-cell">—</td>
+  </tr>
+  <tr class="pass">
+    <td>320</td>
+    <td>BT-280 User profile: all required fields are strings except createdAt (number)</td>
+    <td><span class="badge badge-passed">✅ PASS</span></td>
+    <td>0.000s</td>
+    <td class="error-cell">—</td>
+  </tr>
+  <tr class="pass">
+    <td>321</td>
+    <td>BT-401 Valid phone: 9876543210</td>
+    <td><span class="badge badge-passed">✅ PASS</span></td>
+    <td>0.000s</td>
+    <td class="error-cell">—</td>
+  </tr>
+  <tr class="pass">
+    <td>322</td>
+    <td>BT-402 Valid phone: 1234567890</td>
+    <td><span class="badge badge-passed">✅ PASS</span></td>
+    <td>0.000s</td>
+    <td class="error-cell">—</td>
+  </tr>
+  <tr class="pass">
+    <td>323</td>
+    <td>BT-403 Valid phone: 0000000000</td>
+    <td><span class="badge badge-passed">✅ PASS</span></td>
+    <td>0.000s</td>
+    <td class="error-cell">—</td>
+  </tr>
+  <tr class="pass">
+    <td>324</td>
+    <td>BT-404 Valid phone: 9999999999</td>
+    <td><span class="badge badge-passed">✅ PASS</span></td>
+    <td>0.000s</td>
+    <td class="error-cell">—</td>
+  </tr>
+  <tr class="pass">
+    <td>325</td>
+    <td>BT-405 Valid phone: 5555555555</td>
+    <td><span class="badge badge-passed">✅ PASS</span></td>
+    <td>0.000s</td>
+    <td class="error-cell">—</td>
+  </tr>
+  <tr class="pass">
+    <td>326</td>
+    <td>BT-406 Invalid phone: "987654321"</td>
+    <td><span class="badge badge-passed">✅ PASS</span></td>
+    <td>0.000s</td>
+    <td class="error-cell">—</td>
+  </tr>
+  <tr class="pass">
+    <td>327</td>
+    <td>BT-407 Invalid phone: "98765432101"</td>
+    <td><span class="badge badge-passed">✅ PASS</span></td>
+    <td>0.000s</td>
+    <td class="error-cell">—</td>
+  </tr>
+  <tr class="pass">
+    <td>328</td>
+    <td>BT-408 Invalid phone: "abcdefghij"</td>
+    <td><span class="badge badge-passed">✅ PASS</span></td>
+    <td>0.000s</td>
+    <td class="error-cell">—</td>
+  </tr>
+  <tr class="pass">
+    <td>329</td>
+    <td>BT-409 Invalid phone: "+919876543210"</td>
+    <td><span class="badge badge-passed">✅ PASS</span></td>
+    <td>0.000s</td>
+    <td class="error-cell">—</td>
+  </tr>
+  <tr class="pass">
+    <td>330</td>
+    <td>BT-410 Invalid phone: "9876543-21"</td>
+    <td><span class="badge badge-passed">✅ PASS</span></td>
+    <td>0.000s</td>
+    <td class="error-cell">—</td>
+  </tr>
+  <tr class="pass">
+    <td>331</td>
+    <td>BT-411 Valid URL: https://res.cloudinary.com/image.jpg</td>
+    <td><span class="badge badge-passed">✅ PASS</span></td>
+    <td>0.000s</td>
+    <td class="error-cell">—</td>
+  </tr>
+  <tr class="pass">
+    <td>332</td>
+    <td>BT-412 Valid URL: http://example.com</td>
+    <td><span class="badge badge-passed">✅ PASS</span></td>
+    <td>0.000s</td>
+    <td class="error-cell">—</td>
+  </tr>
+  <tr class="pass">
+    <td>333</td>
+    <td>BT-413 Valid URL: https://pramithm.github.io/TrackBack-Web</td>
+    <td><span class="badge badge-passed">✅ PASS</span></td>
+    <td>0.000s</td>
+    <td class="error-cell">—</td>
+  </tr>
+  <tr class="pass">
+    <td>334</td>
+    <td>BT-414 Valid URL: https://trackback-1c73e-default-rtdb.asi</td>
+    <td><span class="badge badge-passed">✅ PASS</span></td>
+    <td>0.000s</td>
+    <td class="error-cell">—</td>
+  </tr>
+  <tr class="pass">
+    <td>335</td>
+    <td>BT-415 Valid URL: https://www.sub.domain.co.uk/path?query=</td>
+    <td><span class="badge badge-passed">✅ PASS</span></td>
+    <td>0.000s</td>
+    <td class="error-cell">—</td>
+  </tr>
+  <tr class="pass">
+    <td>336</td>
+    <td>BT-416 Invalid URL: "not-a-url"</td>
+    <td><span class="badge badge-passed">✅ PASS</span></td>
+    <td>0.000s</td>
+    <td class="error-cell">—</td>
+  </tr>
+  <tr class="pass">
+    <td>337</td>
+    <td>BT-417 Invalid URL: ""</td>
+    <td><span class="badge badge-passed">✅ PASS</span></td>
+    <td>0.000s</td>
+    <td class="error-cell">—</td>
+  </tr>
+  <tr class="pass">
+    <td>338</td>
+    <td>BT-418 Invalid URL: "ftp://nothttp.com"</td>
+    <td><span class="badge badge-passed">✅ PASS</span></td>
+    <td>0.000s</td>
+    <td class="error-cell">—</td>
+  </tr>
+  <tr class="pass">
+    <td>339</td>
+    <td>BT-419 Invalid URL: "justext"</td>
+    <td><span class="badge badge-passed">✅ PASS</span></td>
+    <td>0.000s</td>
+    <td class="error-cell">—</td>
+  </tr>
+  <tr class="pass">
+    <td>340</td>
+    <td>BT-420 Invalid URL: "null"</td>
+    <td><span class="badge badge-passed">✅ PASS</span></td>
+    <td>0.000s</td>
+    <td class="error-cell">—</td>
+  </tr>
+  <tr class="pass">
+    <td>341</td>
+    <td>BT-421 sanitize "<script>alert(1)</sc"</td>
+    <td><span class="badge badge-passed">✅ PASS</span></td>
+    <td>0.000s</td>
+    <td class="error-cell">—</td>
+  </tr>
+  <tr class="pass">
+    <td>342</td>
+    <td>BT-422 sanitize "Normal text"</td>
+    <td><span class="badge badge-passed">✅ PASS</span></td>
+    <td>0.000s</td>
+    <td class="error-cell">—</td>
+  </tr>
+  <tr class="pass">
+    <td>343</td>
+    <td>BT-423 sanitize "<b>Bold</b>"</td>
+    <td><span class="badge badge-passed">✅ PASS</span></td>
+    <td>0.000s</td>
+    <td class="error-cell">—</td>
+  </tr>
+  <tr class="pass">
+    <td>344</td>
+    <td>BT-424 sanitize "Hello "World""</td>
+    <td><span class="badge badge-passed">✅ PASS</span></td>
+    <td>0.000s</td>
+    <td class="error-cell">—</td>
+  </tr>
+  <tr class="pass">
+    <td>345</td>
+    <td>BT-425 sanitize "It's here"</td>
+    <td><span class="badge badge-passed">✅ PASS</span></td>
+    <td>0.000s</td>
+    <td class="error-cell">—</td>
+  </tr>
+  <tr class="pass">
+    <td>346</td>
+    <td>BT-426 sanitize "  spaces  "</td>
+    <td><span class="badge badge-passed">✅ PASS</span></td>
+    <td>0.000s</td>
+    <td class="error-cell">—</td>
+  </tr>
+  <tr class="pass">
+    <td>347</td>
+    <td>BT-427 sanitize "SELECT * FROM users;"</td>
+    <td><span class="badge badge-passed">✅ PASS</span></td>
+    <td>0.000s</td>
+    <td class="error-cell">—</td>
+  </tr>
+  <tr class="pass">
+    <td>348</td>
+    <td>BT-428 sanitize "<img onerror="evil()"</td>
+    <td><span class="badge badge-passed">✅ PASS</span></td>
+    <td>0.000s</td>
+    <td class="error-cell">—</td>
+  </tr>
+  <tr class="pass">
+    <td>349</td>
+    <td>BT-429 sanitize "Clean & safe"</td>
+    <td><span class="badge badge-passed">✅ PASS</span></td>
+    <td>0.001s</td>
+    <td class="error-cell">—</td>
+  </tr>
+  <tr class="pass">
+    <td>350</td>
+    <td>BT-430 sanitize ""</td>
+    <td><span class="badge badge-passed">✅ PASS</span></td>
+    <td>0.000s</td>
+    <td class="error-cell">—</td>
+  </tr>
+  <tr class="pass">
+    <td>351</td>
+    <td>BT-431 sanitize "<>"</td>
+    <td><span class="badge badge-passed">✅ PASS</span></td>
+    <td>0.000s</td>
+    <td class="error-cell">—</td>
+  </tr>
+  <tr class="pass">
+    <td>352</td>
+    <td>BT-432 sanitize "Back`tick"</td>
+    <td><span class="badge badge-passed">✅ PASS</span></td>
+    <td>0.000s</td>
+    <td class="error-cell">—</td>
+  </tr>
+  <tr class="pass">
+    <td>353</td>
+    <td>BT-433 coerce null → ""</td>
+    <td><span class="badge badge-passed">✅ PASS</span></td>
+    <td>0.000s</td>
+    <td class="error-cell">—</td>
+  </tr>
+  <tr class="pass">
+    <td>354</td>
+    <td>BT-434 coerce undefined → ""</td>
+    <td><span class="badge badge-passed">✅ PASS</span></td>
+    <td>0.000s</td>
+    <td class="error-cell">—</td>
+  </tr>
+  <tr class="pass">
+    <td>355</td>
+    <td>BT-435 coerce 42 → "42"</td>
+    <td><span class="badge badge-passed">✅ PASS</span></td>
+    <td>0.000s</td>
+    <td class="error-cell">—</td>
+  </tr>
+  <tr class="pass">
+    <td>356</td>
+    <td>BT-436 coerce true → "true"</td>
+    <td><span class="badge badge-passed">✅ PASS</span></td>
+    <td>0.000s</td>
+    <td class="error-cell">—</td>
+  </tr>
+  <tr class="pass">
+    <td>357</td>
+    <td>BT-437 50 in [1,100]</td>
+    <td><span class="badge badge-passed">✅ PASS</span></td>
+    <td>0.000s</td>
+    <td class="error-cell">—</td>
+  </tr>
+  <tr class="pass">
+    <td>358</td>
+    <td>BT-438 0 not in [1,100]</td>
+    <td><span class="badge badge-passed">✅ PASS</span></td>
+    <td>0.000s</td>
+    <td class="error-cell">—</td>
+  </tr>
+  <tr class="pass">
+    <td>359</td>
+    <td>BT-439 1 at min boundary</td>
+    <td><span class="badge badge-passed">✅ PASS</span></td>
+    <td>0.000s</td>
+    <td class="error-cell">—</td>
+  </tr>
+  <tr class="pass">
+    <td>360</td>
+    <td>BT-440 100 at max boundary</td>
+    <td><span class="badge badge-passed">✅ PASS</span></td>
+    <td>0.000s</td>
+    <td class="error-cell">—</td>
+  </tr>
+  <tr class="pass">
+    <td>361</td>
+    <td>BT-441 string arg not in range</td>
+    <td><span class="badge badge-passed">✅ PASS</span></td>
+    <td>0.000s</td>
+    <td class="error-cell">—</td>
+  </tr>
+  <tr class="pass">
+    <td>362</td>
+    <td>BT-442 truncate to 5</td>
+    <td><span class="badge badge-passed">✅ PASS</span></td>
+    <td>0.000s</td>
+    <td class="error-cell">—</td>
+  </tr>
+  <tr class="pass">
+    <td>363</td>
+    <td>BT-443 truncate short str</td>
+    <td><span class="badge badge-passed">✅ PASS</span></td>
+    <td>0.000s</td>
+    <td class="error-cell">—</td>
+  </tr>
+  <tr class="pass">
+    <td>364</td>
+    <td>BT-444 truncate non-string</td>
+    <td><span class="badge badge-passed">✅ PASS</span></td>
+    <td>0.000s</td>
+    <td class="error-cell">—</td>
+  </tr>
+  <tr class="pass">
+    <td>365</td>
+    <td>BT-445 parseJSONSafe valid JSON</td>
+    <td><span class="badge badge-passed">✅ PASS</span></td>
+    <td>0.000s</td>
+    <td class="error-cell">—</td>
+  </tr>
+  <tr class="pass">
+    <td>366</td>
+    <td>BT-446 parseJSONSafe invalid returns null</td>
+    <td><span class="badge badge-passed">✅ PASS</span></td>
+    <td>0.000s</td>
+    <td class="error-cell">—</td>
+  </tr>
+  <tr class="pass">
+    <td>367</td>
+    <td>BT-447 parseJSONSafe empty string</td>
+    <td><span class="badge badge-passed">✅ PASS</span></td>
+    <td>0.000s</td>
+    <td class="error-cell">—</td>
+  </tr>
+  <tr class="pass">
+    <td>368</td>
+    <td>BT-448 capitalizeFirst works</td>
+    <td><span class="badge badge-passed">✅ PASS</span></td>
+    <td>0.000s</td>
+    <td class="error-cell">—</td>
+  </tr>
+  <tr class="pass">
+    <td>369</td>
+    <td>BT-449 capitalizeFirst uppercase</td>
+    <td><span class="badge badge-passed">✅ PASS</span></td>
+    <td>0.000s</td>
+    <td class="error-cell">—</td>
+  </tr>
+  <tr class="pass">
+    <td>370</td>
+    <td>BT-450 capitalizeFirst empty</td>
+    <td><span class="badge badge-passed">✅ PASS</span></td>
+    <td>0.000s</td>
+    <td class="error-cell">—</td>
+  </tr>
+  <tr class="pass">
+    <td>371</td>
+    <td>BT-451 PHONE_REGEX matches 10-digit string</td>
+    <td><span class="badge badge-passed">✅ PASS</span></td>
+    <td>0.000s</td>
+    <td class="error-cell">—</td>
+  </tr>
+  <tr class="pass">
+    <td>372</td>
+    <td>BT-452 PHONE_REGEX rejects 9-digit string</td>
+    <td><span class="badge badge-passed">✅ PASS</span></td>
+    <td>0.000s</td>
+    <td class="error-cell">—</td>
+  </tr>
+  <tr class="pass">
+    <td>373</td>
+    <td>BT-453 PHONE_REGEX rejects 11-digit string</td>
+    <td><span class="badge badge-passed">✅ PASS</span></td>
+    <td>0.000s</td>
+    <td class="error-cell">—</td>
+  </tr>
+  <tr class="pass">
+    <td>374</td>
+    <td>BT-454 PHONE_REGEX rejects alphabets</td>
+    <td><span class="badge badge-passed">✅ PASS</span></td>
+    <td>0.000s</td>
+    <td class="error-cell">—</td>
+  </tr>
+  <tr class="pass">
+    <td>375</td>
+    <td>BT-455 EMAIL_REGEX matches standard email</td>
+    <td><span class="badge badge-passed">✅ PASS</span></td>
+    <td>0.000s</td>
+    <td class="error-cell">—</td>
+  </tr>
+  <tr class="pass">
+    <td>376</td>
+    <td>BT-456 EMAIL_REGEX rejects email without @</td>
+    <td><span class="badge badge-passed">✅ PASS</span></td>
+    <td>0.000s</td>
+    <td class="error-cell">—</td>
+  </tr>
+  <tr class="pass">
+    <td>377</td>
+    <td>BT-457 EMAIL_REGEX rejects email without domain</td>
+    <td><span class="badge badge-passed">✅ PASS</span></td>
+    <td>0.000s</td>
+    <td class="error-cell">—</td>
+  </tr>
+  <tr class="pass">
+    <td>378</td>
+    <td>BT-458 URL_REGEX matches https URL</td>
+    <td><span class="badge badge-passed">✅ PASS</span></td>
+    <td>0.000s</td>
+    <td class="error-cell">—</td>
+  </tr>
+  <tr class="pass">
+    <td>379</td>
+    <td>BT-459 URL_REGEX matches http URL</td>
+    <td><span class="badge badge-passed">✅ PASS</span></td>
+    <td>0.000s</td>
+    <td class="error-cell">—</td>
+  </tr>
+  <tr class="pass">
+    <td>380</td>
+    <td>BT-460 URL_REGEX rejects plain text</td>
+    <td><span class="badge badge-passed">✅ PASS</span></td>
+    <td>0.000s</td>
+    <td class="error-cell">—</td>
+  </tr>
+  <tr class="pass">
+    <td>381</td>
+    <td>BT-461 sanitizeString removes all HTML tags</td>
+    <td><span class="badge badge-passed">✅ PASS</span></td>
+    <td>0.000s</td>
+    <td class="error-cell">—</td>
+  </tr>
+  <tr class="pass">
+    <td>382</td>
+    <td>BT-462 sanitizeString trims leading/trailing spaces</td>
+    <td><span class="badge badge-passed">✅ PASS</span></td>
+    <td>0.000s</td>
+    <td class="error-cell">—</td>
+  </tr>
+  <tr class="pass">
+    <td>383</td>
+    <td>BT-463 coerceToString(0) returns "0"</td>
+    <td><span class="badge badge-passed">✅ PASS</span></td>
+    <td>0.000s</td>
+    <td class="error-cell">—</td>
+  </tr>
+  <tr class="pass">
+    <td>384</td>
+    <td>BT-464 coerceToString(false) returns "false"</td>
+    <td><span class="badge badge-passed">✅ PASS</span></td>
+    <td>0.000s</td>
+    <td class="error-cell">—</td>
+  </tr>
+  <tr class="pass">
+    <td>385</td>
+    <td>BT-465 coerceToString([1,2]) returns "1,2"</td>
+    <td><span class="badge badge-passed">✅ PASS</span></td>
+    <td>0.000s</td>
+    <td class="error-cell">—</td>
+  </tr>
+  <tr class="pass">
+    <td>386</td>
+    <td>BT-466 isWithinRange(NaN, 1, 100) is false</td>
+    <td><span class="badge badge-passed">✅ PASS</span></td>
+    <td>0.000s</td>
+    <td class="error-cell">—</td>
+  </tr>
+  <tr class="pass">
+    <td>387</td>
+    <td>BT-467 isWithinRange(Infinity, 1, 100) is false</td>
+    <td><span class="badge badge-passed">✅ PASS</span></td>
+    <td>0.000s</td>
+    <td class="error-cell">—</td>
+  </tr>
+  <tr class="pass">
+    <td>388</td>
+    <td>BT-468 truncateString at exact max returns unchanged</td>
+    <td><span class="badge badge-passed">✅ PASS</span></td>
+    <td>0.000s</td>
+    <td class="error-cell">—</td>
+  </tr>
+  <tr class="pass">
+    <td>389</td>
+    <td>BT-469 truncateString at 0 max returns empty string</td>
+    <td><span class="badge badge-passed">✅ PASS</span></td>
+    <td>0.000s</td>
+    <td class="error-cell">—</td>
+  </tr>
+  <tr class="pass">
+    <td>390</td>
+    <td>BT-470 parseJSONSafe returns array for JSON array</td>
+    <td><span class="badge badge-passed">✅ PASS</span></td>
+    <td>0.000s</td>
+    <td class="error-cell">—</td>
+  </tr>
+  <tr class="pass">
+    <td>391</td>
+    <td>BT-471 parseJSONSafe returns null for undefined</td>
+    <td><span class="badge badge-passed">✅ PASS</span></td>
+    <td>0.000s</td>
+    <td class="error-cell">—</td>
+  </tr>
+  <tr class="pass">
+    <td>392</td>
+    <td>BT-472 capitalizeFirst handles single char</td>
+    <td><span class="badge badge-passed">✅ PASS</span></td>
+    <td>0.000s</td>
+    <td class="error-cell">—</td>
+  </tr>
+  <tr class="pass">
+    <td>393</td>
+    <td>BT-473 capitalizeFirst does not touch rest of string</td>
+    <td><span class="badge badge-passed">✅ PASS</span></td>
+    <td>0.000s</td>
+    <td class="error-cell">—</td>
+  </tr>
+  <tr class="pass">
+    <td>394</td>
+    <td>BT-474 sanitizeString with null returns empty</td>
+    <td><span class="badge badge-passed">✅ PASS</span></td>
+    <td>0.000s</td>
+    <td class="error-cell">—</td>
+  </tr>
+  <tr class="pass">
+    <td>395</td>
+    <td>BT-475 sanitizeString with number returns empty</td>
+    <td><span class="badge badge-passed">✅ PASS</span></td>
+    <td>0.000s</td>
+    <td class="error-cell">—</td>
+  </tr>
+  <tr class="pass">
+    <td>396</td>
+    <td>BT-476 isValidPhone with null returns false</td>
+    <td><span class="badge badge-passed">✅ PASS</span></td>
+    <td>0.000s</td>
+    <td class="error-cell">—</td>
+  </tr>
+  <tr class="pass">
+    <td>397</td>
+    <td>BT-477 isValidEmail with null returns false</td>
+    <td><span class="badge badge-passed">✅ PASS</span></td>
+    <td>0.000s</td>
+    <td class="error-cell">—</td>
+  </tr>
+  <tr class="pass">
+    <td>398</td>
+    <td>BT-478 isValidUrl with null returns false</td>
+    <td><span class="badge badge-passed">✅ PASS</span></td>
+    <td>0.000s</td>
+    <td class="error-cell">—</td>
+  </tr>
+  <tr class="pass">
+    <td>399</td>
+    <td>BT-479 All regex constants are defined</td>
+    <td><span class="badge badge-passed">✅ PASS</span></td>
+    <td>0.000s</td>
+    <td class="error-cell">—</td>
+  </tr>
+  <tr class="pass">
+    <td>400</td>
+    <td>BT-480 All utility functions are callable</td>
+    <td><span class="badge badge-passed">✅ PASS</span></td>
+    <td>0.000s</td>
+    <td class="error-cell">—</td>
+  </tr></tbody>
+  </table>
+</div>
+
+<div class="footer">
+  Generated by TrackBack CI/CD Pipeline &nbsp;|&nbsp; 2026-06-22 16:46:22 UTC
+</div>
+
+</body>
+</html>

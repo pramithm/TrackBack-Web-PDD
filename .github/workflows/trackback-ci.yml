@@ -494,6 +494,8 @@ jobs:
         working-directory: Backend/backend-tests
         run: |
           mkdir -p "Test Results/Logs" "Test Results/Summary" "Test Results/HTML" "Test Results/Excel"
+          # Reset recorded-results.json so it never accumulates across runs
+          echo "[]" > "Test Results/recorded-results.json"
           set +e
           npm run test:ci 2>&1 | tee "Test Results/Logs/backend-run.log"
           TEST_EXIT_CODE=$?

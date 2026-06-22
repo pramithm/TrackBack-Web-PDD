@@ -28,28 +28,29 @@ const LOGS_DIR    = path.join(RESULTS_DIR, 'Logs');
 // ─── Load Results ─────────────────────────────────────────────────────────────
 let results = [];
 
-// 1. Custom recorded-results.json (written by test files via after() hook)
-const recordedJson = path.join(RESULTS_DIR, 'recorded-results.json');
-if (fs.existsSync(recordedJson)) {
+// 1. Mocha JSON reporter output — PREFERRED (always fresh from current run)
+const mochaJson = path.join(ROOT, 'test-results.json');
+if (fs.existsSync(mochaJson)) {
   try {
-    results = JSON.parse(fs.readFileSync(recordedJson, 'utf8'));
-    console.log(`Loaded ${results.length} results from recorded-results.json`);
-  } catch (e) { console.warn('Could not parse recorded-results.json:', e.message); }
+    const raw = JSON.parse(fs.readFileSync(mochaJson, 'utf8'));
+    const passes   = (raw.passes   || []).map(t => ({ name: t.fullTitle, status: 'passed',  duration: t.duration || 0, error: null }));
+    const failures = (raw.failures || []).map(t => ({ name: t.fullTitle, status: 'failed',  duration: t.duration || 0, error: t.err?.message || 'Unknown error' }));
+    const pending  = (raw.pending  || []).map(t => ({ name: t.fullTitle, status: 'skipped', duration: 0, error: null }));
+    results = [...passes, ...failures, ...pending];
+    console.log(`Loaded ${results.length} results from test-results.json (fresh Mocha output)`);
+  } catch (e) { console.warn('Could not parse test-results.json:', e.message); }
 }
 
-// 2. Mocha JSON reporter output
-if (results.length === 0) {
-  const mochaJson = path.join(ROOT, 'test-results.json');
-  if (fs.existsSync(mochaJson)) {
-    try {
-      const raw = JSON.parse(fs.readFileSync(mochaJson, 'utf8'));
-      const passes   = (raw.passes   || []).map(t => ({ name: t.fullTitle, status: 'passed',  duration: t.duration || 0, error: null }));
-      const failures = (raw.failures || []).map(t => ({ name: t.fullTitle, status: 'failed',  duration: t.duration || 0, error: t.err?.message || 'Unknown error' }));
-      const pending  = (raw.pending  || []).map(t => ({ name: t.fullTitle, status: 'skipped', duration: 0, error: null }));
-      results = [...passes, ...failures, ...pending];
-      console.log(`Loaded ${results.length} results from test-results.json`);
-    } catch (e) { console.warn('Could not parse test-results.json:', e.message); }
-  }
+// 2. Fallback: recorded-results.json (per-suite after() hooks)
+//    Only use if test-results.json was not available. Slice to 400 to prevent accumulation.
+const recordedJson = path.join(RESULTS_DIR, 'recorded-results.json');
+if (results.length === 0 && fs.existsSync(recordedJson)) {
+  try {
+    const all = JSON.parse(fs.readFileSync(recordedJson, 'utf8'));
+    // Take only the LAST 400 entries to ignore previous accumulated runs
+    results = all.slice(-400);
+    console.log(`Loaded ${results.length} results from recorded-results.json (last 400 of ${all.length})`);
+  } catch (e) { console.warn('Could not parse recorded-results.json:', e.message); }
 }
 
 // 3. Fallback: 400 test cases
