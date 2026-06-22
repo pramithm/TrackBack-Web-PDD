@@ -1,0 +1,98 @@
+[
+  {
+    "name": "TC-001 App Launch",
+    "status": "passed",
+    "duration": 5377,
+    "error": null,
+    "screenshotPath": null,
+    "timestamp": "2026-06-22T12:48:43.099Z"
+  },
+  {
+    "name": "TC-002 Login Screen",
+    "status": "passed",
+    "duration": 8412,
+    "error": null,
+    "screenshotPath": null,
+    "timestamp": "2026-06-22T12:48:51.513Z"
+  },
+  {
+    "name": "TC-003 Valid Login",
+    "status": "passed",
+    "duration": 19924,
+    "error": null,
+    "screenshotPath": null,
+    "timestamp": "2026-06-22T12:49:11.439Z"
+  },
+  {
+    "name": "TC-004 Invalid Credentials",
+    "status": "passed",
+    "duration": 41136,
+    "error": null,
+    "screenshotPath": null,
+    "timestamp": "2026-06-22T12:49:52.576Z"
+  },
+  {
+    "name": "TC-005 Empty Form Validation",
+    "status": "passed",
+    "duration": 14343,
+    "error": null,
+    "screenshotPath": null,
+    "timestamp": "2026-06-22T12:50:06.919Z"
+  },
+  {
+    "name": "TC-006 Navigate to Sign Up",
+    "status": "failed",
+    "duration": 26868,
+    "error": "element (\"//android.widget.EditText[@hint=\"Email\"]\") still not existing after 10000ms",
+    "screenshotPath": "Screenshots/FAIL_TC006_signup_2026-06-22T12-50-33-685Z.png",
+    "timestamp": "2026-06-22T12:50:33.788Z"
+  },
+  {
+    "name": "TC-007 Dashboard Tabs",
+    "status": "passed",
+    "duration": 52472,
+    "error": null,
+    "screenshotPath": null,
+    "timestamp": "2026-06-22T12:51:26.262Z"
+  },
+  {
+    "name": "TC-008 Logout",
+    "status": "failed",
+    "duration": 850,
+    "error": "org.eclipse.wst.xml.xpath2.processor.XPathParserException: JFlex lexer error: Unknown character at line 1 col 32: ~",
+    "screenshotPath": "Screenshots/FAIL_TC008_logout_2026-06-22T12-51-26-962Z.png",
+    "timestamp": "2026-06-22T12:51:27.113Z"
+  },
+  {
+    "name": "TC-009 Lost Tab",
+    "status": "passed",
+    "duration": 2857,
+    "error": null,
+    "screenshotPath": null,
+    "timestamp": "2026-06-22T12:52:11.253Z"
+  },
+  {
+    "name": "TC-010 Found Tab",
+    "status": "passed",
+    "duration": 2749,
+    "error": null,
+    "screenshotPath": null,
+    "timestamp": "2026-06-22T12:52:14.007Z"
+  },
+  {
+    "name": "TC-011 Search Tab",
+    "status": "passed",
+    "duration": 2230,
+    "error": null,
+    "screenshotPath": null,
+    "timestamp": "2026-06-22T12:52:16.238Z"
+  },
+  {
+    "name": "TC-012 Chat Tab",
+    "status": "passed",
+    "duration": 2257,
+    "error": null,
+    "screenshotPath": null,
+    "timestamp": "2026-06-22T12:52:18.497Z"
+  }
+]
