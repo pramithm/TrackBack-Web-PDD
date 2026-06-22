@@ -4,31 +4,29 @@
 | Field | Value |
 |-------|-------|
 | Deployment URL | https://pramithm.github.io/TrackBack-Web-PDD/ |
-| Build Number | 18 |
-| Execution Date | 2026-06-22 06:19:48 UTC |
+| Build Number | 19 |
+| Execution Date | 2026-06-22 07:07:26 UTC |
 | Branch | main |
-| Commit | 8771cc8 |
+| Commit | 41823e6 |
 
 ## Test Results
 | Metric | Count |
 |--------|-------|
 | Total Tests | 300 |
-| Passed | 289 |
-| Failed | 11 |
+| Passed | 290 |
+| Failed | 10 |
 | Skipped | 0 |
-| Pass Percentage | 96.3% |
+| Pass Percentage | 96.7% |
 
 ## Failed Tests
 - **should login with valid credentials and reach the dashboard**
   - Reason: Test account is not email verified.
 - **Security — should enforce session termination and clean storage upon logout**
   - Reason: Waiting for element to be located By(css selector, .sidebar)
-Wait timed out after 20103ms
-- **Security — should block unauthorized database read attempts to restricted user profiles**
-  - Reason: Security Rules Violation: Path users/ restricted access read succeeded or returned unexpected error: Permission denied
+Wait timed out after 20069ms
 - **Security — should securely sanitize and encode XSS script payloads in text fields**
-  - Reason: Waiting for element to be located By(css selector, *[id="landing-signin-btn"])
-Wait timed out after 20196ms
+  - Reason: Waiting for element to be located By(css selector, .sidebar)
+Wait timed out after 20108ms
 - **TrackBack Web — E2E [Localization]: Verify UI translations and assets for locale 1280x800 (Verify Point #40)**
   - Reason: Verification assertion failed at validation point #40
 - **TrackBack Web — E2E [Performance]: Verify load performance and resource optimization for glassmorphic-transparency (Verify Point #80)**

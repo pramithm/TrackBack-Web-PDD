@@ -1,0 +1,66 @@
+[
+  {
+    "name": "TC-001 App Launch",
+    "status": "passed",
+    "duration": 5475,
+    "error": null,
+    "screenshotPath": null,
+    "timestamp": "2026-06-22T07:05:39.970Z"
+  },
+  {
+    "name": "TC-002 Login Screen",
+    "status": "passed",
+    "duration": 7662,
+    "error": null,
+    "screenshotPath": null,
+    "timestamp": "2026-06-22T07:05:47.634Z"
+  },
+  {
+    "name": "TC-003 Valid Login",
+    "status": "failed",
+    "duration": 19668,
+    "error": "Test account is not email verified.",
+    "screenshotPath": "Screenshots/FAIL_TC003_dashboard_2026-06-22T07-06-07-196Z.png",
+    "timestamp": "2026-06-22T07:06:07.303Z"
+  },
+  {
+    "name": "TC-004 Invalid Credentials",
+    "status": "passed",
+    "duration": 44979,
+    "error": null,
+    "screenshotPath": null,
+    "timestamp": "2026-06-22T07:06:52.288Z"
+  },
+  {
+    "name": "TC-005 Empty Form Validation",
+    "status": "passed",
+    "duration": 14404,
+    "error": null,
+    "screenshotPath": null,
+    "timestamp": "2026-06-22T07:07:06.692Z"
+  },
+  {
+    "name": "TC-006 Navigate to Sign Up",
+    "status": "failed",
+    "duration": 17358,
+    "error": "Can't call click on element with selector \"//android.widget.Button[@text=\"Sign Up\"]\" because element wasn't found",
+    "screenshotPath": "Screenshots/FAIL_TC006_signup_2026-06-22T07-07-23-978Z.png",
+    "timestamp": "2026-06-22T07:07:24.051Z"
+  },
+  {
+    "name": "TC-007 Dashboard Tabs",
+    "status": "failed",
+    "duration": 76819,
+    "error": "element (\"~avatar-button\") still not existing after 20000ms",
+    "screenshotPath": "Screenshots/FAIL_TC007_tabs_2026-06-22T07-08-40-802Z.png",
+    "timestamp": "2026-06-22T07:08:40.870Z"
+  },
+  {
+    "name": "TC-008 Logout",
+    "status": "failed",
+    "duration": 20113,
+    "error": "element (\"~avatar-button\") still not existing after 20000ms",
+    "screenshotPath": "Screenshots/FAIL_TC008_logout_2026-06-22T07-09-00-921Z.png",
+    "timestamp": "2026-06-22T07:09:00.983Z"
+  }
+]

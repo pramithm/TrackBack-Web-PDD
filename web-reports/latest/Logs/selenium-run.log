@@ -9,34 +9,34 @@
 
 🌐 Testing against: https://pramithm.github.io/TrackBack-Web-PDD/
   📄 Page title: "TrackBack - Secure AI-Powered Lost & Found Platform"
-    ✔ should load the TrackBack landing page (787ms)
+    ✔ should load the TrackBack landing page (698ms)
   ✅ Login form loaded
-    ✔ should navigate to the login form (1404ms)
+    ✔ should navigate to the login form (751ms)
   ⏳ Waiting for authentication redirection...
-  📸 Failure screenshot saved: FAIL_email_not_verified_1782108013451.png
-  📄 Failure page source HTML saved: FAIL_email_not_verified_1782108013451_source.html
+  📸 Failure screenshot saved: FAIL_email_not_verified_1782110869649.png
+  📄 Failure page source HTML saved: FAIL_email_not_verified_1782110869649_source.html
     1) should login with valid credentials and reach the dashboard
-  📸 Failure screenshot saved: FAIL_should_login_with_valid_credentials_and_reach_the_dashboard_1782108013828.png
+  📸 Failure screenshot saved: FAIL_should_login_with_valid_credentials_and_reach_the_dashboard_1782110870032.png
   ✅ Invalid credentials correctly rejected
-    ✔ should reject invalid credentials with an error message (1211ms)
+    ✔ should reject invalid credentials with an error message (1187ms)
   ✅ Sign-up form loaded
-    ✔ should open the sign-up form from landing (759ms)
+    ✔ should open the sign-up form from landing (1210ms)
 Recorded results merged and saved to recorded-results.json (5 total cases)
 
   TrackBack — Security E2E & Rules Verification Tests
-    ✔ should reject login for invalid credentials (2166ms)
+    ✔ should reject login for invalid credentials (1758ms)
     2) should enforce session termination and clean storage upon logout
-    ✔ should prevent access to protected routes/dashboard for unauthenticated users (2369ms)
-[2026-06-22T06:00:43.479Z]  @firebase/database: FIREBASE WARNING: set at /users/unauthorized_victim_uid failed: permission_denied 
-    ✔ should block unauthorized database write attempts to restricted user paths (677ms)
-    3) should block unauthorized database read attempts to restricted user profiles
-    4) should securely sanitize and encode XSS script payloads in text fields
+    ✔ should prevent access to protected routes/dashboard for unauthenticated users (2431ms)
+[2026-06-22T06:48:22.026Z]  @firebase/database: FIREBASE WARNING: set at /users/unauthorized_victim_uid failed: permission_denied 
+    ✔ should block unauthorized database write attempts to restricted user paths (562ms)
+    ✔ should block unauthorized database read attempts to restricted user profiles (177ms)
+    3) should securely sanitize and encode XSS script payloads in text fields
 Security recorded results merged and saved to recorded-results.json (11 total cases)
 Security E2E report saved to: /home/runner/work/TrackBack-Web-PDD/TrackBack-Web-PDD/Frontend/Test Results/security-e2e-results.json
 
 
-  7 passing (1m)
-  4 failing
+  8 passing (1m)
+  3 failing
 
   1) TrackBack — Login E2E Tests
        should login with valid credentials and reach the dashboard:
@@ -47,20 +47,14 @@ Security E2E report saved to: /home/runner/work/TrackBack-Web-PDD/TrackBack-Web-
   2) TrackBack — Security E2E & Rules Verification Tests
        should enforce session termination and clean storage upon logout:
      TimeoutError: Waiting for element to be located By(css selector, .sidebar)
-Wait timed out after 20103ms
+Wait timed out after 20069ms
       at /home/runner/work/TrackBack-Web-PDD/TrackBack-Web-PDD/node_modules/selenium-webdriver/lib/webdriver.js:929:22
       at process.processTicksAndRejections (node:internal/process/task_queues:103:5)
 
   3) TrackBack — Security E2E & Rules Verification Tests
-       should block unauthorized database read attempts to restricted user profiles:
-     Error: Security Rules Violation: Path users/ restricted access read succeeded or returned unexpected error: Permission denied
-      at Context.<anonymous> (selenium-tests/tests/security.test.cjs:236:13)
-      at process.processTicksAndRejections (node:internal/process/task_queues:103:5)
-
-  4) TrackBack — Security E2E & Rules Verification Tests
        should securely sanitize and encode XSS script payloads in text fields:
-     TimeoutError: Waiting for element to be located By(css selector, *[id="landing-signin-btn"])
-Wait timed out after 20196ms
+     TimeoutError: Waiting for element to be located By(css selector, .sidebar)
+Wait timed out after 20108ms
       at /home/runner/work/TrackBack-Web-PDD/TrackBack-Web-PDD/node_modules/selenium-webdriver/lib/webdriver.js:929:22
       at process.processTicksAndRejections (node:internal/process/task_queues:103:5)
 
