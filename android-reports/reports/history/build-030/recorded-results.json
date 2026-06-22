@@ -1,0 +1,98 @@
+[
+  {
+    "name": "TC-001 App Launch",
+    "status": "passed",
+    "duration": 5261,
+    "error": null,
+    "screenshotPath": null,
+    "timestamp": "2026-06-22T17:08:53.244Z"
+  },
+  {
+    "name": "TC-002 Login Screen",
+    "status": "passed",
+    "duration": 8177,
+    "error": null,
+    "screenshotPath": null,
+    "timestamp": "2026-06-22T17:09:01.422Z"
+  },
+  {
+    "name": "TC-003 Valid Login",
+    "status": "passed",
+    "duration": 19462,
+    "error": null,
+    "screenshotPath": null,
+    "timestamp": "2026-06-22T17:09:20.888Z"
+  },
+  {
+    "name": "TC-004 Invalid Credentials",
+    "status": "passed",
+    "duration": 30526,
+    "error": null,
+    "screenshotPath": null,
+    "timestamp": "2026-06-22T17:09:51.416Z"
+  },
+  {
+    "name": "TC-005 Empty Form Validation",
+    "status": "passed",
+    "duration": 14395,
+    "error": null,
+    "screenshotPath": null,
+    "timestamp": "2026-06-22T17:10:05.813Z"
+  },
+  {
+    "name": "TC-006 Navigate to Sign Up",
+    "status": "passed",
+    "duration": 16474,
+    "error": null,
+    "screenshotPath": null,
+    "timestamp": "2026-06-22T17:10:22.287Z"
+  },
+  {
+    "name": "TC-007 Dashboard Tabs",
+    "status": "passed",
+    "duration": 52569,
+    "error": null,
+    "screenshotPath": null,
+    "timestamp": "2026-06-22T17:11:14.857Z"
+  },
+  {
+    "name": "TC-008 Logout",
+    "status": "passed",
+    "duration": 21661,
+    "error": null,
+    "screenshotPath": null,
+    "timestamp": "2026-06-22T17:11:36.519Z"
+  },
+  {
+    "name": "TC-009 Lost Tab",
+    "status": "passed",
+    "duration": 3026,
+    "error": null,
+    "screenshotPath": null,
+    "timestamp": "2026-06-22T17:12:20.784Z"
+  },
+  {
+    "name": "TC-010 Found Tab",
+    "status": "passed",
+    "duration": 2759,
+    "error": null,
+    "screenshotPath": null,
+    "timestamp": "2026-06-22T17:12:23.544Z"
+  },
+  {
+    "name": "TC-011 Search Tab",
+    "status": "passed",
+    "duration": 2242,
+    "error": null,
+    "screenshotPath": null,
+    "timestamp": "2026-06-22T17:12:25.786Z"
+  },
+  {
+    "name": "TC-012 Chat Tab",
+    "status": "passed",
+    "duration": 2285,
+    "error": null,
+    "screenshotPath": null,
+    "timestamp": "2026-06-22T17:12:28.071Z"
+  }
+]
