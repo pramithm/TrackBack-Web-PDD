@@ -59,7 +59,8 @@ export default function AuthModule() {
   const [view, setView] = useState(() => {
     const storeState = useAppStore.getState();
     if (storeState.isAuthenticated) {
-      if (!storeState.user?.emailVerified && storeState.user?.email !== 'pramithm2174.sse@saveetha.com') {
+      const isTestEmail = storeState.user?.email && storeState.user.email.trim().toLowerCase() === 'pramithm2174.sse@saveetha.com';
+      if (!storeState.user?.emailVerified && !isTestEmail) {
         return 'email-verify-required';
       } else if (!storeState.user?.isProfileVerified) {
         return 'verify';
@@ -114,7 +115,8 @@ export default function AuthModule() {
       // Reload to ensure we have latest email verification status
       await firebaseUser.reload();
       
-      if (!firebaseUser.emailVerified && firebaseUser.email !== 'pramithm2174.sse@saveetha.com') {
+      const isTestEmail = firebaseUser.email && firebaseUser.email.trim().toLowerCase() === 'pramithm2174.sse@saveetha.com';
+      if (!firebaseUser.emailVerified && !isTestEmail) {
         setUser({
           uid: firebaseUser.uid,
           email: firebaseUser.email,

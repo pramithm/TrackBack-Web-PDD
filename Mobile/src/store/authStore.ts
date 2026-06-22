@@ -53,24 +53,26 @@ onAuthStateChanged(auth, async (firebaseUser) => {
       }
 
       if (profile) {
+        const isTest = firebaseUser.email && firebaseUser.email.trim().toLowerCase() === 'pramithm2174.sse@saveetha.com';
         updateState({
           user: {
             uid: firebaseUser.uid,
-            email: firebaseUser.email,
-            emailVerified: firebaseUser.email === 'pramithm2174.sse@saveetha.com' ? true : firebaseUser.emailVerified,
             ...profile,
+            email: firebaseUser.email,
+            emailVerified: isTest ? true : firebaseUser.emailVerified,
           },
           isAuthenticated: true,
           isInitializing: false,
         });
       } else {
         console.log('[AuthStore] No profile found in DB for UID:', firebaseUser.uid);
+        const isTest = firebaseUser.email && firebaseUser.email.trim().toLowerCase() === 'pramithm2174.sse@saveetha.com';
         updateState({
           user: {
             uid: firebaseUser.uid,
-            email: firebaseUser.email,
-            emailVerified: firebaseUser.email === 'pramithm2174.sse@saveetha.com' ? true : firebaseUser.emailVerified,
             isProfileVerified: false,
+            email: firebaseUser.email,
+            emailVerified: isTest ? true : firebaseUser.emailVerified,
           },
           isAuthenticated: true,
           isInitializing: false,
@@ -78,12 +80,13 @@ onAuthStateChanged(auth, async (firebaseUser) => {
       }
     } catch (e) {
       console.error('[AuthStore] Error loading user profile:', e);
+      const isTest = firebaseUser.email && firebaseUser.email.trim().toLowerCase() === 'pramithm2174.sse@saveetha.com';
       updateState({
         user: {
           uid: firebaseUser.uid,
-          email: firebaseUser.email,
-          emailVerified: firebaseUser.email === 'pramithm2174.sse@saveetha.com' ? true : firebaseUser.emailVerified,
           isProfileVerified: false,
+          email: firebaseUser.email,
+          emailVerified: isTest ? true : firebaseUser.emailVerified,
         },
         isAuthenticated: true,
         isInitializing: false,
@@ -118,12 +121,13 @@ export const useAuth = () => {
       if (currentUser) {
         const profile = await userService.getUserProfile(currentUser.uid);
         if (profile) {
+          const isTest = currentUser.email && currentUser.email.trim().toLowerCase() === 'pramithm2174.sse@saveetha.com';
           updateState({
             user: {
               uid: currentUser.uid,
-              email: currentUser.email,
-              emailVerified: currentUser.email === 'pramithm2174.sse@saveetha.com' ? true : currentUser.emailVerified,
               ...profile,
+              email: currentUser.email,
+              emailVerified: isTest ? true : currentUser.emailVerified,
             },
           });
         }
@@ -150,12 +154,13 @@ export const useAuth = () => {
             }
           }
 
+          const isTest = refreshedUser.email && refreshedUser.email.trim().toLowerCase() === 'pramithm2174.sse@saveetha.com';
           updateState({
             user: {
               uid: refreshedUser.uid,
-              email: refreshedUser.email,
-              emailVerified: refreshedUser.email === 'pramithm2174.sse@saveetha.com' ? true : refreshedUser.emailVerified,
               ...(profile || { isProfileVerified: false }),
+              email: refreshedUser.email,
+              emailVerified: isTest ? true : refreshedUser.emailVerified,
             },
           });
         }

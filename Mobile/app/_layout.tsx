@@ -51,7 +51,8 @@ function AuthProtectedLayout({ children }: { children: React.ReactNode }) {
       }
     } else {
       // Redirect to email verification if not verified
-      if (!user?.emailVerified && user?.email !== 'pramithm2174.sse@saveetha.com') {
+      const isTestEmail = user?.email && user.email.trim().toLowerCase() === 'pramithm2174.sse@saveetha.com';
+      if (!user?.emailVerified && !isTestEmail) {
         if (segments[1] !== 'email-verification') {
           console.log('[LayoutGuard] Redirecting to email verification screen...');
           router.replace('/(auth)/email-verification' as any);
