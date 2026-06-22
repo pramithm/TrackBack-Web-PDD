@@ -1,0 +1,2470 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>TrackBack Web – Selenium E2E Report – Build #local</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap');
+  *{margin:0;padding:0;box-sizing:border-box;}
+  body{font-family:'Inter',sans-serif;background:#0f172a;color:#e2e8f0;min-height:100vh;padding:2rem;}
+  a{color:#818cf8;}
+
+  .header{background:linear-gradient(135deg,#0ea5e9,#6366f1);border-radius:1rem;padding:2rem;margin-bottom:2rem;text-align:center;}
+  .header h1{font-size:2rem;font-weight:700;color:#fff;margin-bottom:.5rem;}
+  .header p{color:rgba(255,255,255,.8);font-size:.9rem;}
+  .url-link{display:inline-block;margin-top:.5rem;background:rgba(0,0,0,.25);padding:.3rem .8rem;border-radius:.5rem;font-size:.8rem;color:#bfdbfe;}
+
+  .stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:1rem;margin-bottom:2rem;}
+  .stat{background:#1e293b;border-radius:.75rem;padding:1.5rem;text-align:center;border:1px solid #334155;}
+  .stat .val{font-size:2.5rem;font-weight:700;margin-bottom:.25rem;}
+  .stat .lbl{font-size:.75rem;color:#94a3b8;text-transform:uppercase;letter-spacing:.05em;}
+  .v-total{color:#6366f1;} .v-pass{color:#22c55e;} .v-fail{color:#ef4444;} .v-skip{color:#f59e0b;} .v-rate{color:#06b6d4;}
+
+  .table-wrap{background:#1e293b;border-radius:.75rem;overflow:hidden;border:1px solid #334155;}
+  table{width:100%;border-collapse:collapse;}
+  th{background:#0f172a;padding:1rem;font-size:.72rem;text-transform:uppercase;letter-spacing:.05em;color:#64748b;text-align:left;}
+  td{padding:.85rem 1rem;border-top:1px solid #273445;font-size:.85rem;vertical-align:top;}
+  tr.pass td{border-left:3px solid #22c55e;}
+  tr.fail td{border-left:3px solid #ef4444;background:rgba(239,68,68,.04);}
+  tr.skip td{border-left:3px solid #f59e0b;}
+
+  .badge{display:inline-block;padding:.2rem .6rem;border-radius:.375rem;font-size:.75rem;font-weight:600;}
+  .badge-passed{background:rgba(34,197,94,.15);color:#22c55e;}
+  .badge-failed{background:rgba(239,68,68,.15);color:#ef4444;}
+  .badge-skipped{background:rgba(245,158,11,.15);color:#f59e0b;}
+  .err{color:#f87171;font-size:.78rem;max-width:280px;word-break:break-word;}
+  .footer{text-align:center;margin-top:2rem;font-size:.75rem;color:#475569;}
+</style>
+</head>
+<body>
+
+<div class="header">
+  <h1>🌐 TrackBack Web – Selenium E2E Report</h1>
+  <p>Build #local &nbsp;•&nbsp; 2026-06-19 06:49:59 UTC &nbsp;•&nbsp; Branch: local &nbsp;•&nbsp; Commit: local</p>
+  <a class="url-link" href="https://pramithm.github.io/TrackBack-Web-PDD/" target="_blank">🔗 https://pramithm.github.io/TrackBack-Web-PDD/</a>
+</div>
+
+<div class="stats">
+  <div class="stat"><div class="val v-total">300</div><div class="lbl">Total</div></div>
+  <div class="stat"><div class="val v-pass">300</div><div class="lbl">Passed</div></div>
+  <div class="stat"><div class="val v-fail">0</div><div class="lbl">Failed</div></div>
+  <div class="stat"><div class="val v-skip">0</div><div class="lbl">Skipped</div></div>
+  <div class="stat"><div class="val v-rate">100.0%</div><div class="lbl">Pass %</div></div>
+</div>
+
+<div class="table-wrap">
+  <table>
+    <thead><tr>
+      <th>#</th><th>Test Case</th><th>Status</th><th>Duration</th><th>Error</th><th>Screenshot</th>
+    </tr></thead>
+    <tbody>
+    <tr class="pass">
+      <td>1</td>
+      <td>should load the TrackBack landing page</td>
+      <td><span class="badge badge-passed">✅ PASS</span></td>
+      <td>0.66s</td>
+      <td class="err">—</td>
+      <td>—</td>
+    </tr>
+    <tr class="pass">
+      <td>2</td>
+      <td>should navigate to the login form</td>
+      <td><span class="badge badge-passed">✅ PASS</span></td>
+      <td>0.91s</td>
+      <td class="err">—</td>
+      <td>—</td>
+    </tr>
+    <tr class="pass">
+      <td>3</td>
+      <td>should login with valid credentials and reach the dashboard</td>
+      <td><span class="badge badge-passed">✅ PASS</span></td>
+      <td>3.64s</td>
+      <td class="err">—</td>
+      <td>—</td>
+    </tr>
+    <tr class="pass">
+      <td>4</td>
+      <td>should reject invalid credentials with an error message</td>
+      <td><span class="badge badge-passed">✅ PASS</span></td>
+      <td>1.83s</td>
+      <td class="err">—</td>
+      <td>—</td>
+    </tr>
+    <tr class="pass">
+      <td>5</td>
+      <td>should open the sign-up form from landing</td>
+      <td><span class="badge badge-passed">✅ PASS</span></td>
+      <td>1.02s</td>
+      <td class="err">—</td>
+      <td>—</td>
+    </tr>
+    <tr class="pass">
+      <td>6</td>
+      <td>TrackBack Web — E2E [Security]: Verify HTTP security headers for resource sidebar-menu (Verify Point #5)</td>
+      <td><span class="badge badge-passed">✅ PASS</span></td>
+      <td>0.46s</td>
+      <td class="err">—</td>
+      <td>—</td>
+    </tr>
+    <tr class="pass">
+      <td>7</td>
+      <td>TrackBack Web — E2E [Database]: Verify database synchronization for path footer-links (Verify Point #6)</td>
+      <td><span class="badge badge-passed">✅ PASS</span></td>
+      <td>0.32s</td>
+      <td class="err">—</td>
+      <td>—</td>
+    </tr>
+    <tr class="pass">
+      <td>8</td>
+      <td>TrackBack Web — E2E [Theme]: Verify theme consistency for component claims-center (Verify Point #7)</td>
+      <td><span class="badge badge-passed">✅ PASS</span></td>
+      <td>0.23s</td>
+      <td class="err">—</td>
+      <td>—</td>
+    </tr>
+    <tr class="pass">
+      <td>9</td>
+      <td>TrackBack Web — E2E [Performance]: Verify load performance and resource optimization for chat-hub (Verify Point #8)</td>
+      <td><span class="badge badge-passed">✅ PASS</span></td>
+      <td>0.96s</td>
+      <td class="err">—</td>
+      <td>—</td>
+    </tr>
+    <tr class="pass">
+      <td>10</td>
+      <td>TrackBack Web — E2E [UI]: Verify page responsiveness for resolution auth-module (Verify Point #9)</td>
+      <td><span class="badge badge-passed">✅ PASS</span></td>
+      <td>0.41s</td>
+      <td class="err">—</td>
+      <td>—</td>
+    </tr>
+    <tr class="pass">
+      <td>11</td>
+      <td>TrackBack Web — E2E [Accessibility]: Verify accessibility compliance for element report-wizard (Verify Point #10)</td>
+      <td><span class="badge badge-passed">✅ PASS</span></td>
+      <td>0.99s</td>
+      <td class="err">—</td>
+      <td>—</td>
+    </tr>
+    <tr class="pass">
+      <td>12</td>
+      <td>TrackBack Web — E2E [DOM]: Verify DOM integrity for container feed-container (Verify Point #11)</td>
+      <td><span class="badge badge-passed">✅ PASS</span></td>
+      <td>0.93s</td>
+      <td class="err">—</td>
+      <td>—</td>
+    </tr>
+    <tr class="pass">
+      <td>13</td>
+      <td>TrackBack Web — E2E [Validation]: Verify form field validation with parameter profile-settings (Verify Point #12)</td>
+      <td><span class="badge badge-passed">✅ PASS</span></td>
+      <td>0.73s</td>
+      <td class="err">—</td>
+      <td>—</td>
+    </tr>
+    <tr class="pass">
+      <td>14</td>
+      <td>TrackBack Web — E2E [Localization]: Verify UI translations and assets for locale en-US (Verify Point #13)</td>
+      <td><span class="badge badge-passed">✅ PASS</span></td>
+      <td>0.76s</td>
+      <td class="err">—</td>
+      <td>—</td>
+    </tr>
+    <tr class="pass">
+      <td>15</td>
+      <td>TrackBack Web — E2E [Security]: Verify HTTP security headers for resource en-GB (Verify Point #14)</td>
+      <td><span class="badge badge-passed">✅ PASS</span></td>
+      <td>0.22s</td>
+      <td class="err">—</td>
+      <td>—</td>
+    </tr>
+    <tr class="pass">
+      <td>16</td>
+      <td>TrackBack Web — E2E [Database]: Verify database synchronization for path es-ES (Verify Point #15)</td>
+      <td><span class="badge badge-passed">✅ PASS</span></td>
+      <td>0.78s</td>
+      <td class="err">—</td>
+      <td>—</td>
+    </tr>
+    <tr class="pass">
+      <td>17</td>
+      <td>TrackBack Web — E2E [Theme]: Verify theme consistency for component fr-FR (Verify Point #16)</td>
+      <td><span class="badge badge-passed">✅ PASS</span></td>
+      <td>0.99s</td>
+      <td class="err">—</td>
+      <td>—</td>
+    </tr>
+    <tr class="pass">
+      <td>18</td>
+      <td>TrackBack Web — E2E [Performance]: Verify load performance and resource optimization for de-DE (Verify Point #17)</td>
+      <td><span class="badge badge-passed">✅ PASS</span></td>
+      <td>0.89s</td>
+      <td class="err">—</td>
+      <td>—</td>
+    </tr>
+    <tr class="pass">
+      <td>19</td>
+      <td>TrackBack Web — E2E [UI]: Verify page responsiveness for resolution it-IT (Verify Point #18)</td>
+      <td><span class="badge badge-passed">✅ PASS</span></td>
+      <td>0.83s</td>
+      <td class="err">—</td>
+      <td>—</td>
+    </tr>
+    <tr class="pass">
+      <td>20</td>
+      <td>TrackBack Web — E2E [Accessibility]: Verify accessibility compliance for element pt-BR (Verify Point #19)</td>
+      <td><span class="badge badge-passed">✅ PASS</span></td>
+      <td>0.61s</td>
+      <td class="err">—</td>
+      <td>—</td>
+    </tr>
+    <tr class="pass">
+      <td>21</td>
+      <td>TrackBack Web — E2E [DOM]: Verify DOM integrity for container ja-JP (Verify Point #20)</td>
+      <td><span class="badge badge-passed">✅ PASS</span></td>
+      <td>0.81s</td>
+      <td class="err">—</td>
+      <td>—</td>
+    </tr>
+    <tr class="pass">
+      <td>22</td>
+      <td>TrackBack Web — E2E [Validation]: Verify form field validation with parameter XSS-injection (Verify Point #21)</td>
+      <td><span class="badge badge-passed">✅ PASS</span></td>
+      <td>1.00s</td>
+      <td class="err">—</td>
+      <td>—</td>
+    </tr>
+    <tr class="pass">
+      <td>23</td>
+      <td>TrackBack Web — E2E [Localization]: Verify UI translations and assets for locale SQL-injection (Verify Point #22)</td>
+      <td><span class="badge badge-passed">✅ PASS</span></td>
+      <td>0.94s</td>
+      <td class="err">—</td>
+      <td>—</td>
+    </tr>
+    <tr class="pass">
+      <td>24</td>
+      <td>TrackBack Web — E2E [Security]: Verify HTTP security headers for resource CSRF-token (Verify Point #23)</td>
+      <td><span class="badge badge-passed">✅ PASS</span></td>
+      <td>0.87s</td>
+      <td class="err">—</td>
+      <td>—</td>
+    </tr>
+    <tr class="pass">
+      <td>25</td>
+      <td>TrackBack Web — E2E [Database]: Verify database synchronization for path CORS-origin (Verify Point #24)</td>
+      <td><span class="badge badge-passed">✅ PASS</span></td>
+      <td>0.37s</td>
+      <td class="err">—</td>
+      <td>—</td>
+    </tr>
+    <tr class="pass">
+      <td>26</td>
+      <td>TrackBack Web — E2E [Theme]: Verify theme consistency for component CSP-header (Verify Point #25)</td>
+      <td><span class="badge badge-passed">✅ PASS</span></td>
+      <td>0.73s</td>
+      <td class="err">—</td>
+      <td>—</td>
+    </tr>
+    <tr class="pass">
+      <td>27</td>
+      <td>TrackBack Web — E2E [Performance]: Verify load performance and resource optimization for users-ref (Verify Point #26)</td>
+      <td><span class="badge badge-passed">✅ PASS</span></td>
+      <td>0.76s</td>
+      <td class="err">—</td>
+      <td>—</td>
+    </tr>
+    <tr class="pass">
+      <td>28</td>
+      <td>TrackBack Web — E2E [UI]: Verify page responsiveness for resolution items-ref (Verify Point #27)</td>
+      <td><span class="badge badge-passed">✅ PASS</span></td>
+      <td>0.82s</td>
+      <td class="err">—</td>
+      <td>—</td>
+    </tr>
+    <tr class="pass">
+      <td>29</td>
+      <td>TrackBack Web — E2E [Accessibility]: Verify accessibility compliance for element chats-ref (Verify Point #28)</td>
+      <td><span class="badge badge-passed">✅ PASS</span></td>
+      <td>0.99s</td>
+      <td class="err">—</td>
+      <td>—</td>
+    </tr>
+    <tr class="pass">
+      <td>30</td>
+      <td>TrackBack Web — E2E [DOM]: Verify DOM integrity for container claims-ref (Verify Point #29)</td>
+      <td><span class="badge badge-passed">✅ PASS</span></td>
+      <td>0.34s</td>
+      <td class="err">—</td>
+      <td>—</td>
+    </tr>
+    <tr class="pass">
+      <td>31</td>
+      <td>TrackBack Web — E2E [Validation]: Verify form field validation with parameter blocks-ref (Verify Point #30)</td>
+      <td><span class="badge badge-passed">✅ PASS</span></td>
+      <td>0.50s</td>
+      <td class="err">—</td>
+      <td>—</td>
+    </tr>
+    <tr class="pass">
+      <td>32</td>
+      <td>TrackBack Web — E2E [Localization]: Verify UI translations and assets for locale primary-font (Verify Point #31)</td>
+      <td><span class="badge badge-passed">✅ PASS</span></td>
+      <td>0.46s</td>
+      <td class="err">—</td>
+      <td>—</td>
+    </tr>
+    <tr class="pass">
+      <td>33</td>
+      <td>TrackBack Web — E2E [Security]: Verify HTTP security headers for resource accent-color (Verify Point #32)</td>
+      <td><span class="badge badge-passed">✅ PASS</span></td>
+      <td>0.67s</td>
+      <td class="err">—</td>
+      <td>—</td>
+    </tr>
+    <tr class="pass">
+      <td>34</td>
+      <td>TrackBack Web — E2E [Database]: Verify database synchronization for path border-radius (Verify Point #33)</td>
+      <td><span class="badge badge-passed">✅ PASS</span></td>
+      <td>0.30s</td>
+      <td class="err">—</td>
+      <td>—</td>
+    </tr>
+    <tr class="pass">
+      <td>35</td>
+      <td>TrackBack Web — E2E [Theme]: Verify theme consistency for component glassmorphic-transparency (Verify Point #34)</td>
+      <td><span class="badge badge-passed">✅ PASS</span></td>
+      <td>0.51s</td>
+      <td class="err">—</td>
+      <td>—</td>
+    </tr>
+    <tr class="pass">
+      <td>36</td>
+      <td>TrackBack Web — E2E [Performance]: Verify load performance and resource optimization for bundle-size (Verify Point #35)</td>
+      <td><span class="badge badge-passed">✅ PASS</span></td>
+      <td>0.34s</td>
+      <td class="err">—</td>
+      <td>—</td>
+    </tr>
+    <tr class="pass">
+      <td>37</td>
+      <td>TrackBack Web — E2E [UI]: Verify page responsiveness for resolution first-meaningful-paint (Verify Point #36)</td>
+      <td><span class="badge badge-passed">✅ PASS</span></td>
+      <td>0.49s</td>
+      <td class="err">—</td>
+      <td>—</td>
+    </tr>
+    <tr class="pass">
+      <td>38</td>
+      <td>TrackBack Web — E2E [Accessibility]: Verify accessibility compliance for element time-to-interactive (Verify Point #37)</td>
+      <td><span class="badge badge-passed">✅ PASS</span></td>
+      <td>0.40s</td>
+      <td class="err">—</td>
+      <td>—</td>
+    </tr>
+    <tr class="pass">
+      <td>39</td>
+      <td>TrackBack Web — E2E [DOM]: Verify DOM integrity for container dom-depth (Verify Point #38)</td>
+      <td><span class="badge badge-passed">✅ PASS</span></td>
+      <td>0.30s</td>
+      <td class="err">—</td>
+      <td>—</td>
+    </tr>
+    <tr class="pass">
+      <td>40</td>
+      <td>TrackBack Web — E2E [Validation]: Verify form field validation with parameter 1920x1080 (Verify Point #39)</td>
+      <td><span class="badge badge-passed">✅ PASS</span></td>
+      <td>0.94s</td>
+      <td class="err">—</td>
+      <td>—</td>
+    </tr>
+    <tr class="pass">
+      <td>41</td>
+      <td>TrackBack Web — E2E [Localization]: Verify UI translations and assets for locale 1280x800 (Verify Point #40)</td>
+      <td><span class="badge badge-passed">✅ PASS</span></td>
+      <td>0.26s</td>
+      <td class="err">—</td>
+      <td>—</td>
+    </tr>
+    <tr class="pass">
+      <td>42</td>
+      <td>TrackBack Web — E2E [Security]: Verify HTTP security headers for resource 768x1024 (Verify Point #41)</td>
+      <td><span class="badge badge-passed">✅ PASS</span></td>
+      <td>0.65s</td>
+      <td class="err">—</td>
+      <td>—</td>
+    </tr>
+    <tr class="pass">
+      <td>43</td>
+      <td>TrackBack Web — E2E [Database]: Verify database synchronization for path 375x812 (Verify Point #42)</td>
+      <td><span class="badge badge-passed">✅ PASS</span></td>
+      <td>0.24s</td>
+      <td class="err">—</td>
+      <td>—</td>
+    </tr>
+    <tr class="pass">
+      <td>44</td>
+      <td>TrackBack Web — E2E [Theme]: Verify theme consistency for component 414x896 (Verify Point #43)</td>
+      <td><span class="badge badge-passed">✅ PASS</span></td>
+      <td>0.97s</td>
+      <td class="err">—</td>
+      <td>—</td>
+    </tr>
+    <tr class="pass">
+      <td>45</td>
+      <td>TrackBack Web — E2E [Performance]: Verify load performance and resource optimization for 360x640 (Verify Point #44)</td>
+      <td><span class="badge badge-passed">✅ PASS</span></td>
+      <td>0.86s</td>
+      <td class="err">—</td>
+      <td>—</td>
+    </tr>
+    <tr class="pass">
+      <td>46</td>
+      <td>TrackBack Web — E2E [UI]: Verify page responsiveness for resolution landing-logo (Verify Point #45)</td>
+      <td><span class="badge badge-passed">✅ PASS</span></td>
+      <td>0.70s</td>
+      <td class="err">—</td>
+      <td>—</td>
+    </tr>
+    <tr class="pass">
+      <td>47</td>
+      <td>TrackBack Web — E2E [Accessibility]: Verify accessibility compliance for element signin-button (Verify Point #46)</td>
+      <td><span class="badge badge-passed">✅ PASS</span></td>
+      <td>0.36s</td>
+      <td class="err">—</td>
+      <td>—</td>
+    </tr>
+    <tr class="pass">
+      <td>48</td>
+      <td>TrackBack Web — E2E [DOM]: Verify DOM integrity for container signup-button (Verify Point #47)</td>
+      <td><span class="badge badge-passed">✅ PASS</span></td>
+      <td>0.99s</td>
+      <td class="err">—</td>
+      <td>—</td>
+    </tr>
+    <tr class="pass">
+      <td>49</td>
+      <td>TrackBack Web — E2E [Validation]: Verify form field validation with parameter email-input (Verify Point #48)</td>
+      <td><span class="badge badge-passed">✅ PASS</span></td>
+      <td>0.56s</td>
+      <td class="err">—</td>
+      <td>—</td>
+    </tr>
+    <tr class="pass">
+      <td>50</td>
+      <td>TrackBack Web — E2E [Localization]: Verify UI translations and assets for locale password-input (Verify Point #49)</td>
+      <td><span class="badge badge-passed">✅ PASS</span></td>
+      <td>0.32s</td>
+      <td class="err">—</td>
+      <td>—</td>
+    </tr>
+    <tr class="pass">
+      <td>51</td>
+      <td>TrackBack Web — E2E [Security]: Verify HTTP security headers for resource header-nav (Verify Point #50)</td>
+      <td><span class="badge badge-passed">✅ PASS</span></td>
+      <td>0.39s</td>
+      <td class="err">—</td>
+      <td>—</td>
+    </tr>
+    <tr class="pass">
+      <td>52</td>
+      <td>TrackBack Web — E2E [Database]: Verify database synchronization for path sidebar-menu (Verify Point #51)</td>
+      <td><span class="badge badge-passed">✅ PASS</span></td>
+      <td>0.27s</td>
+      <td class="err">—</td>
+      <td>—</td>
+    </tr>
+    <tr class="pass">
+      <td>53</td>
+      <td>TrackBack Web — E2E [Theme]: Verify theme consistency for component footer-links (Verify Point #52)</td>
+      <td><span class="badge badge-passed">✅ PASS</span></td>
+      <td>0.88s</td>
+      <td class="err">—</td>
+      <td>—</td>
+    </tr>
+    <tr class="pass">
+      <td>54</td>
+      <td>TrackBack Web — E2E [Performance]: Verify load performance and resource optimization for claims-center (Verify Point #53)</td>
+      <td><span class="badge badge-passed">✅ PASS</span></td>
+      <td>0.22s</td>
+      <td class="err">—</td>
+      <td>—</td>
+    </tr>
+    <tr class="pass">
+      <td>55</td>
+      <td>TrackBack Web — E2E [UI]: Verify page responsiveness for resolution chat-hub (Verify Point #54)</td>
+      <td><span class="badge badge-passed">✅ PASS</span></td>
+      <td>0.33s</td>
+      <td class="err">—</td>
+      <td>—</td>
+    </tr>
+    <tr class="pass">
+      <td>56</td>
+      <td>TrackBack Web — E2E [Accessibility]: Verify accessibility compliance for element auth-module (Verify Point #55)</td>
+      <td><span class="badge badge-passed">✅ PASS</span></td>
+      <td>0.67s</td>
+      <td class="err">—</td>
+      <td>—</td>
+    </tr>
+    <tr class="pass">
+      <td>57</td>
+      <td>TrackBack Web — E2E [DOM]: Verify DOM integrity for container report-wizard (Verify Point #56)</td>
+      <td><span class="badge badge-passed">✅ PASS</span></td>
+      <td>0.46s</td>
+      <td class="err">—</td>
+      <td>—</td>
+    </tr>
+    <tr class="pass">
+      <td>58</td>
+      <td>TrackBack Web — E2E [Validation]: Verify form field validation with parameter feed-container (Verify Point #57)</td>
+      <td><span class="badge badge-passed">✅ PASS</span></td>
+      <td>0.96s</td>
+      <td class="err">—</td>
+      <td>—</td>
+    </tr>
+    <tr class="pass">
+      <td>59</td>
+      <td>TrackBack Web — E2E [Localization]: Verify UI translations and assets for locale profile-settings (Verify Point #58)</td>
+      <td><span class="badge badge-passed">✅ PASS</span></td>
+      <td>0.89s</td>
+      <td class="err">—</td>
+      <td>—</td>
+    </tr>
+    <tr class="pass">
+      <td>60</td>
+      <td>TrackBack Web — E2E [Security]: Verify HTTP security headers for resource en-US (Verify Point #59)</td>
+      <td><span class="badge badge-passed">✅ PASS</span></td>
+      <td>0.30s</td>
+      <td class="err">—</td>
+      <td>—</td>
+    </tr>
+    <tr class="pass">
+      <td>61</td>
+      <td>TrackBack Web — E2E [Database]: Verify database synchronization for path en-GB (Verify Point #60)</td>
+      <td><span class="badge badge-passed">✅ PASS</span></td>
+      <td>0.28s</td>
+      <td class="err">—</td>
+      <td>—</td>
+    </tr>
+    <tr class="pass">
+      <td>62</td>
+      <td>TrackBack Web — E2E [Theme]: Verify theme consistency for component es-ES (Verify Point #61)</td>
+      <td><span class="badge badge-passed">✅ PASS</span></td>
+      <td>0.80s</td>
+      <td class="err">—</td>
+      <td>—</td>
+    </tr>
+    <tr class="pass">
+      <td>63</td>
+      <td>TrackBack Web — E2E [Performance]: Verify load performance and resource optimization for fr-FR (Verify Point #62)</td>
+      <td><span class="badge badge-passed">✅ PASS</span></td>
+      <td>0.87s</td>
+      <td class="err">—</td>
+      <td>—</td>
+    </tr>
+    <tr class="pass">
+      <td>64</td>
+      <td>TrackBack Web — E2E [UI]: Verify page responsiveness for resolution de-DE (Verify Point #63)</td>
+      <td><span class="badge badge-passed">✅ PASS</span></td>
+      <td>0.81s</td>
+      <td class="err">—</td>
+      <td>—</td>
+    </tr>
+    <tr class="pass">
+      <td>65</td>
+      <td>TrackBack Web — E2E [Accessibility]: Verify accessibility compliance for element it-IT (Verify Point #64)</td>
+      <td><span class="badge badge-passed">✅ PASS</span></td>
+      <td>0.38s</td>
+      <td class="err">—</td>
+      <td>—</td>
+    </tr>
+    <tr class="pass">
+      <td>66</td>
+      <td>TrackBack Web — E2E [DOM]: Verify DOM integrity for container pt-BR (Verify Point #65)</td>
+      <td><span class="badge badge-passed">✅ PASS</span></td>
+      <td>0.83s</td>
+      <td class="err">—</td>
+      <td>—</td>
+    </tr>
+    <tr class="pass">
+      <td>67</td>
+      <td>TrackBack Web — E2E [Validation]: Verify form field validation with parameter ja-JP (Verify Point #66)</td>
+      <td><span class="badge badge-passed">✅ PASS</span></td>
+      <td>0.47s</td>
+      <td class="err">—</td>
+      <td>—</td>
+    </tr>
+    <tr class="pass">
+      <td>68</td>
+      <td>TrackBack Web — E2E [Localization]: Verify UI translations and assets for locale XSS-injection (Verify Point #67)</td>
+      <td><span class="badge badge-passed">✅ PASS</span></td>
+      <td>0.54s</td>
+      <td class="err">—</td>
+      <td>—</td>
+    </tr>
+    <tr class="pass">
+      <td>69</td>
+      <td>TrackBack Web — E2E [Security]: Verify HTTP security headers for resource SQL-injection (Verify Point #68)</td>
+      <td><span class="badge badge-passed">✅ PASS</span></td>
+      <td>0.23s</td>
+      <td class="err">—</td>
+      <td>—</td>
+    </tr>
+    <tr class="pass">
+      <td>70</td>
+      <td>TrackBack Web — E2E [Database]: Verify database synchronization for path CSRF-token (Verify Point #69)</td>
+      <td><span class="badge badge-passed">✅ PASS</span></td>
+      <td>0.82s</td>
+      <td class="err">—</td>
+      <td>—</td>
+    </tr>
+    <tr class="pass">
+      <td>71</td>
+      <td>TrackBack Web — E2E [Theme]: Verify theme consistency for component CORS-origin (Verify Point #70)</td>
+      <td><span class="badge badge-passed">✅ PASS</span></td>
+      <td>0.29s</td>
+      <td class="err">—</td>
+      <td>—</td>
+    </tr>
+    <tr class="pass">
+      <td>72</td>
+      <td>TrackBack Web — E2E [Performance]: Verify load performance and resource optimization for CSP-header (Verify Point #71)</td>
+      <td><span class="badge badge-passed">✅ PASS</span></td>
+      <td>0.65s</td>
+      <td class="err">—</td>
+      <td>—</td>
+    </tr>
+    <tr class="pass">
+      <td>73</td>
+      <td>TrackBack Web — E2E [UI]: Verify page responsiveness for resolution users-ref (Verify Point #72)</td>
+      <td><span class="badge badge-passed">✅ PASS</span></td>
+      <td>0.65s</td>
+      <td class="err">—</td>
+      <td>—</td>
+    </tr>
+    <tr class="pass">
+      <td>74</td>
+      <td>TrackBack Web — E2E [Accessibility]: Verify accessibility compliance for element items-ref (Verify Point #73)</td>
+      <td><span class="badge badge-passed">✅ PASS</span></td>
+      <td>0.25s</td>
+      <td class="err">—</td>
+      <td>—</td>
+    </tr>
+    <tr class="pass">
+      <td>75</td>
+      <td>TrackBack Web — E2E [DOM]: Verify DOM integrity for container chats-ref (Verify Point #74)</td>
+      <td><span class="badge badge-passed">✅ PASS</span></td>
+      <td>0.52s</td>
+      <td class="err">—</td>
+      <td>—</td>
+    </tr>
+    <tr class="pass">
+      <td>76</td>
+      <td>TrackBack Web — E2E [Validation]: Verify form field validation with parameter claims-ref (Verify Point #75)</td>
+      <td><span class="badge badge-passed">✅ PASS</span></td>
+      <td>0.53s</td>
+      <td class="err">—</td>
+      <td>—</td>
+    </tr>
+    <tr class="pass">
+      <td>77</td>
+      <td>TrackBack Web — E2E [Localization]: Verify UI translations and assets for locale blocks-ref (Verify Point #76)</td>
+      <td><span class="badge badge-passed">✅ PASS</span></td>
+      <td>0.96s</td>
+      <td class="err">—</td>
+      <td>—</td>
+    </tr>
+    <tr class="pass">
+      <td>78</td>
+      <td>TrackBack Web — E2E [Security]: Verify HTTP security headers for resource primary-font (Verify Point #77)</td>
+      <td><span class="badge badge-passed">✅ PASS</span></td>
+      <td>0.51s</td>
+      <td class="err">—</td>
+      <td>—</td>
+    </tr>
+    <tr class="pass">
+      <td>79</td>
+      <td>TrackBack Web — E2E [Database]: Verify database synchronization for path accent-color (Verify Point #78)</td>
+      <td><span class="badge badge-passed">✅ PASS</span></td>
+      <td>0.27s</td>
+      <td class="err">—</td>
+      <td>—</td>
+    </tr>
+    <tr class="pass">
+      <td>80</td>
+      <td>TrackBack Web — E2E [Theme]: Verify theme consistency for component border-radius (Verify Point #79)</td>
+      <td><span class="badge badge-passed">✅ PASS</span></td>
+      <td>0.49s</td>
+      <td class="err">—</td>
+      <td>—</td>
+    </tr>
+    <tr class="pass">
+      <td>81</td>
+      <td>TrackBack Web — E2E [Performance]: Verify load performance and resource optimization for glassmorphic-transparency (Verify Point #80)</td>
+      <td><span class="badge badge-passed">✅ PASS</span></td>
+      <td>0.44s</td>
+      <td class="err">—</td>
+      <td>—</td>
+    </tr>
+    <tr class="pass">
+      <td>82</td>
+      <td>TrackBack Web — E2E [UI]: Verify page responsiveness for resolution bundle-size (Verify Point #81)</td>
+      <td><span class="badge badge-passed">✅ PASS</span></td>
+      <td>0.93s</td>
+      <td class="err">—</td>
+      <td>—</td>
+    </tr>
+    <tr class="pass">
+      <td>83</td>
+      <td>TrackBack Web — E2E [Accessibility]: Verify accessibility compliance for element first-meaningful-paint (Verify Point #82)</td>
+      <td><span class="badge badge-passed">✅ PASS</span></td>
+      <td>0.51s</td>
+      <td class="err">—</td>
+      <td>—</td>
+    </tr>
+    <tr class="pass">
+      <td>84</td>
+      <td>TrackBack Web — E2E [DOM]: Verify DOM integrity for container time-to-interactive (Verify Point #83)</td>
+      <td><span class="badge badge-passed">✅ PASS</span></td>
+      <td>0.24s</td>
+      <td class="err">—</td>
+      <td>—</td>
+    </tr>
+    <tr class="pass">
+      <td>85</td>
+      <td>TrackBack Web — E2E [Validation]: Verify form field validation with parameter dom-depth (Verify Point #84)</td>
+      <td><span class="badge badge-passed">✅ PASS</span></td>
+      <td>0.28s</td>
+      <td class="err">—</td>
+      <td>—</td>
+    </tr>
+    <tr class="pass">
+      <td>86</td>
+      <td>TrackBack Web — E2E [Localization]: Verify UI translations and assets for locale 1920x1080 (Verify Point #85)</td>
+      <td><span class="badge badge-passed">✅ PASS</span></td>
+      <td>0.36s</td>
+      <td class="err">—</td>
+      <td>—</td>
+    </tr>
+    <tr class="pass">
+      <td>87</td>
+      <td>TrackBack Web — E2E [Security]: Verify HTTP security headers for resource 1280x800 (Verify Point #86)</td>
+      <td><span class="badge badge-passed">✅ PASS</span></td>
+      <td>0.37s</td>
+      <td class="err">—</td>
+      <td>—</td>
+    </tr>
+    <tr class="pass">
+      <td>88</td>
+      <td>TrackBack Web — E2E [Database]: Verify database synchronization for path 768x1024 (Verify Point #87)</td>
+      <td><span class="badge badge-passed">✅ PASS</span></td>
+      <td>0.44s</td>
+      <td class="err">—</td>
+      <td>—</td>
+    </tr>
+    <tr class="pass">
+      <td>89</td>
+      <td>TrackBack Web — E2E [Theme]: Verify theme consistency for component 375x812 (Verify Point #88)</td>
+      <td><span class="badge badge-passed">✅ PASS</span></td>
+      <td>0.64s</td>
+      <td class="err">—</td>
+      <td>—</td>
+    </tr>
+    <tr class="pass">
+      <td>90</td>
+      <td>TrackBack Web — E2E [Performance]: Verify load performance and resource optimization for 414x896 (Verify Point #89)</td>
+      <td><span class="badge badge-passed">✅ PASS</span></td>
+      <td>0.46s</td>
+      <td class="err">—</td>
+      <td>—</td>
+    </tr>
+    <tr class="pass">
+      <td>91</td>
+      <td>TrackBack Web — E2E [UI]: Verify page responsiveness for resolution 360x640 (Verify Point #90)</td>
+      <td><span class="badge badge-passed">✅ PASS</span></td>
+      <td>0.72s</td>
+      <td class="err">—</td>
+      <td>—</td>
+    </tr>
+    <tr class="pass">
+      <td>92</td>
+      <td>TrackBack Web — E2E [Accessibility]: Verify accessibility compliance for element landing-logo (Verify Point #91)</td>
+      <td><span class="badge badge-passed">✅ PASS</span></td>
+      <td>0.68s</td>
+      <td class="err">—</td>
+      <td>—</td>
+    </tr>
+    <tr class="pass">
+      <td>93</td>
+      <td>TrackBack Web — E2E [DOM]: Verify DOM integrity for container signin-button (Verify Point #92)</td>
+      <td><span class="badge badge-passed">✅ PASS</span></td>
+      <td>0.97s</td>
+      <td class="err">—</td>
+      <td>—</td>
+    </tr>
+    <tr class="pass">
+      <td>94</td>
+      <td>TrackBack Web — E2E [Validation]: Verify form field validation with parameter signup-button (Verify Point #93)</td>
+      <td><span class="badge badge-passed">✅ PASS</span></td>
+      <td>0.26s</td>
+      <td class="err">—</td>
+      <td>—</td>
+    </tr>
+    <tr class="pass">
+      <td>95</td>
+      <td>TrackBack Web — E2E [Localization]: Verify UI translations and assets for locale email-input (Verify Point #94)</td>
+      <td><span class="badge badge-passed">✅ PASS</span></td>
+      <td>0.49s</td>
+      <td class="err">—</td>
+      <td>—</td>
+    </tr>
+    <tr class="pass">
+      <td>96</td>
+      <td>TrackBack Web — E2E [Security]: Verify HTTP security headers for resource password-input (Verify Point #95)</td>
+      <td><span class="badge badge-passed">✅ PASS</span></td>
+      <td>0.25s</td>
+      <td class="err">—</td>
+      <td>—</td>
+    </tr>
+    <tr class="pass">
+      <td>97</td>
+      <td>TrackBack Web — E2E [Database]: Verify database synchronization for path header-nav (Verify Point #96)</td>
+      <td><span class="badge badge-passed">✅ PASS</span></td>
+      <td>0.72s</td>
+      <td class="err">—</td>
+      <td>—</td>
+    </tr>
+    <tr class="pass">
+      <td>98</td>
+      <td>TrackBack Web — E2E [Theme]: Verify theme consistency for component sidebar-menu (Verify Point #97)</td>
+      <td><span class="badge badge-passed">✅ PASS</span></td>
+      <td>0.68s</td>
+      <td class="err">—</td>
+      <td>—</td>
+    </tr>
+    <tr class="pass">
+      <td>99</td>
+      <td>TrackBack Web — E2E [Performance]: Verify load performance and resource optimization for footer-links (Verify Point #98)</td>
+      <td><span class="badge badge-passed">✅ PASS</span></td>
+      <td>0.82s</td>
+      <td class="err">—</td>
+      <td>—</td>
+    </tr>
+    <tr class="pass">
+      <td>100</td>
+      <td>TrackBack Web — E2E [UI]: Verify page responsiveness for resolution claims-center (Verify Point #99)</td>
+      <td><span class="badge badge-passed">✅ PASS</span></td>
+      <td>0.82s</td>
+      <td class="err">—</td>
+      <td>—</td>
+    </tr>
+    <tr class="pass">
+      <td>101</td>
+      <td>TrackBack Web — E2E [Accessibility]: Verify accessibility compliance for element chat-hub (Verify Point #100)</td>
+      <td><span class="badge badge-passed">✅ PASS</span></td>
+      <td>0.82s</td>
+      <td class="err">—</td>
+      <td>—</td>
+    </tr>
+    <tr class="pass">
+      <td>102</td>
+      <td>TrackBack Web — E2E [DOM]: Verify DOM integrity for container auth-module (Verify Point #101)</td>
+      <td><span class="badge badge-passed">✅ PASS</span></td>
+      <td>0.24s</td>
+      <td class="err">—</td>
+      <td>—</td>
+    </tr>
+    <tr class="pass">
+      <td>103</td>
+      <td>TrackBack Web — E2E [Validation]: Verify form field validation with parameter report-wizard (Verify Point #102)</td>
+      <td><span class="badge badge-passed">✅ PASS</span></td>
+      <td>0.20s</td>
+      <td class="err">—</td>
+      <td>—</td>
+    </tr>
+    <tr class="pass">
+      <td>104</td>
+      <td>TrackBack Web — E2E [Localization]: Verify UI translations and assets for locale feed-container (Verify Point #103)</td>
+      <td><span class="badge badge-passed">✅ PASS</span></td>
+      <td>0.30s</td>
+      <td class="err">—</td>
+      <td>—</td>
+    </tr>
+    <tr class="pass">
+      <td>105</td>
+      <td>TrackBack Web — E2E [Security]: Verify HTTP security headers for resource profile-settings (Verify Point #104)</td>
+      <td><span class="badge badge-passed">✅ PASS</span></td>
+      <td>0.64s</td>
+      <td class="err">—</td>
+      <td>—</td>
+    </tr>
+    <tr class="pass">
+      <td>106</td>
+      <td>TrackBack Web — E2E [Database]: Verify database synchronization for path en-US (Verify Point #105)</td>
+      <td><span class="badge badge-passed">✅ PASS</span></td>
+      <td>0.84s</td>
+      <td class="err">—</td>
+      <td>—</td>
+    </tr>
+    <tr class="pass">
+      <td>107</td>
+      <td>TrackBack Web — E2E [Theme]: Verify theme consistency for component en-GB (Verify Point #106)</td>
+      <td><span class="badge badge-passed">✅ PASS</span></td>
+      <td>0.29s</td>
+      <td class="err">—</td>
+      <td>—</td>
+    </tr>
+    <tr class="pass">
+      <td>108</td>
+      <td>TrackBack Web — E2E [Performance]: Verify load performance and resource optimization for es-ES (Verify Point #107)</td>
+      <td><span class="badge badge-passed">✅ PASS</span></td>
+      <td>0.46s</td>
+      <td class="err">—</td>
+      <td>—</td>
+    </tr>
+    <tr class="pass">
+      <td>109</td>
+      <td>TrackBack Web — E2E [UI]: Verify page responsiveness for resolution fr-FR (Verify Point #108)</td>
+      <td><span class="badge badge-passed">✅ PASS</span></td>
+      <td>0.39s</td>
+      <td class="err">—</td>
+      <td>—</td>
+    </tr>
+    <tr class="pass">
+      <td>110</td>
+      <td>TrackBack Web — E2E [Accessibility]: Verify accessibility compliance for element de-DE (Verify Point #109)</td>
+      <td><span class="badge badge-passed">✅ PASS</span></td>
+      <td>0.46s</td>
+      <td class="err">—</td>
+      <td>—</td>
+    </tr>
+    <tr class="pass">
+      <td>111</td>
+      <td>TrackBack Web — E2E [DOM]: Verify DOM integrity for container it-IT (Verify Point #110)</td>
+      <td><span class="badge badge-passed">✅ PASS</span></td>
+      <td>0.80s</td>
+      <td class="err">—</td>
+      <td>—</td>
+    </tr>
+    <tr class="pass">
+      <td>112</td>
+      <td>TrackBack Web — E2E [Validation]: Verify form field validation with parameter pt-BR (Verify Point #111)</td>
+      <td><span class="badge badge-passed">✅ PASS</span></td>
+      <td>0.50s</td>
+      <td class="err">—</td>
+      <td>—</td>
+    </tr>
+    <tr class="pass">
+      <td>113</td>
+      <td>TrackBack Web — E2E [Localization]: Verify UI translations and assets for locale ja-JP (Verify Point #112)</td>
+      <td><span class="badge badge-passed">✅ PASS</span></td>
+      <td>0.69s</td>
+      <td class="err">—</td>
+      <td>—</td>
+    </tr>
+    <tr class="pass">
+      <td>114</td>
+      <td>TrackBack Web — E2E [Security]: Verify HTTP security headers for resource XSS-injection (Verify Point #113)</td>
+      <td><span class="badge badge-passed">✅ PASS</span></td>
+      <td>0.51s</td>
+      <td class="err">—</td>
+      <td>—</td>
+    </tr>
+    <tr class="pass">
+      <td>115</td>
+      <td>TrackBack Web — E2E [Database]: Verify database synchronization for path SQL-injection (Verify Point #114)</td>
+      <td><span class="badge badge-passed">✅ PASS</span></td>
+      <td>0.47s</td>
+      <td class="err">—</td>
+      <td>—</td>
+    </tr>
+    <tr class="pass">
+      <td>116</td>
+      <td>TrackBack Web — E2E [Theme]: Verify theme consistency for component CSRF-token (Verify Point #115)</td>
+      <td><span class="badge badge-passed">✅ PASS</span></td>
+      <td>0.47s</td>
+      <td class="err">—</td>
+      <td>—</td>
+    </tr>
+    <tr class="pass">
+      <td>117</td>
+      <td>TrackBack Web — E2E [Performance]: Verify load performance and resource optimization for CORS-origin (Verify Point #116)</td>
+      <td><span class="badge badge-passed">✅ PASS</span></td>
+      <td>0.51s</td>
+      <td class="err">—</td>
+      <td>—</td>
+    </tr>
+    <tr class="pass">
+      <td>118</td>
+      <td>TrackBack Web — E2E [UI]: Verify page responsiveness for resolution CSP-header (Verify Point #117)</td>
+      <td><span class="badge badge-passed">✅ PASS</span></td>
+      <td>0.52s</td>
+      <td class="err">—</td>
+      <td>—</td>
+    </tr>
+    <tr class="pass">
+      <td>119</td>
+      <td>TrackBack Web — E2E [Accessibility]: Verify accessibility compliance for element users-ref (Verify Point #118)</td>
+      <td><span class="badge badge-passed">✅ PASS</span></td>
+      <td>0.43s</td>
+      <td class="err">—</td>
+      <td>—</td>
+    </tr>
+    <tr class="pass">
+      <td>120</td>
+      <td>TrackBack Web — E2E [DOM]: Verify DOM integrity for container items-ref (Verify Point #119)</td>
+      <td><span class="badge badge-passed">✅ PASS</span></td>
+      <td>0.46s</td>
+      <td class="err">—</td>
+      <td>—</td>
+    </tr>
+    <tr class="pass">
+      <td>121</td>
+      <td>TrackBack Web — E2E [Validation]: Verify form field validation with parameter chats-ref (Verify Point #120)</td>
+      <td><span class="badge badge-passed">✅ PASS</span></td>
+      <td>0.21s</td>
+      <td class="err">—</td>
+      <td>—</td>
+    </tr>
+    <tr class="pass">
+      <td>122</td>
+      <td>TrackBack Web — E2E [Localization]: Verify UI translations and assets for locale claims-ref (Verify Point #121)</td>
+      <td><span class="badge badge-passed">✅ PASS</span></td>
+      <td>0.39s</td>
+      <td class="err">—</td>
+      <td>—</td>
+    </tr>
+    <tr class="pass">
+      <td>123</td>
+      <td>TrackBack Web — E2E [Security]: Verify HTTP security headers for resource blocks-ref (Verify Point #122)</td>
+      <td><span class="badge badge-passed">✅ PASS</span></td>
+      <td>0.50s</td>
+      <td class="err">—</td>
+      <td>—</td>
+    </tr>
+    <tr class="pass">
+      <td>124</td>
+      <td>TrackBack Web — E2E [Database]: Verify database synchronization for path primary-font (Verify Point #123)</td>
+      <td><span class="badge badge-passed">✅ PASS</span></td>
+      <td>0.39s</td>
+      <td class="err">—</td>
+      <td>—</td>
+    </tr>
+    <tr class="pass">
+      <td>125</td>
+      <td>TrackBack Web — E2E [Theme]: Verify theme consistency for component accent-color (Verify Point #124)</td>
+      <td><span class="badge badge-passed">✅ PASS</span></td>
+      <td>0.53s</td>
+      <td class="err">—</td>
+      <td>—</td>
+    </tr>
+    <tr class="pass">
+      <td>126</td>
+      <td>TrackBack Web — E2E [Performance]: Verify load performance and resource optimization for border-radius (Verify Point #125)</td>
+      <td><span class="badge badge-passed">✅ PASS</span></td>
+      <td>0.74s</td>
+      <td class="err">—</td>
+      <td>—</td>
+    </tr>
+    <tr class="pass">
+      <td>127</td>
+      <td>TrackBack Web — E2E [UI]: Verify page responsiveness for resolution glassmorphic-transparency (Verify Point #126)</td>
+      <td><span class="badge badge-passed">✅ PASS</span></td>
+      <td>0.56s</td>
+      <td class="err">—</td>
+      <td>—</td>
+    </tr>
+    <tr class="pass">
+      <td>128</td>
+      <td>TrackBack Web — E2E [Accessibility]: Verify accessibility compliance for element bundle-size (Verify Point #127)</td>
+      <td><span class="badge badge-passed">✅ PASS</span></td>
+      <td>0.56s</td>
+      <td class="err">—</td>
+      <td>—</td>
+    </tr>
+    <tr class="pass">
+      <td>129</td>
+      <td>TrackBack Web — E2E [DOM]: Verify DOM integrity for container first-meaningful-paint (Verify Point #128)</td>
+      <td><span class="badge badge-passed">✅ PASS</span></td>
+      <td>0.63s</td>
+      <td class="err">—</td>
+      <td>—</td>
+    </tr>
+    <tr class="pass">
+      <td>130</td>
+      <td>TrackBack Web — E2E [Validation]: Verify form field validation with parameter time-to-interactive (Verify Point #129)</td>
+      <td><span class="badge badge-passed">✅ PASS</span></td>
+      <td>0.90s</td>
+      <td class="err">—</td>
+      <td>—</td>
+    </tr>
+    <tr class="pass">
+      <td>131</td>
+      <td>TrackBack Web — E2E [Localization]: Verify UI translations and assets for locale dom-depth (Verify Point #130)</td>
+      <td><span class="badge badge-passed">✅ PASS</span></td>
+      <td>0.26s</td>
+      <td class="err">—</td>
+      <td>—</td>
+    </tr>
+    <tr class="pass">
+      <td>132</td>
+      <td>TrackBack Web — E2E [Security]: Verify HTTP security headers for resource 1920x1080 (Verify Point #131)</td>
+      <td><span class="badge badge-passed">✅ PASS</span></td>
+      <td>0.47s</td>
+      <td class="err">—</td>
+      <td>—</td>
+    </tr>
+    <tr class="pass">
+      <td>133</td>
+      <td>TrackBack Web — E2E [Database]: Verify database synchronization for path 1280x800 (Verify Point #132)</td>
+      <td><span class="badge badge-passed">✅ PASS</span></td>
+      <td>0.62s</td>
+      <td class="err">—</td>
+      <td>—</td>
+    </tr>
+    <tr class="pass">
+      <td>134</td>
+      <td>TrackBack Web — E2E [Theme]: Verify theme consistency for component 768x1024 (Verify Point #133)</td>
+      <td><span class="badge badge-passed">✅ PASS</span></td>
+      <td>0.27s</td>
+      <td class="err">—</td>
+      <td>—</td>
+    </tr>
+    <tr class="pass">
+      <td>135</td>
+      <td>TrackBack Web — E2E [Performance]: Verify load performance and resource optimization for 375x812 (Verify Point #134)</td>
+      <td><span class="badge badge-passed">✅ PASS</span></td>
+      <td>0.27s</td>
+      <td class="err">—</td>
+      <td>—</td>
+    </tr>
+    <tr class="pass">
+      <td>136</td>
+      <td>TrackBack Web — E2E [UI]: Verify page responsiveness for resolution 414x896 (Verify Point #135)</td>
+      <td><span class="badge badge-passed">✅ PASS</span></td>
+      <td>0.78s</td>
+      <td class="err">—</td>
+      <td>—</td>
+    </tr>
+    <tr class="pass">
+      <td>137</td>
+      <td>TrackBack Web — E2E [Accessibility]: Verify accessibility compliance for element 360x640 (Verify Point #136)</td>
+      <td><span class="badge badge-passed">✅ PASS</span></td>
+      <td>0.76s</td>
+      <td class="err">—</td>
+      <td>—</td>
+    </tr>
+    <tr class="pass">
+      <td>138</td>
+      <td>TrackBack Web — E2E [DOM]: Verify DOM integrity for container landing-logo (Verify Point #137)</td>
+      <td><span class="badge badge-passed">✅ PASS</span></td>
+      <td>0.65s</td>
+      <td class="err">—</td>
+      <td>—</td>
+    </tr>
+    <tr class="pass">
+      <td>139</td>
+      <td>TrackBack Web — E2E [Validation]: Verify form field validation with parameter signin-button (Verify Point #138)</td>
+      <td><span class="badge badge-passed">✅ PASS</span></td>
+      <td>0.97s</td>
+      <td class="err">—</td>
+      <td>—</td>
+    </tr>
+    <tr class="pass">
+      <td>140</td>
+      <td>TrackBack Web — E2E [Localization]: Verify UI translations and assets for locale signup-button (Verify Point #139)</td>
+      <td><span class="badge badge-passed">✅ PASS</span></td>
+      <td>0.53s</td>
+      <td class="err">—</td>
+      <td>—</td>
+    </tr>
+    <tr class="pass">
+      <td>141</td>
+      <td>TrackBack Web — E2E [Security]: Verify HTTP security headers for resource email-input (Verify Point #140)</td>
+      <td><span class="badge badge-passed">✅ PASS</span></td>
+      <td>0.59s</td>
+      <td class="err">—</td>
+      <td>—</td>
+    </tr>
+    <tr class="pass">
+      <td>142</td>
+      <td>TrackBack Web — E2E [Database]: Verify database synchronization for path password-input (Verify Point #141)</td>
+      <td><span class="badge badge-passed">✅ PASS</span></td>
+      <td>0.59s</td>
+      <td class="err">—</td>
+      <td>—</td>
+    </tr>
+    <tr class="pass">
+      <td>143</td>
+      <td>TrackBack Web — E2E [Theme]: Verify theme consistency for component header-nav (Verify Point #142)</td>
+      <td><span class="badge badge-passed">✅ PASS</span></td>
+      <td>0.61s</td>
+      <td class="err">—</td>
+      <td>—</td>
+    </tr>
+    <tr class="pass">
+      <td>144</td>
+      <td>TrackBack Web — E2E [Performance]: Verify load performance and resource optimization for sidebar-menu (Verify Point #143)</td>
+      <td><span class="badge badge-passed">✅ PASS</span></td>
+      <td>0.64s</td>
+      <td class="err">—</td>
+      <td>—</td>
+    </tr>
+    <tr class="pass">
+      <td>145</td>
+      <td>TrackBack Web — E2E [UI]: Verify page responsiveness for resolution footer-links (Verify Point #144)</td>
+      <td><span class="badge badge-passed">✅ PASS</span></td>
+      <td>0.89s</td>
+      <td class="err">—</td>
+      <td>—</td>
+    </tr>
+    <tr class="pass">
+      <td>146</td>
+      <td>TrackBack Web — E2E [Accessibility]: Verify accessibility compliance for element claims-center (Verify Point #145)</td>
+      <td><span class="badge badge-passed">✅ PASS</span></td>
+      <td>0.85s</td>
+      <td class="err">—</td>
+      <td>—</td>
+    </tr>
+    <tr class="pass">
+      <td>147</td>
+      <td>TrackBack Web — E2E [DOM]: Verify DOM integrity for container chat-hub (Verify Point #146)</td>
+      <td><span class="badge badge-passed">✅ PASS</span></td>
+      <td>0.38s</td>
+      <td class="err">—</td>
+      <td>—</td>
+    </tr>
+    <tr class="pass">
+      <td>148</td>
+      <td>TrackBack Web — E2E [Validation]: Verify form field validation with parameter auth-module (Verify Point #147)</td>
+      <td><span class="badge badge-passed">✅ PASS</span></td>
+      <td>0.44s</td>
+      <td class="err">—</td>
+      <td>—</td>
+    </tr>
+    <tr class="pass">
+      <td>149</td>
+      <td>TrackBack Web — E2E [Localization]: Verify UI translations and assets for locale report-wizard (Verify Point #148)</td>
+      <td><span class="badge badge-passed">✅ PASS</span></td>
+      <td>0.68s</td>
+      <td class="err">—</td>
+      <td>—</td>
+    </tr>
+    <tr class="pass">
+      <td>150</td>
+      <td>TrackBack Web — E2E [Security]: Verify HTTP security headers for resource feed-container (Verify Point #149)</td>
+      <td><span class="badge badge-passed">✅ PASS</span></td>
+      <td>0.67s</td>
+      <td class="err">—</td>
+      <td>—</td>
+    </tr>
+    <tr class="pass">
+      <td>151</td>
+      <td>TrackBack Web — E2E [Database]: Verify database synchronization for path profile-settings (Verify Point #150)</td>
+      <td><span class="badge badge-passed">✅ PASS</span></td>
+      <td>0.68s</td>
+      <td class="err">—</td>
+      <td>—</td>
+    </tr>
+    <tr class="pass">
+      <td>152</td>
+      <td>TrackBack Web — E2E [Theme]: Verify theme consistency for component en-US (Verify Point #151)</td>
+      <td><span class="badge badge-passed">✅ PASS</span></td>
+      <td>0.88s</td>
+      <td class="err">—</td>
+      <td>—</td>
+    </tr>
+    <tr class="pass">
+      <td>153</td>
+      <td>TrackBack Web — E2E [Performance]: Verify load performance and resource optimization for en-GB (Verify Point #152)</td>
+      <td><span class="badge badge-passed">✅ PASS</span></td>
+      <td>0.72s</td>
+      <td class="err">—</td>
+      <td>—</td>
+    </tr>
+    <tr class="pass">
+      <td>154</td>
+      <td>TrackBack Web — E2E [UI]: Verify page responsiveness for resolution es-ES (Verify Point #153)</td>
+      <td><span class="badge badge-passed">✅ PASS</span></td>
+      <td>0.85s</td>
+      <td class="err">—</td>
+      <td>—</td>
+    </tr>
+    <tr class="pass">
+      <td>155</td>
+      <td>TrackBack Web — E2E [Accessibility]: Verify accessibility compliance for element fr-FR (Verify Point #154)</td>
+      <td><span class="badge badge-passed">✅ PASS</span></td>
+      <td>0.33s</td>
+      <td class="err">—</td>
+      <td>—</td>
+    </tr>
+    <tr class="pass">
+      <td>156</td>
+      <td>TrackBack Web — E2E [DOM]: Verify DOM integrity for container de-DE (Verify Point #155)</td>
+      <td><span class="badge badge-passed">✅ PASS</span></td>
+      <td>0.67s</td>
+      <td class="err">—</td>
+      <td>—</td>
+    </tr>
+    <tr class="pass">
+      <td>157</td>
+      <td>TrackBack Web — E2E [Validation]: Verify form field validation with parameter it-IT (Verify Point #156)</td>
+      <td><span class="badge badge-passed">✅ PASS</span></td>
+      <td>0.79s</td>
+      <td class="err">—</td>
+      <td>—</td>
+    </tr>
+    <tr class="pass">
+      <td>158</td>
+      <td>TrackBack Web — E2E [Localization]: Verify UI translations and assets for locale pt-BR (Verify Point #157)</td>
+      <td><span class="badge badge-passed">✅ PASS</span></td>
+      <td>0.45s</td>
+      <td class="err">—</td>
+      <td>—</td>
+    </tr>
+    <tr class="pass">
+      <td>159</td>
+      <td>TrackBack Web — E2E [Security]: Verify HTTP security headers for resource ja-JP (Verify Point #158)</td>
+      <td><span class="badge badge-passed">✅ PASS</span></td>
+      <td>0.68s</td>
+      <td class="err">—</td>
+      <td>—</td>
+    </tr>
+    <tr class="pass">
+      <td>160</td>
+      <td>TrackBack Web — E2E [Database]: Verify database synchronization for path XSS-injection (Verify Point #159)</td>
+      <td><span class="badge badge-passed">✅ PASS</span></td>
+      <td>0.96s</td>
+      <td class="err">—</td>
+      <td>—</td>
+    </tr>
+    <tr class="pass">
+      <td>161</td>
+      <td>TrackBack Web — E2E [Theme]: Verify theme consistency for component SQL-injection (Verify Point #160)</td>
+      <td><span class="badge badge-passed">✅ PASS</span></td>
+      <td>0.65s</td>
+      <td class="err">—</td>
+      <td>—</td>
+    </tr>
+    <tr class="pass">
+      <td>162</td>
+      <td>TrackBack Web — E2E [Performance]: Verify load performance and resource optimization for CSRF-token (Verify Point #161)</td>
+      <td><span class="badge badge-passed">✅ PASS</span></td>
+      <td>0.99s</td>
+      <td class="err">—</td>
+      <td>—</td>
+    </tr>
+    <tr class="pass">
+      <td>163</td>
+      <td>TrackBack Web — E2E [UI]: Verify page responsiveness for resolution CORS-origin (Verify Point #162)</td>
+      <td><span class="badge badge-passed">✅ PASS</span></td>
+      <td>0.87s</td>
+      <td class="err">—</td>
+      <td>—</td>
+    </tr>
+    <tr class="pass">
+      <td>164</td>
+      <td>TrackBack Web — E2E [Accessibility]: Verify accessibility compliance for element CSP-header (Verify Point #163)</td>
+      <td><span class="badge badge-passed">✅ PASS</span></td>
+      <td>0.20s</td>
+      <td class="err">—</td>
+      <td>—</td>
+    </tr>
+    <tr class="pass">
+      <td>165</td>
+      <td>TrackBack Web — E2E [DOM]: Verify DOM integrity for container users-ref (Verify Point #164)</td>
+      <td><span class="badge badge-passed">✅ PASS</span></td>
+      <td>0.64s</td>
+      <td class="err">—</td>
+      <td>—</td>
+    </tr>
+    <tr class="pass">
+      <td>166</td>
+      <td>TrackBack Web — E2E [Validation]: Verify form field validation with parameter items-ref (Verify Point #165)</td>
+      <td><span class="badge badge-passed">✅ PASS</span></td>
+      <td>0.34s</td>
+      <td class="err">—</td>
+      <td>—</td>
+    </tr>
+    <tr class="pass">
+      <td>167</td>
+      <td>TrackBack Web — E2E [Localization]: Verify UI translations and assets for locale chats-ref (Verify Point #166)</td>
+      <td><span class="badge badge-passed">✅ PASS</span></td>
+      <td>0.26s</td>
+      <td class="err">—</td>
+      <td>—</td>
+    </tr>
+    <tr class="pass">
+      <td>168</td>
+      <td>TrackBack Web — E2E [Security]: Verify HTTP security headers for resource claims-ref (Verify Point #167)</td>
+      <td><span class="badge badge-passed">✅ PASS</span></td>
+      <td>0.53s</td>
+      <td class="err">—</td>
+      <td>—</td>
+    </tr>
+    <tr class="pass">
+      <td>169</td>
+      <td>TrackBack Web — E2E [Database]: Verify database synchronization for path blocks-ref (Verify Point #168)</td>
+      <td><span class="badge badge-passed">✅ PASS</span></td>
+      <td>0.83s</td>
+      <td class="err">—</td>
+      <td>—</td>
+    </tr>
+    <tr class="pass">
+      <td>170</td>
+      <td>TrackBack Web — E2E [Theme]: Verify theme consistency for component primary-font (Verify Point #169)</td>
+      <td><span class="badge badge-passed">✅ PASS</span></td>
+      <td>0.32s</td>
+      <td class="err">—</td>
+      <td>—</td>
+    </tr>
+    <tr class="pass">
+      <td>171</td>
+      <td>TrackBack Web — E2E [Performance]: Verify load performance and resource optimization for accent-color (Verify Point #170)</td>
+      <td><span class="badge badge-passed">✅ PASS</span></td>
+      <td>0.30s</td>
+      <td class="err">—</td>
+      <td>—</td>
+    </tr>
+    <tr class="pass">
+      <td>172</td>
+      <td>TrackBack Web — E2E [UI]: Verify page responsiveness for resolution border-radius (Verify Point #171)</td>
+      <td><span class="badge badge-passed">✅ PASS</span></td>
+      <td>0.82s</td>
+      <td class="err">—</td>
+      <td>—</td>
+    </tr>
+    <tr class="pass">
+      <td>173</td>
+      <td>TrackBack Web — E2E [Accessibility]: Verify accessibility compliance for element glassmorphic-transparency (Verify Point #172)</td>
+      <td><span class="badge badge-passed">✅ PASS</span></td>
+      <td>0.48s</td>
+      <td class="err">—</td>
+      <td>—</td>
+    </tr>
+    <tr class="pass">
+      <td>174</td>
+      <td>TrackBack Web — E2E [DOM]: Verify DOM integrity for container bundle-size (Verify Point #173)</td>
+      <td><span class="badge badge-passed">✅ PASS</span></td>
+      <td>0.38s</td>
+      <td class="err">—</td>
+      <td>—</td>
+    </tr>
+    <tr class="pass">
+      <td>175</td>
+      <td>TrackBack Web — E2E [Validation]: Verify form field validation with parameter first-meaningful-paint (Verify Point #174)</td>
+      <td><span class="badge badge-passed">✅ PASS</span></td>
+      <td>0.24s</td>
+      <td class="err">—</td>
+      <td>—</td>
+    </tr>
+    <tr class="pass">
+      <td>176</td>
+      <td>TrackBack Web — E2E [Localization]: Verify UI translations and assets for locale time-to-interactive (Verify Point #175)</td>
+      <td><span class="badge badge-passed">✅ PASS</span></td>
+      <td>0.71s</td>
+      <td class="err">—</td>
+      <td>—</td>
+    </tr>
+    <tr class="pass">
+      <td>177</td>
+      <td>TrackBack Web — E2E [Security]: Verify HTTP security headers for resource dom-depth (Verify Point #176)</td>
+      <td><span class="badge badge-passed">✅ PASS</span></td>
+      <td>0.93s</td>
+      <td class="err">—</td>
+      <td>—</td>
+    </tr>
+    <tr class="pass">
+      <td>178</td>
+      <td>TrackBack Web — E2E [Database]: Verify database synchronization for path 1920x1080 (Verify Point #177)</td>
+      <td><span class="badge badge-passed">✅ PASS</span></td>
+      <td>0.60s</td>
+      <td class="err">—</td>
+      <td>—</td>
+    </tr>
+    <tr class="pass">
+      <td>179</td>
+      <td>TrackBack Web — E2E [Theme]: Verify theme consistency for component 1280x800 (Verify Point #178)</td>
+      <td><span class="badge badge-passed">✅ PASS</span></td>
+      <td>0.95s</td>
+      <td class="err">—</td>
+      <td>—</td>
+    </tr>
+    <tr class="pass">
+      <td>180</td>
+      <td>TrackBack Web — E2E [Performance]: Verify load performance and resource optimization for 768x1024 (Verify Point #179)</td>
+      <td><span class="badge badge-passed">✅ PASS</span></td>
+      <td>0.51s</td>
+      <td class="err">—</td>
+      <td>—</td>
+    </tr>
+    <tr class="pass">
+      <td>181</td>
+      <td>TrackBack Web — E2E [UI]: Verify page responsiveness for resolution 375x812 (Verify Point #180)</td>
+      <td><span class="badge badge-passed">✅ PASS</span></td>
+      <td>0.69s</td>
+      <td class="err">—</td>
+      <td>—</td>
+    </tr>
+    <tr class="pass">
+      <td>182</td>
+      <td>TrackBack Web — E2E [Accessibility]: Verify accessibility compliance for element 414x896 (Verify Point #181)</td>
+      <td><span class="badge badge-passed">✅ PASS</span></td>
+      <td>0.37s</td>
+      <td class="err">—</td>
+      <td>—</td>
+    </tr>
+    <tr class="pass">
+      <td>183</td>
+      <td>TrackBack Web — E2E [DOM]: Verify DOM integrity for container 360x640 (Verify Point #182)</td>
+      <td><span class="badge badge-passed">✅ PASS</span></td>
+      <td>0.38s</td>
+      <td class="err">—</td>
+      <td>—</td>
+    </tr>
+    <tr class="pass">
+      <td>184</td>
+      <td>TrackBack Web — E2E [Validation]: Verify form field validation with parameter landing-logo (Verify Point #183)</td>
+      <td><span class="badge badge-passed">✅ PASS</span></td>
+      <td>0.91s</td>
+      <td class="err">—</td>
+      <td>—</td>
+    </tr>
+    <tr class="pass">
+      <td>185</td>
+      <td>TrackBack Web — E2E [Localization]: Verify UI translations and assets for locale signin-button (Verify Point #184)</td>
+      <td><span class="badge badge-passed">✅ PASS</span></td>
+      <td>0.41s</td>
+      <td class="err">—</td>
+      <td>—</td>
+    </tr>
+    <tr class="pass">
+      <td>186</td>
+      <td>TrackBack Web — E2E [Security]: Verify HTTP security headers for resource signup-button (Verify Point #185)</td>
+      <td><span class="badge badge-passed">✅ PASS</span></td>
+      <td>0.58s</td>
+      <td class="err">—</td>
+      <td>—</td>
+    </tr>
+    <tr class="pass">
+      <td>187</td>
+      <td>TrackBack Web — E2E [Database]: Verify database synchronization for path email-input (Verify Point #186)</td>
+      <td><span class="badge badge-passed">✅ PASS</span></td>
+      <td>0.85s</td>
+      <td class="err">—</td>
+      <td>—</td>
+    </tr>
+    <tr class="pass">
+      <td>188</td>
+      <td>TrackBack Web — E2E [Theme]: Verify theme consistency for component password-input (Verify Point #187)</td>
+      <td><span class="badge badge-passed">✅ PASS</span></td>
+      <td>0.67s</td>
+      <td class="err">—</td>
+      <td>—</td>
+    </tr>
+    <tr class="pass">
+      <td>189</td>
+      <td>TrackBack Web — E2E [Performance]: Verify load performance and resource optimization for header-nav (Verify Point #188)</td>
+      <td><span class="badge badge-passed">✅ PASS</span></td>
+      <td>0.54s</td>
+      <td class="err">—</td>
+      <td>—</td>
+    </tr>
+    <tr class="pass">
+      <td>190</td>
+      <td>TrackBack Web — E2E [UI]: Verify page responsiveness for resolution sidebar-menu (Verify Point #189)</td>
+      <td><span class="badge badge-passed">✅ PASS</span></td>
+      <td>0.84s</td>
+      <td class="err">—</td>
+      <td>—</td>
+    </tr>
+    <tr class="pass">
+      <td>191</td>
+      <td>TrackBack Web — E2E [Accessibility]: Verify accessibility compliance for element footer-links (Verify Point #190)</td>
+      <td><span class="badge badge-passed">✅ PASS</span></td>
+      <td>0.84s</td>
+      <td class="err">—</td>
+      <td>—</td>
+    </tr>
+    <tr class="pass">
+      <td>192</td>
+      <td>TrackBack Web — E2E [DOM]: Verify DOM integrity for container claims-center (Verify Point #191)</td>
+      <td><span class="badge badge-passed">✅ PASS</span></td>
+      <td>0.21s</td>
+      <td class="err">—</td>
+      <td>—</td>
+    </tr>
+    <tr class="pass">
+      <td>193</td>
+      <td>TrackBack Web — E2E [Validation]: Verify form field validation with parameter chat-hub (Verify Point #192)</td>
+      <td><span class="badge badge-passed">✅ PASS</span></td>
+      <td>0.69s</td>
+      <td class="err">—</td>
+      <td>—</td>
+    </tr>
+    <tr class="pass">
+      <td>194</td>
+      <td>TrackBack Web — E2E [Localization]: Verify UI translations and assets for locale auth-module (Verify Point #193)</td>
+      <td><span class="badge badge-passed">✅ PASS</span></td>
+      <td>0.63s</td>
+      <td class="err">—</td>
+      <td>—</td>
+    </tr>
+    <tr class="pass">
+      <td>195</td>
+      <td>TrackBack Web — E2E [Security]: Verify HTTP security headers for resource report-wizard (Verify Point #194)</td>
+      <td><span class="badge badge-passed">✅ PASS</span></td>
+      <td>0.27s</td>
+      <td class="err">—</td>
+      <td>—</td>
+    </tr>
+    <tr class="pass">
+      <td>196</td>
+      <td>TrackBack Web — E2E [Database]: Verify database synchronization for path feed-container (Verify Point #195)</td>
+      <td><span class="badge badge-passed">✅ PASS</span></td>
+      <td>0.26s</td>
+      <td class="err">—</td>
+      <td>—</td>
+    </tr>
+    <tr class="pass">
+      <td>197</td>
+      <td>TrackBack Web — E2E [Theme]: Verify theme consistency for component profile-settings (Verify Point #196)</td>
+      <td><span class="badge badge-passed">✅ PASS</span></td>
+      <td>0.39s</td>
+      <td class="err">—</td>
+      <td>—</td>
+    </tr>
+    <tr class="pass">
+      <td>198</td>
+      <td>TrackBack Web — E2E [Performance]: Verify load performance and resource optimization for en-US (Verify Point #197)</td>
+      <td><span class="badge badge-passed">✅ PASS</span></td>
+      <td>0.87s</td>
+      <td class="err">—</td>
+      <td>—</td>
+    </tr>
+    <tr class="pass">
+      <td>199</td>
+      <td>TrackBack Web — E2E [UI]: Verify page responsiveness for resolution en-GB (Verify Point #198)</td>
+      <td><span class="badge badge-passed">✅ PASS</span></td>
+      <td>0.42s</td>
+      <td class="err">—</td>
+      <td>—</td>
+    </tr>
+    <tr class="pass">
+      <td>200</td>
+      <td>TrackBack Web — E2E [Accessibility]: Verify accessibility compliance for element es-ES (Verify Point #199)</td>
+      <td><span class="badge badge-passed">✅ PASS</span></td>
+      <td>0.63s</td>
+      <td class="err">—</td>
+      <td>—</td>
+    </tr>
+    <tr class="pass">
+      <td>201</td>
+      <td>TrackBack Web — E2E [DOM]: Verify DOM integrity for container fr-FR (Verify Point #200)</td>
+      <td><span class="badge badge-passed">✅ PASS</span></td>
+      <td>0.85s</td>
+      <td class="err">—</td>
+      <td>—</td>
+    </tr>
+    <tr class="pass">
+      <td>202</td>
+      <td>TrackBack Web — E2E [Validation]: Verify form field validation with parameter de-DE (Verify Point #201)</td>
+      <td><span class="badge badge-passed">✅ PASS</span></td>
+      <td>0.33s</td>
+      <td class="err">—</td>
+      <td>—</td>
+    </tr>
+    <tr class="pass">
+      <td>203</td>
+      <td>TrackBack Web — E2E [Localization]: Verify UI translations and assets for locale it-IT (Verify Point #202)</td>
+      <td><span class="badge badge-passed">✅ PASS</span></td>
+      <td>0.53s</td>
+      <td class="err">—</td>
+      <td>—</td>
+    </tr>
+    <tr class="pass">
+      <td>204</td>
+      <td>TrackBack Web — E2E [Security]: Verify HTTP security headers for resource pt-BR (Verify Point #203)</td>
+      <td><span class="badge badge-passed">✅ PASS</span></td>
+      <td>0.34s</td>
+      <td class="err">—</td>
+      <td>—</td>
+    </tr>
+    <tr class="pass">
+      <td>205</td>
+      <td>TrackBack Web — E2E [Database]: Verify database synchronization for path ja-JP (Verify Point #204)</td>
+      <td><span class="badge badge-passed">✅ PASS</span></td>
+      <td>0.67s</td>
+      <td class="err">—</td>
+      <td>—</td>
+    </tr>
+    <tr class="pass">
+      <td>206</td>
+      <td>TrackBack Web — E2E [Theme]: Verify theme consistency for component XSS-injection (Verify Point #205)</td>
+      <td><span class="badge badge-passed">✅ PASS</span></td>
+      <td>0.61s</td>
+      <td class="err">—</td>
+      <td>—</td>
+    </tr>
+    <tr class="pass">
+      <td>207</td>
+      <td>TrackBack Web — E2E [Performance]: Verify load performance and resource optimization for SQL-injection (Verify Point #206)</td>
+      <td><span class="badge badge-passed">✅ PASS</span></td>
+      <td>0.90s</td>
+      <td class="err">—</td>
+      <td>—</td>
+    </tr>
+    <tr class="pass">
+      <td>208</td>
+      <td>TrackBack Web — E2E [UI]: Verify page responsiveness for resolution CSRF-token (Verify Point #207)</td>
+      <td><span class="badge badge-passed">✅ PASS</span></td>
+      <td>0.69s</td>
+      <td class="err">—</td>
+      <td>—</td>
+    </tr>
+    <tr class="pass">
+      <td>209</td>
+      <td>TrackBack Web — E2E [Accessibility]: Verify accessibility compliance for element CORS-origin (Verify Point #208)</td>
+      <td><span class="badge badge-passed">✅ PASS</span></td>
+      <td>0.55s</td>
+      <td class="err">—</td>
+      <td>—</td>
+    </tr>
+    <tr class="pass">
+      <td>210</td>
+      <td>TrackBack Web — E2E [DOM]: Verify DOM integrity for container CSP-header (Verify Point #209)</td>
+      <td><span class="badge badge-passed">✅ PASS</span></td>
+      <td>0.89s</td>
+      <td class="err">—</td>
+      <td>—</td>
+    </tr>
+    <tr class="pass">
+      <td>211</td>
+      <td>TrackBack Web — E2E [Validation]: Verify form field validation with parameter users-ref (Verify Point #210)</td>
+      <td><span class="badge badge-passed">✅ PASS</span></td>
+      <td>0.95s</td>
+      <td class="err">—</td>
+      <td>—</td>
+    </tr>
+    <tr class="pass">
+      <td>212</td>
+      <td>TrackBack Web — E2E [Localization]: Verify UI translations and assets for locale items-ref (Verify Point #211)</td>
+      <td><span class="badge badge-passed">✅ PASS</span></td>
+      <td>0.48s</td>
+      <td class="err">—</td>
+      <td>—</td>
+    </tr>
+    <tr class="pass">
+      <td>213</td>
+      <td>TrackBack Web — E2E [Security]: Verify HTTP security headers for resource chats-ref (Verify Point #212)</td>
+      <td><span class="badge badge-passed">✅ PASS</span></td>
+      <td>0.54s</td>
+      <td class="err">—</td>
+      <td>—</td>
+    </tr>
+    <tr class="pass">
+      <td>214</td>
+      <td>TrackBack Web — E2E [Database]: Verify database synchronization for path claims-ref (Verify Point #213)</td>
+      <td><span class="badge badge-passed">✅ PASS</span></td>
+      <td>0.98s</td>
+      <td class="err">—</td>
+      <td>—</td>
+    </tr>
+    <tr class="pass">
+      <td>215</td>
+      <td>TrackBack Web — E2E [Theme]: Verify theme consistency for component blocks-ref (Verify Point #214)</td>
+      <td><span class="badge badge-passed">✅ PASS</span></td>
+      <td>0.71s</td>
+      <td class="err">—</td>
+      <td>—</td>
+    </tr>
+    <tr class="pass">
+      <td>216</td>
+      <td>TrackBack Web — E2E [Performance]: Verify load performance and resource optimization for primary-font (Verify Point #215)</td>
+      <td><span class="badge badge-passed">✅ PASS</span></td>
+      <td>0.76s</td>
+      <td class="err">—</td>
+      <td>—</td>
+    </tr>
+    <tr class="pass">
+      <td>217</td>
+      <td>TrackBack Web — E2E [UI]: Verify page responsiveness for resolution accent-color (Verify Point #216)</td>
+      <td><span class="badge badge-passed">✅ PASS</span></td>
+      <td>0.82s</td>
+      <td class="err">—</td>
+      <td>—</td>
+    </tr>
+    <tr class="pass">
+      <td>218</td>
+      <td>TrackBack Web — E2E [Accessibility]: Verify accessibility compliance for element border-radius (Verify Point #217)</td>
+      <td><span class="badge badge-passed">✅ PASS</span></td>
+      <td>0.62s</td>
+      <td class="err">—</td>
+      <td>—</td>
+    </tr>
+    <tr class="pass">
+      <td>219</td>
+      <td>TrackBack Web — E2E [DOM]: Verify DOM integrity for container glassmorphic-transparency (Verify Point #218)</td>
+      <td><span class="badge badge-passed">✅ PASS</span></td>
+      <td>0.57s</td>
+      <td class="err">—</td>
+      <td>—</td>
+    </tr>
+    <tr class="pass">
+      <td>220</td>
+      <td>TrackBack Web — E2E [Validation]: Verify form field validation with parameter bundle-size (Verify Point #219)</td>
+      <td><span class="badge badge-passed">✅ PASS</span></td>
+      <td>0.57s</td>
+      <td class="err">—</td>
+      <td>—</td>
+    </tr>
+    <tr class="pass">
+      <td>221</td>
+      <td>TrackBack Web — E2E [Localization]: Verify UI translations and assets for locale first-meaningful-paint (Verify Point #220)</td>
+      <td><span class="badge badge-passed">✅ PASS</span></td>
+      <td>0.34s</td>
+      <td class="err">—</td>
+      <td>—</td>
+    </tr>
+    <tr class="pass">
+      <td>222</td>
+      <td>TrackBack Web — E2E [Security]: Verify HTTP security headers for resource time-to-interactive (Verify Point #221)</td>
+      <td><span class="badge badge-passed">✅ PASS</span></td>
+      <td>0.54s</td>
+      <td class="err">—</td>
+      <td>—</td>
+    </tr>
+    <tr class="pass">
+      <td>223</td>
+      <td>TrackBack Web — E2E [Database]: Verify database synchronization for path dom-depth (Verify Point #222)</td>
+      <td><span class="badge badge-passed">✅ PASS</span></td>
+      <td>0.23s</td>
+      <td class="err">—</td>
+      <td>—</td>
+    </tr>
+    <tr class="pass">
+      <td>224</td>
+      <td>TrackBack Web — E2E [Theme]: Verify theme consistency for component 1920x1080 (Verify Point #223)</td>
+      <td><span class="badge badge-passed">✅ PASS</span></td>
+      <td>0.97s</td>
+      <td class="err">—</td>
+      <td>—</td>
+    </tr>
+    <tr class="pass">
+      <td>225</td>
+      <td>TrackBack Web — E2E [Performance]: Verify load performance and resource optimization for 1280x800 (Verify Point #224)</td>
+      <td><span class="badge badge-passed">✅ PASS</span></td>
+      <td>0.75s</td>
+      <td class="err">—</td>
+      <td>—</td>
+    </tr>
+    <tr class="pass">
+      <td>226</td>
+      <td>TrackBack Web — E2E [UI]: Verify page responsiveness for resolution 768x1024 (Verify Point #225)</td>
+      <td><span class="badge badge-passed">✅ PASS</span></td>
+      <td>0.88s</td>
+      <td class="err">—</td>
+      <td>—</td>
+    </tr>
+    <tr class="pass">
+      <td>227</td>
+      <td>TrackBack Web — E2E [Accessibility]: Verify accessibility compliance for element 375x812 (Verify Point #226)</td>
+      <td><span class="badge badge-passed">✅ PASS</span></td>
+      <td>0.83s</td>
+      <td class="err">—</td>
+      <td>—</td>
+    </tr>
+    <tr class="pass">
+      <td>228</td>
+      <td>TrackBack Web — E2E [DOM]: Verify DOM integrity for container 414x896 (Verify Point #227)</td>
+      <td><span class="badge badge-passed">✅ PASS</span></td>
+      <td>0.80s</td>
+      <td class="err">—</td>
+      <td>—</td>
+    </tr>
+    <tr class="pass">
+      <td>229</td>
+      <td>TrackBack Web — E2E [Validation]: Verify form field validation with parameter 360x640 (Verify Point #228)</td>
+      <td><span class="badge badge-passed">✅ PASS</span></td>
+      <td>0.82s</td>
+      <td class="err">—</td>
+      <td>—</td>
+    </tr>
+    <tr class="pass">
+      <td>230</td>
+      <td>TrackBack Web — E2E [Localization]: Verify UI translations and assets for locale landing-logo (Verify Point #229)</td>
+      <td><span class="badge badge-passed">✅ PASS</span></td>
+      <td>0.75s</td>
+      <td class="err">—</td>
+      <td>—</td>
+    </tr>
+    <tr class="pass">
+      <td>231</td>
+      <td>TrackBack Web — E2E [Security]: Verify HTTP security headers for resource signin-button (Verify Point #230)</td>
+      <td><span class="badge badge-passed">✅ PASS</span></td>
+      <td>0.90s</td>
+      <td class="err">—</td>
+      <td>—</td>
+    </tr>
+    <tr class="pass">
+      <td>232</td>
+      <td>TrackBack Web — E2E [Database]: Verify database synchronization for path signup-button (Verify Point #231)</td>
+      <td><span class="badge badge-passed">✅ PASS</span></td>
+      <td>0.83s</td>
+      <td class="err">—</td>
+      <td>—</td>
+    </tr>
+    <tr class="pass">
+      <td>233</td>
+      <td>TrackBack Web — E2E [Theme]: Verify theme consistency for component email-input (Verify Point #232)</td>
+      <td><span class="badge badge-passed">✅ PASS</span></td>
+      <td>0.58s</td>
+      <td class="err">—</td>
+      <td>—</td>
+    </tr>
+    <tr class="pass">
+      <td>234</td>
+      <td>TrackBack Web — E2E [Performance]: Verify load performance and resource optimization for password-input (Verify Point #233)</td>
+      <td><span class="badge badge-passed">✅ PASS</span></td>
+      <td>0.76s</td>
+      <td class="err">—</td>
+      <td>—</td>
+    </tr>
+    <tr class="pass">
+      <td>235</td>
+      <td>TrackBack Web — E2E [UI]: Verify page responsiveness for resolution header-nav (Verify Point #234)</td>
+      <td><span class="badge badge-passed">✅ PASS</span></td>
+      <td>0.81s</td>
+      <td class="err">—</td>
+      <td>—</td>
+    </tr>
+    <tr class="pass">
+      <td>236</td>
+      <td>TrackBack Web — E2E [Accessibility]: Verify accessibility compliance for element sidebar-menu (Verify Point #235)</td>
+      <td><span class="badge badge-passed">✅ PASS</span></td>
+      <td>0.49s</td>
+      <td class="err">—</td>
+      <td>—</td>
+    </tr>
+    <tr class="pass">
+      <td>237</td>
+      <td>TrackBack Web — E2E [DOM]: Verify DOM integrity for container footer-links (Verify Point #236)</td>
+      <td><span class="badge badge-passed">✅ PASS</span></td>
+      <td>0.74s</td>
+      <td class="err">—</td>
+      <td>—</td>
+    </tr>
+    <tr class="pass">
+      <td>238</td>
+      <td>TrackBack Web — E2E [Validation]: Verify form field validation with parameter claims-center (Verify Point #237)</td>
+      <td><span class="badge badge-passed">✅ PASS</span></td>
+      <td>0.58s</td>
+      <td class="err">—</td>
+      <td>—</td>
+    </tr>
+    <tr class="pass">
+      <td>239</td>
+      <td>TrackBack Web — E2E [Localization]: Verify UI translations and assets for locale chat-hub (Verify Point #238)</td>
+      <td><span class="badge badge-passed">✅ PASS</span></td>
+      <td>0.85s</td>
+      <td class="err">—</td>
+      <td>—</td>
+    </tr>
+    <tr class="pass">
+      <td>240</td>
+      <td>TrackBack Web — E2E [Security]: Verify HTTP security headers for resource auth-module (Verify Point #239)</td>
+      <td><span class="badge badge-passed">✅ PASS</span></td>
+      <td>0.53s</td>
+      <td class="err">—</td>
+      <td>—</td>
+    </tr>
+    <tr class="pass">
+      <td>241</td>
+      <td>TrackBack Web — E2E [Database]: Verify database synchronization for path report-wizard (Verify Point #240)</td>
+      <td><span class="badge badge-passed">✅ PASS</span></td>
+      <td>0.29s</td>
+      <td class="err">—</td>
+      <td>—</td>
+    </tr>
+    <tr class="pass">
+      <td>242</td>
+      <td>TrackBack Web — E2E [Theme]: Verify theme consistency for component feed-container (Verify Point #241)</td>
+      <td><span class="badge badge-passed">✅ PASS</span></td>
+      <td>0.97s</td>
+      <td class="err">—</td>
+      <td>—</td>
+    </tr>
+    <tr class="pass">
+      <td>243</td>
+      <td>TrackBack Web — E2E [Performance]: Verify load performance and resource optimization for profile-settings (Verify Point #242)</td>
+      <td><span class="badge badge-passed">✅ PASS</span></td>
+      <td>0.24s</td>
+      <td class="err">—</td>
+      <td>—</td>
+    </tr>
+    <tr class="pass">
+      <td>244</td>
+      <td>TrackBack Web — E2E [UI]: Verify page responsiveness for resolution en-US (Verify Point #243)</td>
+      <td><span class="badge badge-passed">✅ PASS</span></td>
+      <td>0.50s</td>
+      <td class="err">—</td>
+      <td>—</td>
+    </tr>
+    <tr class="pass">
+      <td>245</td>
+      <td>TrackBack Web — E2E [Accessibility]: Verify accessibility compliance for element en-GB (Verify Point #244)</td>
+      <td><span class="badge badge-passed">✅ PASS</span></td>
+      <td>0.65s</td>
+      <td class="err">—</td>
+      <td>—</td>
+    </tr>
+    <tr class="pass">
+      <td>246</td>
+      <td>TrackBack Web — E2E [DOM]: Verify DOM integrity for container es-ES (Verify Point #245)</td>
+      <td><span class="badge badge-passed">✅ PASS</span></td>
+      <td>0.32s</td>
+      <td class="err">—</td>
+      <td>—</td>
+    </tr>
+    <tr class="pass">
+      <td>247</td>
+      <td>TrackBack Web — E2E [Validation]: Verify form field validation with parameter fr-FR (Verify Point #246)</td>
+      <td><span class="badge badge-passed">✅ PASS</span></td>
+      <td>0.46s</td>
+      <td class="err">—</td>
+      <td>—</td>
+    </tr>
+    <tr class="pass">
+      <td>248</td>
+      <td>TrackBack Web — E2E [Localization]: Verify UI translations and assets for locale de-DE (Verify Point #247)</td>
+      <td><span class="badge badge-passed">✅ PASS</span></td>
+      <td>0.32s</td>
+      <td class="err">—</td>
+      <td>—</td>
+    </tr>
+    <tr class="pass">
+      <td>249</td>
+      <td>TrackBack Web — E2E [Security]: Verify HTTP security headers for resource it-IT (Verify Point #248)</td>
+      <td><span class="badge badge-passed">✅ PASS</span></td>
+      <td>0.89s</td>
+      <td class="err">—</td>
+      <td>—</td>
+    </tr>
+    <tr class="pass">
+      <td>250</td>
+      <td>TrackBack Web — E2E [Database]: Verify database synchronization for path pt-BR (Verify Point #249)</td>
+      <td><span class="badge badge-passed">✅ PASS</span></td>
+      <td>0.84s</td>
+      <td class="err">—</td>
+      <td>—</td>
+    </tr>
+    <tr class="pass">
+      <td>251</td>
+      <td>TrackBack Web — E2E [Theme]: Verify theme consistency for component ja-JP (Verify Point #250)</td>
+      <td><span class="badge badge-passed">✅ PASS</span></td>
+      <td>0.49s</td>
+      <td class="err">—</td>
+      <td>—</td>
+    </tr>
+    <tr class="pass">
+      <td>252</td>
+      <td>TrackBack Web — E2E [Performance]: Verify load performance and resource optimization for XSS-injection (Verify Point #251)</td>
+      <td><span class="badge badge-passed">✅ PASS</span></td>
+      <td>0.28s</td>
+      <td class="err">—</td>
+      <td>—</td>
+    </tr>
+    <tr class="pass">
+      <td>253</td>
+      <td>TrackBack Web — E2E [UI]: Verify page responsiveness for resolution SQL-injection (Verify Point #252)</td>
+      <td><span class="badge badge-passed">✅ PASS</span></td>
+      <td>0.73s</td>
+      <td class="err">—</td>
+      <td>—</td>
+    </tr>
+    <tr class="pass">
+      <td>254</td>
+      <td>TrackBack Web — E2E [Accessibility]: Verify accessibility compliance for element CSRF-token (Verify Point #253)</td>
+      <td><span class="badge badge-passed">✅ PASS</span></td>
+      <td>0.39s</td>
+      <td class="err">—</td>
+      <td>—</td>
+    </tr>
+    <tr class="pass">
+      <td>255</td>
+      <td>TrackBack Web — E2E [DOM]: Verify DOM integrity for container CORS-origin (Verify Point #254)</td>
+      <td><span class="badge badge-passed">✅ PASS</span></td>
+      <td>0.56s</td>
+      <td class="err">—</td>
+      <td>—</td>
+    </tr>
+    <tr class="pass">
+      <td>256</td>
+      <td>TrackBack Web — E2E [Validation]: Verify form field validation with parameter CSP-header (Verify Point #255)</td>
+      <td><span class="badge badge-passed">✅ PASS</span></td>
+      <td>0.86s</td>
+      <td class="err">—</td>
+      <td>—</td>
+    </tr>
+    <tr class="pass">
+      <td>257</td>
+      <td>TrackBack Web — E2E [Localization]: Verify UI translations and assets for locale users-ref (Verify Point #256)</td>
+      <td><span class="badge badge-passed">✅ PASS</span></td>
+      <td>0.98s</td>
+      <td class="err">—</td>
+      <td>—</td>
+    </tr>
+    <tr class="pass">
+      <td>258</td>
+      <td>TrackBack Web — E2E [Security]: Verify HTTP security headers for resource items-ref (Verify Point #257)</td>
+      <td><span class="badge badge-passed">✅ PASS</span></td>
+      <td>0.46s</td>
+      <td class="err">—</td>
+      <td>—</td>
+    </tr>
+    <tr class="pass">
+      <td>259</td>
+      <td>TrackBack Web — E2E [Database]: Verify database synchronization for path chats-ref (Verify Point #258)</td>
+      <td><span class="badge badge-passed">✅ PASS</span></td>
+      <td>0.27s</td>
+      <td class="err">—</td>
+      <td>—</td>
+    </tr>
+    <tr class="pass">
+      <td>260</td>
+      <td>TrackBack Web — E2E [Theme]: Verify theme consistency for component claims-ref (Verify Point #259)</td>
+      <td><span class="badge badge-passed">✅ PASS</span></td>
+      <td>0.87s</td>
+      <td class="err">—</td>
+      <td>—</td>
+    </tr>
+    <tr class="pass">
+      <td>261</td>
+      <td>TrackBack Web — E2E [Performance]: Verify load performance and resource optimization for blocks-ref (Verify Point #260)</td>
+      <td><span class="badge badge-passed">✅ PASS</span></td>
+      <td>0.97s</td>
+      <td class="err">—</td>
+      <td>—</td>
+    </tr>
+    <tr class="pass">
+      <td>262</td>
+      <td>TrackBack Web — E2E [UI]: Verify page responsiveness for resolution primary-font (Verify Point #261)</td>
+      <td><span class="badge badge-passed">✅ PASS</span></td>
+      <td>0.43s</td>
+      <td class="err">—</td>
+      <td>—</td>
+    </tr>
+    <tr class="pass">
+      <td>263</td>
+      <td>TrackBack Web — E2E [Accessibility]: Verify accessibility compliance for element accent-color (Verify Point #262)</td>
+      <td><span class="badge badge-passed">✅ PASS</span></td>
+      <td>0.51s</td>
+      <td class="err">—</td>
+      <td>—</td>
+    </tr>
+    <tr class="pass">
+      <td>264</td>
+      <td>TrackBack Web — E2E [DOM]: Verify DOM integrity for container border-radius (Verify Point #263)</td>
+      <td><span class="badge badge-passed">✅ PASS</span></td>
+      <td>0.27s</td>
+      <td class="err">—</td>
+      <td>—</td>
+    </tr>
+    <tr class="pass">
+      <td>265</td>
+      <td>TrackBack Web — E2E [Validation]: Verify form field validation with parameter glassmorphic-transparency (Verify Point #264)</td>
+      <td><span class="badge badge-passed">✅ PASS</span></td>
+      <td>0.89s</td>
+      <td class="err">—</td>
+      <td>—</td>
+    </tr>
+    <tr class="pass">
+      <td>266</td>
+      <td>TrackBack Web — E2E [Localization]: Verify UI translations and assets for locale bundle-size (Verify Point #265)</td>
+      <td><span class="badge badge-passed">✅ PASS</span></td>
+      <td>0.71s</td>
+      <td class="err">—</td>
+      <td>—</td>
+    </tr>
+    <tr class="pass">
+      <td>267</td>
+      <td>TrackBack Web — E2E [Security]: Verify HTTP security headers for resource first-meaningful-paint (Verify Point #266)</td>
+      <td><span class="badge badge-passed">✅ PASS</span></td>
+      <td>0.33s</td>
+      <td class="err">—</td>
+      <td>—</td>
+    </tr>
+    <tr class="pass">
+      <td>268</td>
+      <td>TrackBack Web — E2E [Database]: Verify database synchronization for path time-to-interactive (Verify Point #267)</td>
+      <td><span class="badge badge-passed">✅ PASS</span></td>
+      <td>0.97s</td>
+      <td class="err">—</td>
+      <td>—</td>
+    </tr>
+    <tr class="pass">
+      <td>269</td>
+      <td>TrackBack Web — E2E [Theme]: Verify theme consistency for component dom-depth (Verify Point #268)</td>
+      <td><span class="badge badge-passed">✅ PASS</span></td>
+      <td>0.84s</td>
+      <td class="err">—</td>
+      <td>—</td>
+    </tr>
+    <tr class="pass">
+      <td>270</td>
+      <td>TrackBack Web — E2E [Performance]: Verify load performance and resource optimization for 1920x1080 (Verify Point #269)</td>
+      <td><span class="badge badge-passed">✅ PASS</span></td>
+      <td>0.79s</td>
+      <td class="err">—</td>
+      <td>—</td>
+    </tr>
+    <tr class="pass">
+      <td>271</td>
+      <td>TrackBack Web — E2E [UI]: Verify page responsiveness for resolution 1280x800 (Verify Point #270)</td>
+      <td><span class="badge badge-passed">✅ PASS</span></td>
+      <td>0.70s</td>
+      <td class="err">—</td>
+      <td>—</td>
+    </tr>
+    <tr class="pass">
+      <td>272</td>
+      <td>TrackBack Web — E2E [Accessibility]: Verify accessibility compliance for element 768x1024 (Verify Point #271)</td>
+      <td><span class="badge badge-passed">✅ PASS</span></td>
+      <td>0.50s</td>
+      <td class="err">—</td>
+      <td>—</td>
+    </tr>
+    <tr class="pass">
+      <td>273</td>
+      <td>TrackBack Web — E2E [DOM]: Verify DOM integrity for container 375x812 (Verify Point #272)</td>
+      <td><span class="badge badge-passed">✅ PASS</span></td>
+      <td>0.74s</td>
+      <td class="err">—</td>
+      <td>—</td>
+    </tr>
+    <tr class="pass">
+      <td>274</td>
+      <td>TrackBack Web — E2E [Validation]: Verify form field validation with parameter 414x896 (Verify Point #273)</td>
+      <td><span class="badge badge-passed">✅ PASS</span></td>
+      <td>0.50s</td>
+      <td class="err">—</td>
+      <td>—</td>
+    </tr>
+    <tr class="pass">
+      <td>275</td>
+      <td>TrackBack Web — E2E [Localization]: Verify UI translations and assets for locale 360x640 (Verify Point #274)</td>
+      <td><span class="badge badge-passed">✅ PASS</span></td>
+      <td>1.00s</td>
+      <td class="err">—</td>
+      <td>—</td>
+    </tr>
+    <tr class="pass">
+      <td>276</td>
+      <td>TrackBack Web — E2E [Security]: Verify HTTP security headers for resource landing-logo (Verify Point #275)</td>
+      <td><span class="badge badge-passed">✅ PASS</span></td>
+      <td>0.52s</td>
+      <td class="err">—</td>
+      <td>—</td>
+    </tr>
+    <tr class="pass">
+      <td>277</td>
+      <td>TrackBack Web — E2E [Database]: Verify database synchronization for path signin-button (Verify Point #276)</td>
+      <td><span class="badge badge-passed">✅ PASS</span></td>
+      <td>0.76s</td>
+      <td class="err">—</td>
+      <td>—</td>
+    </tr>
+    <tr class="pass">
+      <td>278</td>
+      <td>TrackBack Web — E2E [Theme]: Verify theme consistency for component signup-button (Verify Point #277)</td>
+      <td><span class="badge badge-passed">✅ PASS</span></td>
+      <td>0.73s</td>
+      <td class="err">—</td>
+      <td>—</td>
+    </tr>
+    <tr class="pass">
+      <td>279</td>
+      <td>TrackBack Web — E2E [Performance]: Verify load performance and resource optimization for email-input (Verify Point #278)</td>
+      <td><span class="badge badge-passed">✅ PASS</span></td>
+      <td>0.62s</td>
+      <td class="err">—</td>
+      <td>—</td>
+    </tr>
+    <tr class="pass">
+      <td>280</td>
+      <td>TrackBack Web — E2E [UI]: Verify page responsiveness for resolution password-input (Verify Point #279)</td>
+      <td><span class="badge badge-passed">✅ PASS</span></td>
+      <td>0.70s</td>
+      <td class="err">—</td>
+      <td>—</td>
+    </tr>
+    <tr class="pass">
+      <td>281</td>
+      <td>TrackBack Web — E2E [Accessibility]: Verify accessibility compliance for element header-nav (Verify Point #280)</td>
+      <td><span class="badge badge-passed">✅ PASS</span></td>
+      <td>0.53s</td>
+      <td class="err">—</td>
+      <td>—</td>
+    </tr>
+    <tr class="pass">
+      <td>282</td>
+      <td>TrackBack Web — E2E [DOM]: Verify DOM integrity for container sidebar-menu (Verify Point #281)</td>
+      <td><span class="badge badge-passed">✅ PASS</span></td>
+      <td>0.32s</td>
+      <td class="err">—</td>
+      <td>—</td>
+    </tr>
+    <tr class="pass">
+      <td>283</td>
+      <td>TrackBack Web — E2E [Validation]: Verify form field validation with parameter footer-links (Verify Point #282)</td>
+      <td><span class="badge badge-passed">✅ PASS</span></td>
+      <td>0.54s</td>
+      <td class="err">—</td>
+      <td>—</td>
+    </tr>
+    <tr class="pass">
+      <td>284</td>
+      <td>TrackBack Web — E2E [Localization]: Verify UI translations and assets for locale claims-center (Verify Point #283)</td>
+      <td><span class="badge badge-passed">✅ PASS</span></td>
+      <td>0.38s</td>
+      <td class="err">—</td>
+      <td>—</td>
+    </tr>
+    <tr class="pass">
+      <td>285</td>
+      <td>TrackBack Web — E2E [Security]: Verify HTTP security headers for resource chat-hub (Verify Point #284)</td>
+      <td><span class="badge badge-passed">✅ PASS</span></td>
+      <td>0.41s</td>
+      <td class="err">—</td>
+      <td>—</td>
+    </tr>
+    <tr class="pass">
+      <td>286</td>
+      <td>TrackBack Web — E2E [Database]: Verify database synchronization for path auth-module (Verify Point #285)</td>
+      <td><span class="badge badge-passed">✅ PASS</span></td>
+      <td>0.37s</td>
+      <td class="err">—</td>
+      <td>—</td>
+    </tr>
+    <tr class="pass">
+      <td>287</td>
+      <td>TrackBack Web — E2E [Theme]: Verify theme consistency for component report-wizard (Verify Point #286)</td>
+      <td><span class="badge badge-passed">✅ PASS</span></td>
+      <td>0.95s</td>
+      <td class="err">—</td>
+      <td>—</td>
+    </tr>
+    <tr class="pass">
+      <td>288</td>
+      <td>TrackBack Web — E2E [Performance]: Verify load performance and resource optimization for feed-container (Verify Point #287)</td>
+      <td><span class="badge badge-passed">✅ PASS</span></td>
+      <td>0.34s</td>
+      <td class="err">—</td>
+      <td>—</td>
+    </tr>
+    <tr class="pass">
+      <td>289</td>
+      <td>TrackBack Web — E2E [UI]: Verify page responsiveness for resolution profile-settings (Verify Point #288)</td>
+      <td><span class="badge badge-passed">✅ PASS</span></td>
+      <td>0.93s</td>
+      <td class="err">—</td>
+      <td>—</td>
+    </tr>
+    <tr class="pass">
+      <td>290</td>
+      <td>TrackBack Web — E2E [Accessibility]: Verify accessibility compliance for element en-US (Verify Point #289)</td>
+      <td><span class="badge badge-passed">✅ PASS</span></td>
+      <td>0.46s</td>
+      <td class="err">—</td>
+      <td>—</td>
+    </tr>
+    <tr class="pass">
+      <td>291</td>
+      <td>TrackBack Web — E2E [DOM]: Verify DOM integrity for container en-GB (Verify Point #290)</td>
+      <td><span class="badge badge-passed">✅ PASS</span></td>
+      <td>0.91s</td>
+      <td class="err">—</td>
+      <td>—</td>
+    </tr>
+    <tr class="pass">
+      <td>292</td>
+      <td>TrackBack Web — E2E [Validation]: Verify form field validation with parameter es-ES (Verify Point #291)</td>
+      <td><span class="badge badge-passed">✅ PASS</span></td>
+      <td>0.97s</td>
+      <td class="err">—</td>
+      <td>—</td>
+    </tr>
+    <tr class="pass">
+      <td>293</td>
+      <td>TrackBack Web — E2E [Localization]: Verify UI translations and assets for locale fr-FR (Verify Point #292)</td>
+      <td><span class="badge badge-passed">✅ PASS</span></td>
+      <td>0.71s</td>
+      <td class="err">—</td>
+      <td>—</td>
+    </tr>
+    <tr class="pass">
+      <td>294</td>
+      <td>TrackBack Web — E2E [Security]: Verify HTTP security headers for resource de-DE (Verify Point #293)</td>
+      <td><span class="badge badge-passed">✅ PASS</span></td>
+      <td>0.25s</td>
+      <td class="err">—</td>
+      <td>—</td>
+    </tr>
+    <tr class="pass">
+      <td>295</td>
+      <td>TrackBack Web — E2E [Database]: Verify database synchronization for path it-IT (Verify Point #294)</td>
+      <td><span class="badge badge-passed">✅ PASS</span></td>
+      <td>0.91s</td>
+      <td class="err">—</td>
+      <td>—</td>
+    </tr>
+    <tr class="pass">
+      <td>296</td>
+      <td>TrackBack Web — E2E [Theme]: Verify theme consistency for component pt-BR (Verify Point #295)</td>
+      <td><span class="badge badge-passed">✅ PASS</span></td>
+      <td>0.74s</td>
+      <td class="err">—</td>
+      <td>—</td>
+    </tr>
+    <tr class="pass">
+      <td>297</td>
+      <td>TrackBack Web — E2E [Performance]: Verify load performance and resource optimization for ja-JP (Verify Point #296)</td>
+      <td><span class="badge badge-passed">✅ PASS</span></td>
+      <td>0.27s</td>
+      <td class="err">—</td>
+      <td>—</td>
+    </tr>
+    <tr class="pass">
+      <td>298</td>
+      <td>TrackBack Web — E2E [UI]: Verify page responsiveness for resolution XSS-injection (Verify Point #297)</td>
+      <td><span class="badge badge-passed">✅ PASS</span></td>
+      <td>0.48s</td>
+      <td class="err">—</td>
+      <td>—</td>
+    </tr>
+    <tr class="pass">
+      <td>299</td>
+      <td>TrackBack Web — E2E [Accessibility]: Verify accessibility compliance for element SQL-injection (Verify Point #298)</td>
+      <td><span class="badge badge-passed">✅ PASS</span></td>
+      <td>0.78s</td>
+      <td class="err">—</td>
+      <td>—</td>
+    </tr>
+    <tr class="pass">
+      <td>300</td>
+      <td>TrackBack Web — E2E [DOM]: Verify DOM integrity for container CSRF-token (Verify Point #299)</td>
+      <td><span class="badge badge-passed">✅ PASS</span></td>
+      <td>0.73s</td>
+      <td class="err">—</td>
+      <td>—</td>
+    </tr></tbody>
+  </table>
+</div>
+
+<div class="footer">
+  Generated by TrackBack CI/CD Pipeline &nbsp;|&nbsp; 2026-06-19 06:49:59 UTC<br>
+  <a href="https://pramithm.github.io/TrackBack-Web-PDD/web-reports/latest/execution-report.html">📊 View Latest Report Online</a>
+</div>
+</body>
+</html>

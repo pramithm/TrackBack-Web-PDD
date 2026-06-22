@@ -2,13 +2,13 @@ const { Builder, By, until } = require('selenium-webdriver');
 const chrome = require('selenium-webdriver/chrome');
 const fs = require('fs');
 const path = require('path');
-const { initializeApp } = require('firebase/app');
+const { initializeApp, deleteApp } = require('firebase/app');
 const { getAuth, signInWithEmailAndPassword } = require('firebase/auth');
-const { getDatabase, ref, set, get } = require('firebase/database');
+const { getDatabase, ref, set, get, goOffline } = require('firebase/database');
 
 const testResults = [];
 
-const REPO_OWNER = process.env.REPO_OWNER || 'YOUR_USERNAME';
+const REPO_OWNER = process.env.REPO_OWNER || 'pramithm';
 const REPO_NAME = process.env.REPO_NAME || 'TrackBack-Web-PDD';
 const BASE_URL = process.env.BASE_URL || `https://${REPO_OWNER}.github.io/${REPO_NAME}/`;
 
@@ -90,6 +90,22 @@ describe('TrackBack — Security E2E & Rules Verification Tests', function () {
 
   after(async () => {
     if (driver) await driver.quit();
+
+    if (firebaseApp) {
+      try {
+        const db = getDatabase(firebaseApp);
+        if (db) {
+          goOffline(db);
+        }
+      } catch (err) {
+        console.warn('⚠️ Error during firebase database offline:', err.message);
+      }
+      try {
+        await deleteApp(firebaseApp);
+      } catch (err) {
+        console.warn('⚠️ Error during firebase deleteApp:', err.message);
+      }
+    }
 
     const resultsDir = path.resolve(__dirname, '../../Test Results');
     fs.mkdirSync(resultsDir, { recursive: true });

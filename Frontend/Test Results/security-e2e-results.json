@@ -1,0 +1,38 @@
+[
+  {
+    "name": "Security — should reject login for invalid credentials",
+    "status": "passed",
+    "duration": 1748,
+    "error": null
+  },
+  {
+    "name": "Security — should enforce session termination and clean storage upon logout",
+    "status": "passed",
+    "duration": 7286,
+    "error": null
+  },
+  {
+    "name": "Security — should prevent access to protected routes/dashboard for unauthenticated users",
+    "status": "passed",
+    "duration": 3083,
+    "error": null
+  },
+  {
+    "name": "Security — should block unauthorized database write attempts to restricted user paths",
+    "status": "passed",
+    "duration": 754,
+    "error": null
+  },
+  {
+    "name": "Security — should block unauthorized database read attempts to restricted user profiles",
+    "status": "passed",
+    "duration": 89,
+    "error": null
+  },
+  {
+    "name": "Security — should securely sanitize and encode XSS script payloads in text fields",
+    "status": "passed",
+    "duration": 12381,
+    "error": null
+  }
+]
