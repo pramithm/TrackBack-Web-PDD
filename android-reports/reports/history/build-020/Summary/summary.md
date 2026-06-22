@@ -4,26 +4,24 @@
 | Field | Value |
 |-------|-------|
 | Build Number | 20 |
-| Execution Date | 2026-06-18 07:58:14 UTC |
+| Execution Date | 2026-06-22 07:49:04 UTC |
 | Branch | main |
-| Commit | 7f66239 |
+| Commit | 1a27167 |
 
 ## Test Results
 | Metric | Count |
 |--------|-------|
-| Total Tests | 8 |
-| Passed | 2 |
-| Failed | 6 |
+| Total Tests | 300 |
+| Passed | 296 |
+| Failed | 4 |
 | Skipped | 0 |
-| Pass Rate | 25.0% |
+| Pass Rate | 98.7% |
 
 ## Failed Tests
-- **TC-002 Login Screen**: element ("//android.widget.EditText[@hint="Email"]") still not existing after 20000ms
-- **TC-003 Valid Login**: element ("//android.widget.EditText[@hint="Email"]") still not existing after 20000ms
-- **TC-004 Invalid Credentials**: element ("//android.widget.EditText[@hint="Email"]") still not existing after 20000ms
-- **TC-005 Empty Form Validation**: element ("//android.widget.EditText[@hint="Email"]") still not existing after 20000ms
-- **TC-006 Navigate to Sign Up**: element ("//android.widget.EditText[@hint="Email"]") still not existing after 20000ms
-- **TC-007 Dashboard Tabs**: element ("//android.widget.EditText[@hint="Email"]") still not existing after 20000ms
+- **TC-003 Valid Login**: Test account is not email verified.
+- **TC-006 Navigate to Sign Up**: Can't call click on element with selector "//android.widget.Button[@text="Sign Up"]" because element wasn't found
+- **TC-007 Dashboard Tabs**: element ("~avatar-button") still not existing after 20000ms
+- **TC-008 Logout**: element ("~avatar-button") still not existing after 20000ms
 
 ## Report URL
 [View Online HTML Report](https://pramithm.github.io/TrackBack-Web-PDD/android-reports/reports/latest/execution-report.html)

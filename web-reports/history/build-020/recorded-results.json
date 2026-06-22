@@ -2,36 +2,72 @@
   {
     "name": "should load the TrackBack landing page",
     "status": "passed",
-    "duration": 1144,
+    "duration": 1022,
     "error": null,
     "screenshotPath": null
   },
   {
     "name": "should navigate to the login form",
     "status": "passed",
-    "duration": 247,
+    "duration": 1156,
     "error": null,
     "screenshotPath": null
   },
   {
     "name": "should login with valid credentials and reach the dashboard",
     "status": "failed",
-    "duration": 20872,
-    "error": "Neither dashboard nor verify step appeared after login",
-    "screenshotPath": "Screenshots/FAIL_should_login_with_valid_credentials_and_reach_the_dashboard_1781766276524.png"
+    "duration": 2884,
+    "error": "Test account is not email verified.",
+    "screenshotPath": "Screenshots/FAIL_should_login_with_valid_credentials_and_reach_the_dashboard_1782113329097.png"
   },
   {
     "name": "should reject invalid credentials with an error message",
     "status": "passed",
-    "duration": 540,
+    "duration": 860,
     "error": null,
     "screenshotPath": null
   },
   {
     "name": "should open the sign-up form from landing",
     "status": "passed",
-    "duration": 300,
+    "duration": 1230,
     "error": null,
     "screenshotPath": null
+  },
+  {
+    "name": "Security — should reject login for invalid credentials",
+    "status": "passed",
+    "duration": 1488,
+    "error": null
+  },
+  {
+    "name": "Security — should enforce session termination and clean storage upon logout",
+    "status": "failed",
+    "duration": 21342,
+    "error": "Waiting for element to be located By(css selector, .sidebar)\nWait timed out after 20007ms"
+  },
+  {
+    "name": "Security — should prevent access to protected routes/dashboard for unauthenticated users",
+    "status": "passed",
+    "duration": 2410,
+    "error": null
+  },
+  {
+    "name": "Security — should block unauthorized database write attempts to restricted user paths",
+    "status": "passed",
+    "duration": 565,
+    "error": null
+  },
+  {
+    "name": "Security — should block unauthorized database read attempts to restricted user profiles",
+    "status": "passed",
+    "duration": 174,
+    "error": null
+  },
+  {
+    "name": "Security — should securely sanitize and encode XSS script payloads in text fields",
+    "status": "failed",
+    "duration": 21356,
+    "error": "Waiting for element to be located By(css selector, .sidebar)\nWait timed out after 20097ms"
   }
 ]

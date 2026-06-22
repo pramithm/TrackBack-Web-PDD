@@ -1,0 +1,38 @@
+[
+  {
+    "name": "Security — should reject login for invalid credentials",
+    "status": "passed",
+    "duration": 1488,
+    "error": null
+  },
+  {
+    "name": "Security — should enforce session termination and clean storage upon logout",
+    "status": "failed",
+    "duration": 21342,
+    "error": "Waiting for element to be located By(css selector, .sidebar)\nWait timed out after 20007ms"
+  },
+  {
+    "name": "Security — should prevent access to protected routes/dashboard for unauthenticated users",
+    "status": "passed",
+    "duration": 2410,
+    "error": null
+  },
+  {
+    "name": "Security — should block unauthorized database write attempts to restricted user paths",
+    "status": "passed",
+    "duration": 565,
+    "error": null
+  },
+  {
+    "name": "Security — should block unauthorized database read attempts to restricted user profiles",
+    "status": "passed",
+    "duration": 174,
+    "error": null
+  },
+  {
+    "name": "Security — should securely sanitize and encode XSS script payloads in text fields",
+    "status": "failed",
+    "duration": 21356,
+    "error": "Waiting for element to be located By(css selector, .sidebar)\nWait timed out after 20097ms"
+  }
+]
