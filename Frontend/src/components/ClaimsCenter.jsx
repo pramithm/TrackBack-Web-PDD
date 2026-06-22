@@ -64,35 +64,52 @@ export default function ClaimsCenter() {
     if (user) {
       setLoading(true);
       unsubscribe = requestService.listenToRequests(activeSubTab, (data) => {
-        // Mocking claimant names / statuses to match the claim.png screenshot for presentation
-        const formattedData = data.map((req, idx) => {
-          if (idx === 0) {
-            return {
-              ...req,
-              claimerName: 'User @sarah_j',
-              itemTitle: 'Silver Hydration Flask',
-              status: req.status === 'pending' ? 'accepted' : req.status, // Auto-accepted for demo look
-              mockType: 'qa'
-            };
-          } else if (idx === 1) {
-            return {
-              ...req,
-              claimerName: 'User @mike_tech',
-              itemTitle: 'Universal Laptop Charger',
-              status: req.status === 'pending' ? 'accepted' : req.status,
-              mockType: 'image'
-            };
-          } else {
-            return {
-              ...req,
-              claimerName: 'User @mystery_box',
-              itemTitle: 'Over-Ear Wireless Headphones',
-              status: 'under review', // Match mock state
-              mockType: 'mismatch'
-            };
+        // Static mock items to match the presentation screens/layouts from design requirements
+        const mockIncoming = [
+          {
+            id: 'mock-incoming-1',
+            claimerName: 'User @sarah_j',
+            itemTitle: 'Silver Hydration Flask',
+            status: 'accepted',
+            mockType: 'qa',
+            createdAt: Date.now() - 3600000 * 2,
+            itemImage: 'https://images.unsplash.com/photo-1602143407151-7111542de6e8?q=80&w=600&auto=format&fit=crop'
+          },
+          {
+            id: 'mock-incoming-2',
+            claimerName: 'User @mike_tech',
+            itemTitle: 'Universal Laptop Charger',
+            status: 'accepted',
+            mockType: 'image',
+            createdAt: Date.now() - 3600000 * 4,
+            itemImage: 'https://images.unsplash.com/photo-1583863788434-e58a36330cf0?q=80&w=600&auto=format&fit=crop'
+          },
+          {
+            id: 'mock-incoming-3',
+            claimerName: 'User @mystery_box',
+            itemTitle: 'Over-Ear Wireless Headphones',
+            status: 'under review',
+            mockType: 'mismatch',
+            createdAt: Date.now() - 3600000 * 6,
+            itemImage: 'https://images.unsplash.com/photo-1505740420928-5e560c06d30e?q=80&w=600&auto=format&fit=crop'
           }
-        });
-        setRequests(formattedData);
+        ];
+
+        const mockOutgoing = [
+          {
+            id: 'mock-outgoing-1',
+            claimerName: 'You (Claimant)',
+            itemTitle: 'Black Leather Wallet',
+            status: 'pending',
+            createdAt: Date.now() - 3600000 * 8,
+            itemImage: 'https://images.unsplash.com/photo-1627123424574-724758594e93?q=80&w=600&auto=format&fit=crop'
+          }
+        ];
+
+        const mocks = activeSubTab === 'incoming' ? mockIncoming : mockOutgoing;
+        const combined = [...data, ...mocks];
+
+        setRequests(combined);
         setLoading(false);
       });
     }
@@ -349,7 +366,9 @@ export default function ClaimsCenter() {
                         AI
                       </div>
                       <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem', fontSize: '13px', color: '#003135' }}>
-                        <div style={{ fontWeight: 600 }}>Verification Q&A</div>
+                    <div style={{ fontWeight: 600 }}>Verification Q&A</div>
+                    {req.id.startsWith('mock') ? (
+                      <>
                         <div>
                           <strong style={{ color: '#024950' }}>Q: Where did you last see the item?</strong><br />
                           <span style={{ color: '#636E72' }}>A: At the central park café near the fountain.</span>
@@ -358,7 +377,13 @@ export default function ClaimsCenter() {
                           <strong style={{ color: '#024950' }}>Q: Any distinctive marks?</strong><br />
                           <span style={{ color: '#636E72' }}>A: Small dent on the bottom rim and a 'Mountain' sticker on the side.</span>
                         </div>
+                      </>
+                    ) : (
+                      <div style={{ whiteSpace: 'pre-line', color: '#636E72' }}>
+                        {req.message || 'No verification message provided.'}
                       </div>
+                    )}
+                  </div>
                     </div>
                   )}
 
@@ -453,7 +478,7 @@ export default function ClaimsCenter() {
                           onClick={() => handleAccept(req)}
                           disabled={actionLoading !== null}
                         >
-                          Verify Manually
+                          Accept Claim
                         </button>
                       </div>
                     )}

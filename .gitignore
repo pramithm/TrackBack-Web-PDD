@@ -4,6 +4,9 @@ dist/
 Test Results/
 complete_implementation_report.md
 .env*.local
+.env
+.env.*
+!.env.example
 *.log
 .gemini/
 test-credentials.json

@@ -34,18 +34,22 @@ export const aiService = {
       const imagePart = await aiService.fileToGenerativePart(file);
       
       const prompt = `
-        Analyze this image for a lost and found application. 
-        You MUST verify two things:
-        1. Does the image contain any inappropriate, explicit, or sexually suggestive content?
-        2. Does the image contain any identifiable human faces? (Pets are perfectly fine).
+        Analyze this image for a lost-and-found recovery application.
+        You MUST verify the following rules:
+        1. The image contains a valid, physical, real-world item (not scenery, abstract patterns, screenshot of unrelated text, or purely scenery).
+        2. The image is clear, identifiable, and usable.
+        3. The image is safe and not offensive, inappropriate, NSFW, or spam.
+        4. The image is relevant to a lost-and-found report (e.g. keys, wallet, phone, bag, document, etc.).
+        5. The image is not completely blank, corrupted, or unrelated.
+        6. The image does NOT contain any identifiable human faces.
 
         Return your analysis STRICTLY in the following JSON format:
         {
           "safe": boolean, 
           "hasHumanFaces": boolean,
-          "reason": "short explanation if not safe or has faces, otherwise empty string"
+          "reason": "Clear explanation of why it failed verification (e.g. contains human face, blurred image, not a physical item, offensive content, etc.). If verification passes, this should be an empty string."
         }
-        Do not return any markdown wrappers, just the raw JSON string.
+        Do not return any markdown wrappers like \`\`\`json, just the raw JSON string.
       `;
 
       const result = await model.generateContent([prompt, imagePart]);
@@ -149,21 +153,31 @@ export const aiService = {
       const model = aiService.getModel();
       
       const prompt = `
-        You are an AI moderator for a lost and found app chat.
-        Users are supposed to ONLY discuss returning, identifying, or claiming the item: "${itemTitle}".
+        You are an AI moderator for a lost-and-found app chat where users discuss recovering, identifying, or claiming the item: "${itemTitle}".
         
-        Analyze this message: "${messageText}"
+        Analyze this chat message: "${messageText}"
         
-        Check for:
-        1. Abusive, offensive, or inappropriate language.
-        2. Completely off-topic conversation (e.g., dating, spam, unrelated chit-chat).
+        Apply the following rules:
         
-        Greetings, polite conversation, and arranging meetings to return the item are perfectly fine.
+        1. ALLOW messages related to:
+           - Lost item recovery
+           - Found item discussion
+           - Ownership verification or item identification
+           - Meeting coordination/handover coordinates or timing
+           - Claim verification or recovery communication
+           - Polite greetings and normal coordinating chat
+        
+        2. BLOCK messages related to:
+           - Unrelated casual conversations (e.g. "How are you?", "What are you doing?", "Let's be friends", "What games do you play?")
+           - Personal contact sharing (e.g. requesting/sharing phone numbers, Instagram, WhatsApp, Snapchat IDs, Facebook)
+           - Financial discussions (e.g. "Send me money", "Pay me first", "Transfer ₹500")
+           - Abuse, threats, harassment, bullying, or offensive language
+           - Spam, ads, promotions, or repetitive content
         
         Return EXACTLY this JSON format and nothing else:
         {
           "isAppropriate": boolean,
-          "reason": "Brief explanation if inappropriate, otherwise empty string"
+          "reason": "Brief explanation if blocked, otherwise empty string"
         }
         Do not include markdown wrappers like \`\`\`json.
       `;

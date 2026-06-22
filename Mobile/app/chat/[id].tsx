@@ -20,6 +20,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useAuth } from '@/src/store/authStore';
 import { chatService, ChatMessage, ChatMetadata } from '@/src/services/chatService';
 import { userService } from '@/src/services/userService';
+import { aiService } from '@/src/services/aiService';
 import { rtdb } from '@/src/config/firebase';
 import { ref, onValue, set } from 'firebase/database';
 import { connectivity } from '@/src/services/connectivity';
@@ -165,8 +166,16 @@ export default function ChatDetailScreen() {
       }, 100);
     } catch (err: any) {
       console.error('[ChatDetail] Error sending message:', err);
-      const friendlyMsg = errorHelper.getFriendlyMessage(err);
-      Alert.alert('Message Failed', friendlyMsg);
+      const errMsg = err.message || '';
+      if (errMsg.includes('blocked by AI') || errMsg.includes('permanently locked')) {
+        Alert.alert(
+          'Message Blocked',
+          'This chat is intended only for item recovery and verification. Unrelated or inappropriate messages are not allowed.'
+        );
+      } else {
+        const friendlyMsg = errorHelper.getFriendlyMessage(err);
+        Alert.alert('Message Failed', friendlyMsg);
+      }
       setInputText(textToSend); // Restore text on failure so user doesn't lose it
     } finally {
       setSending(false);

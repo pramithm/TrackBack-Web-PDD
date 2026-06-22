@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { useAppStore } from '../../../Backend/store/useAppStore';
 import { chatService } from '../../../Backend/services/chatService';
 import { userService } from '../../../Backend/services/userService';
+import { aiService } from '../../../Backend/services/aiService';
 import { errorHelper } from '../services/errorHelper';
 import { rtdb } from '../../../Backend/config/firebase';
 import { ref, onValue, set } from 'firebase/database';
@@ -433,8 +434,14 @@ export default function ChatHub() {
       scrollToBottom();
     } catch (err) {
       console.error(err);
-      setErrorBanner(errorHelper.getFriendlyMessage(err));
-      showToast('Failed to send message: ' + errorHelper.getFriendlyMessage(err), 'error');
+      const errMsg = err.message || '';
+      if (errMsg.includes('blocked by AI') || errMsg.includes('permanently locked')) {
+        setErrorBanner('This chat is intended only for item recovery and verification. Unrelated or inappropriate messages are not allowed.');
+        showToast('Message blocked by safety moderation rules.', 'error');
+      } else {
+        setErrorBanner(errorHelper.getFriendlyMessage(err));
+        showToast('Failed to send message: ' + errorHelper.getFriendlyMessage(err), 'error');
+      }
       setTimeout(() => {
         setErrorBanner('');
       }, 6000);
@@ -808,8 +815,26 @@ export default function ChatHub() {
               </div>
             )}
 
-            {/* Blocked User Warning Banner */}
-            {(isPartnerBlocked || amIBlocked) && (
+            {/* Blocked User / AI Moderation Warning Banner */}
+            {chatMetadata?.isBlockedByAI ? (
+              <div 
+                className="chat-warning-banner" 
+                style={{ 
+                  fontFamily: "'Inter', sans-serif", 
+                  background: '#FEF2F2', 
+                  color: '#EF4444', 
+                  borderBottom: '1px solid #FEE2E2',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '6px',
+                  justifyContent: 'center',
+                  padding: '10px 16px'
+                }}
+              >
+                <AlertTriangle size={16} />
+                <span>This chat is permanently locked due to moderation violations.</span>
+              </div>
+            ) : (isPartnerBlocked || amIBlocked) ? (
               <div 
                 className="chat-warning-banner" 
                 style={{ 
@@ -832,7 +857,7 @@ export default function ChatHub() {
                   }
                 </span>
               </div>
-            )}
+            ) : null}
 
             {/* Message History logs */}
             <div className="chat-messages-log" style={{ padding: '24px', display: 'flex', flexDirection: 'column', gap: '16px' }}>
@@ -936,41 +961,41 @@ export default function ChatHub() {
                 <input
                   type="text"
                   className="form-input"
-                  placeholder={(isPartnerBlocked || amIBlocked) ? "Messaging is disabled for blocked users." : "Type a message regarding return arrangements..."}
+                  placeholder={chatMetadata?.isBlockedByAI ? "This chat is permanently locked." : (isPartnerBlocked || amIBlocked) ? "Messaging is disabled for blocked users." : "Type a message regarding return arrangements..."}
                   value={inputText}
                   onChange={(e) => setInputText(e.target.value)}
-                  disabled={sending || isPartnerBlocked || amIBlocked}
+                  disabled={sending || isPartnerBlocked || amIBlocked || chatMetadata?.isBlockedByAI}
                   style={{
                     width: '100%',
                     height: '44px',
                     borderRadius: '50px',
                     border: '1px solid #E2E8F0',
-                    background: (isPartnerBlocked || amIBlocked) ? '#F1F5F9' : '#F8FAFC',
+                    background: (isPartnerBlocked || amIBlocked || chatMetadata?.isBlockedByAI) ? '#F1F5F9' : '#F8FAFC',
                     padding: '0 18px',
                     fontSize: '0.9rem',
                     color: '#003135',
                     outline: 'none'
                   }}
-                  required
+                  required={!chatMetadata?.isBlockedByAI}
                 />
               </div>
 
               {/* Pill Send Button */}
               <button 
                 type="submit" 
-                disabled={sending || !inputText.trim() || isPartnerBlocked || amIBlocked}
+                disabled={sending || !inputText.trim() || isPartnerBlocked || amIBlocked || chatMetadata?.isBlockedByAI}
                 style={{ 
                   width: '44px', 
                   height: '44px', 
                   borderRadius: '50%', 
-                  background: (isPartnerBlocked || amIBlocked) ? '#94A3B8' : '#0FA4AF', 
+                  background: (isPartnerBlocked || amIBlocked || chatMetadata?.isBlockedByAI) ? '#94A3B8' : '#0FA4AF', 
                   border: 'none', 
                   display: 'flex', 
                   alignItems: 'center', 
                   justifyContent: 'center',
                   color: '#FFFFFF',
-                  cursor: (isPartnerBlocked || amIBlocked) ? 'default' : 'pointer',
-                  boxShadow: (isPartnerBlocked || amIBlocked) ? 'none' : '0 4px 12px rgba(15, 164, 175, 0.2)'
+                  cursor: (isPartnerBlocked || amIBlocked || chatMetadata?.isBlockedByAI) ? 'default' : 'pointer',
+                  boxShadow: (isPartnerBlocked || amIBlocked || chatMetadata?.isBlockedByAI) ? 'none' : '0 4px 12px rgba(15, 164, 175, 0.2)'
                 }}
               >
                 {sending ? <Loader2 className="spinner" size={16} /> : <Send size={16} style={{ marginLeft: '2px' }} />}

@@ -128,17 +128,20 @@ export default function FoundReportScreen() {
       }
 
       if (!result.canceled && result.assets[0].uri) {
-        setImageUri(result.assets[0].uri);
-        setImageVerified(true);
+        const pickedUri = result.assets[0].uri;
+        setImageUri(pickedUri);
+        setImageVerified(false);
         setModerationError('');
+        handleVerifyImage(pickedUri);
       }
     } catch (err) {
       console.error('Error selecting image:', err);
     }
   };
 
-  const handleVerifyImage = async () => {
-    if (!imageUri) return;
+  const handleVerifyImage = async (uriOverride?: string) => {
+    const targetUri = uriOverride || imageUri;
+    if (!targetUri) return;
 
     setModerationLoading(true);
     setModerationError('');
@@ -153,7 +156,7 @@ export default function FoundReportScreen() {
       }
 
       console.log('[FoundReport] Launching Gemini Image moderation...');
-      const res = await aiService.moderateImage(imageUri);
+      const res = await aiService.moderateImage(targetUri);
       
       if (res.verified) {
         setImageVerified(true);
@@ -653,7 +656,7 @@ export default function FoundReportScreen() {
                   {!imageVerified ? (
                     <TouchableOpacity
                       style={[styles.verifyButton, moderationLoading && styles.btnDisabled]}
-                      onPress={handleVerifyImage}
+                      onPress={() => handleVerifyImage()}
                       disabled={moderationLoading}
                     >
                       {moderationLoading ? (
@@ -722,6 +725,19 @@ export default function FoundReportScreen() {
                   <TouchableOpacity style={styles.addQuestionSlotBtn} onPress={handleAddQuestion}>
                     <Ionicons name="add" size={16} color="#345C72" style={{ marginRight: 4 }} />
                     <Text style={styles.addQuestionSlotText}>Add Question</Text>
+                  </TouchableOpacity>
+
+                  <TouchableOpacity
+                    style={[styles.addQuestionSlotBtn, { backgroundColor: 'rgba(52, 92, 114, 0.08)', marginLeft: 8 }]}
+                    onPress={handleAutoGenerateQuestions}
+                    disabled={questionsLoading}
+                  >
+                    {questionsLoading ? (
+                      <ActivityIndicator size="small" color="#345C72" style={{ marginRight: 4 }} />
+                    ) : (
+                      <Ionicons name="sparkles" size={16} color="#345C72" style={{ marginRight: 4 }} />
+                    )}
+                    <Text style={styles.addQuestionSlotText}>Auto Generate Questions</Text>
                   </TouchableOpacity>
                 </View>
               </View>

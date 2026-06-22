@@ -56,10 +56,30 @@ export default function ReportWizard({ onClose }) {
     setImageFile(file);
     setImagePreview(URL.createObjectURL(file));
     setError('');
+    setModerationResult(null);
 
-    // Temporarily disabled AI Image Verification & Question Generation
-    if (type === 'found') {
-      setModerationResult({ verified: true, reason: '' });
+    if (isOffline) {
+      showToast('Network connection unavailable. Cannot perform AI image verification.', 'error');
+      setModerationResult({ verified: false, reason: 'Offline mode.' });
+      return;
+    }
+
+    setModerationLoading(true);
+    try {
+      const result = await aiService.moderateImage(file);
+      setModerationResult(result);
+      if (result.verified) {
+        showToast('Image verification passed successfully!', 'success');
+      } else {
+        setError(`Image verification failed: ${result.reason || 'Rejected.'}`);
+        showToast('Selected image failed AI moderation.', 'error');
+      }
+    } catch (err) {
+      console.error('Image moderation error:', err);
+      setModerationResult({ verified: false, reason: 'Failed to verify image. Please try again.' });
+      setError('Failed to analyze image with AI moderation.');
+    } finally {
+      setModerationLoading(false);
     }
   };
 
@@ -85,8 +105,12 @@ export default function ReportWizard({ onClose }) {
         setFieldErrors(prev => ({ ...prev, image: 'Please upload an image of the found item.' }));
         hasErrors = true;
       }
-      if (type === 'found' && moderationResult && !moderationResult.verified) {
-        setFieldErrors(prev => ({ ...prev, image: 'Please upload a valid item image. The current image was rejected.' }));
+      if (imageFile && moderationLoading) {
+        setError('Please wait for image verification to complete.');
+        hasErrors = true;
+      }
+      if (imageFile && moderationResult && !moderationResult.verified) {
+        setFieldErrors(prev => ({ ...prev, image: `Image validation failed: ${moderationResult.reason || 'Please upload a clear, safe, and relevant item image.'}` }));
         hasErrors = true;
       }
       if (!hasErrors) setStep(2);
@@ -197,6 +221,34 @@ export default function ReportWizard({ onClose }) {
     setQuestions(updated);
   };
 
+  const handleAutoGenerateQuestions = async () => {
+    if (isOffline) {
+      showToast('Network connection unavailable. Cannot generate questions.', 'error');
+      return;
+    }
+    if (!imageFile) {
+      showToast('Please upload an item image first.', 'warning');
+      return;
+    }
+
+    setQuestionsLoading(true);
+    setError('');
+    try {
+      const generated = await aiService.generateQuestions(imageFile);
+      if (Array.isArray(generated) && generated.length === 3) {
+        setQuestions(generated.map(item => ({ q: item.q || '', a: item.a || '' })));
+        showToast('Questions generated successfully!', 'success');
+      } else {
+        throw new Error('Failed to generate 3 valid questions.');
+      }
+    } catch (err) {
+      console.error(err);
+      showToast('Failed to auto-generate questions: ' + err.message, 'error');
+    } finally {
+      setQuestionsLoading(false);
+    }
+  };
+
   const renderStep1 = () => (
     <div>
       <h3 style={{ fontSize: '1.25rem', fontWeight: 600, marginBottom: '1rem', color: 'var(--primary-color)' }}>Step 1: What type of report?</h3>
@@ -271,10 +323,27 @@ export default function ReportWizard({ onClose }) {
             </button>
           </div>
 
-          {type === 'found' && moderationResult && moderationResult.verified && (
-            <div className="ai-status-card ai-status-success">
-              <ShieldCheck size={16} />
-              <span>Image uploaded successfully. Please proceed.</span>
+          {moderationLoading && (
+            <div className="ai-status-card" style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', background: '#F1F5F9', border: '1px dashed #94A3B8', borderRadius: '12px', padding: '12px', marginTop: '12px', color: '#475569' }}>
+              <Loader2 className="spinner" size={16} style={{ width: 16, height: 16 }} />
+              <span>AI verifying image... Please wait.</span>
+            </div>
+          )}
+
+          {!moderationLoading && moderationResult && (
+            <div className={`ai-status-card ${moderationResult.verified ? 'ai-status-success' : 'ai-status-error'}`} style={{
+              display: 'flex',
+              alignItems: 'center',
+              gap: '0.5rem',
+              borderRadius: '12px',
+              padding: '12px',
+              marginTop: '12px',
+              background: moderationResult.verified ? '#ECFDF5' : '#FEF2F2',
+              border: moderationResult.verified ? '1px solid #10B981' : '1px solid #EF4444',
+              color: moderationResult.verified ? '#065F46' : '#991B1B'
+            }}>
+              {moderationResult.verified ? <ShieldCheck size={16} /> : <AlertCircle size={16} />}
+              <span>{moderationResult.verified ? 'Image verification passed successfully. Please proceed.' : `Verification failed: ${moderationResult.reason}`}</span>
             </div>
           )}
         </div>
@@ -390,11 +459,20 @@ export default function ReportWizard({ onClose }) {
     <div>
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem' }}>
         <h3 style={{ fontSize: '1.25rem', fontWeight: 600, color: 'var(--primary-color)' }}>Step 4: Owner Verification Questions</h3>
-        {questionsLoading && (
-          <span style={{ display: 'flex', alignItems: 'center', gap: '0.3rem', fontSize: '0.8rem', color: 'var(--primary-color)' }}>
-            <Loader2 className="spinner" size={12} style={{ width: 12, height: 12 }} /> Generating...
-          </span>
-        )}
+        <button
+          type="button"
+          className="btn btn-secondary"
+          style={{ padding: '0.4rem 0.8rem', fontSize: '0.85rem', borderRadius: '10px', display: 'flex', alignItems: 'center', gap: '0.4rem' }}
+          onClick={handleAutoGenerateQuestions}
+          disabled={questionsLoading || !imageFile}
+        >
+          {questionsLoading ? (
+            <Loader2 className="spinner" size={14} style={{ width: 14, height: 14 }} />
+          ) : (
+            <Sparkles size={14} style={{ color: 'var(--cyan-accent)' }} />
+          )}
+          <span>Auto Generate Questions</span>
+        </button>
       </div>
       
       <p style={{ color: 'var(--light-text)', fontSize: '0.9rem', marginBottom: '1.5rem' }}>

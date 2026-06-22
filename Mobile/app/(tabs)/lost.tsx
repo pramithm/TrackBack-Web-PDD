@@ -20,6 +20,7 @@ import * as ImagePicker from 'expo-image-picker';
 import { useRouter } from 'expo-router';
 import { useAuth } from '@/src/store/authStore';
 import { itemService, Item } from '@/src/services/itemService';
+import { aiService } from '@/src/services/aiService';
 import { connectivity } from '@/src/services/connectivity';
 import { errorHelper } from '@/src/services/errorHelper';
 
@@ -78,6 +79,11 @@ export default function LostReportScreen() {
 
   // UI Modals
   const [colorPickerVisible, setColorPickerVisible] = useState(false);
+
+  // AI Moderation States
+  const [imageVerified, setImageVerified] = useState(false);
+  const [moderationLoading, setModerationLoading] = useState(false);
+  const [moderationError, setModerationError] = useState('');
 
   // Publishing State
   const [publishing, setPublishing] = useState(false);
@@ -146,16 +152,49 @@ export default function LostReportScreen() {
       }
 
       if (!result.canceled && result.assets[0].uri) {
-        setImageUri(result.assets[0].uri);
+        const pickedUri = result.assets[0].uri;
+        setImageUri(pickedUri);
+        setImageVerified(false);
+        setModerationError('');
         setError('');
+        triggerVerifyImage(pickedUri);
       }
     } catch (err) {
       console.error('Error selecting image:', err);
     }
   };
 
+  const triggerVerifyImage = async (uri: string) => {
+    setModerationLoading(true);
+    setModerationError('');
+    setError('');
+    try {
+      const isOnline = await connectivity.checkOnline();
+      if (!isOnline) {
+        setModerationError('Network connection unavailable. Please check your internet connection.');
+        return;
+      }
+      console.log('[LostReport] Launching Gemini Image moderation...');
+      const res = await aiService.moderateImage(uri);
+      if (res.verified) {
+        setImageVerified(true);
+        Alert.alert('Image Verified', 'The image is verified safe for publishing!');
+      } else {
+        setImageVerified(false);
+        setModerationError(res.reason || 'Image failed safety moderation (e.g. human face detected).');
+      }
+    } catch (err: any) {
+      console.error(err);
+      setModerationError(errorHelper.getFriendlyMessage(err));
+    } finally {
+      setModerationLoading(false);
+    }
+  };
+
   const handleRemoveImage = () => {
     setImageUri(null);
+    setImageVerified(false);
+    setModerationError('');
   };
 
   const detectLocation = () => {
@@ -245,6 +284,8 @@ export default function LostReportScreen() {
     setDescription('');
     setUniqueIdentifier('');
     setImageUri(null);
+    setImageVerified(false);
+    setModerationError('');
     setBuildingName('');
     setFloorRoom('');
     setAdditionalDetails('');
@@ -599,14 +640,33 @@ export default function LostReportScreen() {
                   <View style={styles.previewContainer}>
                     <View style={styles.previewImageCard}>
                       <Image source={{ uri: imageUri }} style={styles.previewImage} contentFit="cover" />
-                      <TouchableOpacity style={styles.removeImageBtn} onPress={handleRemoveImage}>
-                        <Ionicons name="trash" size={18} color="#FFFFFF" />
-                      </TouchableOpacity>
+                      {!moderationLoading && (
+                        <TouchableOpacity style={styles.removeImageBtn} onPress={handleRemoveImage}>
+                          <Ionicons name="trash" size={18} color="#FFFFFF" />
+                        </TouchableOpacity>
+                      )}
                     </View>
-                    <View style={styles.verifiedSafeBadge}>
-                      <Ionicons name="checkmark-circle" size={16} color="#FFFFFF" style={{ marginRight: 6 }} />
-                      <Text style={styles.verifiedSafeText}>Photo Added</Text>
-                    </View>
+
+                    {moderationLoading && (
+                      <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6, marginTop: 12 }}>
+                        <ActivityIndicator size="small" color="#345C72" />
+                        <Text style={{ color: '#56646E', fontSize: 13, fontFamily: 'PlusJakartaSans-SemiBold' }}>AI verifying image...</Text>
+                      </View>
+                    )}
+
+                    {!moderationLoading && imageVerified && (
+                      <View style={styles.verifiedSafeBadge}>
+                        <Ionicons name="checkmark-circle" size={16} color="#FFFFFF" style={{ marginRight: 6 }} />
+                        <Text style={styles.verifiedSafeText}>Photo Verified & Added</Text>
+                      </View>
+                    )}
+
+                    {!moderationLoading && moderationError.length > 0 && (
+                      <View style={{ flexDirection: 'row', alignItems: 'center', backgroundColor: '#FFE2E2', padding: 12, borderRadius: 16, marginTop: 12 }}>
+                        <Ionicons name="alert-circle" size={20} color="#B91C1C" style={{ marginRight: 8 }} />
+                        <Text style={{ color: '#B91C1C', fontSize: 13, fontFamily: 'PlusJakartaSans-SemiBold', flex: 1 }}>{moderationError}</Text>
+                      </View>
+                    )}
                   </View>
                 )}
               </View>
@@ -881,27 +941,42 @@ export default function LostReportScreen() {
 
             {step === 3 && (
               <View style={{ flex: 1, flexDirection: 'row', gap: 10, justifyContent: 'flex-end' }}>
-                {!imageUri && (
+                {(!imageUri || moderationLoading) && (
                   <TouchableOpacity 
                     style={[styles.backBtn, { borderWidth: 0 }]} 
                     onPress={() => {
                       setError('');
+                      setImageUri(null);
+                      setImageVerified(false);
+                      setModerationError('');
                       setStep(4);
                     }}
+                    disabled={moderationLoading}
                   >
                     <Text style={[styles.backBtnText, { color: '#345C72' }]}>Skip for now</Text>
                   </TouchableOpacity>
                 )}
                 <TouchableOpacity 
-                  style={[styles.nextBtn, !imageUri && styles.btnDisabled]} 
+                  style={[
+                    styles.nextBtn, 
+                    (!imageUri || moderationLoading || !imageVerified) && styles.btnDisabled
+                  ]} 
                   onPress={() => {
                     if (!imageUri) {
                       setError('Please upload a photo or tap Skip.');
                       return;
                     }
+                    if (moderationLoading) {
+                      setError('Please wait for image verification to complete.');
+                      return;
+                    }
+                    if (!imageVerified) {
+                      setError('Selected photo did not pass AI verification: ' + (moderationError || 'Reason unknown.'));
+                      return;
+                    }
                     setStep(4);
                   }}
-                  disabled={!imageUri}
+                  disabled={!imageUri || moderationLoading || !imageVerified}
                 >
                   <Text style={styles.nextBtnText}>Continue</Text>
                   <Ionicons name="arrow-forward" size={16} color="#FFFFFF" style={{ marginLeft: 6 }} />
